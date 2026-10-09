@@ -177,6 +177,30 @@ body.app .site-foot { display: none; }
   .lc-spots a .num { display: none; }
 }
 .lc.tour { height: 1000vh; }
+.lc.tour.house { height: 760vh; }
+.house-ui { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+.house-ui > * { pointer-events: auto; }
+.house-list-btn { position: absolute; left: 20px; bottom: 22px; background: rgba(248,240,228,.92); color: #3D281E; border: 0; padding: 10px 14px; font: 600 13px Lato, sans-serif; letter-spacing: .02em; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); }
+.house-list { position: absolute; left: 20px; bottom: 70px; width: min(340px, calc(100% - 40px)); max-height: 60%; overflow: auto; background: rgba(248,240,228,.97); color: #3D281E; box-shadow: 0 12px 40px rgba(30,18,10,.25); }
+.house-list .hl-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 10px 6px 16px; }
+.house-list ol { list-style: none; margin: 0; padding: 0 0 8px; }
+.house-list li button { width: 100%; display: flex; justify-content: space-between; gap: 12px; background: none; border: 0; padding: 10px 16px; font: 14px Lato, sans-serif; color: inherit; cursor: pointer; text-align: left; min-height: 44px; }
+.house-list li button:hover { background: rgba(165,91,63,.08); }
+.house-panel { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); width: min(360px, calc(100% - 48px)); background: rgba(248,240,228,.97); color: #3D281E; padding: 26px 24px 18px; box-shadow: 0 18px 50px rgba(30,18,10,.28); animation: hp-in .5s ease both; }
+@keyframes hp-in { from { opacity: 0; transform: translate(16px, -50%); } }
+.house-panel h3 { font-family: var(--display); font-size: 30px; font-weight: 500; margin: 6px 0 6px; line-height: 1.1; }
+.house-panel .eyebrow { color: #94503A; }
+.house-panel .hp-line { font-size: 15px; margin: 0 0 8px; }
+.house-panel .hp-meta { font-size: 13px; color: #6B5546; margin: 0 0 12px; }
+.house-panel .hp-price { font-size: 18px; font-weight: 700; margin: 0 0 14px; }
+.house-panel .hp-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.house-panel .hp-links { display: flex; gap: 18px; font-size: 14px; margin: 14px 0 6px; }
+.house-panel .linkish { background: none; border: 0; padding: 0; font: inherit; color: #94503A; text-decoration: underline; cursor: pointer; }
+.house-panel .hp-links a { color: #94503A; }
+.house-panel .hp-nav { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(61,40,30,.15); margin-top: 10px; padding-top: 8px; }
+.house-panel .hp-close { position: absolute; right: 8px; top: 8px; }
+.house-panel .hp-hint { font-size: 12px; margin: 6px 0 0; }
+@media (max-width: 760px) { .lc.tour.house { height: 640vh; } .house-panel { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; transform: none; padding: 18px 16px 12px; animation: none; } .house-panel h3 { font-size: 24px; } .house-panel .hp-line { font-size: 14px; } .house-list-btn { left: 12px; bottom: 14px; } }
 .lc.tour .lc-cap { top: auto; bottom: 8%; }
 @media (max-width: 760px) { .lc.tour { height: 820vh; } }
 .world { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
@@ -377,7 +401,7 @@ body.app .toast { bottom: 96px; }
         <button type="button" data-act="mode" data-v="app" id="mode-app">Installed app</button>
       </span>
       <label class="sr" for="opening-sel">Opening animation</label>
-      <select id="opening-sel" data-act="opening"><option value="tour">Opening C · Home Tour</option><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option></select>
+      <select id="opening-sel" data-act="opening"><option value="house">Opening D · The House (foyer)</option><option value="tour">Opening C · Home Tour</option><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option></select>
       <label class="sr" for="skin-sel">Theme</label>
       <select id="skin-sel" data-act="skin"><option value="signature">Theme · Signature: approved palette</option><option value="atelier">Theme · Everyday: Clay &amp; Cocoa</option><option value="festive">Theme · Festive: Saffron &amp; Rani</option><option value="monsoon">Theme · Monsoon: Peacock &amp; Moss</option><option value="gifting">Theme · Gifting: Cherry &amp; Blush</option><option value="evening">Theme · Evening: Indigo &amp; Brass</option></select>
       <a href="#admin">Owner view</a>
@@ -422,6 +446,7 @@ body.app .toast { bottom: 96px; }
 
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
 <script type="module" src="tour3d.js"></script>
+<script type="module" src="house3d.js"></script>
 <script>
 (function () {
 'use strict';
@@ -484,11 +509,12 @@ function defaults() {
   Object.keys(skuMap).forEach((sku, i) => { stock[sku] = [8, 6, 5, 3][i % 4]; });
   stock['BT-CN-PS-OL'] = 0;
   stock['BT-CN-BS-220'] = 2;
-  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'tour', skin: 'signature' };
+  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'house', skin: 'signature', seenHouse: true };
 }
 let S = defaults();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
-if (!['arches', 'pour', 'tour'].includes(S.opening)) S.opening = 'tour';
+if (!S.seenHouse) { S.opening = 'house'; S.seenHouse = true; } // show the newest opening once
+if (!['arches', 'pour', 'tour', 'house'].includes(S.opening)) S.opening = 'house';
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
 const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: { step: 'contact', contact: {}, address: {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, orderDraftId: null }, toast: null };
 
@@ -607,10 +633,10 @@ function viewHome() {
   const fo = PAIRINGS[1]; const a = byId[fo.items[0][0]].variants[fo.items[0][1]], b = byId[fo.items[1][0]].variants[fo.items[1][1]];
   const ritSel = UI.ritual.homeSel || { a: true, b: true };
   const ritTotal = (ritSel.a ? a.price : 0) + (ritSel.b ? b.price : 0);
-  const SRC = S.opening === 'tour' ? TOUR_ITEMS : ARR;
+  const SRC = S.opening === 'tour' || S.opening === 'house' ? TOUR_ITEMS : ARR;
   const world = [['Home', 'Jesmonite trays, dishes and sculptural pieces', 'Now', '#jesmonite'], ['Fragrance', 'Scented and sculpted candles', 'Now', '#candles'], ['Gifts', 'Gift sets and curated gifting', 'Coming later', null], ['Celebrations', 'Wedding, festive and return gifts', 'Coming later', null], ['Living', 'Broader lifestyle collections', 'Coming later', null]];
   return `
-  <section class="lc${S.opening === 'tour' ? ' tour' : ''}" aria-label="Living Canvas, ${esc(OPENINGS[S.opening].name)}" id="lc">
+  <section class="lc${S.opening === 'tour' ? ' tour' : S.opening === 'house' ? ' tour house' : ''}" aria-label="Living Canvas, ${esc(OPENINGS[S.opening].name)}" id="lc">
     <div class="lc-stage" id="lc-stage">
       <canvas id="lc-canvas" aria-hidden="true"></canvas>
       <div class="lc-spots" id="lc-spots">${SRC.map((o, i) => o.id && !o.noSpot ? `<a href="#p-${o.id}" data-spot="${i}" tabindex="-1" aria-hidden="true">${esc(byId[o.id].name)}<span class="num">${priceFrom(byId[o.id])}</span></a>` : '<span hidden></span>').join('')}</div>
@@ -629,6 +655,7 @@ function viewHome() {
         <ol class="lc-rail" id="lc-rail" aria-hidden="true">${OPENINGS[S.opening].rail.map((l, i) => `<li class="${i ? '' : 'on'}">${l}</li>`).join('')}</ol>
         <a class="lc-skip" id="lc-skip" href="#home" data-act="skip-intro">Skip intro</a>
         <span class="lc-progress" id="lc-progress" aria-hidden="true"></span>
+        ${S.opening === 'house' ? '<div class="house-ui" id="house-ui"></div>' : ''}
       </div>
     </div>
   </section>
@@ -907,7 +934,8 @@ function viewNotFound() { return `<div class="wrap" style="padding-block:60px 10
 // ---------- render ----------
 function render(nav) {
   const r = route(); let html;
-  if (r === 'home') html = viewHome();
+  if (r.startsWith('house-')) S.opening = 'house';
+  if (r === 'home' || r.startsWith('house-')) html = viewHome();
   else if (r === 'shop') html = viewShop('all');
   else if (r === 'candles') html = viewShop('candles');
   else if (r === 'jesmonite') html = viewShop('jesmonite');
@@ -928,7 +956,15 @@ function render(nav) {
   renderChrome(); renderOverlay();
   if (r === 'checkout' && UI.co.step === 'pay' && UI.co.method === 'qr') drawQR();
   if (nav) { window.scrollTo(0, 0); const h = app.querySelector('h1[tabindex]'); if (h && r !== 'home') h.focus({ preventScroll: true }); }
-  lcSetup(r === 'home');
+  lcSetup(r === 'home' || r.startsWith('house-'));
+  if (S.opening === 'house' && $('#house-ui')) { UI.house.focus = -1; UI.house.list = false; renderHouseUI(); }
+  if (r.startsWith('house-')) houseDeepLink(r.slice(6));
+}
+// a shared link to one piece: open the house at that piece, already in focus
+function houseDeepLink(id) {
+  const i = TOUR_ITEMS.findIndex((o) => o.room === 'F' && o.id === id && o.label); if (i < 0) return;
+  const go = () => { const lc = $('#lc'), st = $('#lc-stage'); if (!lc) return; const total = lc.offsetHeight - st.offsetHeight; const p = window.HOUSE.timeOf(i) + .015; window.scrollTo(0, lc.getBoundingClientRect().top + scrollY - 65 + p * total); LC.p = p; setTimeout(() => houseFocus(i), 300); };
+  if (window.HOUSE && window.HOUSE.ready) go(); else window.addEventListener('house-ready', go, { once: true });
 }
 
 // ---------- living canvas ----------
@@ -961,6 +997,9 @@ const OPENINGS = {
   pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Cast', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
     caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Cast, set,<br><em>lifted from the mould.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
     spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 },
+  house: { name: 'D · The House', rail: ['Front door', 'The niche', 'Left shelves', 'Right shelves', 'The foyer'], cuts: [.2, .4, .51, .62], hero: [.02, .05], staticP: .67,
+    caps: [['The door is open.<br><em>Come in.</em>', [.08, .1, .15, .18]], ['One by one,<br><em>the candles are lit.</em>', [.31, .32, .37, .39]], ['Trays and plates on the left.<br><em>Tap any piece to look closer.</em>', [.42, .44, .49, .51]], ['Little forms on the right,<br><em>made to be used.</em>', [.53, .55, .6, .62]], ['Made with thought.<br><em>Given with feeling.</em>', [.68, .7, .78, .8]], ['The next room is being furnished.<br><em>Shop the foyer below.</em>', [.86, .88, .93, .95]]],
+    spots: null, final: [.955, .995], light: 0 },
   tour: { name: 'C · Home Tour', rail: ['Front door', 'Foyer', 'Living room', 'Bedroom'], cuts: [.16, .48, .79], hero: [.02, .05], staticP: .33,
     caps: [['The door is open.<br><em>Come in.</em>', [.07, .09, .13, .15]], ['One by one,<br><em>the candles are lit.</em>', [.19, .21, .25, .27]], ['Trays and plates to the left,<br><em>little forms to the right.</em>', [.29, .31, .4, .42]], ['The next room<br><em>waits in the dark.</em>', [.48, .5, .54, .56]], ['Pieces for the living room,<br><em>made to be used.</em>', [.6, .62, .71, .73]], ['A corner kept<br><em>for giving.</em>', [.86, .875, .945, .96]]],
     spots: null, final: [.965, .995], light: 0 }
@@ -1307,7 +1346,54 @@ function sceneTour(ctx, L, p, t) {
   const vg = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * .4, L.W / 2, L.H / 2, Math.max(L.W, L.H) * .78); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.32)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, L.W, L.H);
   fxPost(ctx, L, p, t, L.W / 2, L.H * .82, L.u);
 }
-window.BT_DEBUG = { LC, lcTarget };
+// D · The House: baked rooms from Blender (house3d.js). Tap a piece and the camera glides to it.
+function sceneHouse(ctx, L, p, t) {
+  const Hs = window.HOUSE;
+  if (!Hs || Hs.failed) { ctx.fillStyle = '#120B08'; ctx.fillRect(0, 0, L.W, L.H); if (Hs && Hs.failed) { ctx.fillStyle = '#F3E6D6'; ctx.font = '16px Lato, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('This device cannot show the 3D house. Try opening A or B.', L.W / 2, L.H / 2); } LC.spots = []; return; }
+  if (!Hs.canvas || !document.body.contains(Hs.canvas)) { Hs.mount($('#lc-stage')); Hs.resize(L.W, L.H, window.devicePixelRatio || 1); }
+  else if (Hs.W !== L.W || Hs.Hh !== L.H) Hs.resize(L.W, L.H, window.devicePixelRatio || 1);
+  if (!Hs.ready) { // a quiet intro while the house loads, then it fades in
+    ctx.fillStyle = '#0E0907'; ctx.fillRect(0, 0, L.W, L.H); const w = Math.min(L.W - 48, 420), x = (L.W - w) / 2, y = L.H * .62;
+    ctx.fillStyle = 'rgba(243,230,214,.25)'; ctx.fillRect(x, y, w, 1); ctx.fillStyle = '#F3E6D6'; ctx.fillRect(x, y, w * (Hs.progress || 0), 1);
+    ctx.font = '13px Lato, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(243,230,214,.8)'; ctx.fillText('Opening the house…', L.W / 2, y + 26); LC.spots = []; LC.houseIn = 0; return;
+  }
+  LC.spots = Hs.render(p, t); LC.houseIn = Math.min(1, (LC.houseIn || 0) + .04);
+  if (LC.houseIn < 1) { ctx.fillStyle = `rgba(14,9,7,${1 - LC.houseIn})`; ctx.fillRect(0, 0, L.W, L.H); }
+  const fin = seg(p, .955, .995); if (fin > 0) { ctx.fillStyle = `rgba(18,11,8,${.55 * fin})`; ctx.fillRect(0, 0, L.W, L.H); }
+  const vg = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * .45, L.W / 2, L.H / 2, Math.max(L.W, L.H) * .8); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.22)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, L.W, L.H);
+}
+const HOUSE_IDX = () => TOUR_ITEMS.map((o, i) => (o.room === 'F' && o.label ? i : -1)).filter((i) => i >= 0);
+UI.house = { focus: -1, list: false, pending: null };
+function renderHouseUI() {
+  const box = $('#house-ui'); if (!box) return; const f = UI.house.focus; const ids = HOUSE_IDX();
+  let h = `<button class="house-list-btn" type="button" data-act="house-list" aria-expanded="${UI.house.list}">Shop this room <span class="num">(${ids.length})</span></button>`;
+  if (UI.house.list) h += `<div class="house-list" role="dialog" aria-label="Pieces in the foyer"><div class="hl-head"><strong>The foyer</strong><button class="icon-btn" type="button" data-act="house-list" aria-label="Close list">${CLOSE}</button></div><ol>${ids.map((i) => { const p = byId[TOUR_ITEMS[i].id]; return `<li><button type="button" data-act="house-focus" data-i="${i}"><span>${esc(p.name)}</span><span class="num muted">${priceFrom(p)}</span></button></li>`; }).join('')}</ol></div>`;
+  if (f >= 0) {
+    const o = TOUR_ITEMS[f], p = byId[o.id]; const k = ids.indexOf(f); const candle = p.cat === 'candles' || o.withPillar;
+    const where = o.pos[0] > 1 ? 'Left shelf' : o.pos[0] < -1 ? 'Right shelf' : 'The niche';
+    h += `<aside class="house-panel" role="dialog" aria-labelledby="hp-h">
+      <button class="icon-btn hp-close" type="button" data-act="house-close" aria-label="Back to the room">${CLOSE}</button>
+      <span class="eyebrow">Foyer · ${where}</span><h3 id="hp-h">${esc(p.name)}</h3><p class="hp-line">${esc(p.line)}</p>
+      <p class="hp-meta">${esc((p.notes || []).join(' · '))}${p.size ? ' · ' + esc(p.size) : ''}</p>
+      <p class="hp-price num">${priceFrom(p)}</p>
+      <div class="hp-actions">${candle ? `<button class="btn ghost" type="button" data-act="house-light" data-i="${f}">${window.HOUSE && window.HOUSE.forceLit[f] ? 'Blow it out' : 'Light it'}</button>` : ''}<button class="btn" type="button" data-act="house-add" data-id="${o.id}">Add to cart</button></div>
+      <p class="hp-links"><a href="#p-${o.id}">View details</a><button type="button" class="linkish" data-act="house-share" data-id="${o.id}">Share this piece</button></p>
+      <div class="hp-nav"><button class="icon-btn" type="button" data-act="house-step" data-d="-1" aria-label="Previous piece">‹</button><span class="num">${k + 1} / ${ids.length}</span><button class="icon-btn" type="button" data-act="house-step" data-d="1" aria-label="Next piece">›</button></div>
+      <p class="hp-hint muted">Drag to turn it.</p></aside>`;
+  }
+  box.innerHTML = h;
+}
+function houseFocus(i) {
+  const Hs = window.HOUSE; if (!Hs || !Hs.ready) { UI.house.pending = i; return; }
+  if (Hs.focusOn(i)) { UI.house.focus = i; UI.house.list = false; renderHouseUI(); track('house_focus', { id: TOUR_ITEMS[i].id }); setTimeout(() => $('.house-panel .hp-close')?.focus(), 50); }
+}
+window.addEventListener('house-unfocus', () => { UI.house.focus = -1; renderHouseUI(); });
+window.addEventListener('house-ready', () => { if (LC.cv && S.opening === 'house') { renderHouseUI(); if (UI.house.pending != null) { const i = UI.house.pending; UI.house.pending = null; setTimeout(() => houseFocus(i), 400); } } });
+// drag to turn the piece in focus
+(() => { let x0 = null; document.addEventListener('pointerdown', (e) => { if (UI.house.focus >= 0 && e.target.closest('#lc-stage') && !e.target.closest('.house-panel, .house-list, a, button')) x0 = e.clientX; });
+  document.addEventListener('pointermove', (e) => { if (x0 != null && window.HOUSE) { window.HOUSE.spin(e.clientX - x0); x0 = e.clientX; } });
+  document.addEventListener('pointerup', () => { x0 = null; }); })();
+window.BT_DEBUG = { LC, lcTarget, houseFocus };
 window.addEventListener('tour3-ready', () => { if (LC.cv && S.opening === 'tour') { const sp = reduce.matches ? OPENINGS.tour.staticP : LC.p; lcDraw(sp, performance.now() / 1000); lcCopy(sp, reduce.matches); } });
 const MARKS = {}; const MARK_SRC = { wordmark: 'assets/logo-wordmark.png' };
 function tintMark(name, col) {
@@ -1328,7 +1414,7 @@ function lcResize() {
 function lcDraw(p, t) {
   const ctx = LC.ctx; if (!ctx || !LC.W) return; ctx.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); ctx.clearRect(0, 0, LC.W, LC.H);
   const L = layout(); LC.spots = [];
-  if (S.opening === 'pour') scenePour(ctx, L, p, t); else if (S.opening === 'tour') sceneTour(ctx, L, p, t); else sceneArches(ctx, L, p, t);
+  if (S.opening === 'pour') scenePour(ctx, L, p, t); else if (S.opening === 'tour') sceneTour(ctx, L, p, t); else if (S.opening === 'house') sceneHouse(ctx, L, p, t); else sceneArches(ctx, L, p, t);
   grain(ctx, L, t);
 }
 function lcCopy(p, still) {
@@ -1398,11 +1484,19 @@ function focusFirstError() { const el = document.querySelector('[aria-invalid="t
 
 // ---------- events ----------
 document.addEventListener('click', (e) => {
+  const sp = e.target.closest('[data-spot]'); if (sp && S.opening === 'house') { e.preventDefault(); houseFocus(+sp.dataset.spot); return; }
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act; const d = t.dataset;
   switch (a) {
     case 'mode': S.mode = d.v; save(); renderChrome(); say(d.v === 'app' ? 'Showing the installed-app layout.' : 'Showing the website layout.'); break;
     case 'reset': { const mode = S.mode; S = defaults(); S.mode = mode; save(); UI.pdp = {}; UI.finder = { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }; UI.co = { step: 'contact', contact: {}, address: {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false }; render(); say('Demo reset. Cart, saved items, orders and stock are back to the start.'); break; }
     case 'menu': UI.menu = !UI.menu; renderChrome(); break;
+    case 'house-list': UI.house.list = !UI.house.list; renderHouseUI(); break;
+    case 'house-focus': houseFocus(+d.i); break;
+    case 'house-close': window.HOUSE && window.HOUSE.unfocus(); break;
+    case 'house-step': { const ids = HOUSE_IDX(); const k = ids.indexOf(UI.house.focus); houseFocus(ids[(k + +d.d + ids.length) % ids.length]); break; }
+    case 'house-light': { const Hs = window.HOUSE; Hs.forceLit[+d.i] = !Hs.forceLit[+d.i]; renderHouseUI(); break; }
+    case 'house-add': { const p = byId[d.id]; const v = p.variants.find((x) => stockOf(x.sku) > 0); if (v) addToCart(v.sku, 1, { source: 'house' }); else say('Sorry, that one is sold out.'); break; }
+    case 'house-share': { const url = location.href.split('#')[0] + '#house-' + d.id; try { navigator.clipboard.writeText(url).then(() => say('Link copied. It opens the house at this piece.'), () => say(url)); } catch (err) { say(url); } track('house_share', { id: d.id }); break; }
     case 'search': UI.search = true; renderOverlay(); setTimeout(() => $('#search-q')?.focus(), 0); break;
     case 'close-search': UI.search = false; renderOverlay(); break;
     case 'open-cart': UI.drawer = true; UI.drawerMsg = null; renderOverlay(); setTimeout(() => $('#drawer-close')?.focus(), 0); break;
@@ -1482,7 +1576,7 @@ document.addEventListener('submit', (e) => {
     placeOrder('Card');
   }
 });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (UI.search) { UI.search = false; renderOverlay(); } else if (UI.drawer) { UI.drawer = false; renderOverlay(); $('#cart-btn').focus(); } else if (UI.menu) { UI.menu = false; renderChrome(); } } });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && UI.house && UI.house.focus >= 0 && window.HOUSE) { window.HOUSE.unfocus(); return; } if (e.key === 'Escape') { if (UI.search) { UI.search = false; renderOverlay(); } else if (UI.drawer) { UI.drawer = false; renderOverlay(); $('#cart-btn').focus(); } else if (UI.menu) { UI.menu = false; renderChrome(); } } });
 
 // cart route opens page; keep track of checkout entry
 const origRender = render;
