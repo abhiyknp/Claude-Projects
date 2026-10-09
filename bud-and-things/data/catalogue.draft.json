@@ -1,0 +1,227 @@
+{
+  "_status": "DRAFT. Product names, scents, prices, sizes and materials are proposals for review, not confirmed products. Replace with confirmed details and real photography before launch.",
+  "currency": "INR",
+  "categories": [
+    { "id": "candles", "name": "Candles", "live": true },
+    { "id": "jesmonite", "name": "Jesmonite Objects", "live": true },
+    { "id": "gift-sets", "name": "Gift Sets", "live": false },
+    { "id": "home-decor", "name": "Home Décor", "live": false }
+  ],
+  "products": [
+    {
+      "id": "first-light",
+      "name": "First Light",
+      "category": "candles",
+      "line": "The first quiet hour, poured.",
+      "notes": ["Mogra", "Neroli", "White tea"],
+      "variants": [
+        { "sku": "BT-CN-FL-120", "label": "120 g", "price": 899 },
+        { "sku": "BT-CN-FL-220", "label": "220 g", "price": 1399 }
+      ],
+      "material": "Fragrance-led candle in a matte stone-finish jar, cotton wick. Wax type to be confirmed.",
+      "size": "120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm",
+      "burnTime": "To be confirmed by burn test",
+      "care": ["Let the first burn melt to the edges (about 2 hours).", "Trim the wick to 5 mm before each light.", "Never leave a burning candle unattended."],
+      "tags": { "mood": ["calm", "fresh"], "space": ["bedroom", "workspace"], "occasion": ["just-because", "thank-you"], "for": ["self", "gift"] },
+      "colour": "#F4ECE0",
+      "art": "jar"
+    },
+    {
+      "id": "monsoon-letters",
+      "name": "Monsoon Letters",
+      "category": "candles",
+      "line": "Wet earth, old paper, a window left open.",
+      "notes": ["Petrichor", "Vetiver", "Green cardamom"],
+      "variants": [
+        { "sku": "BT-CN-ML-120", "label": "120 g", "price": 899 },
+        { "sku": "BT-CN-ML-220", "label": "220 g", "price": 1399 }
+      ],
+      "material": "Fragrance-led candle in a matte stone-finish jar, cotton wick. Wax type to be confirmed.",
+      "size": "120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm",
+      "burnTime": "To be confirmed by burn test",
+      "care": ["Let the first burn melt to the edges (about 2 hours).", "Trim the wick to 5 mm before each light.", "Never leave a burning candle unattended."],
+      "tags": { "mood": ["calm", "creative"], "space": ["living", "workspace"], "occasion": ["just-because", "milestone"], "for": ["self", "gift"] },
+      "colour": "#8C8B6A",
+      "art": "jar"
+    },
+    {
+      "id": "chai-at-four",
+      "name": "Chai at Four",
+      "category": "candles",
+      "line": "The hour everyone comes home to.",
+      "notes": ["Masala chai", "Tonka", "Warm milk"],
+      "variants": [
+        { "sku": "BT-CN-CF-120", "label": "120 g", "price": 899 },
+        { "sku": "BT-CN-CF-220", "label": "220 g", "price": 1399 }
+      ],
+      "material": "Fragrance-led candle in a matte stone-finish jar, cotton wick. Wax type to be confirmed.",
+      "size": "120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm",
+      "burnTime": "To be confirmed by burn test",
+      "care": ["Let the first burn melt to the edges (about 2 hours).", "Trim the wick to 5 mm before each light.", "Never leave a burning candle unattended."],
+      "tags": { "mood": ["cosy"], "space": ["living", "kitchen"], "occasion": ["housewarming", "thank-you"], "for": ["self", "gift"] },
+      "colour": "#C99A6C",
+      "art": "jar"
+    },
+    {
+      "id": "brass-and-saffron",
+      "name": "Brass & Saffron",
+      "category": "candles",
+      "line": "For lamps, doorways and celebrations.",
+      "notes": ["Saffron", "Amber", "Sandalwood"],
+      "variants": [
+        { "sku": "BT-CN-BS-220", "label": "220 g", "price": 1499 }
+      ],
+      "material": "Fragrance-led candle in a matte terracotta-finish jar, cotton wick. Wax type to be confirmed.",
+      "size": "8.5 × 9 cm",
+      "burnTime": "To be confirmed by burn test",
+      "care": ["Let the first burn melt to the edges (about 2 hours).", "Trim the wick to 5 mm before each light.", "Never leave a burning candle unattended."],
+      "tags": { "mood": ["cosy", "gift-ready"], "space": ["living", "entrance"], "occasion": ["festive", "housewarming", "milestone"], "for": ["gift"] },
+      "colour": "#B0644A",
+      "art": "jar"
+    },
+    {
+      "id": "terrace-garden",
+      "name": "Terrace Garden",
+      "category": "candles",
+      "line": "Tulsi, lemongrass and a little sunlight.",
+      "notes": ["Tulsi", "Lemongrass", "Fig leaf"],
+      "variants": [
+        { "sku": "BT-CN-TG-120", "label": "120 g", "price": 899 },
+        { "sku": "BT-CN-TG-220", "label": "220 g", "price": 1399 }
+      ],
+      "material": "Fragrance-led candle in a matte stone-finish jar, cotton wick. Wax type to be confirmed.",
+      "size": "120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm",
+      "burnTime": "To be confirmed by burn test",
+      "care": ["Let the first burn melt to the edges (about 2 hours).", "Trim the wick to 5 mm before each light.", "Never leave a burning candle unattended."],
+      "tags": { "mood": ["fresh"], "space": ["kitchen", "workspace", "bathroom"], "occasion": ["just-because", "birthday"], "for": ["self", "gift"] },
+      "colour": "#A7A98A",
+      "art": "jar"
+    },
+    {
+      "id": "pillar-studies",
+      "name": "Pillar Studies",
+      "category": "candles",
+      "line": "Sculpted candles that look good even unlit.",
+      "notes": ["Unscented"],
+      "variants": [
+        { "sku": "BT-CN-PS-IV", "label": "Ivory", "price": 549 },
+        { "sku": "BT-CN-PS-TC", "label": "Terracotta", "price": 549 },
+        { "sku": "BT-CN-PS-OL", "label": "Olive", "price": 549 },
+        { "sku": "BT-CN-PS-SET3", "label": "Set of 3", "price": 1499 }
+      ],
+      "material": "Unscented ribbed pillar candle. Wax type to be confirmed.",
+      "size": "5 × 12 cm",
+      "burnTime": "To be confirmed by burn test",
+      "care": ["Burn on a heat-safe plate.", "Trim the wick to 5 mm before each light.", "Never leave a burning candle unattended."],
+      "tags": { "mood": ["creative", "calm"], "space": ["living", "dining"], "occasion": ["festive", "birthday", "just-because"], "for": ["self", "gift"] },
+      "colour": "#F1E8DA",
+      "art": "pillar"
+    },
+    {
+      "id": "ghat-tray",
+      "name": "Ghat Tray",
+      "category": "jesmonite",
+      "line": "Steps for your small everyday things.",
+      "variants": [
+        { "sku": "BT-JS-GT-IT", "label": "Ivory Terrazzo", "price": 1490 },
+        { "sku": "BT-JS-GT-SD", "label": "Sand", "price": 1490 },
+        { "sku": "BT-JS-GT-TC", "label": "Terracotta", "price": 1490 }
+      ],
+      "material": "Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.",
+      "size": "30 × 15 × 2 cm",
+      "care": ["Wipe with a soft, damp cloth.", "Not dishwasher-safe and not for food.", "Keep away from long contact with water."],
+      "tags": { "mood": ["calm", "gift-ready"], "space": ["living", "bedroom", "entrance"], "occasion": ["housewarming", "milestone"], "for": ["self", "gift"] },
+      "colour": "#B88352",
+      "art": "tray"
+    },
+    {
+      "id": "moonlet-ring-dish",
+      "name": "Moonlet Ring Dish",
+      "category": "jesmonite",
+      "line": "A half-moon for the rings you take off at night.",
+      "variants": [
+        { "sku": "BT-JS-MR-IV", "label": "Ivory", "price": 590 },
+        { "sku": "BT-JS-MR-CS", "label": "Caramel Swirl", "price": 590 },
+        { "sku": "BT-JS-MR-OL", "label": "Olive", "price": 590 }
+      ],
+      "material": "Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.",
+      "size": "10 × 5 × 2.5 cm",
+      "care": ["Wipe with a soft, damp cloth.", "Not dishwasher-safe and not for food.", "Keep away from long contact with water."],
+      "tags": { "mood": ["calm", "gift-ready"], "space": ["bedroom", "bathroom"], "occasion": ["birthday", "thank-you", "just-because"], "for": ["self", "gift"] },
+      "colour": "#B0644A",
+      "art": "dish"
+    },
+    {
+      "id": "jharokha-catch-all",
+      "name": "Jharokha Catch-all",
+      "category": "jesmonite",
+      "line": "A little window for keys, coins and notes.",
+      "variants": [
+        { "sku": "BT-JS-JC-IV", "label": "Ivory", "price": 1090 },
+        { "sku": "BT-JS-JC-SD", "label": "Sand", "price": 1090 }
+      ],
+      "material": "Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.",
+      "size": "14 × 17 × 2.5 cm",
+      "care": ["Wipe with a soft, damp cloth.", "Not dishwasher-safe and not for food.", "Keep away from long contact with water."],
+      "tags": { "mood": ["creative"], "space": ["entrance", "workspace"], "occasion": ["housewarming", "thank-you"], "for": ["self", "gift"] },
+      "colour": "#DCC9AE",
+      "art": "arch-tray"
+    },
+    {
+      "id": "pebble-coasters",
+      "name": "Pebble Coasters",
+      "category": "jesmonite",
+      "line": "River stones for your morning cup.",
+      "variants": [
+        { "sku": "BT-JS-PC-ME4", "label": "Mixed Earth · set of 4", "price": 1190 },
+        { "sku": "BT-JS-PC-IV4", "label": "All Ivory · set of 4", "price": 1190 }
+      ],
+      "material": "Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.",
+      "size": "Each about 10 × 9 × 1 cm",
+      "care": ["Wipe with a soft, damp cloth.", "Not dishwasher-safe.", "Use with hot mugs; avoid flames."],
+      "tags": { "mood": ["cosy", "fresh"], "space": ["living", "workspace", "dining"], "occasion": ["housewarming", "birthday"], "for": ["self", "gift"] },
+      "colour": "#6B6B43",
+      "art": "pebbles"
+    },
+    {
+      "id": "still-form-no-1",
+      "name": "Still Form No. 1",
+      "category": "jesmonite",
+      "line": "An arch to lean books, or thoughts, against.",
+      "variants": [
+        { "sku": "BT-JS-SF-IV", "label": "Ivory", "price": 1690 },
+        { "sku": "BT-JS-SF-TC", "label": "Terracotta", "price": 1690 }
+      ],
+      "material": "Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.",
+      "size": "12 × 18 × 4 cm",
+      "care": ["Dust with a dry, soft cloth.", "Keep indoors."],
+      "tags": { "mood": ["creative", "calm"], "space": ["living", "workspace"], "occasion": ["milestone", "housewarming"], "for": ["self", "gift"] },
+      "colour": "#F1E8DA",
+      "art": "arch"
+    },
+    {
+      "id": "halo-candle-plate",
+      "name": "Halo Candle Plate",
+      "category": "jesmonite",
+      "line": "Give your candle somewhere to stand.",
+      "variants": [
+        { "sku": "BT-JS-HP-IV", "label": "Ivory", "price": 690 },
+        { "sku": "BT-JS-HP-OL", "label": "Olive", "price": 690 },
+        { "sku": "BT-JS-HP-CR", "label": "Caramel", "price": 690 }
+      ],
+      "material": "Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.",
+      "size": "14 cm across, 1.5 cm rim",
+      "care": ["Wipe with a soft, damp cloth.", "Not dishwasher-safe and not for food.", "Let wax cool before removing."],
+      "tags": { "mood": ["calm", "cosy"], "space": ["living", "dining", "bedroom"], "occasion": ["festive", "just-because"], "for": ["self", "gift"] },
+      "colour": "#6B6B43",
+      "art": "plate"
+    }
+  ],
+  "pairings": [
+    { "id": "morning-ritual", "name": "The Morning Ritual", "items": ["first-light", "halo-candle-plate"], "why": "A fresh candle and a plate to stand it on." },
+    { "id": "four-oclock", "name": "Four O’Clock", "items": ["chai-at-four", "ghat-tray"], "why": "Warm scent and a tray for the tea things." },
+    { "id": "doorway-welcome", "name": "Doorway Welcome", "items": ["brass-and-saffron", "jharokha-catch-all"], "why": "A festive scent and a catch-all by the door. Made for housewarmings." },
+    { "id": "rainy-desk", "name": "Rainy Desk", "items": ["monsoon-letters", "pebble-coasters"], "why": "Earthy scent and coasters for long work afternoons." },
+    { "id": "night-stand", "name": "Night Stand", "items": ["terrace-garden", "moonlet-ring-dish"], "why": "A light scent and a dish for rings at the end of the day." }
+  ]
+}
