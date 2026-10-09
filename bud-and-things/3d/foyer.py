@@ -391,5 +391,12 @@ for ob in EXPORT:
 # embedded glTF saved as .json: plain JSON is a served web type where .glb is not
 bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, 'foyer.gltf'), use_selection=True, export_format='GLTF_EMBEDDED', export_texcoords=True,
                           export_normals=True, export_materials='NONE', export_yup=True, export_apply=True)
-os.replace(os.path.join(OUT, 'foyer.gltf'), os.path.join(OUT, 'foyer.json'))
+# ship it as a JS module (glTF JSON + base64 buffer): served everywhere, and nothing fetches a data: URL
+import json  # noqa: E402
+_g = json.load(open(os.path.join(OUT, 'foyer.gltf')))
+_b64 = _g['buffers'][0].pop('uri').split(',', 1)[1]
+with open(os.path.join(OUT, 'foyer.js'), 'w') as fh:
+    fh.write('// Foyer geometry from bud-and-things/3d/foyer.py: glTF JSON plus its binary buffer as base64.\n// Shipped as a module so it loads like any script, with no fetch of a data: URL.\n')
+    fh.write('export default { gltf: ' + json.dumps(_g, separators=(',', ':')) + ', bin: "' + _b64 + '" };\n')
+os.remove(os.path.join(OUT, 'foyer.gltf'))
 print('done', OUT)

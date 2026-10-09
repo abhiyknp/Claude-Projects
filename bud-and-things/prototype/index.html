@@ -1350,7 +1350,7 @@ function sceneTour(ctx, L, p, t) {
 // D · The House: baked rooms from Blender (house3d.js). Tap a piece and the camera glides to it.
 function sceneHouse(ctx, L, p, t) {
   const Hs = window.HOUSE;
-  if (!Hs || Hs.failed) { ctx.fillStyle = '#120B08'; ctx.fillRect(0, 0, L.W, L.H); if (Hs && Hs.failed) { ctx.fillStyle = '#F3E6D6'; ctx.font = '16px Lato, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('This device cannot show the 3D house. Try opening A or B.', L.W / 2, L.H / 2); } LC.spots = []; return; }
+  if (!Hs || Hs.failed) { ctx.fillStyle = '#120B08'; ctx.fillRect(0, 0, L.W, L.H); if (Hs && Hs.failed) { ctx.fillStyle = '#F3E6D6'; ctx.font = '16px Lato, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('The 3D house could not load here. Try opening A or B.', L.W / 2, L.H / 2); if (Hs.error) { ctx.font = '12px Lato, sans-serif'; ctx.fillStyle = 'rgba(243,230,214,.6)'; ctx.fillText(Hs.error.slice(0, 120), L.W / 2, L.H / 2 + 24); } } LC.spots = []; return; }
   if (!Hs.canvas || !document.body.contains(Hs.canvas)) { Hs.mount($('#lc-stage')); Hs.resize(L.W, L.H, window.devicePixelRatio || 1); }
   else if (Hs.W !== L.W || Hs.Hh !== L.H) Hs.resize(L.W, L.H, window.devicePixelRatio || 1);
   if (!Hs.ready) { // a quiet intro while the house loads, then it fades in

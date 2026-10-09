@@ -42,6 +42,16 @@ function bakedMaterial(map, color, lmDay, lmLit) {
   return m;
 }
 
+// pack the glTF JSON and its buffer into one GLB in memory, so the loader never has to fetch anything
+function glb({ gltf, bin }) {
+  const raw = atob(bin), body = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) body[i] = raw.charCodeAt(i);
+  let js = new TextEncoder().encode(JSON.stringify(gltf)); const jp = (4 - js.length % 4) % 4; const bp = (4 - body.length % 4) % 4;
+  const total = 12 + 8 + js.length + jp + 8 + body.length + bp; const out = new ArrayBuffer(total); const dv = new DataView(out); const u8 = new Uint8Array(out);
+  dv.setUint32(0, 0x46546C67, true); dv.setUint32(4, 2, true); dv.setUint32(8, total, true);
+  dv.setUint32(12, js.length + jp, true); dv.setUint32(16, 0x4E4F534A, true); u8.set(js, 20); u8.fill(0x20, 20 + js.length, 20 + js.length + jp);
+  const o = 20 + js.length + jp; dv.setUint32(o, body.length + bp, true); dv.setUint32(o + 4, 0x004E4942, true); u8.set(body, o + 8);
+  return out;
+}
 function load(onProgress) {
   const mgr = new THREE.LoadingManager(); mgr.onProgress = (u, a, b) => onProgress(a / b);
   const tl = new THREE.TextureLoader(mgr);
@@ -49,7 +59,7 @@ function load(onProgress) {
   const maps = {}; PIECES.forEach((n) => { maps[n] = { day: lm('day', n), lit: lm('lit', n) }; });
   const oak = tl.load('assets/tex-oak.jpg'); oak.colorSpace = THREE.SRGBColorSpace; oak.wrapS = oak.wrapT = THREE.RepeatWrapping; oak.anisotropy = 8;
   return Promise.all([
-    new Promise((res, rej) => new GLTFLoader(mgr).load(BASE + 'foyer.json', res, undefined, rej)),
+    import('./assets/house/foyer.js').then((m) => new Promise((res, rej) => new GLTFLoader().parse(glb(m.default), '', res, rej))),
     new Promise((res, rej) => tl.load(BASE + 'env.jpg', (t) => { t.colorSpace = THREE.SRGBColorSpace; t.mapping = THREE.EquirectangularReflectionMapping; res(t); }, undefined, rej))
   ]).then(([gltf, env]) => ({ gltf, env, maps, oak }));
 }
@@ -104,9 +114,9 @@ H.mount = function (stage) {
       H.S = build(res); const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
       const comp = new EffectComposer(r, rt); comp.addPass(new RenderPass(H.S.scene, H.camera)); comp.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), .4, .5, 1.05)); comp.addPass(new OutputPass());
       H.composer = comp; H.resize(H.W || 800, H.Hh || 600, window.devicePixelRatio || 1); H.ready = true; onLeaf(() => {}); window.dispatchEvent(new Event('house-ready'));
-    }).catch((e) => { console.error(e); H.failed = true; });
+    }).catch((e) => { console.error(e); H.error = String((e && e.message) || e); H.failed = true; });
     return true;
-  } catch (e) { H.failed = true; return false; }
+  } catch (e) { H.error = String((e && e.message) || e); H.failed = true; return false; }
 };
 H.resize = function (W, Hh, dpr) {
   if (!H.renderer) return; H.W = W; H.Hh = Hh; H.renderer.setPixelRatio(Math.min(dpr, W < 760 ? 1.5 : 1.75)); H.renderer.setSize(W, Hh, false);
