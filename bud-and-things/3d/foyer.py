@@ -21,6 +21,7 @@ from mathutils import Vector
 
 OUT = next((a for a in sys.argv[1:] if not a.startswith('--')), os.path.join(os.path.dirname(__file__), '..', 'prototype', 'assets', 'house'))
 FAST = '--fast' in sys.argv
+ONLY = next((a.split('=', 1)[1].split(',') for a in sys.argv if a.startswith('--only=')), None)  # rebake just these pieces
 os.makedirs(OUT, exist_ok=True)
 SAMPLES = 24 if FAST else 160
 LM_MAX = 4.0  # lightmaps store (light / LM_MAX) ** (1 / 2.2)
@@ -159,9 +160,9 @@ right = box('right', W, W + T, 0, D, 0, H, M['plaster'])
 cut(right, arch_prism('c', 'yz', 7.4, 2.0, 2.6, W - 1, W + 1))
 walls = join('walls', [back, left, right])
 # niche: recess walls, a stone ledge and an oak shelf
+# the recess itself is cut into the back wall above; only the ledge and the shelf are added (panels laid over the
+# cut faces would block their light)
 niche = join('niche', [
-    box('nb', -1.0, 1.0, D + .5, D + .55, .9, 3.6, M['niche']),
-    box('nl', -1.05, -1.0, D, D + .5, .9, 3.6, M['niche']), box('nr', 1.0, 1.05, D, D + .5, .9, 3.6, M['niche']),
     box('ledge', -1.1, 1.1, D - .12, D + .5, .87, .93, M['stone']),
     box('nshelf', -.98, .98, D + .04, D + .5, 1.6, 1.645, M['shelf']),
 ])
@@ -333,6 +334,8 @@ def bake_all(state):
     import cv2
     set_state(state)
     for ob in EXPORT:
+        if ONLY and ob.name not in ONLY:
+            continue
         res = BAKE[ob.name]
         t = time.time()
         img = bpy.data.images.new('lm_%s_%s' % (state, ob.name), res, res, float_buffer=True)

@@ -36,7 +36,7 @@ function bakedMaterial(map, color, lmDay, lmLit) {
   const m = new THREE.MeshBasicMaterial({ map, color });
   m.onBeforeCompile = (sh) => {
     sh.uniforms.lmDay = { value: lmDay }; sh.uniforms.lmLit = { value: lmLit }; sh.uniforms.kDay = LM.day; sh.uniforms.kLit = LM.lit;
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute vec2 uv1;\nvarying vec2 vLm;').replace('#include <uv_vertex>', '#include <uv_vertex>\nvLm = uv1;');
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vLm;').replace('#include <uv_vertex>', '#include <uv_vertex>\nvLm = uv1;');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D lmDay; uniform sampler2D lmLit; uniform float kDay; uniform float kLit; varying vec2 vLm;')
       .replace('reflectedLight.indirectDiffuse += vec3( 1.0 );', 'vec3 ld = pow(texture2D(lmDay, vLm).rgb, vec3(2.2)) * 4.0; vec3 lc = pow(texture2D(lmLit, vLm).rgb, vec3(2.2)) * 4.0;\n\t\treflectedLight.indirectDiffuse += ld * kDay + lc * kLit;');
   };
@@ -64,7 +64,7 @@ function build(res) {
   const plaster = plasterTex(); plaster.repeat.set(.5, .5);
   const wood = (rep, col) => { const t = res.oak.clone(); t.repeat.set(rep, rep); t.needsUpdate = true; return [t, col]; };
   const stone = tileTex('#D5C6AE'); stone.repeat.set(.5, .5);
-  const rug = rugTex(); rug.wrapS = rug.wrapT = THREE.ClampToEdgeWrapping; rug.repeat.set(1 / 1.6, 1 / 5.2); rug.offset.set(.5, -1.6 / 5.2);
+  const rug = rugTex(); rug.wrapS = rug.wrapT = THREE.ClampToEdgeWrapping; rug.repeat.set(1 / 1.6, 1 / 5.2); rug.offset.set(.5, 5.8 / 5.2); // glTF flips v: the runner spans v = -5.8 … -0.6
   const LOOK = {
     walls: [plaster, '#F1E8DA'], trim: [plaster, '#F1E8DA'], reveals: [plaster, '#F1E8DA'], ceiling: [plaster, '#F3EEE6'], niche: [plaster, '#DECBB3'],
     front: [plaster, '#E8D2B2'], floor: wood(.45, '#C79B70'), frame: wood(.6, '#6E4A33'), door_l: wood(.6, '#7A5038'), door_r: wood(.6, '#7A5038'),
@@ -103,7 +103,7 @@ H.mount = function (stage) {
     H.renderer = r; H.canvas = cv; H.camera = new THREE.PerspectiveCamera(46, 1, .05, 120);
     load((f) => { H.progress = f; }).then((res) => {
       H.S = build(res); const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
-      const comp = new EffectComposer(r, rt); comp.addPass(new RenderPass(H.S.scene, H.camera)); comp.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), .45, .5, .92)); comp.addPass(new OutputPass());
+      const comp = new EffectComposer(r, rt); comp.addPass(new RenderPass(H.S.scene, H.camera)); comp.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), .4, .5, 1.05)); comp.addPass(new OutputPass());
       H.composer = comp; H.resize(H.W || 800, H.Hh || 600, window.devicePixelRatio || 1); H.ready = true; onLeaf(() => {}); window.dispatchEvent(new Event('house-ready'));
     }).catch((e) => { console.error(e); H.failed = true; });
     return true;
@@ -164,6 +164,7 @@ H.render = function (p, t) {
     const it = H.items[H.focus]; it.obj.rotation.y = it.obj.userData.ry + F.k * (F.spin + Math.sin(t * .5) * .25); it.obj.position.y = it.obj.userData.base.y + F.k * .03;
     if (F.dir < 0 && k >= 1) { it.obj.rotation.y = it.obj.userData.ry; it.obj.position.y = it.obj.userData.base.y; H.focus = -1; window.dispatchEvent(new Event('house-unfocus')); }
   }
+  H.renderer.toneMappingExposure = .78 + .22 * seg(p, .12, .2); // the porch is in full sun, the foyer is softer
   cam.position.copy(pos); cam.position.y += Math.sin(t * .8) * .004; cam.lookAt(look); H.lastLook = look.clone(); H.lastP = p;
   H.composer.render();
   // labels

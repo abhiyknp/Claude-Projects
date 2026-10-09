@@ -9,7 +9,7 @@ Clickable prototype: https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr (source: 
 | Area | Decision |
 |---|---|
 | Brand assets source | `BUD_AND_THINGS Phase 1 to Phase 3 Step 5 Master Document`: used for the logo, monogram, leaf mark, palette and packaging photos only. The launch range stays candles + Jesmonite objects |
-| Visual direction | Default opening **C · Home Tour**: a scroll-driven 3D walk (three.js, `prototype/tour3d.js`). The carved front door swings open; in the foyer, living room and bedroom the candles on the centre shelf light one by one, then the camera turns to the left and right shelves as the candles and Jesmonite pieces are placed as decor. Each new room starts dark. Oak texture from the three.js examples (MIT); every other surface is generated in code. Openings A (arches) and B (pour) and six themes stay switchable for review |
+| Visual direction | Default opening **D · The House** (foyer preview, `prototype/house3d.js`): the porch and foyer are modelled and lit in Blender (`3d/foyer.py`), with daylight and candle light baked into lightmaps and mixed as the candles light. Scroll walks the camera in through the carved door, to the candle niche and along both shelves; tapping a piece glides the camera to it (details panel, Light it, Add to cart, Share), and `#house-<product>` links open the house at that piece. Openings C (3D tour), A (arches), B (pour) and six themes stay switchable |
 | Typography | Cormorant Garamond (display) + Lato (UI), both SIL OFL |
 | Founder | Brand lockup stays **BUD & THINGS**; Ashi signs the Our Story note and the footer |
 | Commerce | Own website takes its own orders. **No shop platform.** Amazon, Flipkart, Meesho etc. are run from their own seller panels |
