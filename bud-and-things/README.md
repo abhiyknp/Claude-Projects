@@ -8,6 +8,7 @@ Clickable prototype: https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr (source: 
 
 | Area | Decision |
 |---|---|
+| Brand source | `BUD_AND_THINGS Phase 1 to Phase 3 Step 5 Master Document`: launch is **candles only** (Collection 01 · Everyday Rituals); showpieces and gift sets are later |
 | Visual direction | **A · Atelier of Light**: plaster arches, one moving window of light, the Living Canvas scroll from morning to dusk |
 | Typography | Fraunces (display) + Hanken Grotesk (UI), both SIL OFL |
 | Founder | Brand lockup stays **BUD & THINGS**; Ashi signs the Our Story note and the footer |
@@ -31,10 +32,14 @@ Check current India pricing before committing.
 
 ## Catalogue
 
-`data/catalogue.draft.json`: **draft** launch range of 6 candles and 6 Jesmonite objects, with
+`data/catalogue.draft.json`: an earlier draft that included Jesmonite objects. **Superseded** by the master document: the prototype now sells only the 6 draft candles. Original note: draft launch range with
 variants, prices in ₹, sizes, materials, care, discovery tags and pairings. Every name, scent and
 price is a proposal for review, not a confirmed product. Burn times and wax type stay
 "to be confirmed" until tested.
 
 Product photography is still needed. Stock photos may be used as mood placeholders on the design
 boards only, never as product listings.
+
+## Brand assets
+
+`prototype/assets/` holds images extracted from the master document PDF: the logo lockup, wordmark, B&T monogram, encircled seal and leaf mark (cut out as transparent masks so they recolour per theme), the logo photograph and the seven packaging photographs. They come from low-resolution PDF images; replace them with the original logo files and product photography before launch.

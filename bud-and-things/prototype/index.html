@@ -1,28 +1,64 @@
 <title>BUD &amp; THINGS Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Hanken+Grotesk:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lato:wght@400;700&display=swap">
 <style>
 /* Layout: Atelier of Light. One plaster room; warm light carries the colour; square, quiet UI around a single scroll moment. Single light theme by brand choice. */
 :root {
-  --ivory: #F4EBDF; --plaster: #EBDCCB; --linen: #EADBC8; --sand: #D9B99A; --sand2: #E4CDB2; --card: #FBF5EE;
-  --caramel: #B88352; --terra: #C2522B; --terra-ink: #A63D17; --olive: #5E6B1F;
-  --choc: #22140E; --choc2: #4E3326; --line: #DCC3A8; --line2: #C9A685; --dusk: #6E5444; --glow: #FFB37A;
-  --cta: #A63D17; --on-cta: #FFF6EE;
-  --ok: #4E6B3A; --warn: #A63D17; --ok-bg: #E5E6C4; --err-bg: #F6D3C2; --head-bg: rgba(244,235,223,.96);
-  --sk-ink: #22140E; --sk-ink2: #4E3326; --sk-accent: #A63D17; --sk-light: #FFF6EC; --sk-dark: #22140E; --sk-glow: #FFB37A; --sk-cta: #FFB37A; --sk-on-cta: #22140E; --sk-chip: rgba(255,246,236,.94);
-  --display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
-  --body: 'Hanken Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --ivory: #F8F0E4; --plaster: #EFE3D3; --linen: #F1E6D6; --sand: #E6D5C1; --sand2: #EADCCB; --card: #FDF8F1;
+  --caramel: #C08A5B; --terra: #A55B3F; --terra-ink: #94503A; --olive: #56634A;
+  --choc: #3D281E; --choc2: #5F4535; --line: #E2D1BC; --line2: #CDB79C; --dusk: #6E5444; --glow: #F3D9B8;
+  --cta: #A55B3F; --on-cta: #F8F0E4;
+  --ok: #4F5E3E; --warn: #94503A; --ok-bg: #E4E8D9; --err-bg: #F4DDD2; --head-bg: rgba(248,240,228,.96);
+  --sk-ink: #3D281E; --sk-ink2: #5F4535; --sk-accent: #94503A; --sk-light: #FFF6EC; --sk-dark: #3D281E; --sk-glow: #F3D9B8; --sk-cta: #F8F0E4; --sk-on-cta: #3D281E; --sk-chip: rgba(248,240,228,.94);
+  --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --body: 'Lato', 'Segoe UI', system-ui, sans-serif;
   --wrap: 1280px;
   color-scheme: light;
 }
+:root[data-skin="atelier"] { --ivory: #F4EBDF; --plaster: #EBDCCB; --linen: #EADBC8; --sand: #D9B99A; --sand2: #E4CDB2; --card: #FBF5EE; --caramel: #B88352; --terra: #C2522B; --terra-ink: #A63D17; --olive: #5E6B1F; --choc: #22140E; --choc2: #4E3326; --line: #DCC3A8; --line2: #C9A685; --glow: #FFB37A; --cta: #A63D17; --on-cta: #FFF6EE; --ok: #4E6B3A; --ok-bg: #E5E6C4; --err-bg: #F6D3C2; --head-bg: rgba(244,235,223,.96); --sk-ink: #22140E; --sk-ink2: #4E3326; --sk-accent: #A63D17; --sk-dark: #22140E; --sk-glow: #FFB37A; --sk-cta: #FFB37A; --sk-on-cta: #22140E; --sk-chip: rgba(255,246,236,.94); }
 /* Themes by use case. Bold, colour-blocked rooms on stage; the shop stays light and readable. Product colours never change. */
 :root[data-skin="festive"] { --ivory: #FFF3E3; --plaster: #FBE3C6; --linen: #FAE0C2; --sand: #F2B969; --sand2: #F7CF96; --card: #FFF9F0; --terra: #C8175C; --terra-ink: #B0124F; --olive: #7A4A00; --choc: #3A0A14; --choc2: #6B2333; --line: #F0C891; --line2: #E2A85A; --glow: #FFB020; --cta: #B0124F; --on-cta: #FFF3E3; --ok-bg: #F2E6C2; --err-bg: #FAD6DE; --head-bg: rgba(255,243,227,.96); --sk-accent: #B0124F; --sk-dark: #3A0A14; --sk-glow: #FFB020; --sk-cta: #FFB020; --sk-on-cta: #3A0A14; }
 :root[data-skin="monsoon"] { --ivory: #EEF4F1; --plaster: #DDE9E4; --linen: #DCE8E2; --sand: #9FC0B5; --sand2: #C3D9D0; --card: #F8FBF9; --terra: #0E8077; --terra-ink: #0B6B63; --olive: #4F5E12; --choc: #0C2624; --choc2: #2E4A46; --line: #C5DAD2; --line2: #9DBFB3; --glow: #C9E265; --cta: #0B6B63; --on-cta: #F2FBF8; --ok: #2F5A2C; --ok-bg: #DCEBCF; --err-bg: #F3DAD3; --head-bg: rgba(238,244,241,.96); --sk-accent: #0B6B63; --sk-dark: #0C2624; --sk-glow: #C9E265; --sk-cta: #C9E265; --sk-on-cta: #0C2624; }
 :root[data-skin="gifting"] { --ivory: #FFF4F1; --plaster: #FBE2DC; --linen: #FADFD8; --sand: #F0AFA3; --sand2: #F6CCC3; --card: #FFFAF8; --terra: #C21A36; --terra-ink: #A3122A; --olive: #6B3A2E; --choc: #3B0A12; --choc2: #6A2A33; --line: #F1C6BD; --line2: #E39E91; --glow: #FFB4A8; --cta: #A3122A; --on-cta: #FFF4F1; --ok-bg: #ECE4CC; --err-bg: #FBD7D6; --head-bg: rgba(255,244,241,.96); --sk-accent: #A3122A; --sk-dark: #3B0A12; --sk-glow: #FFB4A8; --sk-cta: #FFB4A8; --sk-on-cta: #3B0A12; }
 :root[data-skin="evening"] { --ivory: #12142B; --plaster: #1A1D3A; --linen: #1D2040; --sand: #2E3260; --sand2: #252950; --card: #171A33; --caramel: #C99A6C; --terra: #E2B45C; --terra-ink: #E2B45C; --olive: #B9C38A; --choc: #F1EDE4; --choc2: #C2C0D6; --line: #2E3260; --line2: #3D4278; --glow: #7A5410; --cta: #E2B45C; --on-cta: #12142B; --ok: #B9D38A; --ok-bg: #24302A; --err-bg: #3A2236; --head-bg: rgba(18,20,43,.94); --sk-ink: #F1EDE4; --sk-ink2: #C2C0D6; --sk-accent: #E2B45C; --sk-dark: #12142B; --sk-glow: #E2B45C; --sk-cta: #E2B45C; --sk-on-cta: #12142B; color-scheme: dark; }
 * { box-sizing: border-box; }
+/* Brand marks from the identity system, used as masks so they take each theme's colour */
+.mark { display: inline-block; background-color: currentColor; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain; flex-shrink: 0; }
+.mark.wordmark { -webkit-mask-image: url(assets/logo-wordmark.png); mask-image: url(assets/logo-wordmark.png); width: 176px; height: 26px; }
+.mark.lockup { -webkit-mask-image: url(assets/logo-lockup.png); mask-image: url(assets/logo-lockup.png); width: min(430px, 36vw); aspect-ratio: 1239 / 552; }
+.mark.monogram { -webkit-mask-image: url(assets/monogram.png); mask-image: url(assets/monogram.png); width: 40px; aspect-ratio: 435 / 480; }
+.mark.seal { -webkit-mask-image: url(assets/monogram-seal.png); mask-image: url(assets/monogram-seal.png); width: 64px; aspect-ratio: 1; }
+.mark.leafmark { -webkit-mask-image: url(assets/leaf.png); mask-image: url(assets/leaf.png); width: 40px; aspect-ratio: 252 / 279; color: var(--caramel); }
+.photo { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.photo img { width: 100%; max-width: 100%; height: auto; display: block; aspect-ratio: 464 / 544; object-fit: cover; }
+.photo figcaption, .pack-grid figcaption { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--choc2); }
+.photo.dark figcaption { color: inherit; opacity: .8; }
+.pack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+.pack-grid figure { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.pack-grid img { width: 100%; max-width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block; }
+.thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.thumbs button { height: 96px; padding: 0; border: 1px solid var(--line); background: var(--linen); cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.thumbs button[aria-pressed="true"] { border: 2px solid var(--choc); }
+.thumbs img:not(.obj) { width: 100%; height: 100%; object-fit: cover; }
+figure.gal img { aspect-ratio: auto; height: min(620px, 80vw); object-fit: cover; }
+.next-up { display: flex; flex-direction: column; gap: 6px; padding-top: 16px; border-top: 1px dashed var(--line2); font-size: 14px; }
+.pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 24px; }
+.pillars > div { display: flex; flex-direction: column; gap: 8px; }
+.pillars svg { color: var(--terra-ink); }
+.story-hero img { width: 100%; height: clamp(220px, 38vw, 460px); object-fit: cover; display: block; }
+.sel { user-select: all; font-weight: 700; }
+.hero-logo { margin: 4px 0; line-height: 0; }
+.hero-logo .lockup { color: var(--sk-ink); }
+.ink-light .hero-logo .lockup { color: var(--sk-light); filter: drop-shadow(0 2px 14px rgba(20,12,8,.45)); }
+.logo .mark.monogram { display: none; width: 30px; }
+@media (max-width: 560px) { .logo .mark.wordmark { display: none; } .logo .mark.monogram { display: inline-block; } }
+.band .opts button { display: inline-flex; align-items: center; gap: 10px; }
+.options button { display: flex; align-items: center; gap: 12px; }
+.options button svg { color: var(--terra-ink); }
+.options button[aria-checked="true"] svg { color: inherit; }
+@media (max-width: 760px) { .mark.lockup { width: min(300px, 78vw); } }
 body { background: var(--ivory); color: var(--choc); font-family: var(--body); font-size: 16px; line-height: 1.55; }
-h1, h2, h3 { font-family: var(--display); font-weight: 300; line-height: 1.1; margin: 0; text-wrap: balance; }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; line-height: 1.08; margin: 0; text-wrap: balance; }
 p { margin: 0; }
 a { color: var(--choc); }
 a:hover { color: var(--terra-ink); }
@@ -117,7 +153,7 @@ body.app .site-foot { display: none; }
 .lc-rail li.on::before { width: 26px; height: 2px; }
 .lc-skip { position: absolute; right: 20px; bottom: 16px; min-height: 44px; display: flex; align-items: center; font-weight: 500; pointer-events: auto; }
 .lc-progress { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--sk-accent); transform-origin: 0 50%; transform: scaleX(0); opacity: .7; }
-.ink-light .lc-hero h1, .ink-light .lc-hero .sub, .ink-light .lc-cap p, .ink-light .lc-skip { color: var(--sk-light); }
+.ink-light .lc-hero .sub, .ink-light .lc-cap p, .ink-light .lc-skip { color: var(--sk-light); }
 .ink-light .lc-hero .tag, .ink-light .lc-cap em, .ink-light .lc-hero .eyebrow { color: var(--sk-glow); }
 .ink-light .lc-hero .btn.ghost { background: transparent; color: var(--sk-light); border-color: var(--sk-light); }
 .ink-light .lc-hero .btn.ghost:hover { background: rgba(245,239,228,.12); }
@@ -331,7 +367,7 @@ body.app .toast { bottom: 96px; }
       <label class="sr" for="opening-sel">Opening animation</label>
       <select id="opening-sel" data-act="opening"><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option></select>
       <label class="sr" for="skin-sel">Theme</label>
-      <select id="skin-sel" data-act="skin"><option value="atelier">Theme · Everyday: Clay &amp; Cocoa</option><option value="festive">Theme · Festive: Saffron &amp; Rani</option><option value="monsoon">Theme · Monsoon: Peacock &amp; Moss</option><option value="gifting">Theme · Gifting: Cherry &amp; Blush</option><option value="evening">Theme · Evening: Indigo &amp; Brass</option></select>
+      <select id="skin-sel" data-act="skin"><option value="signature">Theme · Signature: approved palette</option><option value="atelier">Theme · Everyday: Clay &amp; Cocoa</option><option value="festive">Theme · Festive: Saffron &amp; Rani</option><option value="monsoon">Theme · Monsoon: Peacock &amp; Moss</option><option value="gifting">Theme · Gifting: Cherry &amp; Blush</option><option value="evening">Theme · Evening: Indigo &amp; Brass</option></select>
       <a href="#admin">Owner view</a>
       <button type="button" data-act="reset">Reset demo</button>
     </span>
@@ -340,7 +376,7 @@ body.app .toast { bottom: 96px; }
 
 <header class="site-head">
   <div class="wrap">
-    <a class="logo" href="#home">BUD &amp; THINGS</a>
+    <a class="logo" href="#home" aria-label="BUD &amp; THINGS by Ashi, home"><span class="mark wordmark" aria-hidden="true"></span><span class="mark monogram" aria-hidden="true"></span></a>
     <nav class="nav" aria-label="Primary" id="nav"></nav>
     <div class="head-actions">
       <button class="icon-btn" type="button" data-act="search" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
@@ -357,11 +393,11 @@ body.app .toast { bottom: 96px; }
 <footer class="site-foot">
   <div class="wrap cols">
     <div style="display:flex;flex-direction:column;gap:8px">
-      <span class="logo">BUD &amp; THINGS</span>
+      <span class="mark lockup" style="width:220px" role="img" aria-label="BUD &amp; THINGS by Ashi"></span>
       <span class="muted">Made with thought. Given with feeling.</span>
       <span class="muted">BUD &amp; THINGS by Ashi</span>
     </div>
-    <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a></nav>
+    <nav aria-label="Shop"><strong>Shop</strong><a href="#shop">Candles</a><a href="#collection">Everyday Rituals</a><a href="#ritual">Build Your Ritual</a><a href="#gifting">Gifting</a></nav>
     <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact · WhatsApp</a><a href="#help">Shipping &amp; delivery</a><a href="#help">Exchanges</a><a href="#help">Product care</a></nav>
     <nav aria-label="About"><strong>About</strong><a href="#story">Our Story</a><a href="#help">Where to find us</a><a href="#help">Privacy</a><a href="#help">Terms</a></nav>
   </div>
@@ -377,57 +413,62 @@ body.app .toast { bottom: 96px; }
 'use strict';
 
 // ---------- catalogue (draft) ----------
-const FIN = { 'Ivory': '#F1E8DA', 'Ivory Terrazzo': '#EFE7DA', 'Sand': '#DCC9AE', 'Terracotta': '#B0644A', 'Caramel Swirl': '#C99A6C', 'Caramel': '#C99A6C', 'Olive': '#6B6B43', 'Mixed Earth · set of 4': '#6B6B43', 'All Ivory · set of 4': '#F1E8DA' };
+// Launch scope from the master document: candles only, Collection 01 · Everyday Rituals.
+// Names, scents and prices are drafts until prototype and burn testing are complete.
+const IMG = { box: 'assets/pack-box.jpg', jar: 'assets/pack-jar.jpg', tag: 'assets/pack-tag.jpg', card: 'assets/pack-card.jpg', pouch: 'assets/pack-pouch.jpg', seal: 'assets/pack-seal.jpg', leather: 'assets/pack-leather.jpg', logoPhoto: 'assets/logo-photo.jpg' };
 const CANDLE_CARE = ['Let the first burn melt to the edges (about 2 hours).', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'];
-const JES_CARE = ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Keep away from long contact with water.'];
-const JES_MAT = 'Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.';
-const JAR_MAT = 'Fragrance-led candle in a matte stone-finish jar, cotton wick. Wax type to be confirmed.';
+const JAR_MAT = 'Scented candle in a speckled stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.';
 const JAR_SIZE = '120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm';
 const twoSizes = (code) => [{ sku: 'BT-CN-' + code + '-120', label: '120 g', price: 899 }, { sku: 'BT-CN-' + code + '-220', label: '220 g', price: 1399 }];
+const PILLAR_COL = { 'Ivory': '#F1E8DA', 'Terracotta': '#A55B3F', 'Olive': '#6B7B5B' };
 const P = [
   { id: 'first-light', name: 'First Light', cat: 'candles', type: 'Scented candle', line: 'The first quiet hour, poured.', notes: ['Mogra', 'Neroli', 'White tea'], variants: twoSizes('FL'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'fresh'], space: ['bedroom', 'workspace'], occ: ['just-because', 'thank-you'], gift: true, art: 'jar', c: '#F4ECE0' },
-  { id: 'monsoon-letters', name: 'Monsoon Letters', cat: 'candles', type: 'Scented candle', line: 'Wet earth, old paper, a window left open.', notes: ['Petrichor', 'Vetiver', 'Green cardamom'], variants: twoSizes('ML'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'creative'], space: ['living', 'workspace'], occ: ['just-because', 'milestone'], gift: true, art: 'jar', c: '#8C8B6A' },
-  { id: 'chai-at-four', name: 'Chai at Four', cat: 'candles', type: 'Scented candle', line: 'The hour everyone comes home to.', notes: ['Masala chai', 'Tonka', 'Warm milk'], variants: twoSizes('CF'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['cosy'], space: ['living', 'kitchen'], occ: ['housewarming', 'thank-you'], gift: true, art: 'jar', c: '#C99A6C' },
-  { id: 'brass-and-saffron', name: 'Brass & Saffron', cat: 'candles', type: 'Scented candle', line: 'For lamps, doorways and celebrations.', notes: ['Saffron', 'Amber', 'Sandalwood'], variants: [{ sku: 'BT-CN-BS-220', label: '220 g', price: 1499 }], material: 'Fragrance-led candle in a matte terracotta-finish jar, cotton wick. Wax type to be confirmed.', size: '8.5 × 9 cm', care: CANDLE_CARE, mood: ['cosy', 'gift-ready'], space: ['living', 'entrance'], occ: ['festive', 'housewarming', 'milestone'], gift: true, art: 'jar', c: '#B0644A' },
-  { id: 'terrace-garden', name: 'Terrace Garden', cat: 'candles', type: 'Scented candle', line: 'Tulsi, lemongrass and a little sunlight.', notes: ['Tulsi', 'Lemongrass', 'Fig leaf'], variants: twoSizes('TG'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['fresh'], space: ['kitchen', 'workspace', 'bathroom'], occ: ['just-because', 'birthday'], gift: true, art: 'jar', c: '#A7A98A' },
-  { id: 'pillar-studies', name: 'Pillar Studies', cat: 'candles', type: 'Pillar candle', line: 'Sculpted candles that look good even unlit.', notes: ['Unscented'], variants: [{ sku: 'BT-CN-PS-IV', label: 'Ivory', price: 549 }, { sku: 'BT-CN-PS-TC', label: 'Terracotta', price: 549 }, { sku: 'BT-CN-PS-OL', label: 'Olive', price: 549 }, { sku: 'BT-CN-PS-SET3', label: 'Set of 3', price: 1499 }], material: 'Unscented ribbed pillar candle. Wax type to be confirmed.', size: '5 × 12 cm', care: ['Burn on a heat-safe plate.', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'], mood: ['creative', 'calm'], space: ['living', 'dining'], occ: ['festive', 'birthday', 'just-because'], gift: true, art: 'pillar', c: '#F1E8DA' },
-  { id: 'ghat-tray', name: 'Ghat Tray', cat: 'jesmonite', type: 'Tray', line: 'Steps for your small everyday things.', variants: [{ sku: 'BT-JS-GT-IT', label: 'Ivory Terrazzo', price: 1490 }, { sku: 'BT-JS-GT-SD', label: 'Sand', price: 1490 }, { sku: 'BT-JS-GT-TC', label: 'Terracotta', price: 1490 }], material: JES_MAT, size: '30 × 15 × 2 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['living', 'bedroom', 'entrance'], occ: ['housewarming', 'milestone'], gift: true, art: 'tray' },
-  { id: 'moonlet-ring-dish', name: 'Moonlet Ring Dish', cat: 'jesmonite', type: 'Ring dish', line: 'A half-moon for the rings you take off at night.', variants: [{ sku: 'BT-JS-MR-IV', label: 'Ivory', price: 590 }, { sku: 'BT-JS-MR-CS', label: 'Caramel Swirl', price: 590 }, { sku: 'BT-JS-MR-OL', label: 'Olive', price: 590 }], material: JES_MAT, size: '10 × 5 × 2.5 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['bedroom', 'bathroom'], occ: ['birthday', 'thank-you', 'just-because'], gift: true, art: 'dish' },
-  { id: 'jharokha-catch-all', name: 'Jharokha Catch-all', cat: 'jesmonite', type: 'Catch-all', line: 'A little window for keys, coins and notes.', variants: [{ sku: 'BT-JS-JC-IV', label: 'Ivory', price: 1090 }, { sku: 'BT-JS-JC-SD', label: 'Sand', price: 1090 }], material: JES_MAT, size: '14 × 17 × 2.5 cm', care: JES_CARE, mood: ['creative'], space: ['entrance', 'workspace'], occ: ['housewarming', 'thank-you'], gift: true, art: 'archtray' },
-  { id: 'pebble-coasters', name: 'Pebble Coasters', cat: 'jesmonite', type: 'Coasters', line: 'River stones for your morning cup.', variants: [{ sku: 'BT-JS-PC-ME4', label: 'Mixed Earth · set of 4', price: 1190 }, { sku: 'BT-JS-PC-IV4', label: 'All Ivory · set of 4', price: 1190 }], material: JES_MAT, size: 'Each about 10 × 9 × 1 cm', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe.', 'Use with hot mugs; keep away from flames.'], mood: ['cosy', 'fresh'], space: ['living', 'workspace', 'dining'], occ: ['housewarming', 'birthday'], gift: true, art: 'pebbles' },
-  { id: 'still-form-no-1', name: 'Still Form No. 1', cat: 'jesmonite', type: 'Sculptural', line: 'An arch to lean books, or thoughts, against.', variants: [{ sku: 'BT-JS-SF-IV', label: 'Ivory', price: 1690 }, { sku: 'BT-JS-SF-TC', label: 'Terracotta', price: 1690 }], material: JES_MAT, size: '12 × 18 × 4 cm', care: ['Dust with a dry, soft cloth.', 'Keep indoors.'], mood: ['creative', 'calm'], space: ['living', 'workspace'], occ: ['milestone', 'housewarming'], gift: true, art: 'arch' },
-  { id: 'halo-candle-plate', name: 'Halo Candle Plate', cat: 'jesmonite', type: 'Candle plate', line: 'Give your candle somewhere to stand.', variants: [{ sku: 'BT-JS-HP-IV', label: 'Ivory', price: 690 }, { sku: 'BT-JS-HP-OL', label: 'Olive', price: 690 }, { sku: 'BT-JS-HP-CR', label: 'Caramel', price: 690 }], material: JES_MAT, size: '14 cm across, 1.5 cm rim', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Let wax cool before removing.'], mood: ['calm', 'cosy'], space: ['living', 'dining', 'bedroom'], occ: ['festive', 'just-because'], gift: false, art: 'plate' }
+  { id: 'monsoon-letters', name: 'Monsoon Letters', cat: 'candles', type: 'Scented candle', line: 'Wet earth, old paper, a window left open.', notes: ['Petrichor', 'Vetiver', 'Green cardamom'], variants: twoSizes('ML'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'creative'], space: ['living', 'workspace'], occ: ['just-because', 'milestone'], gift: true, art: 'jar', c: '#A9B39A' },
+  { id: 'chai-at-four', name: 'Chai at Four', cat: 'candles', type: 'Scented candle', line: 'The hour everyone comes home to.', notes: ['Masala chai', 'Tonka', 'Warm milk'], variants: twoSizes('CF'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['cosy'], space: ['living', 'kitchen'], occ: ['housewarming', 'thank-you'], gift: true, art: 'jar', c: '#C08A5B' },
+  { id: 'brass-and-saffron', name: 'Brass & Saffron', cat: 'candles', type: 'Scented candle', line: 'For lamps, doorways and celebrations.', notes: ['Saffron', 'Amber', 'Sandalwood'], variants: [{ sku: 'BT-CN-BS-220', label: '220 g', price: 1499 }], material: 'Scented candle in a terracotta stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.', size: '8.5 × 9 cm', care: CANDLE_CARE, mood: ['cosy', 'gift-ready'], space: ['living', 'entrance'], occ: ['festive', 'housewarming', 'milestone'], gift: true, art: 'jar', c: '#A55B3F' },
+  { id: 'terrace-garden', name: 'Terrace Garden', cat: 'candles', type: 'Scented candle', line: 'Tulsi, lemongrass and a little sunlight.', notes: ['Tulsi', 'Lemongrass', 'Fig leaf'], variants: twoSizes('TG'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['fresh'], space: ['kitchen', 'workspace', 'bathroom'], occ: ['just-because', 'birthday'], gift: true, art: 'jar', c: '#C9D0B8' },
+  { id: 'pillar-studies', name: 'Pillar Studies', cat: 'candles', type: 'Pillar candle', line: 'Sculpted candles that look good even unlit.', notes: ['Unscented'], variants: [{ sku: 'BT-CN-PS-IV', label: 'Ivory', price: 549 }, { sku: 'BT-CN-PS-TC', label: 'Terracotta', price: 549 }, { sku: 'BT-CN-PS-OL', label: 'Olive', price: 549 }, { sku: 'BT-CN-PS-SET3', label: 'Set of 3', price: 1499 }], material: 'Unscented ribbed pillar candle. Wax type to be confirmed after testing.', size: '5 × 12 cm', care: ['Burn on a heat-safe plate.', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'], mood: ['creative', 'calm'], space: ['living', 'dining'], occ: ['festive', 'birthday', 'just-because'], gift: true, art: 'pillar', c: '#F1E8DA' }
 ];
 const PAIRINGS = [
-  { id: 'morning-ritual', name: 'The Morning Ritual', items: [['first-light', 0], ['halo-candle-plate', 0]], why: 'A fresh candle and a plate to stand it on.' },
-  { id: 'four-oclock', name: 'Four O’Clock', items: [['chai-at-four', 1], ['ghat-tray', 1]], why: 'Warm scent and a tray for the tea things.' },
-  { id: 'doorway-welcome', name: 'Doorway Welcome', items: [['brass-and-saffron', 0], ['jharokha-catch-all', 0]], why: 'A festive scent and a catch-all by the door. Made for housewarmings.' },
-  { id: 'rainy-desk', name: 'Rainy Desk', items: [['monsoon-letters', 1], ['pebble-coasters', 0]], why: 'Earthy scent and coasters for long work afternoons.' },
-  { id: 'night-stand', name: 'Night Stand', items: [['terrace-garden', 0], ['moonlet-ring-dish', 0]], why: 'A light scent and a dish for rings at the end of the day.' }
+  { id: 'morning-evening', name: 'Morning & Evening', items: [['first-light', 0], ['chai-at-four', 0]], why: 'A fresh candle to start the day and a warm one for when everyone is home.' },
+  { id: 'four-oclock', name: 'Four O’Clock', items: [['chai-at-four', 1], ['pillar-studies', 1]], why: 'Masala chai and a terracotta pillar for the tea table.' },
+  { id: 'doorway-welcome', name: 'Doorway Welcome', items: [['brass-and-saffron', 0], ['pillar-studies', 3]], why: 'Saffron by the door and three pillars for the steps. Made for festive evenings.' },
+  { id: 'rainy-desk', name: 'Rainy Desk', items: [['monsoon-letters', 1], ['first-light', 0]], why: 'Wet earth for long afternoons and a light scent for the morning after.' },
+  { id: 'night-stand', name: 'Night Stand', items: [['terrace-garden', 0], ['pillar-studies', 0]], why: 'A green, light scent and an ivory pillar for the end of the day.' }
 ];
+const FUTURE = [['Showpieces & home objects', 'Expansion 01'], ['Gift sets & curated gifting', 'Expansion 02'], ['Broader lifestyle collections', 'Expansion 03']];
 const MOODS = [['calm', 'Calm and grounded'], ['cosy', 'Warm and cosy'], ['fresh', 'Fresh and uplifting'], ['creative', 'Creative and expressive'], ['gift-ready', 'Thoughtful and gift-ready']];
 const SPACES = [['bedroom', 'Bedroom'], ['living', 'Living room'], ['workspace', 'Desk or workspace'], ['kitchen', 'Kitchen'], ['entrance', 'Entrance'], ['bathroom', 'Bathroom'], ['dining', 'Dining table']];
 const OCCASIONS = [['birthday', 'Birthday'], ['housewarming', 'Housewarming'], ['thank-you', 'Thank you'], ['festive', 'Festive'], ['milestone', 'A milestone'], ['just-because', 'Just because']];
 const STATES = ['Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'];
 const STATUSES = ['Placed', 'Packed', 'Shipped', 'Delivered'];
+// Brand elements from the identity system: leaf, sun, arch, flow, spark.
+const ICON = {
+  leaf: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M7 26C12 20 18 13 26 6"/><path d="M13 19c-4 0-6-3-6-6 4 0 6 2 6 6z"/><path d="M17 15c0-4 2-7 6-7 0 4-2 7-6 7z"/><path d="M19 13c3 1 5 4 4 7-3-1-5-4-4-7z"/></svg>',
+  sun: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M6 22h20"/><path d="M10 22a6 6 0 0 1 12 0"/><path d="M16 8v4M8 13l2.5 2.5M24 13l-2.5 2.5M4 18h3M25 18h3"/></svg>',
+  arch: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M8 27V15a8 8 0 0 1 16 0v12"/><path d="M12 27V16a4 4 0 0 1 8 0v11"/><path d="M5 27h22"/></svg>',
+  flow: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M4 12c4-4 8 4 12 0s8 4 12 0"/><path d="M4 18c4-4 8 4 12 0s8 4 12 0"/><path d="M4 24c4-4 8 4 12 0s8 4 12 0"/></svg>',
+  spark: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4l2.4 9.6L28 16l-9.6 2.4L16 28l-2.4-9.6L4 16l9.6-2.4z"/></svg>'
+};
+const MOOD_ICON = { calm: 'flow', cosy: 'sun', fresh: 'leaf', creative: 'spark', 'gift-ready': 'arch' };
 const byId = Object.fromEntries(P.map((p) => [p.id, p]));
 const skuMap = {};
 P.forEach((p) => p.variants.forEach((v, i) => { skuMap[v.sku] = { p, v, i }; }));
 
 // ---------- state ----------
-const KEY = 'bt-proto-v1';
+const KEY = 'bt-proto-v2';
 function defaults() {
   const stock = {};
   Object.keys(skuMap).forEach((sku, i) => { stock[sku] = [8, 6, 5, 3][i % 4]; });
-  stock['BT-JS-SF-TC'] = 0;
-  stock['BT-JS-MR-CS'] = 2;
-  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'arches', skin: 'atelier' };
+  stock['BT-CN-PS-OL'] = 0;
+  stock['BT-CN-BS-220'] = 2;
+  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'arches', skin: 'signature' };
 }
 let S = defaults();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
 if (!['arches', 'pour'].includes(S.opening)) S.opening = 'arches';
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
-const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: { step: 'contact', contact: {}, address: {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, orderDraftId: null }, toast: null };
+const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'first-light', object: 'chai-at-four' } }, co: { step: 'contact', contact: {}, address: {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, orderDraftId: null }, toast: null };
 
 // ---------- helpers ----------
 const $ = (s, r = document) => r.querySelector(s);
@@ -439,26 +480,8 @@ const stockOf = (sku) => (S.stock[sku] ?? 0);
 const inStock = (p) => p.variants.some((v) => stockOf(v.sku) > 0);
 function track(name, data) { S.events.unshift({ t: new Date().toISOString(), name, data: data || {} }); S.events = S.events.slice(0, 60); save(); }
 function shade(hex, f) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; if (f < 1) { r *= f; g *= f; b *= f; } else { const k = f - 1; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; } return '#' + [r, g, b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join(''); }
-function colorFor(p, vi) { const v = p.variants[vi || 0]; if (p.art === 'jar') return p.c; return FIN[v.label] || p.c || '#DCC9AE'; }
-function art(p, vi, s) {
-  s = s || 1; vi = vi || 0; const c = colorFor(p, vi); const px = (n) => Math.round(n * s) + 'px';
-  const shadow = `${px(10)} ${px(14)} ${px(24)} rgba(58,41,32,.13)`;
-  switch (p.art) {
-    case 'jar': return `<span class="obj" style="width:${px(84)};height:${px(100)};background:${c};border-radius:${px(6)} ${px(6)} ${px(10)} ${px(10)};border-top:${px(8)} solid ${shade(c, 1.25)};box-shadow:inset ${px(-14)} 0 0 rgba(58,41,32,.09),${shadow}"></span>`;
-    case 'pillar': {
-      const one = (col, h) => `<span class="obj" style="width:${px(42)};height:${px(h)};background:repeating-linear-gradient(90deg,${col} 0 ${px(6)},${shade(col, .86)} ${px(6)} ${px(8)});box-shadow:${shadow}"></span>`;
-      if (p.variants[vi].label === 'Set of 3') return one('#F1E8DA', 124) + one('#B0644A', 100) + one('#6B6B43', 112);
-      return one(c, 124);
-    }
-    case 'tray': return `<span class="obj" style="width:${px(210)};height:${px(44)};border-radius:50%;background:${c};box-shadow:inset 0 ${px(-12)} 0 ${shade(c, .86)},${shadow}"></span>`;
-    case 'dish': return `<span class="obj" style="width:${px(120)};height:${px(40)};border-radius:0 0 ${px(60)} ${px(60)};background:${c};border-top:${px(8)} solid ${shade(c, 1.2)};box-shadow:${shadow}"></span>`;
-    case 'archtray': return `<span class="obj" style="width:${px(120)};height:${px(146)};border-radius:${px(60)} ${px(60)} ${px(8)} ${px(8)};background:${shade(c, 1.3)};box-shadow:inset 0 0 0 ${px(14)} ${c},${shadow}"></span>`;
-    case 'pebbles': { const iv = c === '#F1E8DA'; return `<span class="obj" style="width:${px(120)};height:${px(38)};margin-top:${px(60)};border-radius:50%;background:${c};box-shadow:${px(26)} ${px(-24)} 0 ${px(-4)} ${iv ? '#E6DAC6' : '#B88352'},${px(-22)} ${px(-44)} 0 ${px(-8)} ${iv ? '#F6EFE3' : '#F1E8DA'},${px(6)} ${px(-64)} 0 ${px(-12)} ${iv ? '#DDD0BA' : '#B0644A'}"></span>`; }
-    case 'arch': return `<span class="obj" style="width:${px(110)};height:${px(150)};border-radius:${px(55)} ${px(55)} 0 0;background:radial-gradient(circle at 50% 62%,transparent 0 ${px(26)},${c} ${px(27)});filter:drop-shadow(${px(10)} ${px(14)} ${px(14)} rgba(58,41,32,.14))"></span>`;
-    case 'plate': return `<span class="obj" style="width:${px(170)};height:${px(38)};border-radius:50%;background:${c};box-shadow:inset 0 0 0 ${px(9)} ${shade(c, .86)},${shadow}"></span>`;
-  }
-  return '';
-}
+function colorFor(p, vi) { const v = p.variants[vi || 0]; if (p.art === 'jar') return p.c; return PILLAR_COL[v.label] || p.c; }
+function art(p, vi, sc) { sc = sc || 1; const z = Math.round(170 * sc); return `<img class="obj" src="${prodImg(p, vi || 0)}" alt="" width="${z}" height="${z}" style="width:${z}px;height:${z}px">`; }
 const HEART = (on) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="${on ? '#94503A' : 'none'}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
 const CLOSE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 function cartLines() { return S.cart.map((l) => ({ ...l, p: skuMap[l.sku].p, v: skuMap[l.sku].v, vi: skuMap[l.sku].i })).filter((l) => l.p); }
@@ -486,9 +509,9 @@ window.addEventListener('hashchange', () => { UI.menu = false; render(true); });
 // ---------- chrome ----------
 const NAV = [['shop', 'Shop'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story']];
 function renderChrome() {
-  const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'jesmonite'].includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
+  const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'collection'].includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
   $('#nav').innerHTML = NAV.map(([k, l]) => `<a href="#${k}"${cur(k)}>${l}</a>`).join('');
-  $('#mobile-menu-inner').innerHTML = [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['shop', 'All products'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['help', 'Help & contact']].map(([k, l]) => `<a href="#${k}">${l}</a>`).join('');
+  $('#mobile-menu-inner').innerHTML = [['shop', 'Candles'], ['collection', 'Everyday Rituals'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['help', 'Help & contact']].map(([k, l]) => `<a href="#${k}">${l}</a>`).join('');
   $('#mobile-menu').hidden = !UI.menu; $('#menu-btn').setAttribute('aria-expanded', String(UI.menu));
   const cc = cartCount(); const cb = $('#cart-btn');
   cb.setAttribute('aria-label', `Cart, ${cc} item${cc === 1 ? '' : 's'}`);
@@ -497,7 +520,7 @@ function renderChrome() {
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
   $('#opening-sel').value = S.opening; $('#skin-sel').value = S.skin; document.documentElement.dataset.skin = S.skin; $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
-  const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
+  const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'collection'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
   $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
     + tab('shop', 'Shop', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>')
     + tab('feeling', 'Feeling', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16"/></svg>')
@@ -522,9 +545,9 @@ function renderOverlay() {
     const q = UI.searchQ.trim().toLowerCase();
     const res = q ? P.filter((p) => (p.name + ' ' + p.type + ' ' + (p.notes || []).join(' ') + ' ' + p.line).toLowerCase().includes(q)) : [];
     h += `<div class="search-panel" role="dialog" aria-modal="true" aria-label="Search"><div class="wrap">
-      <div style="display:flex;justify-content:space-between;align-items:center"><span class="logo">BUD &amp; THINGS</span><button class="icon-btn" type="button" data-act="close-search" aria-label="Close search">${CLOSE}</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center"><span class="logo"><span class="mark wordmark" aria-hidden="true"></span><span class="sr">BUD &amp; THINGS</span></span><button class="icon-btn" type="button" data-act="close-search" aria-label="Close search">${CLOSE}</button></div>
       <label for="search-q">Search candles and objects</label>
-      <input id="search-q" type="text" autocomplete="off" value="${esc(UI.searchQ)}" placeholder="Try “tray”, “chai” or “calm”">
+      <input id="search-q" type="text" autocomplete="off" value="${esc(UI.searchQ)}" placeholder="Try “chai”, “saffron” or “pillar”">
       <div id="search-res">${searchResults(q, res)}</div>
     </div></div>`;
   }
@@ -533,14 +556,14 @@ function renderOverlay() {
 }
 function searchResults(q, res) {
   if (!q) return '<p class="muted">Search by name, scent or type.</p>';
-  if (!res.length) return `<div class="empty"><strong>No match for “${esc(q)}”.</strong><span class="muted">Try a scent (chai, tulsi), a type (tray, coasters), or let us suggest something.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn small" href="#feeling" data-act="close-search">Find Your Feeling</a><a class="btn small ghost" href="#shop" data-act="close-search">See all products</a></span></div>`;
-  return res.map((p, i) => `<a class="result" href="#p-${p.id}" data-act="close-search"><span class="tile${i % 2 ? ' alt' : ''}">${art(p, 0, .4)}</span><span><strong>${esc(p.name)}</strong><br><span class="muted" style="font-size:14px">${esc(p.type)} · ${priceFrom(p)}</span></span></a>`).join('');
+  if (!res.length) return `<div class="empty"><strong>No match for “${esc(q)}”.</strong><span class="muted">Try a scent (chai, tulsi, saffron), “pillar”, or let us suggest something.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn small" href="#feeling" data-act="close-search">Find Your Feeling</a><a class="btn small ghost" href="#shop" data-act="close-search">See all products</a></span></div>`;
+  return res.map((p, i) => `<a class="result" href="#p-${p.id}" data-act="close-search"><span class="tile${i % 2 ? ' alt' : ''}">${art(p, 0, .36)}</span><span><strong>${esc(p.name)}</strong><br><span class="muted" style="font-size:14px">${esc(p.type)} · ${priceFrom(p)}</span></span></a>`).join('');
 }
 function totalsHTML(t) {
   return `<div class="totals num"><div><span>Subtotal</span><span>${inr(t.sub)}</span></div><div><span>Shipping <span class="hint">(${S.settings.freeOver ? 'free over ' + inr(S.settings.freeOver) + ', ' : ''}demo rule)</span></span><span>${t.ship ? inr(t.ship) : 'Free'}</span></div><div class="grand"><span>Total</span><span>${inr(t.total)}</span></div></div>`;
 }
 function lineItem(l) {
-  return `<div class="line-item"><a class="tile" href="#p-${l.p.id}" data-act="close-cart" aria-label="${esc(l.p.name)}">${art(l.p, l.vi, .5)}</a>
+  return `<div class="line-item"><a class="tile" href="#p-${l.p.id}" data-act="close-cart" aria-label="${esc(l.p.name)}">${art(l.p, l.vi, .44)}</a>
     <div class="meta"><strong>${esc(l.p.name)}</strong><span class="muted">${esc(l.v.label)} · ${inr(l.v.price)}</span>
     <span style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span class="qty"><button type="button" data-act="qty" data-sku="${l.sku}" data-d="-1" aria-label="Decrease quantity of ${esc(l.p.name)}">−</button><span class="num">${l.qty}</span><button type="button" data-act="qty" data-sku="${l.sku}" data-d="1" aria-label="Increase quantity of ${esc(l.p.name)}">+</button></span><button class="linkbtn" type="button" data-act="remove" data-sku="${l.sku}">Remove</button></span></div>
     <strong class="num">${inr(l.v.price * l.qty)}</strong></div>`;
@@ -551,14 +574,14 @@ function card(p, i) {
   const saved = S.saved.includes(p.id); const out = !inStock(p);
   const sw = p.art === 'jar' ? '' : `<span class="swatches" aria-label="${p.variants.length} options">${p.variants.map((v, vi) => `<span style="background:${colorFor(p, vi)}"></span>`).join('')}</span>`;
   return `<div class="card"><a class="tile${i % 2 ? ' alt' : ''}" href="#p-${p.id}" aria-label="${esc(p.name)}">${art(p, 0, 1)}${out ? '<span class="badge out">Sold out</span>' : ''}</a>
-    <span class="eyebrow">${p.cat === 'candles' ? 'Candle' : 'Jesmonite'} · ${esc(p.type)}</span>
+    <span class="eyebrow">${esc(p.type)}</span>
     <a class="name" href="#p-${p.id}">${esc(p.name)}</a>${sw}
     <span class="row"><span class="num" style="font-weight:600">${priceFrom(p)}</span><span style="display:flex;gap:4px"><button class="icon-btn" type="button" data-act="save" data-id="${p.id}" aria-pressed="${saved}" aria-label="${saved ? 'Remove ' + esc(p.name) + ' from saved' : 'Save ' + esc(p.name)}">${HEART(saved)}</button>${out ? '' : `<button class="btn ghost small" type="button" data-act="quick-add" data-id="${p.id}">Add</button>`}</span></span></div>`;
 }
 
 // ---------- views ----------
 function viewHome() {
-  const feat = ['chai-at-four', 'ghat-tray', 'monsoon-letters', 'moonlet-ring-dish'].map((id) => byId[id]);
+  const feat = ['chai-at-four', 'first-light', 'brass-and-saffron', 'pillar-studies'].map((id) => byId[id]);
   const fo = PAIRINGS[1]; const a = byId[fo.items[0][0]].variants[fo.items[0][1]], b = byId[fo.items[1][0]].variants[fo.items[1][1]];
   const ritSel = UI.ritual.homeSel || { a: true, b: true };
   const ritTotal = (ritSel.a ? a.price : 0) + (ritSel.b ? b.price : 0);
@@ -566,18 +589,18 @@ function viewHome() {
   <section class="lc" aria-label="Living Canvas, ${esc(OPENINGS[S.opening].name)}" id="lc">
     <div class="lc-stage" id="lc-stage">
       <canvas id="lc-canvas" aria-hidden="true"></canvas>
-      <div class="lc-spots" id="lc-spots">${ARR.map((o, i) => `<a href="#p-${o.id}" data-spot="${i}" tabindex="-1" aria-hidden="true">${esc(byId[o.id].name)}<span class="num">${priceFrom(byId[o.id])}</span></a>`).join('')}</div>
+      <div class="lc-spots" id="lc-spots">${ARR.map((o, i) => o.id && !o.noSpot ? `<a href="#p-${o.id}" data-spot="${i}" tabindex="-1" aria-hidden="true">${esc(byId[o.id].name)}<span class="num">${priceFrom(byId[o.id])}</span></a>` : '<span hidden></span>').join('')}</div>
       <div class="lc-copy" id="lc-copy">
         <div class="lc-hero" id="lc-hero">
           <span class="eyebrow">${esc(SKINS[S.skin].eyebrow)}</span>
-          <h1>BUD &amp;<br>THINGS</h1>
-          <p class="tag">Thoughtful objects.<br>Meaningful moments.</p>
-          <p class="sub">Objects and little rituals, thoughtfully made for everyday living and meaningful giving.</p>
-          <div class="lc-cta"><a class="btn" href="#shop">Explore the Collection</a><a class="btn ghost" href="#feeling">Find Your Feeling</a></div>
+          <h1 class="hero-logo"><span class="sr">BUD &amp; THINGS by Ashi</span><span class="mark lockup" aria-hidden="true"></span></h1>
+          <p class="tag">Made with thought.<br>Given with feeling.</p>
+          <p class="sub">Candles for small rituals, slow evenings and meaningful giving. Collection 01, Everyday Rituals.</p>
+          <div class="lc-cta"><a class="btn" href="#shop">Shop the candles</a><a class="btn ghost" href="#feeling">Find Your Feeling</a></div>
         </div>
-        ${OPENINGS[S.opening].caps.map((c, i) => `<div class="lc-cap" id="lc-cap${i}"><p>${typeof c[0] === 'function' ? c[0]() : c[0]}</p></div>`).join('')}
+        ${OPENINGS[S.opening].caps.map((c, i) => `<div class="lc-cap" id="lc-cap${i}"><p>${c[0]}</p></div>`).join('')}
         <div class="lc-final" id="lc-final"><p>Where would you<br><em>like to begin?</em></p>
-          <nav class="paths" aria-label="Ways into the shop"><a href="#candles">Shop Candles<span>6 →</span></a><a href="#jesmonite">Shop Jesmonite Objects<span>6 →</span></a><a href="#shop">Explore All Products<span>12 →</span></a><a class="feel" href="#feeling">Find Your Feeling<span>5 questions →</span></a></nav>
+          <nav class="paths" aria-label="Ways into the shop"><a href="#shop">Shop Candles<span>6 →</span></a><a href="#collection">Everyday Rituals<span>Collection 01 →</span></a><a href="#ritual">Build Your Ritual<span>Pair two →</span></a><a class="feel" href="#feeling">Find Your Feeling<span>5 questions →</span></a></nav>
         </div>
         <ol class="lc-rail" id="lc-rail" aria-hidden="true">${OPENINGS[S.opening].rail.map((l, i) => `<li class="${i ? '' : 'on'}">${l}</li>`).join('')}</ol>
         <a class="lc-skip" id="lc-skip" href="#home" data-act="skip-intro">Skip intro</a>
@@ -586,99 +609,113 @@ function viewHome() {
     </div>
   </section>
 
-  <section class="section wrap" id="after-intro" aria-label="About"><div class="intro"><p>Candles you look forward to lighting. Objects that hold the small things. Made with thought, and given with feeling.</p><a href="#story" style="font-weight:600">Read our story</a></div></section>
+  <section class="section wrap" id="after-intro" aria-label="About"><div class="intro"><span class="mark leafmark" aria-hidden="true"></span><p>The little things we choose, make and give can carry a lot of meaning. We begin with candles, made in small batches for everyday rituals.</p><a href="#story" style="font-weight:600">Read our story</a></div></section>
 
-  <section class="wrap" aria-labelledby="cats-h" style="padding-bottom:80px"><div class="section-head"><h2 id="cats-h">Shop by category</h2></div>
-    <div class="cats">
-      <a class="cat" href="#candles"><span class="tile">${art(byId['chai-at-four'], 0, 1.1)}${art(byId['first-light'], 0, 1.4)}${art(byId['pillar-studies'], 1, 1)}</span><span class="row"><strong>Candles</strong><span style="font-weight:600">6 scents and studies →</span></span></a>
-      <a class="cat" href="#jesmonite"><span class="tile alt">${art(byId['ghat-tray'], 0, .9)}${art(byId['still-form-no-1'], 0, .9)}</span><span class="row"><strong>Jesmonite Objects</strong><span style="font-weight:600">6 pieces →</span></span></a>
-    </div></section>
+  <section class="wrap" id="collection-sec" aria-labelledby="col-h" style="padding-bottom:80px"><div class="split">
+    <figure class="photo" style="margin:0"><img src="${IMG.jar}" alt="A speckled stone candle jar with a wooden lid and the BUD &amp; THINGS by Ashi label, on a terrazzo stone." width="464" height="544"><figcaption>Approved label direction</figcaption></figure>
+    <div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow">Collection 01</span><h2 id="col-h" style="font-size:clamp(34px,4vw,52px)">Everyday Rituals</h2>
+      <p class="muted" style="max-width:520px">Candles are not only for decoration. They are part of small routines, moods, evenings, hosting and personal moments. Six candles to begin with: five scented, one sculpted and unscented.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#shop">Shop the collection</a><a class="btn ghost" href="#ritual">Pair two candles</a></div>
+      <div class="next-up"><span class="eyebrow">Coming later, not yet available</span><span class="muted">${FUTURE.map((f) => esc(f[0])).join(' · ')}</span></div>
+    </div></div></section>
 
   <section class="band" aria-labelledby="feel-h"><div class="wrap"><div style="flex:1 1 360px"><span class="eyebrow">Find Your Feeling · 1 of 5</span><h2 id="feel-h">What would you like your space, or your moment, to feel like?</h2></div>
-    <div class="opts" role="group" aria-label="Choose a feeling">${MOODS.map(([k, l]) => `<button type="button" data-act="home-mood" data-v="${k}">${l}</button>`).join('')}</div></div></section>
+    <div class="opts" role="group" aria-label="Choose a feeling">${MOODS.map(([k, l]) => `<button type="button" data-act="home-mood" data-v="${k}">${ICON[MOOD_ICON[k]]}<span>${l}</span></button>`).join('')}</div></div></section>
 
-  <section class="section wrap" aria-labelledby="feat-h"><div class="section-head"><h2 id="feat-h">Pieces to begin with</h2><a href="#shop" style="font-weight:600">See all 12 →</a></div>
+  <section class="section wrap" aria-labelledby="feat-h"><div class="section-head"><h2 id="feat-h">Candles to begin with</h2><a href="#shop" style="font-weight:600">See all 6 →</a></div>
     <div class="grid">${feat.map(card).join('')}</div></section>
 
   <section style="background:var(--linen)" aria-labelledby="rit-h"><div class="wrap section"><div class="split">
-    <div style="display:flex;flex-direction:column;gap:14px;flex:1 1 300px"><span class="eyebrow">Build Your Ritual</span><h2 id="rit-h" style="font-size:clamp(30px,3.4vw,42px)">${fo.name}</h2><p class="muted">${fo.why} Pick the pieces you want; nothing goes into your cart until you add it.</p><a href="#ritual" style="font-weight:600">Make your own pairing →</a></div>
+    <div style="display:flex;flex-direction:column;gap:14px;flex:1 1 300px"><span class="eyebrow">Build Your Ritual</span><h2 id="rit-h" style="font-size:clamp(30px,3.4vw,44px)">${fo.name}</h2><p class="muted">${fo.why} Pick the candles you want; nothing goes into your cart until you add it.</p><a href="#ritual" style="font-weight:600">Make your own pairing →</a></div>
     <div class="builder" style="flex:2 1 520px;margin-top:0">
-      <label class="piece"><span class="tile">${art(byId['chai-at-four'], 1, .9)}</span><span class="check"><input type="checkbox" id="home-rit-a" data-act="home-rit" data-k="a" ${ritSel.a ? 'checked' : ''}> Chai at Four · 220 g</span><span class="num">${inr(a.price)}</span></label>
-      <label class="piece"><span class="tile">${art(byId['ghat-tray'], 1, .8)}</span><span class="check"><input type="checkbox" id="home-rit-b" data-act="home-rit" data-k="b" ${ritSel.b ? 'checked' : ''}> Ghat Tray · Sand</span><span class="num">${inr(b.price)}</span></label>
-      <div class="sum"><span class="muted">Together</span><span class="num" style="font-family:var(--display);font-size:34px;font-weight:300">${inr(ritTotal)}</span><button class="btn" type="button" data-act="home-rit-add" ${ritTotal ? '' : 'disabled'}>${ritSel.a && ritSel.b ? 'Add both to cart' : 'Add selected to cart'}</button></div>
+      <label class="piece"><span class="tile">${art(byId[fo.items[0][0]], fo.items[0][1], .9)}</span><span class="check"><input type="checkbox" id="home-rit-a" data-act="home-rit" data-k="a" ${ritSel.a ? 'checked' : ''}> ${esc(byId[fo.items[0][0]].name)} · ${esc(a.label)}</span><span class="num">${inr(a.price)}</span></label>
+      <label class="piece"><span class="tile">${art(byId[fo.items[1][0]], fo.items[1][1], .9)}</span><span class="check"><input type="checkbox" id="home-rit-b" data-act="home-rit" data-k="b" ${ritSel.b ? 'checked' : ''}> ${esc(byId[fo.items[1][0]].name)} · ${esc(b.label)}</span><span class="num">${inr(b.price)}</span></label>
+      <div class="sum"><span class="muted">Together</span><span class="num" style="font-family:var(--display);font-size:38px;font-weight:500">${inr(ritTotal)}</span><button class="btn" type="button" data-act="home-rit-add" ${ritTotal ? '' : 'disabled'}>${ritSel.a && ritSel.b ? 'Add both to cart' : 'Add selected to cart'}</button></div>
     </div></div></div></section>
 
-  <section class="section wrap" id="gifting-sec" aria-labelledby="gift-h"><div class="section-head"><h2 id="gift-h">Something for the moment</h2></div>
+  <section class="section wrap" aria-labelledby="arrive-h"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Made to be given</span><h2 id="arrive-h">How it arrives</h2></div><span class="muted" style="max-width:420px;font-size:14px">The approved packaging direction. Final pieces may differ once packaging is produced.</span></div>
+    <div class="pack-grid">
+      <figure><img src="${IMG.box}" alt="Kraft packaging box with the BUD &amp; THINGS label and tagline." loading="lazy" width="528" height="544"><figcaption>Packaging box</figcaption></figure>
+      <figure><img src="${IMG.tag}" alt="Textured hang tag with the logo and the line Made with thought. Given with feeling." loading="lazy" width="402" height="544"><figcaption>Hang tag</figcaption></figure>
+      <figure><img src="${IMG.card}" alt="Thank-you card with a leaf mark." loading="lazy" width="496" height="544"><figcaption>Thank-you note</figcaption></figure>
+      <figure><img src="${IMG.seal}" alt="Terracotta wax seal stamped with the B&amp;T monogram." loading="lazy" width="348" height="544"><figcaption>B&amp;T seal</figcaption></figure>
+    </div></section>
+
+  <section class="section wrap" id="gifting-sec" aria-labelledby="gift-h" style="padding-top:0"><div class="section-head"><h2 id="gift-h">Something for the moment</h2></div>
     <div style="display:flex;flex-wrap:wrap;gap:10px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
 
-  <section class="dark-band" aria-labelledby="story-h"><div class="wrap section"><div class="split"><div class="texture" aria-hidden="true"></div>
-    <div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow" style="color:var(--glow)">Materials &amp; making</span><h2 id="story-h" style="font-size:clamp(30px,3.4vw,42px)">Every piece is a little different, on purpose.</h2><p style="opacity:.86;max-width:520px">Our objects are cast in Jesmonite, a water-based composite, and made in small batches. Small marks, swirls and tones vary from piece to piece.</p><a href="#story" style="font-weight:600">A note from Ashi →</a></div></div></div></section>
+  <section class="dark-band" aria-labelledby="story-h"><div class="wrap section"><div class="split"><figure class="photo dark" style="margin:0"><img src="${IMG.leather}" alt="Leather brand detail embossed with the leaf mark." loading="lazy" width="320" height="544"></figure>
+    <div style="display:flex;flex-direction:column;gap:16px"><span class="mark monogram" aria-hidden="true"></span><span class="eyebrow" style="color:var(--glow)">Thought → Object → Feeling → Memory</span><h2 id="story-h" style="font-size:clamp(30px,3.4vw,44px)">A bud is something beginning to grow.</h2><p style="opacity:.86;max-width:520px">BUD carries a personal connection to Buddy: companionship, warmth and everyday memories. &amp; THINGS keeps the brand open, for the objects, fragrances and gifts that become part of homes and celebrations.</p><a href="#story" style="font-weight:600">Read our story →</a></div></div></div></section>
 
-  <section class="section wrap" aria-labelledby="news-h"><div class="intro" style="gap:14px"><h2 id="news-h" style="font-size:36px">Hear about new pieces first</h2><p class="muted" style="font-family:var(--body);font-size:16px">New batches and restocks, about once a month. Unsubscribe any time.</p>
+  <section class="section wrap" aria-labelledby="news-h"><div class="intro" style="gap:14px"><h2 id="news-h" style="font-size:40px">Hear about new candles first</h2><p class="muted" style="font-family:var(--body);font-size:16px">New batches and restocks, about once a month. Unsubscribe any time.</p>
     <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email address</label><input id="news-email" type="email" autocomplete="email" style="flex:1 1 240px"><button class="btn" type="submit">Subscribe</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`;
 }
 
 function viewShop(cat) {
-  const sh = UI.shop; sh.cat = cat || 'all';
-  let list = P.filter((p) => sh.cat === 'all' || p.cat === sh.cat);
+  const sh = UI.shop; sh.cat = 'candles';
+  let list = P.slice();
   const types = [...new Set(list.map((p) => p.type))];
   if (!types.includes(sh.type)) sh.type = 'all';
   if (sh.type !== 'all') list = list.filter((p) => p.type === sh.type);
   if (sh.occ !== 'all') list = list.filter((p) => p.occ.includes(sh.occ));
   if (sh.sort === 'low') list = [...list].sort((a, b) => minPrice(a) - minPrice(b));
   if (sh.sort === 'high') list = [...list].sort((a, b) => minPrice(b) - minPrice(a));
-  const title = sh.cat === 'candles' ? 'Candles' : sh.cat === 'jesmonite' ? 'Jesmonite Objects' : 'All products';
-  const blurb = sh.cat === 'candles' ? 'Fragrance-led candles and sculpted pillars for everyday rituals and gifting.' : sh.cat === 'jesmonite' ? 'Trays, ring dishes and sculptural forms cast in Jesmonite, a water-based composite. Each piece varies a little in tone and texture.' : 'Everything ready to order today: candles and Jesmonite objects.';
+  const coll = cat === 'collection';
   const cards = list.map(card);
-  if (sh.cat === 'jesmonite' && cards.length > 3 && sh.type === 'all' && sh.occ === 'all') cards.splice(3, 0, `<div class="note-card"><span class="eyebrow">A little discovery</span><h3>Why no two trays look quite the same</h3><p style="opacity:.86">Jesmonite is mixed and poured in small batches, so swirls and speckles settle a little differently each time.</p><a href="#story">Read the material note →</a></div>`);
-  if (cards.length) cards.push(`<a class="feel-card" href="#feeling"><span class="eyebrow" style="color:var(--terra-ink)">Not sure yet?</span><h3>Find Your Feeling</h3><span class="muted">Five short questions about your space or occasion, then pieces to match.</span><strong>Start →</strong></a>`);
-  return `<div class="wrap"><div class="page-head"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / ${sh.cat === 'all' ? 'Shop' : `<a href="#shop">Shop</a> / ${title}`}</nav>
-    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px"><h1 tabindex="-1">${title}</h1><p class="muted" style="max-width:520px">${blurb}</p></div></div>
-    <div class="toolbar"><div class="group" role="group" aria-label="Category">
-      ${[['all', 'All', 'shop'], ['candles', 'Candles', 'candles'], ['jesmonite', 'Jesmonite Objects', 'jesmonite']].map(([k, l, h]) => `<a class="chip" href="#${h}" aria-pressed="${sh.cat === k}">${l}</a>`).join('')}</div>
-      <div class="group"><label for="f-type">Type</label><select id="f-type" data-act="shop-filter" data-k="type"><option value="all">All types</option>${types.map((t) => `<option ${sh.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select>
-      <label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${OCCASIONS.map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
+  if (cards.length > 3 && sh.type === 'all' && sh.occ === 'all') cards.splice(3, 0, `<div class="note-card"><span class="eyebrow">A little discovery</span><h3>Why the first burn matters</h3><p style="opacity:.86">Let the first burn melt the wax right to the edges, about two hours. It sets the candle’s memory and helps it burn evenly every time after.</p><a href="#help">Candle care →</a></div>`);
+  if (cards.length) cards.push(`<a class="feel-card" href="#feeling"><span class="eyebrow" style="color:var(--terra-ink)">Not sure yet?</span><h3>Find Your Feeling</h3><span class="muted">Five short questions about your space or occasion, then candles to match.</span><strong>Start →</strong></a>`);
+  return `<div class="wrap"><div class="page-head"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / ${coll ? '<a href="#shop">Shop</a> / Everyday Rituals' : 'Shop'}</nav>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Collection 01</span><h1 tabindex="-1">${coll ? 'Everyday Rituals' : 'Candles'}</h1></div><p class="muted" style="max-width:520px">${coll ? 'Our first collection: candles for small routines, moods, evenings, hosting and personal moments.' : 'Five scented candles and one sculpted, unscented pillar. Made in small batches.'}</p></div></div>
+    <div class="toolbar"><div class="group" role="group" aria-label="Type">
+      ${[['all', 'All candles'], ['Scented candle', 'Scented'], ['Pillar candle', 'Pillars']].map(([k, l]) => `<button class="chip" type="button" data-act="shop-type" data-v="${k}" aria-pressed="${sh.type === k}">${l}</button>`).join('')}</div>
+      <div class="group"><label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${OCCASIONS.map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
       <label for="f-sort">Sort</label><select id="f-sort" data-act="shop-filter" data-k="sort"><option value="featured" ${sh.sort === 'featured' ? 'selected' : ''}>Featured</option><option value="low" ${sh.sort === 'low' ? 'selected' : ''}>Price: low to high</option><option value="high" ${sh.sort === 'high' ? 'selected' : ''}>Price: high to low</option></select></div></div>
-    <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'piece' : 'pieces'}</p>
-    ${list.length ? `<div class="grid" style="padding-bottom:80px">${cards.join('')}</div>` : `<div class="empty" style="margin-bottom:80px"><strong>Nothing matches these filters yet.</strong><span class="muted">Clear a filter, or try Find Your Feeling for suggestions.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="clear-filters">Clear filters</button><a class="btn small ghost" href="#feeling">Find Your Feeling</a></span></div>`}
+    <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'candle' : 'candles'}</p>
+    ${list.length ? `<div class="grid" style="padding-bottom:40px">${cards.join('')}</div>` : `<div class="empty" style="margin-bottom:40px"><strong>Nothing matches these filters yet.</strong><span class="muted">Clear a filter, or try Find Your Feeling for suggestions.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="clear-filters">Clear filters</button><a class="btn small ghost" href="#feeling">Find Your Feeling</a></span></div>`}
+    <div class="next-up" style="margin-bottom:80px"><span class="eyebrow">Coming later, not yet available</span><span class="muted">${FUTURE.map((f) => esc(f[0])).join(' · ')}. <a href="#home" data-act="focus-news">Hear about them first</a>.</span></div>
   </div>`;
 }
 
 function viewProduct(id) {
   const p = byId[id]; if (!p) return viewNotFound();
-  const st = UI.pdp[id] || (UI.pdp[id] = { vi: p.variants.length > 1 && p.art === 'jar' ? 1 : 0, qty: 1, pin: '', pinMsg: null });
+  const st = UI.pdp[id] || (UI.pdp[id] = { vi: p.variants.length > 1 && p.art === 'jar' ? 1 : 0, qty: 1, pin: '', pinMsg: null, img: 0 });
   const v = p.variants[st.vi]; const left = stockOf(v.sku); const saved = S.saved.includes(p.id);
   if (!st.viewed) { st.viewed = true; track('product_view', { id }); }
-  const pair = PAIRINGS.find((x) => x.items.some(([pid]) => pid === id)); const other = pair && byId[pair.items.find(([pid]) => pid !== id)[0]];
-  const otherV = other && other.variants[pair.items.find(([pid]) => pid !== id)[1]];
-  const related = P.filter((x) => x.cat === p.cat && x.id !== id).slice(0, 3);
+  const pair = PAIRINGS.find((x) => x.items.some(([pid]) => pid === id)); const oi = pair && pair.items.find(([pid]) => pid !== id); const other = oi && byId[oi[0]];
+  const related = P.filter((x) => x.id !== id).slice(0, 3);
   const stockNote = left === 0 ? '<span class="pill out">Sold out</span>' : left <= 3 ? `<span class="pill low">Only ${left} left in this batch</span>` : '<span class="pill">In stock</span>';
-  return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${p.cat}">${p.cat === 'candles' ? 'Candles' : 'Jesmonite Objects'}</a> / ${esc(p.name)}</nav>
-  <div class="pdp"><div class="pdp-gallery"><div class="tile" style="background:var(--linen)">${art(p, st.vi, 2.2)}<span class="hint" style="position:absolute;right:14px;bottom:10px;letter-spacing:.12em;text-transform:uppercase;font-size:11px">Drawing · photo to come</span></div></div>
-  <div class="pdp-info"><span class="eyebrow">${p.cat === 'candles' ? 'Candle' : 'Jesmonite'}${p.notes ? ' · ' + p.notes.join(', ') : ' · ' + esc(p.type)}</span>
+  const gal = [['render', esc(p.name) + ', ' + esc(v.label)], ['jar', 'Approved label and lid direction'], ['box', 'Packaging box'], ['tag', 'Hang tag']];
+  const gi = st.img || 0;
+  const main = gi === 0 ? `<div class="tile" style="background:var(--linen)">${art(p, st.vi, 2.1)}<span class="hint" style="position:absolute;right:14px;bottom:10px;letter-spacing:.12em;text-transform:uppercase;font-size:11px">Render · product photo to come</span></div>` : `<figure class="photo gal" style="margin:0"><img src="${IMG[gal[gi][0]]}" alt="${gal[gi][1]}"><figcaption>${gal[gi][1]}</figcaption></figure>`;
+  return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#collection">Everyday Rituals</a> / ${esc(p.name)}</nav>
+  <div class="pdp"><div class="pdp-gallery">${main}
+    <div class="thumbs" role="group" aria-label="Images">${gal.map((g, i) => `<button type="button" data-act="pdp-img" data-id="${id}" data-i="${i}" aria-pressed="${i === gi}" aria-label="${g[1]}">${i === 0 ? art(p, st.vi, .42) : `<img src="${IMG[g[0]]}" alt="">`}</button>`).join('')}</div></div>
+  <div class="pdp-info"><span class="eyebrow">Everyday Rituals · ${p.notes.join(', ')}</span>
     <h1 tabindex="-1">${esc(p.name)}</h1><p class="line">${esc(p.line)}</p>
     <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="price num">${inr(v.price)}</span>${stockNote}</div>
-    <div role="radiogroup" aria-label="${p.art === 'jar' ? 'Size' : 'Option'}" style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">${p.art === 'jar' ? 'Size' : p.cat === 'candles' ? 'Colour' : 'Finish'}</span>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">${p.variants.map((x, i) => `<button class="chip" type="button" role="radio" aria-checked="${i === st.vi}" data-act="variant" data-id="${id}" data-i="${i}">${p.art !== 'jar' && p.cat === 'jesmonite' ? `<span style="width:14px;height:14px;border-radius:50%;margin-right:8px;background:${colorFor(p, i)};border:1px solid var(--line2)"></span>` : ''}${esc(x.label)}${new Set(p.variants.map((y) => y.price)).size > 1 ? ' · ' + inr(x.price) : ''}${stockOf(x.sku) === 0 ? ' · sold out' : ''}</button>`).join('')}</div></div>
+    <div role="radiogroup" aria-label="${p.art === 'jar' ? 'Size' : 'Colour'}" style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">${p.art === 'jar' ? 'Size' : 'Colour'}</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${p.variants.map((x, i) => `<button class="chip" type="button" role="radio" aria-checked="${i === st.vi}" data-act="variant" data-id="${id}" data-i="${i}">${p.art === 'pillar' && PILLAR_COL[x.label] ? `<span style="width:14px;height:14px;border-radius:50%;margin-right:8px;background:${PILLAR_COL[x.label]};border:1px solid var(--line2)"></span>` : ''}${esc(x.label)}${new Set(p.variants.map((y) => y.price)).size > 1 ? ' · ' + inr(x.price) : ''}${stockOf(x.sku) === 0 ? ' · sold out' : ''}</button>`).join('')}</div></div>
     <div class="buy">${left > 0 ? `<span class="qty"><button type="button" data-act="pdp-qty" data-id="${id}" data-d="-1" aria-label="Decrease quantity">−</button><span class="num" aria-live="polite">${st.qty}</span><button type="button" data-act="pdp-qty" data-id="${id}" data-d="1" aria-label="Increase quantity">+</button></span><button class="btn add" type="button" data-act="add" data-id="${id}">Add to cart · <span class="num">${inr(v.price * st.qty)}</span></button>` : `<button class="btn add ${S.notify[v.sku] ? 'ghost' : ''}" type="button" data-act="notify" data-sku="${v.sku}">${S.notify[v.sku] ? 'We’ll tell you when it’s back' : 'Notify me when it’s back'}</button>`}
       <button class="icon-btn" style="border:1px solid var(--line2);width:52px;height:52px" type="button" data-act="save" data-id="${id}" aria-pressed="${saved}" aria-label="${saved ? 'Remove from saved' : 'Save ' + esc(p.name)}">${HEART(saved)}</button></div>
     <form data-form="pin" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap" novalidate><span class="field" style="flex:1 1 200px"><label for="pin-${id}">Check delivery to your PIN code</label><input id="pin-${id}" inputmode="numeric" maxlength="6" autocomplete="postal-code" value="${esc(st.pin)}"></span><button class="btn ghost" type="submit">Check</button></form>
     ${st.pinMsg ? `<div class="status ${st.pinMsg.ok ? 'ok' : 'err'}" role="status">${esc(st.pinMsg.text)}</div>` : ''}
-    <p class="muted" style="font-size:14px">Good for ${p.occ.map((o) => OCCASIONS.find((x) => x[0] === o)[1].toLowerCase()).join(', ')}.</p>
+    <p class="muted" style="font-size:14px">A thoughtful little gesture for ${p.occ.map((o) => OCCASIONS.find((x) => x[0] === o)[1].toLowerCase()).join(', ')}.</p>
     <div class="facts">
-      ${p.notes ? `<div><strong>Scent</strong><span class="muted">${p.notes.join(' · ')}</span></div>` : ''}
+      <div><strong>Scent</strong><span class="muted">${p.notes.join(' · ')}</span></div>
       <div><strong>Size &amp; material</strong><span class="muted">${esc(p.size)}. ${esc(p.material)}</span></div>
-      <div><strong>Care</strong><span class="muted">${p.care.map(esc).join(' ')}${p.cat === 'candles' ? ' Burn time to be confirmed.' : ''}</span></div>
+      <div><strong>Burn &amp; care</strong><span class="muted">${p.care.map(esc).join(' ')} Burn time to be confirmed by testing.</span></div>
       <div><strong>Delivery &amp; exchanges</strong><span class="muted">Shipping: ${inr(S.settings.shipFee)}, free over ${inr(S.settings.freeOver)} (demo rule). See <a href="#help">exchange policy</a>.</span></div>
     </div></div></div>
-  ${other ? `<div class="pair"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Pairs well with</span><strong style="font-family:var(--display);font-weight:300;font-size:26px">${esc(other.name)} · ${esc(otherV.label)}</strong><span class="muted">${esc(pair.why)}</span><a href="#ritual" data-act="pick-ritual" data-v="${pair.id}" style="font-weight:600">Build this ritual →</a></div><span style="display:flex;gap:14px;align-items:flex-end">${art(other, pair.items.find(([pid]) => pid !== id)[1], .8)}</span></div>` : ''}
-  <section class="section" aria-labelledby="rel-h" style="padding-top:56px"><div class="section-head"><h2 id="rel-h">More ${p.cat === 'candles' ? 'candles' : 'objects'}</h2></div><div class="grid">${related.map(card).join('')}</div></section></div>`;
+  ${other ? `<div class="pair"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Pairs well with</span><strong style="font-family:var(--display);font-weight:500;font-size:30px">${esc(other.name)} · ${esc(other.variants[oi[1]].label)}</strong><span class="muted">${esc(pair.why)}</span><a href="#ritual" data-act="pick-ritual" data-v="${pair.id}" style="font-weight:600">Build this ritual →</a></div><span style="display:flex">${art(other, oi[1], .8)}</span></div>` : ''}
+  <section class="section" aria-labelledby="box-h" style="padding-top:56px;padding-bottom:0"><div class="section-head"><h2 id="box-h">In the box</h2><span class="muted" style="font-size:14px">Approved packaging direction; final pieces may differ.</span></div>
+    <div class="pack-grid"><figure><img src="${IMG.box}" alt="Kraft packaging box with the BUD &amp; THINGS label." loading="lazy"><figcaption>Box with care card</figcaption></figure><figure><img src="${IMG.tag}" alt="Hang tag with the tagline." loading="lazy"><figcaption>Hang tag</figcaption></figure><figure><img src="${IMG.card}" alt="Thank-you card." loading="lazy"><figcaption>Thank-you note</figcaption></figure><figure><img src="${IMG.seal}" alt="B&amp;T wax seal." loading="lazy"><figcaption>B&amp;T seal</figcaption></figure></div></section>
+  <section class="section" aria-labelledby="rel-h" style="padding-top:56px"><div class="section-head"><h2 id="rel-h">More from Everyday Rituals</h2></div><div class="grid">${related.map(card).join('')}</div></section></div>`;
 }
 
 function finderScore() {
   const f = UI.finder; const max = f.budget === 'u1000' ? 1000 : f.budget === 'u2000' ? 2000 : Infinity;
   const moodL = f.mood && MOODS.find((m) => m[0] === f.mood)[1].toLowerCase(); const spaceL = f.space && SPACES.find((m) => m[0] === f.space)[1].toLowerCase();
-  let list = P.filter((p) => minPrice(p) <= max && (f.kind !== 'candle' || p.cat === 'candles') && (f.kind !== 'object' || p.cat === 'jesmonite'));
+  let list = P.filter((p) => minPrice(p) <= max && (f.kind !== 'candle' || p.art === 'jar') && (f.kind !== 'object' || p.art === 'pillar'));
   list = list.map((p) => { let sc = 0; const why = [];
     if (f.mood && p.mood.includes(f.mood)) { sc += 3; why.push('fits “' + moodL + '”'); }
     if (f.space && p.space.includes(f.space)) { sc += 2; why.push('made for the ' + spaceL); }
@@ -693,7 +730,7 @@ const FSTEPS = [
   { k: 'mood', q: 'What would you like your space, or your moment, to feel like?', opts: MOODS },
   { k: 'space', q: 'Where will it live?', opts: SPACES },
   { k: 'who', q: 'Is it for you, or a gift?', opts: [['me', 'For me'], ['gift', 'A gift for someone']] },
-  { k: 'kind', q: 'Which kind of piece?', opts: [['candle', 'A candle'], ['object', 'A Jesmonite object'], ['either', 'Either']] },
+  { k: 'kind', q: 'Scented, or a sculpted unscented pillar?', opts: [['candle', 'Scented'], ['object', 'Unscented pillar'], ['either', 'Either']] },
   { k: 'budget', q: 'What would you like to spend on one piece?', opts: [['u1000', 'Under ₹1,000'], ['u2000', 'Under ₹2,000'], ['any', 'Any amount']] }
 ];
 function viewFeeling() {
@@ -711,7 +748,7 @@ function viewFeeling() {
   }
   const s = FSTEPS[f.step];
   return `<div class="finder"><aside class="finder-side"><span class="eyebrow num">Find Your Feeling · step ${f.step + 1} of 5</span><div class="progress" aria-hidden="true">${FSTEPS.map((_, i) => `<span class="${i <= f.step ? 'on' : ''}"></span>`).join('')}</div><h1 tabindex="-1">${esc(s.q)}</h1><span style="margin-top:auto;font-size:13px;opacity:.88">Every step can be skipped. Back keeps your answers.</span></aside>
-    <div class="finder-main"><div class="options" role="radiogroup" aria-label="${esc(s.q)}">${s.opts.map(([k, l]) => `<button type="button" role="radio" aria-checked="${f[s.k] === k}" data-act="finder-opt" data-k="${s.k}" data-v="${k}">${l}</button>`).join('')}</div>
+    <div class="finder-main"><div class="options" role="radiogroup" aria-label="${esc(s.q)}">${s.opts.map(([k, l]) => `<button type="button" role="radio" aria-checked="${f[s.k] === k}" data-act="finder-opt" data-k="${s.k}" data-v="${k}">${s.k === 'mood' ? ICON[MOOD_ICON[k]] : ''}<span>${l}</span></button>`).join('')}</div>
     <div class="finder-nav">${f.step > 0 ? '<button class="btn ghost" type="button" data-act="finder-back">Back</button>' : ''}<button class="btn" type="button" data-act="finder-next">${f.step === 4 ? 'See my matches' : 'Next'}</button><button class="linkbtn" type="button" data-act="finder-skip">Skip this question</button></div></div></div>`;
 }
 
@@ -724,9 +761,9 @@ function viewRitual() {
   const sel = R.pick[key];
   const lines = items.map(([pid, vi], i) => ({ p: byId[pid], v: byId[pid].variants[vi], vi, i }));
   const total = lines.reduce((a, l) => a + (sel[l.i] ? l.v.price : 0), 0);
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Build Your Ritual</span><h1 tabindex="-1">Pair a candle with an object</h1><p class="muted" style="max-width:620px">Start from a pairing we like, or make your own. Each price is shown, and nothing goes into your cart until you add it.</p></div>
-    <div class="rituals" role="group" aria-label="Pairings">${PAIRINGS.map((x) => `<button type="button" aria-pressed="${R.preset === x.id}" data-act="ritual" data-v="${x.id}"><strong>${esc(x.name)}</strong><span class="muted" style="font-size:14px">${esc(x.why)}</span></button>`).join('')}<button type="button" aria-pressed="${R.preset === 'custom'}" data-act="ritual" data-v="custom"><strong>Make your own</strong><span class="muted" style="font-size:14px">Choose any candle and any object.</span></button></div>
-    ${R.preset === 'custom' ? `<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px"><span class="field" style="flex:1 1 240px"><label for="r-candle">Candle</label><select id="r-candle" data-act="ritual-custom" data-k="candle">${P.filter((x) => x.cat === 'candles').map((x) => `<option value="${x.id}" ${R.custom.candle === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span><span class="field" style="flex:1 1 240px"><label for="r-object">Object</label><select id="r-object" data-act="ritual-custom" data-k="object">${P.filter((x) => x.cat === 'jesmonite').map((x) => `<option value="${x.id}" ${R.custom.object === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span></div>` : ''}
+  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Build Your Ritual</span><h1 tabindex="-1">Pair two candles for two moments</h1><p class="muted" style="max-width:620px">Start from a pairing we like, or make your own. Each price is shown, and nothing goes into your cart until you add it.</p></div>
+    <div class="rituals" role="group" aria-label="Pairings">${PAIRINGS.map((x) => `<button type="button" aria-pressed="${R.preset === x.id}" data-act="ritual" data-v="${x.id}"><strong>${esc(x.name)}</strong><span class="muted" style="font-size:14px">${esc(x.why)}</span></button>`).join('')}<button type="button" aria-pressed="${R.preset === 'custom'}" data-act="ritual" data-v="custom"><strong>Make your own</strong><span class="muted" style="font-size:14px">Choose any two candles.</span></button></div>
+    ${R.preset === 'custom' ? `<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px"><span class="field" style="flex:1 1 240px"><label for="r-candle">First candle</label><select id="r-candle" data-act="ritual-custom" data-k="candle">${P.map((x) => `<option value="${x.id}" ${R.custom.candle === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span><span class="field" style="flex:1 1 240px"><label for="r-object">Second candle</label><select id="r-object" data-act="ritual-custom" data-k="object">${P.map((x) => `<option value="${x.id}" ${R.custom.object === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span></div>` : ''}
     <div class="builder">${lines.map((l) => `<label class="piece"><span class="tile">${art(l.p, l.vi, .9)}</span><span class="check"><input type="checkbox" id="rit-${l.i}" data-act="ritual-pick" data-i="${l.i}" ${sel[l.i] ? 'checked' : ''} ${stockOf(l.v.sku) ? '' : 'disabled'}> ${esc(l.p.name)} · ${esc(l.v.label)}</span><span class="num">${inr(l.v.price)}${stockOf(l.v.sku) ? '' : ' · sold out'}</span><a href="#p-${l.p.id}" style="font-size:14px">View details</a></label>`).join('<span aria-hidden="true" style="align-self:center;font-family:var(--display);font-size:32px">+</span>')}
       <div class="sum"><span class="muted">Together</span><span class="num" style="font-family:var(--display);font-size:36px;font-weight:300">${inr(total)}</span><span class="hint">No bundle discount; prices are the same as buying separately.</span><button class="btn" type="button" data-act="ritual-add" ${total ? '' : 'disabled'}>Add selected to cart</button></div></div></div>`;
 }
@@ -790,7 +827,7 @@ function viewOrder(id) {
       <p class="muted" style="font-size:14px">Prototype: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>
       <div class="status">Questions about this order? Message us on WhatsApp at [your number].</div>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#shop">Keep browsing</a><a class="btn ghost" href="#feeling">Find Your Feeling</a></span></div>
-    <aside class="checkout-side"><strong>${o.id}</strong>${o.items.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.name)} · ${esc(l.label)} × ${l.qty}</span><span class="num">${inr(l.price * l.qty)}</span></div>`).join('')}<div class="totals num"><div><span>Subtotal</span><span>${inr(o.sub)}</span></div><div><span>Shipping</span><span>${o.ship ? inr(o.ship) : 'Free'}</span></div><div class="grand"><span>Paid</span><span>${inr(o.total)}</span></div></div><span class="muted" style="font-size:14px">To ${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
+    <aside class="checkout-side"><strong>${o.id}</strong>${o.items.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.name)} · ${esc(l.label)} × ${l.qty}</span><span class="num">${inr(l.price * l.qty)}</span></div>`).join('')}<div class="totals num"><div><span>Subtotal</span><span>${inr(o.sub)}</span></div><div><span>Shipping</span><span>${o.ship ? inr(o.ship) : 'Free'}</span></div><div class="grand"><span>Paid</span><span>${inr(o.total)}</span></div></div><figure class="photo" style="margin:0"><img src="${IMG.card}" alt="Thank-you card with a leaf mark." loading="lazy"><figcaption>A thank-you note goes in with orders where we can include one</figcaption></figure><span class="muted" style="font-size:14px">To ${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
 }
 
 function viewAdmin() {
@@ -809,18 +846,32 @@ function viewAdmin() {
 }
 
 function viewStory() {
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Our Story</span><h1 tabindex="-1">Thoughtful objects. Meaningful moments.</h1></div>
-    <div class="split" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:16px;max-width:620px"><p style="font-family:var(--display);font-weight:300;font-size:26px;line-height:1.35">BUD &amp; THINGS makes candles and small objects for the everyday: the first light of the morning, a tray by the door, a gift that says you thought about it.</p><p class="muted">We work in small batches. Our objects are cast in Jesmonite, a water-based composite, so every piece carries slight differences in tone and texture.</p>
-    <div class="pair" style="flex-direction:column;align-items:flex-start"><span class="eyebrow">A note from Ashi</span><p>[Ashi’s founder note goes here, in her own words.]</p></div></div><div class="texture" aria-hidden="true"></div></div></div>`;
+  const pillars = [['leaf', 'Thoughtful Design', 'Thought goes into the things we make.'], ['sun', 'Everyday Moments', 'The everyday deserves beautiful things too.'], ['arch', 'Gifting With Feeling', 'Give something that feels chosen, not simply bought.'], ['flow', 'Contemporary Indian Soul', 'Rooted in India. Designed for contemporary living.'], ['spark', 'Made to Be Kept', 'Some things become special because we keep them.']];
+  return `<div class="story-hero"><img src="${IMG.logoPhoto}" alt="The BUD &amp; THINGS by Ashi logo on a warm wall with leaf shadows."></div>
+  <div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Our Story</span><h1 tabindex="-1">Thoughtful objects. Meaningful moments.</h1></div>
+    <div class="split" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:18px;max-width:640px">
+      <p style="font-family:var(--display);font-weight:500;font-size:28px;line-height:1.3">BUD &amp; THINGS is built around the belief that the little things we choose, make, keep and give can carry a lot of meaning.</p>
+      <p class="muted">The name BUD carries a personal connection to Buddy, representing companionship, warmth, familiarity and everyday memories. A bud also represents something beginning to grow: a small beginning with the potential to become something beautiful. &amp; THINGS keeps the brand open and evolving, for the objects, fragrances, gifts and details that become part of homes, celebrations and everyday life.</p>
+      <p class="muted">We start deliberately small: home-based, in small batches, beginning with candles. Inspired by everyday rituals, Indian warmth and the details that make a place feel like home, BUD &amp; THINGS creates things meant to be used, enjoyed, gifted and remembered.</p>
+      <div class="pair" style="flex-direction:column;align-items:flex-start"><span class="mark monogram" aria-hidden="true"></span><span class="eyebrow">A note from Ashi</span><p>[Ashi’s founder note goes here, in her own words.]</p></div>
+    </div>
+    <div style="display:grid;gap:16px"><figure class="photo" style="margin:0"><img src="${IMG.seal}" alt="Terracotta wax seal with the B&amp;T monogram." loading="lazy"></figure><figure class="photo" style="margin:0"><img src="${IMG.leather}" alt="Leather brand detail with the leaf mark." loading="lazy"></figure></div></div>
+    <section class="section" aria-labelledby="pill-h" style="padding-bottom:0"><div class="section-head"><h2 id="pill-h">What we hold to</h2><span class="eyebrow">Thought → Object → Feeling → Memory</span></div>
+      <div class="pillars">${pillars.map(([ic, h, t]) => `<div>${ICON[ic]}<strong>${h}</strong><span class="muted">${t}</span></div>`).join('')}</div></section>
+    <section class="section" aria-labelledby="next-h" style="padding-bottom:0"><div class="section-head"><h2 id="next-h">How we will grow</h2></div>
+      <div class="facts" style="border-top:0"><div><strong>Now · Candles</strong><span class="muted">Collection 01, Everyday Rituals.</span></div>${FUTURE.map(([f, s]) => `<div><strong>${s} · Later</strong><span class="muted">${esc(f)}. Not yet available.</span></div>`).join('')}</div></section></div>`;
 }
 function viewHelp() {
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">Placeholder page. Policies must reflect how the business actually runs.</p></div>
-    <div class="facts" style="border-top:0"><div><strong>Contact</strong><span class="muted">WhatsApp and phone: [your number]<br>Email: [your email]</span></div><div><strong>Shipping &amp; delivery</strong><span class="muted">[Your shipping fee, areas and delivery times]</span></div><div><strong>Exchanges</strong><span class="muted">[Your exchange policy]</span></div><div><strong>Where to find us</strong><span class="muted">[Stores, pop-ups and stockists]. Also on Amazon, Flipkart and Meesho.</span></div></div></div>`;
+  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">Placeholder policies. They must reflect how the business actually runs.</p></div>
+    <div class="facts" style="border-top:0"><div><strong>Contact</strong><span class="muted">Email: <span class="sel">hello@budandthings.com</span><br>WhatsApp: [your business number]<br>Instagram: <span class="sel">@budandthings</span></span></div><div><strong>Shipping &amp; delivery</strong><span class="muted">[Your shipping fee, areas and delivery times]</span></div><div><strong>Exchanges</strong><span class="muted">[Your exchange policy]</span></div><div><strong>Candle care</strong><span class="muted">${CANDLE_CARE.join(' ')} Keep away from children, pets and anything that can catch fire.</span></div><div><strong>Where to find us</strong><span class="muted">[Stores, pop-ups and stockists]. Also on Amazon, Flipkart and Meesho.</span></div></div></div>`;
 }
 function viewGifting() {
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">Something for the moment</h1><p class="muted" style="max-width:620px">Pick an occasion to see pieces that suit it. Gift wrap and notes are not offered yet, so they are not shown.</p></div>
+  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">Small gift. Real feeling.</h1><p class="muted" style="max-width:620px">A thoughtful little gesture for the people who make life feel like home. Pick an occasion to see candles that suit it.</p></div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div>
-    <div class="section-head"><h2>Popular to give</h2></div><div class="grid">${['brass-and-saffron', 'ghat-tray', 'moonlet-ring-dish', 'first-light'].map((id, i) => card(byId[id], i)).join('')}</div></div>`;
+    <div class="split" style="margin-bottom:48px"><figure class="photo" style="margin:0"><img src="${IMG.card}" alt="Thank-you card with a leaf mark." loading="lazy"><figcaption>A thank-you note, where we can include one</figcaption></figure>
+      <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">Chosen with thought.</h2><p class="muted">In the approved packaging plan, each candle arrives boxed, tagged and sealed with the B&amp;T mark, ready to give. Gift sets, personal notes and gift pouches will come later and are not available yet.</p>
+      <figure class="photo" style="margin:0;max-width:260px"><img src="${IMG.pouch}" alt="Cotton gift pouch with the BUD &amp; THINGS logo." loading="lazy"><figcaption>Gift pouch · coming with gift sets</figcaption></figure></div></div>
+    <div class="section-head"><h2>Popular to give</h2></div><div class="grid">${['brass-and-saffron', 'chai-at-four', 'first-light', 'pillar-studies'].map((id, i) => card(byId[id], i)).join('')}</div></div>`;
 }
 function viewNotFound() { return `<div class="wrap" style="padding-block:60px 100px"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
 
@@ -829,8 +880,8 @@ function render(nav) {
   const r = route(); let html;
   if (r === 'home') html = viewHome();
   else if (r === 'shop') html = viewShop('all');
-  else if (r === 'candles') html = viewShop('candles');
-  else if (r === 'jesmonite') html = viewShop('jesmonite');
+  else if (r === 'candles' || r === 'jesmonite') html = viewShop('candles');
+  else if (r === 'collection') html = viewShop('collection');
   else if (r.startsWith('p-')) html = viewProduct(r.slice(2));
   else if (r === 'feeling') html = viewFeeling();
   else if (r === 'ritual') html = viewRitual();
@@ -862,36 +913,45 @@ function mixHex(c1, c2, t) { const a = parseInt(c1.slice(1), 16), b = parseInt(c
 function mixSeq(cols, t) { const q = clamp(t) * (cols.length - 1); const i = Math.min(cols.length - 2, Math.floor(q)); return mixHex(cols[i], cols[i + 1], ease(q - i)); }
 function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
 
-// The arrangement every opening resolves into: two candles, three Jesmonite pieces.
+// The arrangement both openings resolve into: Collection 01 candles, styled with a terrazzo stone and a botanical sprig (props, not for sale).
 const ARR = [
-  { id: 'ghat-tray', k: 'tray', dx: -175, c: '#DCC9AE', h: 16, w: 236 },
-  { id: 'chai-at-four', k: 'jar', dx: -175, dy: -12, c: '#C99A6C', h: 88, w: 64, candle: true },
-  { id: 'moonlet-ring-dish', k: 'dish', dx: -15, c: '#6B6B43', h: 26, w: 92 },
-  { id: 'still-form-no-1', k: 'arch', dx: 112, c: '#F1E8DA', h: 140, w: 96 },
-  { id: 'pillar-studies', k: 'pillar', dx: 232, c: '#B0644A', h: 112, w: 34 }
+  { k: 'sprig', dx: -318, w: 70, h: 64, c: '#6B7B5B', prop: true },
+  { k: 'slab', dx: -195, w: 150, h: 12, c: '#E9E1D3', prop: true },
+  { id: 'chai-at-four', k: 'jar', dx: -195, dy: -20, c: '#C08A5B', h: 92, w: 70 },
+  { id: 'first-light', k: 'jar', dx: -82, c: '#F4ECE0', h: 68, w: 58 },
+  { id: 'brass-and-saffron', k: 'jar', dx: 28, c: '#A55B3F', h: 92, w: 70, lift: 50 },
+  { id: 'pillar-studies', k: 'pillar', dx: 132, c: '#F1E8DA', h: 124, w: 34, lift: 62 },
+  { id: 'pillar-studies', k: 'pillar', dx: 174, c: '#A55B3F', h: 96, w: 34, noSpot: true },
+  { id: 'pillar-studies', k: 'pillar', dx: 216, c: '#6B7B5B', h: 110, w: 34, noSpot: true },
+  { id: 'monsoon-letters', k: 'jar', dx: 300, c: '#A9B39A', h: 78, w: 62 }
 ];
 const OPENINGS = {
   arches: { name: 'A · Through the Arches', rail: ['Doorway', 'Arches', 'The room', 'Dusk'], cuts: [.3, .6, .8], hero: [.05, .11], staticP: .66,
-    caps: [['Step <em>inside.</em>', [.13, .17, .26, .3]], ['Form, texture,<br><em>and the quiet in between.</em>', [.35, .4, .5, .55]], ['Made with thought.<br><em>Given with feeling.</em>', [.62, .66, .74, .78]]],
-    spots: [.6, .65, .78, .82], final: [.82, .9] },
-  pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Wax', 'Set'], cuts: [.3, .48, .72], hero: [.05, .11], staticP: .84,
-    caps: [['Every piece begins<br><em>as a pour.</em>', [.12, .16, .26, .3]], ['Swirled once.<br><em>Never quite the same twice.</em>', [.31, .35, .44, .48]], ['Then a slow pour<br><em>of scented wax.</em>', [.5, .54, .65, .69]], ['Set, finished,<br><em>ready to give.</em>', [.72, .75, .82, .85]]],
-    spots: [.76, .79, .85, .88], final: [.87, .93] }
+    caps: [['Step <em>inside.</em>', [.13, .17, .26, .3]], ['Thought, object,<br><em>feeling, memory.</em>', [.35, .4, .5, .55]], ['Some evenings need nothing more<br><em>than a warm light.</em>', [.62, .66, .74, .78]]],
+    spots: [.6, .65, .78, .82], final: [.86, .93], light: .8 },
+  pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Label', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
+    caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Labelled, wicked,<br><em>made to be given.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
+    spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 }
 };
 const SKINS = {
+  signature: { name: 'Signature · Approved palette', use: 'The approved palette: ivory, sand, caramel, terracotta, olive and chocolate.', eyebrow: 'Collection 01 · Everyday Rituals', dark: true, wall: ['#A55B3F', '#8F4C33', '#7A3F2A'], floor: ['#4A3125', '#3D281E', '#33211A'], arch: ['#8F4C33', '#A55B3F', '#B36C49', '#C08A5B'], plinth: '#F8F0E4', duskWall: '#2A1B14', duskFloor: '#1F140F', night: '#120B08', light: '255,236,210', type: '#F8F0E4', ink2: '#F3E6D6', fx: null },
   atelier: { name: 'Everyday · Clay & Cocoa', use: 'The year-round look: a terracotta room, cocoa floor and a peach glow.', eyebrow: 'Objects & little rituals', dark: true, wall: ['#9C4322', '#8F3B1D', '#823318'], floor: ['#5A2E1C', '#4E2717', '#422013'], arch: ['#A84B27', '#B5562F', '#C06238', '#CA6E42'], plinth: '#F4E4D2', duskWall: '#2A140C', duskFloor: '#1E0E08', night: '#140805', light: '255,200,150', type: '#FFB37A', ink2: '#F5E3D3', fx: null },
   festive: { name: 'Festive · Saffron & Rani', use: 'For Diwali and the festive rush: a rani-pink room, saffron light, marigolds and diyas at dusk.', eyebrow: 'The festive edit', dark: true, wall: ['#7A1230', '#6A0F2A', '#5A0C24'], floor: ['#3E0A18', '#350815', '#2C0612'], arch: ['#6E0F2B', '#801434', '#92193D', '#A31F46'], plinth: '#FBE3C6', duskWall: '#2A0610', duskFloor: '#1E040B', night: '#120207', light: '255,186,80', type: '#FFB020', ink2: '#FFD9A8', fx: 'festive' },
   monsoon: { name: 'Monsoon · Peacock & Moss', use: 'For June to September: a deep peacock room, moss light and soft rain, made for earthy scents like Monsoon Letters.', eyebrow: 'The monsoon edit', dark: true, wall: ['#0F4C4A', '#0D4341', '#0B3A38'], floor: ['#082B29', '#072624', '#06201F'], arch: ['#0C3F3D', '#11504D', '#16605C', '#1B706B'], plinth: '#DDE9E4', duskWall: '#06201F', duskFloor: '#041716', night: '#020C0B', light: '214,236,190', type: '#C9E265', ink2: '#CFE7DE', fx: 'rain' },
   gifting: { name: 'Gifting · Cherry & Blush', use: 'For gifting campaigns, weddings and Valentine’s week: a cherry room with blush petals.', eyebrow: 'The gifting edit', dark: true, wall: ['#8E0F24', '#7E0D20', '#6E0B1C'], floor: ['#45060F', '#3B050D', '#31040B'], arch: ['#6F0A1C', '#820E22', '#951228', '#A8162E'], plinth: '#FBE2DC', duskWall: '#2E0409', duskFloor: '#220307', night: '#140104', light: '255,200,190', type: '#FFB4A8', ink2: '#FFD6CF', fx: 'petals' },
   evening: { name: 'Evening · Indigo & Brass', use: 'For night-time browsing and dark-mode phones: an indigo room, brass light and the candle already burning.', eyebrow: 'After dark', dark: true, lit: true, wall: ['#1B1F45', '#181B3D', '#141735'], floor: ['#0F1129', '#0D0F24', '#0B0C1F'], arch: ['#14173A', '#1C2050', '#242962', '#2C3274'], plinth: '#2E3260', duskWall: '#0B0C1F', duskFloor: '#07081A', night: '#05060F', light: '226,180,92', type: '#E2B45C', ink2: '#C2C0D6', fx: 'evening' }
 };
-if (!SKINS[S.skin]) S.skin = 'atelier';
+const LEAF = new Image();
+const TINT = {};
+if (!SKINS[S.skin]) S.skin = 'signature';
+LEAF.onload = () => { for (const k in PIMG) delete PIMG[k]; render(); };
+LEAF.src = 'assets/leaf.png';
 const SK = () => SKINS[S.skin];
 const flameAlpha = (p, a, b) => SK().lit ? Math.max(seg(p, .02, .1), seg(p, a, b)) : seg(p, a, b);
-const WORDS = { arches: ['THOUGHTFUL OBJECTS', 'MEANINGFUL MOMENTS'], pour: ['POUR · SWIRL · SET', 'MADE WITH THOUGHT'] };
+const WORDS = { arches: ['THOUGHTFUL OBJECTS', 'MEANINGFUL MOMENTS'], pour: ['EVERYDAY RITUALS', 'MADE WITH THOUGHT'] };
 function bigType(ctx, L, p, by, sP) {
   const K = SK(); const rows = WORDS[S.opening] || WORDS.arches; const sz = Math.round((L.mobile ? .11 : .2) * L.H * (sP || 1)); if (sz < 8) return;
-  ctx.save(); ctx.font = `italic 300 ${sz}px Fraunces, Georgia, serif`; ctx.textBaseline = 'alphabetic';
+  ctx.save(); ctx.font = `italic 300 ${sz}px "Cormorant Garamond", Georgia, serif`; ctx.textBaseline = 'alphabetic';
   rows.forEach((w, i) => {
     const txt = (w + '  ·  ').repeat(4); const tw = ctx.measureText(txt).width / 4; const dir = i ? 1 : -1;
     const x = (L.W / 2) + dir * (p * 1.4 - .5) * tw - tw * 1.5; const y = by - (i ? .1 : 1.05) * sz * 1.05;
@@ -953,31 +1013,58 @@ function sil(o, x, y, s) {
 }
 function side(ctx, x0, x1, c, sun) { const g = ctx.createLinearGradient(x0, 0, x1, 0); const hi = shade(c, 1.2), lo = shade(c, .76); if (sun < 0) { g.addColorStop(0, hi); g.addColorStop(.5, c); g.addColorStop(1, lo); } else { g.addColorStop(0, lo); g.addColorStop(.5, c); g.addColorStop(1, hi); } return g; }
 function wick(ctx, x, y, s) { ctx.strokeStyle = '#3A2920'; ctx.lineWidth = 1.6 * s; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 1 * s, y - 7 * s); ctx.stroke(); }
-function drawObj(ctx, o, x, y, s, sun, marble) {
+function tintLeaf(col) {
+  if (!LEAF.complete || !LEAF.naturalWidth) return null; if (TINT[col]) return TINT[col];
+  const c = document.createElement('canvas'); c.width = LEAF.naturalWidth; c.height = LEAF.naturalHeight; const x = c.getContext('2d');
+  x.drawImage(LEAF, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, c.width, c.height); TINT[col] = c; return c;
+}
+function speckle(ctx, x0, y0, w, h, s, seed) {
+  ctx.fillStyle = 'rgba(70,48,36,.28)';
+  for (let i = 0; i < 34; i++) { const a = Math.sin(seed * 12.9898 + i * 78.233) * 43758.5453, b = Math.sin(seed * 39.3468 + i * 11.135) * 24634.6345; const fx = a - Math.floor(a), fy = b - Math.floor(b); ctx.beginPath(); ctx.arc(x0 + fx * w, y0 + fy * h, (.5 + (i % 3) * .35) * s, 0, TAU); ctx.fill(); }
+}
+function drawObj(ctx, o, x, y, s, sun) {
   const c = o.c, w = o.w * s, h = o.h * s;
   if (o.k === 'jar') {
     ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fill(sil(o, x, y, s));
-    ctx.fillStyle = shade(c, 1.22); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 6 * s, 0, 0, TAU); ctx.fill();
-    ctx.fillStyle = '#EFE3CF'; ctx.beginPath(); ctx.ellipse(x, y - h + 1 * s, w / 2 - 5 * s, 4 * s, 0, 0, TAU); ctx.fill();
-    ctx.fillStyle = 'rgba(245,239,228,.85)'; ctx.fillRect(x - w * .28, y - h * .58, w * .56, h * .2); wick(ctx, x, y - h, s);
+    ctx.save(); ctx.clip(sil(o, x, y, s)); speckle(ctx, x - w / 2, y - h, w, h, s, o.dx || 1); ctx.restore();
+    const lw = w * .66, lh = h * .4, lx = x - lw / 2, ly = y - h * .66;
+    ctx.fillStyle = '#F5ECDD'; ctx.fillRect(lx, ly, lw, lh); ctx.strokeStyle = 'rgba(61,40,30,.18)'; ctx.lineWidth = Math.max(.6, .6 * s); ctx.strokeRect(lx, ly, lw, lh);
+    const lf = tintLeaf('#3D281E'); if (lf) { const lfh = lh * .38; ctx.drawImage(lf, x - lfh * .45, ly + lh * .1, lfh * .9, lfh); }
+    if (s >= 1.4) { ctx.fillStyle = '#3D281E'; ctx.textAlign = 'center'; ctx.font = `600 ${Math.max(5, lw * .118).toFixed(1)}px "Cormorant Garamond", Georgia, serif`; ctx.fillText('BUD & THINGS', x, ly + lh * .7); ctx.font = `${Math.max(4, lw * .08).toFixed(1)}px Lato, sans-serif`; ctx.fillText('by Ashi', x, ly + lh * .88); }
+    if (o.lid) {
+      const lh2 = 14 * s; const g = ctx.createLinearGradient(x - w / 2, 0, x + w / 2, 0); g.addColorStop(0, '#C9965F'); g.addColorStop(.5, '#A8743F'); g.addColorStop(1, '#7E5230');
+      ctx.fillStyle = g; ctx.fillRect(x - w / 2 - 1 * s, y - h - lh2, w + 2 * s, lh2 + 2 * s);
+      ctx.fillStyle = '#C9965F'; ctx.beginPath(); ctx.ellipse(x, y - h - lh2, w / 2 + 1 * s, 5 * s, 0, 0, TAU); ctx.fill();
+    } else {
+      ctx.fillStyle = shade(c, 1.22); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 6 * s, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#EFE3CF'; ctx.beginPath(); ctx.ellipse(x, y - h + 1 * s, w / 2 - 5 * s, 4 * s, 0, 0, TAU); ctx.fill(); wick(ctx, x, y - h, s);
+    }
   } else if (o.k === 'pillar') {
     ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fillRect(x - w / 2, y - h, w, h);
     ctx.fillStyle = 'rgba(58,41,32,.14)'; for (let i = 1; i < 6; i++) ctx.fillRect(x - w / 2 + i * w / 6, y - h, 1.2 * s, h);
     ctx.fillStyle = shade(c, 1.16); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 4 * s, 0, 0, TAU); ctx.fill(); wick(ctx, x, y - h, s);
-  } else if (o.k === 'tray') {
-    const rx = w / 2, ry = 22 * s, d = 9 * s;
-    ctx.fillStyle = shade(c, .78); ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI); ctx.lineTo(x - rx, y - d); ctx.ellipse(x, y - d, rx, ry, 0, Math.PI, 0, true); ctx.closePath(); ctx.fill();
+  } else if (o.k === 'slab') {
+    const rx = w / 2, ry = 15 * s, d = h;
+    ctx.fillStyle = shade(c, .82); ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI); ctx.lineTo(x - rx, y - d); ctx.ellipse(x, y - d, rx, ry, 0, Math.PI, 0, true); ctx.closePath(); ctx.fill();
     ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y - d, rx, ry, 0, 0, TAU); ctx.fill();
-    if (marble) { ctx.save(); ctx.beginPath(); ctx.ellipse(x, y - d, rx, ry, 0, 0, TAU); ctx.clip(); ctx.translate(x, y - d); ctx.rotate(marble.rot || 0); ctx.scale(1, ry / rx); ctx.globalAlpha *= .9; ctx.drawImage(LC.marble, -rx * 1.4, -rx * 1.4, rx * 2.8, rx * 2.8); ctx.restore(); }
-    ctx.fillStyle = 'rgba(58,41,32,.09)'; ctx.beginPath(); ctx.ellipse(x, y - d + 2 * s, rx * .86, ry * .74, 0, 0, TAU); ctx.fill();
-  } else if (o.k === 'dish') {
-    ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fill(sil(o, x, y, s));
-    ctx.fillStyle = shade(c, 1.22); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 12 * s, 0, 0, TAU); ctx.fill();
-    ctx.fillStyle = shade(c, .82); ctx.beginPath(); ctx.ellipse(x, y - h + 1 * s, w * .4, 8 * s, 0, 0, TAU); ctx.fill();
-  } else if (o.k === 'arch') {
-    ctx.save(); ctx.translate((sun < 0 ? 7 : -7) * s, 0); ctx.fillStyle = shade(c, .74); ctx.fill(sil(o, x, y, s), 'evenodd'); ctx.restore();
-    ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fill(sil(o, x, y, s), 'evenodd');
+    ctx.save(); ctx.clip(); const cols = ['rgba(165,91,63,.5)', 'rgba(107,123,91,.45)', 'rgba(61,40,30,.35)', 'rgba(192,138,91,.5)'];
+    for (let i = 0; i < 46; i++) { const a = Math.sin(i * 91.7) * 1000, b = Math.sin(i * 47.3) * 1000; ctx.fillStyle = cols[i % 4]; ctx.beginPath(); ctx.arc(x - rx + (a - Math.floor(a)) * rx * 2, y - d - ry + (b - Math.floor(b)) * ry * 2, (1 + (i % 3)) * s * .8, 0, TAU); ctx.fill(); }
+    ctx.restore();
+  } else if (o.k === 'sprig') {
+    const lf = tintLeaf(c); if (lf) { ctx.save(); ctx.translate(x, y - 2 * s); ctx.rotate(-.35); const hh = h, ww = hh * lf.width / lf.height; ctx.drawImage(lf, -ww / 2, -hh, ww, hh); ctx.restore(); }
   }
+}
+const PIMG = {};
+function prodImg(p, vi) {
+  const key = p.id + ':' + vi + ':' + (tintLeaf('#3D281E') ? 1 : 0); if (PIMG[key]) return PIMG[key];
+  const c = document.createElement('canvas'); c.width = c.height = 360; const x = c.getContext('2d'); const v = p.variants[vi];
+  let objs;
+  if (p.art === 'pillar') {
+    objs = v.label === 'Set of 3' ? [{ k: 'pillar', c: PILLAR_COL.Ivory, w: 34, h: 124, dx: -46 }, { k: 'pillar', c: PILLAR_COL.Terracotta, w: 34, h: 96, dx: 0 }, { k: 'pillar', c: PILLAR_COL.Olive, w: 34, h: 110, dx: 46 }] : [{ k: 'pillar', c: PILLAR_COL[v.label] || p.c, w: 34, h: 124, dx: 0 }];
+  } else objs = [{ k: 'jar', c: p.c, w: 70, h: v.label === '120 g' ? 72 : 92, dx: 0, lid: true }];
+  const s = 2; x.fillStyle = 'rgba(61,40,30,.16)'; x.beginPath(); x.ellipse(180, 314, 120, 10, 0, 0, TAU); x.fill();
+  objs.forEach((o) => drawObj(x, o, 180 + o.dx * s, 312, s, -.6));
+  return (PIMG[key] = c.toDataURL('image/png'));
 }
 function castShadow(ctx, o, x, y, s, sun, elev, a) {
   if (a <= 0) return; const w = o.w * s, h = Math.max(o.h, 14) * s;
@@ -1006,7 +1093,7 @@ function plinth(ctx, x, y, s, col) {
   ctx.fillStyle = rgba('#3A2920', .12); ctx.fillRect(x - 330 * s, y + 32 * s, 660 * s, 6 * s);
 }
 function placeAll(L, s, bx, by) { return ARR.map((o) => ({ o, x: bx + o.dx * s, y: by + (o.dy || 0) * s })); }
-function spotFor(it, s, a) { const o = it.o; if (o.k === 'tray') return { x: it.x - o.w * s * .32, y: it.y + 30 * s, a }; const up = o.k === 'jar' ? 26 : o.k === 'pillar' ? 60 : 14; return { x: it.x, y: it.y - o.h * s - up * s, a }; }
+function spotFor(it, s, a) { const o0 = it.o; if (o0.k === 'jar' || o0.k === 'pillar' || o0.k === 'slab' || o0.k === 'sprig') { const up = o0.lift || (o0.k === 'pillar' ? 20 : 26); return { x: it.x, y: it.y - o0.h * s - up * s, a }; } const o = it.o; if (o.k === 'tray') return { x: it.x - o.w * s * .32, y: it.y + 30 * s, a }; const up = o.k === 'jar' ? 26 : o.k === 'pillar' ? 60 : 14; return { x: it.x, y: it.y - o.h * s - up * s, a }; }
 
 // A · Through the Arches: the camera walks forward through four plaster arches into the room.
 function sceneArches(ctx, L, p, t) {
@@ -1036,7 +1123,7 @@ function sceneArches(ctx, L, p, t) {
   const items = placeAll(L, s, L.ax, by);
   items.forEach((it) => castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .22 * (1 - dusk * .5)));
   items.forEach((it) => drawObj(ctx, it.o, it.x, it.y, s, sun));
-  const spotA = win(p, cfg.spots); LC.spots = items.map((it) => spotFor(it, s, spotA));
+  const spotA = win(p, cfg.spots); LC.spots = items.map((it) => spotFor(it, s, it.o.id && !it.o.noSpot ? spotA : 0));
   // arches, far to near, each a wall with an arched opening
   const AZ = [1.2, 1.95, 2.7, 3.45], AC = K.arch;
   for (let i = 3; i >= 0; i--) {
@@ -1052,7 +1139,7 @@ function sceneArches(ctx, L, p, t) {
   }
   fxPre(ctx, L, p, t, L.ax, by, s);
   ctx.fillStyle = rgba(K.night, .42 * dusk); ctx.fillRect(0, 0, L.W, L.H);
-  const jar = items[1]; flame(ctx, jar.x + 1 * s, jar.y - jar.o.h * s - 15 * s, s, flameAlpha(p, .84, .92), t);
+  lightAll(ctx, items, s, p, cfg.light, t);
   fxPost(ctx, L, p, t, L.ax, by, s);
 }
 
@@ -1070,61 +1157,51 @@ function pourCup(ctx, x, y, s, a, tilt, col) {
   ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(-6 * s - w / 2, -2 * s, w / 2 - 2 * s, 4 * s, 0, 0, TAU); ctx.fill(); ctx.restore();
 }
 function dashed(ctx, o, x, y, s, a) { if (a <= 0) return; ctx.save(); ctx.setLineDash([6 * s, 6 * s]); ctx.lineWidth = 1.3 * s; ctx.strokeStyle = rgba(SK().ink2, a); ctx.stroke(sil(o, x, y, s)); ctx.restore(); }
+function lightAll(ctx, items, s, p, start, t, gate) {
+  let n = 0;
+  items.forEach((it) => { const o = it.o; if (o.k !== 'jar' && o.k !== 'pillar') return; const a0 = start + n * .012; n++; const fy = it.y - o.h * s - (o.k === 'jar' ? 15 : 9) * s; flame(ctx, it.x + 1 * s, fy, s * (o.k === 'jar' ? 1 : .8), flameAlpha(p, a0, a0 + .05) * (gate === undefined ? 1 : gate), t + n); });
+}
 function scenePour(ctx, L, p, t) {
-  const cfg = OPENINGS.pour; const dusk = ease(seg(p, .87, .98));
+  const cfg = OPENINGS.pour; const dusk = ease(seg(p, .8, .96));
   const K = SK(); room(ctx, L, mixHex(mixSeq(K.wall, seg(p, 0, .86)), K.duskWall, dusk), mixHex(K.floor[0], K.duskFloor, dusk), L.hz);
   bigType(ctx, L, p, L.hz - 10 * L.u, 1);
   const s = L.u * 1.14; plinth(ctx, L.ax, L.ay, s, K.plinth); const sun = -.55, elev = .6;
-  const items = placeAll(L, s, L.ax, L.ay); const [tray, jar, dish, arch, pillar] = items;
-  const f = seg(p, .15, .4), set = seg(p, .4, .47), g = seg(p, .5, .68), jset = seg(p, .68, .74);
-  const ms = [seg(p, .72, .8), seg(p, .75, .83), seg(p, .78, .86)];
-  const sketch = 1 - seg(p, .86, .9);
-  castShadow(ctx, tray.o, tray.x, tray.y, s, sun, elev, .2 * set);
-  [dish, arch, pillar].forEach((it, i) => castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .2 * ms[i]));
-  castShadow(ctx, jar.o, jar.x, jar.y, s, sun, elev, .2 * jset);
-  // tray: marbled puddle spreading inside its mould, then set
-  const rot = 2.8 * ease(f) + .3;
-  dashed(ctx, tray.o, tray.x, tray.y, s, .55 * (1 - set) * sketch);
-  if (f > 0 && set < 1) {
-    const e = easeOut(f), rx = tray.o.w / 2 * s, ry = 22 * s;
-    ctx.save(); ctx.globalAlpha = 1 - set; ctx.beginPath(); ctx.ellipse(tray.x + 20 * s * (1 - e), tray.y - 9 * s, rx * e, ry * e, 0, 0, TAU); ctx.clip();
-    ctx.translate(tray.x, tray.y - 9 * s); ctx.rotate(rot); ctx.scale(1, ry / rx); ctx.drawImage(LC.marble, -rx * 1.4, -rx * 1.4, rx * 2.8, rx * 2.8); ctx.restore();
-    if (f < 1) for (let r = 0; r < 3; r++) { const ph = ((t * .8 + r / 3) % 1); ctx.strokeStyle = `rgba(255,255,255,${.5 * (1 - ph)})`; ctx.lineWidth = 1.2 * s; ctx.beginPath(); ctx.ellipse(tray.x + 20 * s, tray.y - 9 * s, 14 * s + ph * 60 * s * e, (4 * s + ph * 12 * s * e), 0, 0, TAU); ctx.stroke(); }
-  }
-  if (set > 0) { ctx.save(); ctx.globalAlpha = set; drawObj(ctx, tray.o, tray.x, tray.y, s, sun, { rot }); ctx.restore(); }
-  if (set > 0 && set < 1) { const rx = tray.o.w / 2 * s; ctx.save(); ctx.beginPath(); ctx.ellipse(tray.x, tray.y - 9 * s, rx, 22 * s, 0, 0, TAU); ctx.clip(); const gx = tray.x - rx + set * rx * 2.4; const sg = ctx.createLinearGradient(gx - 40 * s, 0, gx + 40 * s, 0); sg.addColorStop(0, 'rgba(255,255,255,0)'); sg.addColorStop(.5, 'rgba(255,255,255,.55)'); sg.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = sg; ctx.fillRect(gx - 40 * s, tray.y - 40 * s, 80 * s, 60 * s); ctx.restore(); }
-  const pw = 9 * s * (1 - seg(p, .37, .41)) * seg(p, .14, .17);
-  const cupA = seg(p, .12, .16) * (1 - seg(p, .41, .45)); if (cupA > 0) pourCup(ctx, tray.x + 20 * s, L.H * (L.mobile ? .42 : .3), s, cupA, .5 + .5 * seg(p, .14, .2), '#E6CFAE');
-  if (pw > 0) stream(ctx, tray.x + 20 * s, L.H * (L.mobile ? .42 : .3), tray.y - 9 * s, pw, '#E6CFAE', t);
-  // jar: a see-through vessel fills with scented wax, then turns to stone
-  const jo = jar.o, jw = jo.w * s, jh = jo.h * s;
-  dashed(ctx, jo, jar.x, jar.y, s, .55 * (1 - seg(p, .46, .5)) * sketch);
-  if (p > .46 && jset < 1) {
-    const va = seg(p, .46, .5) * (1 - jset);
-    ctx.save(); ctx.globalAlpha = va; ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.fill(sil(jo, jar.x, jar.y, s)); ctx.strokeStyle = rgba('#5C4637', .5); ctx.lineWidth = 1.4 * s; ctx.stroke(sil(jo, jar.x, jar.y, s));
-    ctx.clip(sil(jo, jar.x, jar.y, s)); const lvl = jar.y - (jh - 6 * s) * easeOut(g);
-    ctx.fillStyle = '#F1E4CC'; ctx.beginPath(); ctx.moveTo(jar.x - jw, jar.y + 4 * s); for (let i = 0; i <= 16; i++) { const xx = jar.x - jw / 2 + jw * i / 16; ctx.lineTo(xx, lvl + Math.sin(i * .9 + t * 6) * 1.6 * s * (1 - g)); } ctx.lineTo(jar.x + jw, jar.y + 4 * s); ctx.closePath(); ctx.fill(); ctx.restore();
-  }
-  if (jset > 0) { ctx.save(); ctx.globalAlpha = jset; drawObj(ctx, jo, jar.x, jar.y, s, sun); ctx.restore(); }
-  const cupB = seg(p, .48, .52) * (1 - seg(p, .68, .72)); if (cupB > 0) pourCup(ctx, jar.x + 6 * s, L.H * (L.mobile ? .42 : .3), s, cupB, .5 + .5 * seg(p, .5, .55), '#F3E7D2');
-  const ww = 7 * s * seg(p, .5, .53) * (1 - seg(p, .66, .69)); if (ww > 0) stream(ctx, jar.x + 6 * s, L.H * (L.mobile ? .42 : .3), jar.y - (jh - 6 * s) * easeOut(g), ww, '#F3E7D2', t);
-  const notes = byId['chai-at-four'].notes;
-  ctx.save(); ctx.textAlign = 'center'; ctx.font = `italic 300 ${Math.round(17 * s)}px Fraunces, Georgia, serif`;
-  notes.forEach((n, i) => { const wp = seg(p, .54 + i * .035, .7 + i * .035); if (wp <= 0 || wp >= 1) return; ctx.fillStyle = rgba(K.ink2, Math.sin(Math.PI * wp) * .95); ctx.fillText(n, jar.x + (i - 1) * 46 * s + Math.sin(t + i) * 6 * s, jar.y - jh - 26 * s - wp * 120 * s); });
-  ctx.restore();
-  // demould: dish, arch and pillar lift out of their moulds one after another
-  [dish, arch, pillar].forEach((it, i) => {
-    const m = ms[i]; dashed(ctx, it.o, it.x, it.y, s, .4 * (1 - seg(m, 0, .3)) * sketch);
+  const items = placeAll(L, s, L.ax, L.ay);
+  const sketch = 1 - seg(p, .8, .86);
+  const jars = items.filter((it) => it.o.k === 'jar'); const pillars = items.filter((it) => it.o.k === 'pillar');
+  const props = items.filter((it) => it.o.prop);
+  const lab = seg(p, .62, .72);
+  props.forEach((it) => { ctx.save(); ctx.globalAlpha = seg(p, .02, .08); castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .18); drawObj(ctx, it.o, it.x, it.y, s, sun); ctx.restore(); });
+  const pourY = L.H * (L.mobile ? .42 : .3);
+  jars.forEach((it, k) => {
+    const o = it.o, jw = o.w * s, jh = o.h * s; const a = .14 + k * .11, g = seg(p, a, a + .11);
+    castShadow(ctx, o, it.x, it.y, s, sun, elev, .2 * lab);
+    dashed(ctx, o, it.x, it.y, s, .6 * (1 - seg(p, a - .02, a)) * sketch);
+    if (p > a - .02 && lab < 1) {
+      ctx.save(); ctx.globalAlpha = seg(p, a - .02, a) * (1 - lab); ctx.fillStyle = 'rgba(255,255,255,.22)'; ctx.fill(sil(o, it.x, it.y, s)); ctx.strokeStyle = rgba(K.ink2, .6); ctx.lineWidth = 1.4 * s; ctx.stroke(sil(o, it.x, it.y, s));
+      ctx.clip(sil(o, it.x, it.y, s)); const lvl = it.y - (jh - 6 * s) * easeOut(g);
+      ctx.fillStyle = '#F1E4CC'; ctx.beginPath(); ctx.moveTo(it.x - jw, it.y + 4 * s); for (let i = 0; i <= 16; i++) { const xx = it.x - jw / 2 + jw * i / 16; ctx.lineTo(xx, lvl + Math.sin(i * .9 + t * 6) * 1.6 * s * (1 - g)); } ctx.lineTo(it.x + jw, it.y + 4 * s); ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+    if (lab > 0) { ctx.save(); ctx.globalAlpha = lab; drawObj(ctx, o, it.x, it.y, s, sun); ctx.restore(); }
+    const cup = seg(p, a - .02, a + .01) * (1 - seg(p, a + .1, a + .12)); if (cup > 0) pourCup(ctx, it.x + 6 * s, pourY, s, cup, .5 + .5 * seg(p, a, a + .03), '#F3E7D2');
+    const ww = 7 * s * seg(p, a, a + .015) * (1 - seg(p, a + .095, a + .11)); if (ww > 0) stream(ctx, it.x + 6 * s, pourY, it.y - (jh - 6 * s) * easeOut(g), ww, '#F3E7D2', t);
+    const notes = byId[o.id].notes; ctx.save(); ctx.textAlign = 'center'; ctx.font = `italic 500 ${Math.round(19 * s)}px "Cormorant Garamond", Georgia, serif`;
+    notes.forEach((n, i) => { const wp = seg(p, a + .02 + i * .025, a + .1 + i * .025); if (wp <= 0 || wp >= 1) return; ctx.fillStyle = rgba(K.ink2, Math.sin(Math.PI * wp) * .95); ctx.fillText(n, it.x + (i - 1) * 50 * s + Math.sin(t + i) * 6 * s, it.y - jh - 30 * s - wp * 120 * s); });
+    ctx.restore();
+  });
+  pillars.forEach((it, i) => {
+    const m = seg(p, .58 + i * .025, .66 + i * .025); dashed(ctx, it.o, it.x, it.y, s, .5 * (1 - seg(m, 0, .3)) * sketch);
+    castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .2 * m);
     if (m <= 0) return; const e = ease(m);
-    ctx.save(); ctx.globalAlpha = e; const sc = .94 + .06 * e; ctx.translate(it.x, it.y); ctx.scale(sc, sc); ctx.translate(-it.x, -it.y); drawObj(ctx, it.o, it.x, it.y, s, sun); ctx.restore();
-    const bw = it.o.w * s + 26 * s, bh = it.o.h * s + 22 * s, lift = 90 * s * e;
-    ctx.save(); ctx.globalAlpha = (1 - e) * .9; ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.strokeStyle = rgba('#5C4637', .55); ctx.lineWidth = 1.2 * s;
+    ctx.save(); ctx.globalAlpha = e; drawObj(ctx, it.o, it.x, it.y, s, sun); ctx.restore();
+    const bw = it.o.w * s + 18 * s, bh = it.o.h * s + 16 * s, lift = 90 * s * e;
+    ctx.save(); ctx.globalAlpha = (1 - e) * .9; ctx.fillStyle = 'rgba(255,255,255,.3)'; ctx.strokeStyle = rgba(K.ink2, .6); ctx.lineWidth = 1.2 * s;
     ctx.beginPath(); ctx.rect(it.x - bw / 2, it.y - bh + 4 * s - lift, bw, bh); ctx.fill(); ctx.stroke(); ctx.restore();
   });
-  LC.spots = items.map((it) => spotFor(it, s, win(p, cfg.spots)));
+  LC.spots = items.map((it) => spotFor(it, s, it.o.id && !it.o.noSpot ? win(p, cfg.spots) : 0));
   fxPre(ctx, L, p, t, L.ax, L.ay, s);
   ctx.fillStyle = rgba(K.night, .42 * dusk); ctx.fillRect(0, 0, L.W, L.H);
-  flame(ctx, jar.x + 1 * s, jar.y - jh - 15 * s, s, jset > .5 ? flameAlpha(p, .89, .95) : 0, t);
+  lightAll(ctx, items, s, p, cfg.light, t, lab);
   fxPost(ctx, L, p, t, L.ax, L.ay, s);
 }
 
@@ -1218,7 +1295,9 @@ document.addEventListener('click', (e) => {
     case 'close-cart': UI.drawer = false; UI.drawerMsg = null; renderOverlay(); break;
     case 'save': e.preventDefault(); toggleSave(d.id); break;
     case 'quick-add': { const p = byId[d.id]; const vi = p.variants.findIndex((v) => stockOf(v.sku) > 0); if (vi >= 0) { addToCart(p.variants[vi].sku, 1, { source: 'card' }); setTimeout(() => $('#drawer-close')?.focus(), 0); } break; }
-    case 'variant': UI.pdp[d.id].vi = +d.i; UI.pdp[d.id].qty = 1; render(); break;
+    case 'variant': UI.pdp[d.id].vi = +d.i; UI.pdp[d.id].qty = 1; UI.pdp[d.id].img = 0; render(); break;
+    case 'pdp-img': UI.pdp[d.id].img = +d.i; render(); break;
+    case 'shop-type': UI.shop.type = d.v; render(); break;
     case 'pdp-qty': { const st = UI.pdp[d.id]; const v = byId[d.id].variants[st.vi]; st.qty = Math.max(1, Math.min(stockOf(v.sku), st.qty + +d.d)); render(); break; }
     case 'add': { const st = UI.pdp[d.id]; addToCart(byId[d.id].variants[st.vi].sku, st.qty, { source: 'product' }); setTimeout(() => $('#drawer-close')?.focus(), 0); break; }
     case 'notify': S.notify[d.sku] = !S.notify[d.sku]; save(); track('notify_me', { sku: d.sku }); render(); say(S.notify[d.sku] ? 'We’ll let you know when it’s back (simulated).' : 'Notification removed.'); break;
