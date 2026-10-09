@@ -9,7 +9,7 @@ Clickable prototype: https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr (source: 
 | Area | Decision |
 |---|---|
 | Brand assets source | `BUD_AND_THINGS Phase 1 to Phase 3 Step 5 Master Document`: used for the logo, monogram, leaf mark, palette and packaging photos only. The launch range stays candles + Jesmonite objects |
-| Visual direction | Default opening **C · Home Tour**: front door opens, hall, living room, bedroom, then the whole house at dusk. Openings A (arches) and B (pour) and six themes stay switchable for review |
+| Visual direction | Default opening **C · Home Tour**: a first-person walk: the huge centre door swings open; in each room the candles on the centre shelf light one by one, then the view turns to pieces being placed on the left and right shelves; the next room starts dark. Openings A (arches) and B (pour) and six themes stay switchable for review |
 | Typography | Cormorant Garamond (display) + Lato (UI), both SIL OFL |
 | Founder | Brand lockup stays **BUD & THINGS**; Ashi signs the Our Story note and the footer |
 | Commerce | Own website takes its own orders. **No shop platform.** Amazon, Flipkart, Meesho etc. are run from their own seller panels |

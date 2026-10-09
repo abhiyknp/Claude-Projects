@@ -604,7 +604,7 @@ function viewHome() {
   const fo = PAIRINGS[1]; const a = byId[fo.items[0][0]].variants[fo.items[0][1]], b = byId[fo.items[1][0]].variants[fo.items[1][1]];
   const ritSel = UI.ritual.homeSel || { a: true, b: true };
   const ritTotal = (ritSel.a ? a.price : 0) + (ritSel.b ? b.price : 0);
-  const SRC = S.opening === 'tour' ? TOUR.items : ARR;
+  const SRC = S.opening === 'tour' ? TOUR_ITEMS : ARR;
   const world = [['Home', 'Jesmonite trays, dishes and sculptural pieces', 'Now', '#jesmonite'], ['Fragrance', 'Scented and sculpted candles', 'Now', '#candles'], ['Gifts', 'Gift sets and curated gifting', 'Coming later', null], ['Celebrations', 'Wedding, festive and return gifts', 'Coming later', null], ['Living', 'Broader lifestyle collections', 'Coming later', null]];
   return `
   <section class="lc${S.opening === 'tour' ? ' tour' : ''}" aria-label="Living Canvas, ${esc(OPENINGS[S.opening].name)}" id="lc">
@@ -958,9 +958,9 @@ const OPENINGS = {
   pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Cast', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
     caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Cast, set,<br><em>lifted from the mould.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
     spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 },
-  tour: { name: 'C · Home Tour', rail: ['Front door', 'Hall', 'Living room', 'Bedroom', 'Whole house'], cuts: [.16, .31, .51, .72], hero: [.03, .08], staticP: .45,
-    caps: [['Come in.<br><em>The door is open.</em>', [.07, .1, .15, .18]], ['The hall:<br><em>a welcome that lingers.</em>', [.19, .22, .28, .31]], ['The living room:<br><em>shelves of little things.</em>', [.35, .38, .47, .5]], ['The bedroom:<br><em>the last light of the day.</em>', [.55, .58, .66, .69]], ['Made with thought.<br><em>Given with feeling.</em>', [.73, .76, .83, .86]]],
-    spots: null, final: [.86, .93], light: 0 }
+  tour: { name: 'C · Home Tour', rail: ['Front door', 'Room one', 'Room two', 'Room three'], cuts: [.16, .46, .7], hero: [.02, .06], staticP: .44,
+    caps: [['The door is open.<br><em>Come in.</em>', [.06, .09, .14, .17]], ['One by one,<br><em>the candles are lit.</em>', [.23, .25, .3, .32]], ['Trays and plates to the left,<br><em>little forms to the right.</em>', [.33, .35, .41, .43]], ['The next room<br><em>waits in the dark.</em>', [.48, .5, .55, .57]], ['The last room:<br><em>everything wrapped to give.</em>', [.72, .74, .78, .8]], ['Made with thought.<br><em>Given with feeling.</em>', [.8, .83, .86, .88]]],
+    spots: null, final: [.87, .94], light: 0 }
 };
 const SKINS = {
   signature: { name: 'Signature · Approved palette', use: 'The approved palette: ivory, sand, caramel, terracotta, olive and chocolate.', eyebrow: 'Collection 01 · Everyday Rituals', dark: true, wall: ['#A55B3F', '#8F4C33', '#7A3F2A'], floor: ['#4A3125', '#3D281E', '#33211A'], arch: ['#8F4C33', '#A55B3F', '#B36C49', '#C08A5B'], plinth: '#F8F0E4', duskWall: '#2A1B14', duskFloor: '#1F140F', night: '#120B08', light: '255,236,210', type: '#F8F0E4', ink2: '#F3E6D6', fx: null },
@@ -1265,146 +1265,168 @@ function scenePour(ctx, L, p, t) {
   fxPost(ctx, L, p, t, L.ax, L.ay, s);
 }
 
-// C · Home Tour: open the front door, walk through the hall, living room and bedroom, then pull back to the whole house at dusk.
-const TOUR = {
-  rooms: [{ x: 0, name: 'Hall' }, { x: 1000, name: 'Living room' }, { x: 2000, name: 'Bedroom' }],
-  windows: [{ x0: 130, x1: 370, y0: 90, y1: 430 }, { x0: 1060, x1: 1330, y0: 70, y1: 470 }, { x0: 2680, x1: 2900, y0: 120, y1: 420 }],
-  items: [
-    { k: 'sprig', x: 690, y: 300, w: 60, h: 70, c: '#6B7B5B', prop: true },
-    { id: 'brass-and-saffron', k: 'jar', x: 560, y: 410, w: 70, h: 92, c: '#A55B3F' },
-    { id: 'jharokha-catch-all', k: 'archtray', x: 680, y: 410, w: 84, h: 104, c: '#DCC9AE', up: 70 },
-    { id: 'pillar-studies', k: 'pillar', x: 780, y: 410, w: 30, h: 124, c: '#F1E8DA' },
-    { id: 'pillar-studies', k: 'pillar', x: 812, y: 410, w: 30, h: 96, c: '#A55B3F', noSpot: true },
-    { id: 'pillar-studies', k: 'pillar', x: 844, y: 410, w: 30, h: 110, c: '#6B7B5B', noSpot: true },
-    { id: 'still-form-no-1', k: 'arch', x: 1525, y: 230, w: 80, h: 118, c: '#F1E8DA' },
-    { id: 'monsoon-letters', k: 'jar', x: 1665, y: 230, w: 62, h: 78, c: '#A9B39A' },
-    { id: 'pebble-coasters', k: 'pebbles', x: 1800, y: 230, w: 76, h: 30, c: '#6B7B5B' },
-    { id: 'ghat-tray', k: 'tray', x: 1570, y: 360, w: 180, h: 16, c: '#DCC9AE' },
-    { id: 'chai-at-four', k: 'jar', x: 1570, y: 348, w: 64, h: 84, c: '#C08A5B' },
-    { id: 'halo-candle-plate', k: 'plate', x: 1780, y: 360, w: 110, h: 8, c: '#6B7B5B' },
-    { k: 'pillar', x: 1780, y: 354, w: 30, h: 86, c: '#F1E8DA', prop: true },
-    { k: 'sprig', x: 2240, y: 290, w: 60, h: 70, c: '#6B7B5B', prop: true },
-    { id: 'terrace-garden', k: 'jar', x: 2495, y: 430, w: 58, h: 70, c: '#C9D0B8' },
-    { id: 'moonlet-ring-dish', k: 'dish', x: 2565, y: 430, w: 70, h: 22, c: '#C99A6C', rings: true },
-    { id: 'first-light', k: 'jar', x: 2790, y: 420, w: 54, h: 66, c: '#F4ECE0' }
-  ]
-};
-function tourCam(L, p) {
-  const m = L.mobile; const Z = m ? L.H * .7 / 640 : Math.min(L.W / 1060, L.H / 680);
-  const dz = Math.min(L.W / 3400, L.H * .62 / 960) / Z;
-  const hall = m ? 700 : 500, liv = m ? 1660 : 1500, bed = m ? 2560 : 2520;
-  const K = [[0, hall, 1, 300], [.17, hall, 1, 300], [.28, hall, 1.07, 310], [.34, liv, 1, 300], [.48, liv, 1.13, 290], [.54, bed, 1, 300], [.68, bed, 1.08, 310], [.82, 1500, dz, 170], [1, 1500, dz, 170]];
-  let i = 0; while (i < K.length - 2 && p > K[i + 1][0]) i++;
-  const a = K[i], b = K[i + 1], t = ease(seg(p, a[0], b[0]));
-  return { x: a[1] + (b[1] - a[1]) * t, z: Z * (a[2] + (b[2] - a[2]) * t), y: a[3] + (b[3] - a[3]) * t };
+// C · Home Tour: a first-person walk. A huge door opens, then room by room the candles on the centre shelf light,
+// and pieces are placed on the left and right shelves. Each new room starts in the dark.
+const T3 = { D: 1100, W2: 650, H: 780, eye: 330 };
+const TR = [
+  { name: 'Room one', wall: 3, dark: [.62, .22], span: [0, .46], walk: [.14, .22], light: [.22, .3], left: [.3, .36], right: [.36, .42], out: [.42, .46] },
+  { name: 'Room two', wall: 2, dark: [.94, .28], span: [.46, .7], into: [.46, .48], light: [.49, .56], left: [.56, .61], right: [.61, .66], out: [.66, .7] },
+  { name: 'Room three', wall: 1, dark: [.94, .24], span: [.7, 1.01], into: [.7, .72], light: [.73, .79], left: [.79, .83], right: [.82, .86] }
+];
+const NICHE = (id, k, x, y, w, h, c, extra) => Object.assign({ id, k, x, y, w, h, c, where: 'back' }, extra || {});
+const SIDE = (side, id, k, zz, y, w, h, c, extra) => Object.assign({ id, k, side, zz, y, w, h, c, where: side }, extra || {});
+const TOUR_ITEMS = [
+  // room one
+  NICHE('chai-at-four', 'jar', -115, 250, 66, 86, '#C08A5B', { r: 0 }), NICHE('brass-and-saffron', 'jar', 0, 250, 70, 92, '#A55B3F', { r: 0 }), NICHE('first-light', 'jar', 112, 250, 58, 68, '#F4ECE0', { r: 0 }),
+  NICHE('pillar-studies', 'pillar', -46, 450, 32, 124, '#F1E8DA', { r: 0 }), NICHE('pillar-studies', 'pillar', 0, 450, 32, 96, '#A55B3F', { r: 0, noSpot: true }), NICHE('pillar-studies', 'pillar', 46, 450, 32, 110, '#6B7B5B', { r: 0, noSpot: true }),
+  SIDE('left', 'ghat-tray', 'tray', 360, 260, 170, 16, '#DCC9AE', { r: 0 }), SIDE('left', 'moonlet-ring-dish', 'dish', 520, 430, 80, 24, '#C99A6C', { r: 0, rings: true }), SIDE('left', 'halo-candle-plate', 'plate', 680, 260, 110, 8, '#6B7B5B', { r: 0 }),
+  SIDE('right', 'still-form-no-1', 'arch', 380, 260, 84, 124, '#F1E8DA', { r: 0 }), SIDE('right', 'pebble-coasters', 'pebbles', 540, 430, 74, 30, '#6B7B5B', { r: 0 }), SIDE('right', 'jharokha-catch-all', 'archtray', 700, 260, 84, 104, '#DCC9AE', { r: 0 }),
+  // room two
+  NICHE('monsoon-letters', 'jar', -115, 250, 64, 80, '#A9B39A', { r: 1 }), NICHE('terrace-garden', 'jar', 0, 250, 66, 86, '#C9D0B8', { r: 1 }), NICHE('chai-at-four', 'jar', 112, 250, 58, 70, '#C08A5B', { r: 1, noSpot: true }),
+  NICHE('pillar-studies', 'pillar', -60, 450, 32, 110, '#6B7B5B', { r: 1, noSpot: true }), NICHE('first-light', 'jar', 0, 450, 58, 68, '#F4ECE0', { r: 1, noSpot: true }), NICHE('pillar-studies', 'pillar', 60, 450, 32, 120, '#F1E8DA', { r: 1, noSpot: true }),
+  SIDE('left', 'halo-candle-plate', 'plate', 380, 260, 110, 8, '#C99A6C', { r: 1, noSpot: true }), SIDE('left', null, 'pillar', 380, 256, 30, 86, '#F1E8DA', { r: 1, prop: true }), SIDE('left', 'ghat-tray', 'tray', 600, 430, 170, 16, '#B0644A', { r: 1, noSpot: true }),
+  SIDE('right', 'pebble-coasters', 'pebbles', 400, 260, 74, 30, '#F1E8DA', { r: 1, noSpot: true }), SIDE('right', 'still-form-no-1', 'arch', 620, 430, 84, 124, '#B0644A', { r: 1, noSpot: true }),
+  // room three: the gifting nook
+  NICHE(null, 'box', -120, 250, 96, 70, '#B98A5A', { r: 2, prop: true }), NICHE('brass-and-saffron', 'jar', 0, 250, 70, 92, '#A55B3F', { r: 2, noSpot: true }), NICHE(null, 'box', 120, 250, 80, 56, '#C9A27A', { r: 2, prop: true }),
+  NICHE('pillar-studies', 'pillar', -46, 450, 32, 124, '#F1E8DA', { r: 2, noSpot: true }), NICHE('pillar-studies', 'pillar', 0, 450, 32, 96, '#A55B3F', { r: 2, noSpot: true }), NICHE('pillar-studies', 'pillar', 46, 450, 32, 110, '#6B7B5B', { r: 2, noSpot: true }),
+  SIDE('left', 'moonlet-ring-dish', 'dish', 420, 260, 80, 24, '#F1E8DA', { r: 2, rings: true, noSpot: true }), SIDE('left', 'first-light', 'jar', 640, 430, 56, 66, '#F4ECE0', { r: 2, noSpot: true }),
+  SIDE('right', 'jharokha-catch-all', 'archtray', 420, 260, 84, 104, '#C99A6C', { r: 2, noSpot: true }), SIDE('right', 'pebble-coasters', 'pebbles', 640, 430, 74, 30, '#6B7B5B', { r: 2, noSpot: true })
+];
+function tourRoom(p) { return p < TR[1].span[0] ? 0 : p < TR[2].span[0] ? 1 : 2; }
+function tourCamera(L, p, ri) {
+  const R = TR[ri], m = L.mobile;
+  const f = m ? Math.min(L.H * .62, L.W * 1.25) : Math.min(L.H * .95, L.W * .8);
+  let z = 250, x = 0;
+  if (ri === 0) z = -950 + 1200 * ease(seg(p, R.walk[0], R.walk[1]));
+  else z = 120 + 130 * ease(seg(p, R.into[0], R.into[0] + .03));
+  z += 120 * ease(seg(p, R.light[0], R.light[1]));
+  // turn to face the left shelves, then the right ones
+  const lw = ease(seg(p, R.left[0], R.left[0] + .025)) * (1 - ease(seg(p, R.right[0], R.right[0] + .025)));
+  const rw = ease(seg(p, R.right[0], R.right[0] + .025)) * (R.out ? 1 - ease(seg(p, R.out[0], R.out[0] + .02)) : 1 - ease(seg(p, .87, .9)));
+  const turn = m ? 1.25 : 1.1; const yaw = turn * (rw - lw); x = 90 * (rw - lw);
+  if (R.out) z += 300 * ease(seg(p, R.out[0], R.out[1]));
+  else z -= 80 * ease(seg(p, .87, .93));
+  return { x, z, f, yaw, eye: T3.eye, cy: L.H * (m ? .5 : .52) };
 }
-function curtains(ctx, w, t, wind, col) {
-  const span = w.x1 - w.x0, pw = span * .3, n = 7;
-  [[w.x0 - 14, w.x0 - 14 + pw, 1], [w.x1 + 14 - pw, w.x1 + 14, -1]].forEach(([a, b, dir]) => {
-    for (let i = 0; i < n; i++) {
-      const f0 = i / n, f1 = (i + 1) / n; const sway = (f) => (wind * (dir > 0 ? f : 1 - f) + 4) * Math.sin(t * 1.5 + f * 5 + dir);
-      const xa = a + (b - a) * f0, xb = a + (b - a) * f1; const yb = w.y1 + 50;
-      ctx.fillStyle = rgba(col, i % 2 ? .62 : .5);
-      ctx.beginPath(); ctx.moveTo(xa, w.y0 - 18); ctx.lineTo(xb, w.y0 - 18); ctx.quadraticCurveTo(xb + sway(f1) * .4, (w.y0 + yb) / 2, xb + sway(f1), yb); ctx.lineTo(xa + sway(f0), yb); ctx.quadraticCurveTo(xa + sway(f0) * .4, (w.y0 + yb) / 2, xa, w.y0 - 18); ctx.closePath(); ctx.fill();
-    }
-  });
-  ctx.fillStyle = '#7A5A3C'; ctx.fillRect(w.x0 - 30, w.y0 - 22, span + 60, 5);
+function cam3(X, Y, Z, c) { const dx = X - c.x, dz = Z - c.z, cs = Math.cos(c.yaw || 0), sn = Math.sin(c.yaw || 0); return [dx * cs - dz * sn, Y - c.eye, dx * sn + dz * cs]; }
+function p3(X, Y, Z, c, L) { const v = cam3(X, Y, Z, c); if (v[2] < 4) return null; const s = c.f / v[2]; return { x: L.W / 2 + v[0] * s, y: c.cy - v[1] * s, s }; }
+// fill a 3D polygon, clipped against the near plane so walls behind the camera still draw correctly
+function quad(ctx, pts, c, L, fill) {
+  const NZ = 8, v = pts.map((a) => cam3(a[0], a[1], a[2], c)), out = [];
+  v.forEach((a, i) => { const b = v[(i + 1) % v.length]; if (a[2] >= NZ) out.push(a); if ((a[2] >= NZ) !== (b[2] >= NZ)) { const t = (NZ - a[2]) / (b[2] - a[2]); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, NZ]); } });
+  if (out.length < 3) return; ctx.fillStyle = fill; ctx.beginPath();
+  out.forEach((a, i) => { const s = c.f / a[2], x = L.W / 2 + a[0] * s, y = c.cy - a[1] * s; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); ctx.fill();
+}
+function itemPos(o, ri) {
+  const { D, W2 } = T3;
+  if (o.where === 'back') return { X: o.x, Y: o.y, Z: D - 70 };
+  return { X: o.side === 'left' ? -W2 + 46 : W2 - 46, Y: o.y, Z: o.zz };
+}
+function itemReveal(o, p) {
+  const R = TR[o.r]; if (o.where === 'back') return 1;
+  const list = TOUR_ITEMS.filter((x) => x.r === o.r && x.where === o.where); const k = list.indexOf(o), n = list.length;
+  const w = o.where === 'left' ? R.left : R.right; const a = w[0] + (w[1] - w[0]) * .8 * k / n;
+  return ease(seg(p, a, a + (w[1] - w[0]) * .45));
+}
+function candleOn(o, p) {
+  const R = TR[o.r]; if (o.k !== 'jar' && o.k !== 'pillar') return 0;
+  if (o.where !== 'back') return itemReveal(o, p) * seg(p, (o.where === 'left' ? R.left : R.right)[1] - .01, (o.where === 'left' ? R.left : R.right)[1] + .01);
+  const list = TOUR_ITEMS.filter((x) => x.r === o.r && x.where === 'back' && (x.k === 'jar' || x.k === 'pillar')); const k = list.indexOf(o), n = list.length;
+  const a = R.light[0] + (R.light[1] - R.light[0]) * k / n; return seg(p, a, a + .012);
+}
+function drawBox(ctx, x, y, s, w, h, c) {
+  ctx.fillStyle = shade(c, .82); ctx.fillRect(x - w / 2 * s + 6 * s, y - h * s - 6 * s, w * s, h * s);
+  ctx.fillStyle = c; ctx.fillRect(x - w / 2 * s, y - h * s, w * s, h * s);
+  ctx.fillStyle = '#F5ECDD'; ctx.fillRect(x - w * .3 * s, y - h * .7 * s, w * .6 * s, h * .4 * s);
+  const lf = tintLeaf('#3D281E'); if (lf) { const hh = h * .22 * s; ctx.drawImage(lf, x - hh * .45, y - h * .66 * s, hh * .9, hh); }
+  ctx.strokeStyle = '#8A6A44'; ctx.lineWidth = 1.4 * s; ctx.beginPath(); ctx.moveTo(x + w * .38 * s, y - h * s); ctx.lineTo(x + w * .38 * s, y); ctx.stroke();
 }
 function sceneTour(ctx, L, p, t) {
-  const K = SK(); const cfg = OPENINGS.tour;
-  const night = ease(seg(p, .5, .8)), glow = .45 + .55 * night;
-  const v = Math.min(1, Math.abs(p - (LC.lastP ?? p)) * 900); LC.lastP = p; LC.wind = (LC.wind || 0) * .9 + v * 40 * .1;
-  const cam = tourCam(L, p); const cx = L.W / 2, cy = L.H * (L.mobile ? .42 : .5);
-  // sky behind the house (seen when the camera pulls back)
-  const sky = ctx.createLinearGradient(0, 0, 0, L.H); sky.addColorStop(0, mixHex(K.duskWall, '#0E0806', .3)); sky.addColorStop(1, mixHex(K.wall[2], K.duskWall, .5));
-  ctx.fillStyle = sky; ctx.fillRect(0, 0, L.W, L.H);
-  ctx.save(); ctx.translate(cx, cy); ctx.scale(cam.z, cam.z); ctx.translate(-cam.x, -cam.y);
-  const W = (x) => x; const roomCols = [K.arch[3], K.arch[2], K.arch[1]];
-  // ground and roof (visible in the whole-house view)
-  ctx.fillStyle = mixHex(K.floor[2], '#000000', .25); ctx.fillRect(-2000, 600, 7000, 900);
-  const roof = mixHex(K.arch[0], '#1A100B', .25);
-  ctx.fillStyle = roof; ctx.beginPath(); ctx.moveTo(-90, -30); ctx.lineTo(1500, -360); ctx.lineTo(3090, -30); ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = rgba('#000000', .18); ctx.lineWidth = 6; for (let i = 1; i < 9; i++) { const yy = -30 - i * 36; const half = 1590 * (1 - i * 36 / 330); ctx.beginPath(); ctx.moveTo(1500 - half, yy); ctx.lineTo(1500 + half, yy); ctx.stroke(); }
-  // rooms
-  TOUR.rooms.forEach((r, i) => {
-    const wc = mixHex(roomCols[i], K.duskWall, night * .55);
-    ctx.fillStyle = wc; ctx.fillRect(r.x, 0, 1000, 560);
-    const fl = ctx.createLinearGradient(0, 560, 0, 600); fl.addColorStop(0, mixHex(K.floor[i], '#000000', night * .3)); fl.addColorStop(1, shade(K.floor[i], .8));
-    ctx.fillStyle = fl; ctx.fillRect(r.x, 540, 1000, 60);
-    ctx.fillStyle = rgba('#000000', .12); ctx.fillRect(r.x, 530, 1000, 10);
-    ctx.fillStyle = mixHex(wc, '#000000', .25); ctx.fillRect(r.x, -30, 1000, 30);
-    // pendant lamp
-    const lx = r.x + (i === 1 ? 1180 - 1000 : 500); ctx.strokeStyle = rgba('#000000', .4); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(lx, 0); ctx.lineTo(lx, 70); ctx.stroke();
-    ctx.fillStyle = mixHex(K.plinth, '#000000', .1); ctx.beginPath(); ctx.moveTo(lx - 34, 100); ctx.quadraticCurveTo(lx, 50, lx + 34, 100); ctx.closePath(); ctx.fill();
-    if (night > 0) { const g = ctx.createRadialGradient(lx, 110, 0, lx, 110, 420); g.addColorStop(0, `rgba(255,200,140,${.3 * night})`); g.addColorStop(1, 'rgba(255,200,140,0)'); ctx.fillStyle = g; ctx.fillRect(lx - 420, 0, 840, 560); }
-  });
-  // windows: sky, light on the floor, dust, curtains
-  TOUR.windows.forEach((w, i) => {
-    const r = (w.x1 - w.x0) / 2, mx = (w.x0 + w.x1) / 2; const win2 = new Path2D(); win2.moveTo(w.x0, w.y1); win2.lineTo(w.x0, w.y0 + r); win2.arc(mx, w.y0 + r, r, Math.PI, 0); win2.lineTo(w.x1, w.y1); win2.closePath();
-    const sg = ctx.createLinearGradient(0, w.y0, 0, w.y1); sg.addColorStop(0, mixHex('#F6E3C4', '#2B2340', night)); sg.addColorStop(1, mixHex('#FBEFD9', '#4A3048', night)); ctx.fillStyle = sg; ctx.fill(win2);
-    ctx.strokeStyle = mixHex(K.plinth, '#000000', .2); ctx.lineWidth = 10; ctx.stroke(win2); ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(mx, w.y0); ctx.lineTo(mx, w.y1); ctx.moveTo(w.x0, (w.y0 + w.y1) / 2 + 30); ctx.lineTo(w.x1, (w.y0 + w.y1) / 2 + 30); ctx.stroke();
-    ctx.fillStyle = mixHex(K.plinth, '#000000', .1); ctx.fillRect(w.x0 - 20, w.y1, w.x1 - w.x0 + 40, 12);
-    const la = .32 * (1 - night);
-    if (la > 0) {
-      const dx = 260; ctx.fillStyle = `rgba(${K.light},${la * .5})`; ctx.beginPath(); ctx.moveTo(w.x0, w.y1 + 12); ctx.lineTo(w.x1, w.y1 + 12); ctx.lineTo(w.x1 + dx, 556); ctx.lineTo(w.x0 + dx, 556); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = `rgba(${K.light},${la})`; ctx.beginPath(); ctx.moveTo(w.x0 + dx - 20, 556); ctx.lineTo(w.x1 + dx + 30, 556); ctx.lineTo(w.x1 + dx + 60, 590); ctx.lineTo(w.x0 + dx + 10, 590); ctx.closePath(); ctx.fill();
-      for (let k = 0; k < 18; k++) { const m = LC.motes[(k + i * 18) % LC.motes.length]; const fy = (m.y + t * .03 * m.s) % 1; const yy = w.y1 + fy * (556 - w.y1); const xx = w.x0 + m.x * (w.x1 - w.x0) + fy * dx + Math.sin(t * m.s + m.ph) * 6; ctx.fillStyle = `rgba(${K.light},${.6 * la * Math.sin(Math.PI * fy) * 2})`; ctx.beginPath(); ctx.arc(xx, yy, 1.6 + m.s, 0, TAU); ctx.fill(); }
+  const K = SK(); const ri = tourRoom(p); const R = TR[ri]; const c = tourCamera(L, p, ri);
+  const { D, W2, H } = T3; const zn = c.z < -10 ? 0 : -300;
+  const wall = mixHex(K.arch[R.wall], '#000000', .05), side = shade(wall, .86), ceil = shade(wall, .62), floor = K.floor[ri];
+  ctx.fillStyle = shade(wall, .5); ctx.fillRect(0, 0, L.W, L.H);
+  // room box
+  quad(ctx, [[-W2, H, zn], [W2, H, zn], [W2, H, D], [-W2, H, D]], c, L, ceil);
+  quad(ctx, [[-W2, 0, zn], [W2, 0, zn], [W2, 0, D], [-W2, 0, D]], c, L, floor);
+  for (let i = 1; i < 8; i++) { const zz = i * D / 8; if (zz > zn) quad(ctx, [[-W2, 0, zz], [W2, 0, zz], [W2, 0, zz + 3], [-W2, 0, zz + 3]], c, L, rgba('#000000', .08)); }
+  quad(ctx, [[-W2, 0, zn], [-W2, 0, D], [-W2, H, D], [-W2, H, zn]], c, L, side);
+  quad(ctx, [[W2, 0, zn], [W2, 0, D], [W2, H, D], [W2, H, zn]], c, L, side);
+  quad(ctx, [[-W2, 0, D], [W2, 0, D], [W2, H, D], [-W2, H, D]], c, L, wall);
+  // skirting and cornice lines
+  [[0, 14], [H - 18, H]].forEach(([y0, y1]) => { quad(ctx, [[-W2, y0, zn], [-W2, y0, D], [-W2, y1, D], [-W2, y1, zn]], c, L, rgba('#000000', .12)); quad(ctx, [[W2, y0, zn], [W2, y0, D], [W2, y1, D], [W2, y1, zn]], c, L, rgba('#000000', .12)); quad(ctx, [[-W2, y0, D], [W2, y0, D], [W2, y1, D], [-W2, y1, D]], c, L, rgba('#000000', .12)); });
+  // centre niche: an arch recess with two shelves
+  const arch = [[-250, 0, D], [-250, 370, D]]; for (let i = 1; i < 16; i++) { const a = Math.PI - i / 16 * Math.PI; arch.push([Math.cos(a) * 250, 370 + Math.sin(a) * 250, D]); } arch.push([250, 370, D], [250, 0, D]);
+  quad(ctx, arch, c, L, shade(wall, .72));
+  [250, 450].forEach((y) => { quad(ctx, [[-240, y, D - 110], [240, y, D - 110], [240, y, D], [-240, y, D]], c, L, mixHex(K.plinth, '#000000', .08)); quad(ctx, [[-240, y - 14, D - 110], [240, y - 14, D - 110], [240, y, D - 110], [-240, y, D - 110]], c, L, mixHex(K.plinth, '#000000', .25)); });
+  // side shelves
+  ['left', 'right'].forEach((sd) => { const sx = sd === 'left' ? -1 : 1; [260, 430].forEach((y) => { const x0 = sx * W2, x1 = sx * (W2 - 92); quad(ctx, [[x0, y, 300], [x1, y, 300], [x1, y, 800], [x0, y, 800]], c, L, mixHex(K.plinth, '#000000', .1)); quad(ctx, [[x1, y - 14, 300], [x1, y, 300], [x1, y, 800], [x1, y - 14, 800]], c, L, mixHex(K.plinth, '#000000', .3)); quad(ctx, [[x0, y - 14, 300], [x1, y - 14, 300], [x1, y, 300], [x0, y, 300]], c, L, mixHex(K.plinth, '#000000', .2)); }); });
+  // sheer curtains either side of the niche, swaying
+  const wind = 5 + (LC.wind || 0);
+  [-1, 1].forEach((sd) => { const a = p3(sd * 300, H - 40, D - 30, c, L), b = p3(sd * 520, 0, D - 30, c, L); if (!a || !b) return; const x0 = Math.min(a.x, b.x), x1 = Math.max(a.x, b.x), n = 6;
+    for (let i = 0; i < n; i++) { const f0 = i / n, f1 = (i + 1) / n; const sw = (f) => wind * a.s * 2 * Math.sin(t * 1.4 + f * 5 + sd) * (sd > 0 ? f : 1 - f); const xa = x0 + (x1 - x0) * f0, xb = x0 + (x1 - x0) * f1;
+      ctx.fillStyle = rgba('#F7EEE2', i % 2 ? .5 : .38); ctx.beginPath(); ctx.moveTo(xa, a.y); ctx.lineTo(xb, a.y); ctx.quadraticCurveTo(xb + sw(f1) * .5, (a.y + b.y) / 2, xb + sw(f1), b.y); ctx.lineTo(xa + sw(f0), b.y); ctx.quadraticCurveTo(xa + sw(f0) * .5, (a.y + b.y) / 2, xa, a.y); ctx.closePath(); ctx.fill(); }
+    ctx.fillStyle = '#7A5A3C'; ctx.fillRect(x0 - 6, a.y - 4, x1 - x0 + 12, 4); });
+  // pieces in this room, far to near
+  const items = TOUR_ITEMS.map((o, i) => ({ o, i })).filter((v) => v.o.r === ri).map((v) => { const ps = itemPos(v.o, ri); return { ...v, ps, rv: itemReveal(v.o, p) }; }).sort((a, b) => b.ps.Z - a.ps.Z);
+  const placed = [];
+  items.forEach((v) => { const o = v.o; if (v.rv <= 0) return; const drop = (1 - v.rv) * 60; const q = p3(v.ps.X, v.ps.Y + drop, v.ps.Z, c, L); if (!q) return;
+    ctx.save(); ctx.globalAlpha = Math.min(1, v.rv * 1.4);
+    if (o.k === 'box') drawBox(ctx, q.x, q.y, q.s, o.w, o.h, o.c); else { castShadow(ctx, o, q.x, q.y, q.s, -.4, .7, .14); drawObj(ctx, o, q.x, q.y, q.s, o.side === 'right' ? 1 : -1); }
+    ctx.restore(); placed.push({ v, q }); });
+  // darkness, with light around every lit candle and every placed piece
+  const lit = items.filter((v) => (v.o.k === 'jar' || v.o.k === 'pillar')).reduce((a, v) => a + candleOn(v.o, p), 0) / Math.max(1, items.filter((v) => v.o.where === 'back' && (v.o.k === 'jar' || v.o.k === 'pillar')).length);
+  const dark = R.dark[0] + (R.dark[1] - R.dark[0]) * clamp(lit);
+  const m = LC.mctx; m.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); m.globalCompositeOperation = 'source-over'; m.clearRect(0, 0, L.W, L.H);
+  m.fillStyle = rgba(K.night, dark); m.fillRect(0, 0, L.W, L.H); m.globalCompositeOperation = 'destination-out';
+  placed.forEach(({ v, q }) => { const on = candleOn(v.o, p); const rr = (on > 0 ? 300 : 150) * q.s; const a = on > 0 ? .9 * on : .55 * v.rv * (v.o.where === 'back' ? .4 : 1);
+    if (a <= 0) return; const g = m.createRadialGradient(q.x, q.y - v.o.h * q.s * .6, 0, q.x, q.y - v.o.h * q.s * .6, rr); g.addColorStop(0, `rgba(0,0,0,${a})`); g.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = g; m.fillRect(q.x - rr, q.y - rr - v.o.h * q.s, rr * 2, rr * 2); });
+  m.globalCompositeOperation = 'source-over';
+  ctx.drawImage(LC.mask, 0, 0, L.W, L.H);
+  placed.forEach(({ v, q }) => { const on = candleOn(v.o, p); if (on <= 0) return; const fy = q.y - v.o.h * q.s - (v.o.k === 'jar' ? 15 : 9) * q.s; flame(ctx, q.x + q.s, fy, q.s * (v.o.k === 'jar' ? 1.1 : .9), on, t + v.i); });
+  // product labels
+  const black = (R.out ? seg(p, R.out[0], R.out[1]) : 0) + (R.into ? 1 - seg(p, R.into[0], R.into[1]) : 0);
+  LC.spots = TOUR_ITEMS.map((o, i) => { if (!o.id || o.noSpot || o.r !== ri) return { x: 0, y: 0, a: 0 }; const pl = placed.find((x) => x.v.i === i); if (!pl) return { x: 0, y: 0, a: 0 };
+    const ready = o.where === 'back' ? candleOn(o, p) : pl.v.rv; const up = (o.k === 'jar' ? 40 : o.k === 'pillar' ? 40 : o.k === 'tray' ? -46 : 22) * pl.q.s;
+    const x = pl.q.x, y = pl.q.y - o.h * pl.q.s - up; const vis = x > 50 && x < L.W - 50 && y > 70 && y < L.H - 40 ? 1 : 0;
+    return { x, y, a: ready * vis * (1 - clamp(black * 3)) * (ri === 0 ? seg(p, .2, .23) : 1) }; });
+  // the front of the house: a huge centred door that swings open, then flies past
+  if (ri === 0 && c.z < -10) {
+    const open = ease(seg(p, .03, .14)); const dw = 300, dh = 1000, ar = dw;
+    const fc = mixHex(K.wall[0], '#1E130E', .1);
+    const f0 = p3(0, 0, 0, c, L); if (f0) {
+      const s = f0.s, top = c.cy - (dh - ar - c.eye) * s, rr = ar * s;
+      const hole = new Path2D(); hole.moveTo(f0.x - rr, f0.y); hole.lineTo(f0.x - rr, top); hole.arc(f0.x, top, rr, Math.PI, 0); hole.lineTo(f0.x + rr, f0.y); hole.closePath();
+      const fp = new Path2D(); fp.rect(-L.W, -L.H, L.W * 3, L.H * 3); fp.addPath(hole);
+      ctx.fillStyle = fc; ctx.fill(fp, 'evenodd');
+      const sky = ctx.createLinearGradient(0, 0, 0, f0.y); sky.addColorStop(0, rgba('#000000', .18)); sky.addColorStop(1, rgba('#000000', 0)); ctx.save(); ctx.fillStyle = sky; ctx.fill(fp, 'evenodd'); ctx.restore();
+      ctx.fillStyle = shade(fc, .7); ctx.fillRect(0, f0.y, L.W, L.H - f0.y);
+      ctx.lineWidth = 30 * s; ctx.strokeStyle = shade(fc, .78); ctx.stroke(hole);
+      ctx.fillStyle = shade(fc, .6); ctx.fillRect(f0.x - rr * 1.4, f0.y, rr * 2.8, 26 * s);
+      // door leaves hinged at each side of the opening, swinging into the house
+      const ang = open * 1.4;
+      [-1, 1].forEach((sd) => {
+        const hx = sd * dw; const pts = [];
+        const N = 14; const loc = [[0, 0], [1, 0]]; // leaf outline: u across from the hinge (0..1), v height; the top follows the arch
+        for (let i = N; i >= 0; i--) { const a = (i / N) * Math.PI / 2; loc.push([1 - Math.cos(a), dh - ar + Math.sin(a) * ar]); }
+        const P3s = loc.map(([u, v]) => { const X = hx - sd * u * dw * Math.cos(ang), Z = u * dw * Math.sin(ang); return p3(X, v, Z, c, L); });
+        if (P3s.some((v) => !v)) return;
+        const g = ctx.createLinearGradient(P3s[0].x, 0, P3s[1].x, 0); g.addColorStop(0, '#6A4229'); g.addColorStop(1, shade('#7A4E30', 1 - open * .35));
+        ctx.fillStyle = g; ctx.beginPath(); P3s.forEach((v, i) => i ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y)); ctx.closePath(); ctx.fill();
+        const panel = (u0, u1, v0, v1) => { const q = [[u0, v0], [u1, v0], [u1, v1], [u0, v1]].map(([u, v]) => p3(hx - sd * u * dw * Math.cos(ang), v, u * dw * Math.sin(ang), c, L)); if (q.some((v) => !v)) return; ctx.strokeStyle = rgba('#000000', .28); ctx.lineWidth = Math.max(1, 3 * s); ctx.beginPath(); q.forEach((v, i) => i ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y)); ctx.closePath(); ctx.stroke(); };
+        panel(.18, .82, 90, 420); panel(.18, .82, 470, 760);
+        const kn = p3(hx - sd * .9 * dw * Math.cos(ang), 470, .9 * dw * Math.sin(ang), c, L); if (kn) { ctx.fillStyle = '#C9A24A'; ctx.beginPath(); ctx.arc(kn.x, kn.y, 6 * kn.s, 0, TAU); ctx.fill(); }
+      });
+      // plaque, lamps, planters
+      const pq = p3(0, dh + 120, 0, c, L); if (pq && !L.mobile) { const ww = 300 * pq.s, hh = 64 * pq.s; ctx.fillStyle = '#F3E8D8'; ctx.fillRect(pq.x - ww / 2, pq.y - hh / 2, ww, hh); const wm = tintMark('wordmark', '#3D281E'); if (wm) { const w2 = ww * .84, h2 = w2 * wm.height / wm.width; ctx.drawImage(wm, pq.x - w2 / 2, pq.y - h2 / 2, w2, h2); } }
+      [-1, 1].forEach((sd) => { const lp = p3(sd * (dw + 150), 640, 0, c, L); if (lp) { ctx.fillStyle = '#2E241E'; ctx.fillRect(lp.x - 14 * lp.s, lp.y - 40 * lp.s, 28 * lp.s, 52 * lp.s); const g = ctx.createRadialGradient(lp.x, lp.y, 0, lp.x, lp.y, 200 * lp.s); g.addColorStop(0, 'rgba(255,206,140,.55)'); g.addColorStop(1, 'rgba(255,206,140,0)'); ctx.fillStyle = g; ctx.fillRect(lp.x - 200 * lp.s, lp.y - 200 * lp.s, 400 * lp.s, 400 * lp.s); ctx.fillStyle = '#FFE3B0'; ctx.fillRect(lp.x - 9 * lp.s, lp.y - 32 * lp.s, 18 * lp.s, 30 * lp.s); }
+        const pp = p3(sd * (dw + 330), 0, -40, c, L); if (pp) { const s2 = pp.s; ctx.fillStyle = '#A55B3F'; ctx.beginPath(); ctx.moveTo(pp.x - 60 * s2, pp.y - 120 * s2); ctx.lineTo(pp.x + 60 * s2, pp.y - 120 * s2); ctx.lineTo(pp.x + 46 * s2, pp.y); ctx.lineTo(pp.x - 46 * s2, pp.y); ctx.closePath(); ctx.fill(); const lf = tintLeaf('#55663F'); if (lf) { ctx.save(); ctx.translate(pp.x, pp.y - 120 * s2); ctx.rotate(sd * .22); const hh = 280 * s2, ww = hh * lf.width / lf.height; ctx.drawImage(lf, -ww / 2, -hh, ww, hh); ctx.restore(); } } });
     }
-    curtains(ctx, w, t, 6 + (LC.wind || 0), '#F7EEE2');
-  });
-  // hall: arch niche and console; living: shelves, picture lights and sofa; bedroom: bed and bedside table
-  const niche = (x0, x1, y0, y1, col) => { const r = (x1 - x0) / 2; ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x0, y1); ctx.lineTo(x0, y0 + r); ctx.arc((x0 + x1) / 2, y0 + r, r, Math.PI, 0); ctx.lineTo(x1, y1); ctx.closePath(); ctx.fill(); };
-  niche(620, 760, 130, 320, mixHex(roomCols[0], '#000000', .18));
-  ctx.fillStyle = '#6E4A30'; ctx.fillRect(470, 410, 400, 16); ctx.fillStyle = '#5A3C27'; ctx.fillRect(490, 426, 12, 134); ctx.fillRect(838, 426, 12, 134); ctx.fillRect(490, 500, 360, 8);
-  ctx.fillStyle = rgba('#000000', .14); ctx.beginPath(); ctx.ellipse(560, 575, 330, 18, 0, 0, TAU); ctx.fill();
-  [[1440, 1910, 230], [1440, 1910, 360]].forEach(([a, b, y]) => { ctx.fillStyle = mixHex(K.plinth, '#000000', .06); ctx.fillRect(a, y, b - a, 14); ctx.fillStyle = rgba('#000000', .16); ctx.fillRect(a, y + 14, b - a, 8);
-    ctx.fillStyle = '#B8A46A'; ctx.fillRect((a + b) / 2 - 60, y - 140 + 4, 120, 6); const g = ctx.createLinearGradient(0, y - 130, 0, y); g.addColorStop(0, `rgba(255,224,170,${.18 * glow})`); g.addColorStop(1, 'rgba(255,224,170,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo((a + b) / 2 - 60, y - 132); ctx.lineTo((a + b) / 2 + 60, y - 132); ctx.lineTo(b, y); ctx.lineTo(a, y); ctx.closePath(); ctx.fill(); });
-  ctx.fillStyle = mixHex('#E9DFD0', '#000000', night * .3); ctx.beginPath(); rp(ctx, 1090, 440, 290, 100, 18); ctx.fill(); ctx.fillStyle = mixHex('#DCCFBD', '#000000', night * .3); ctx.fillRect(1100, 420, 270, 40); ctx.fillStyle = '#C08A5B'; ctx.fillRect(1120, 425, 60, 32);
-  niche(2180, 2300, 140, 300, mixHex(roomCols[2], '#000000', .18));
-  ctx.fillStyle = mixHex(K.plinth, '#000000', .15); ctx.beginPath(); ctx.moveTo(2060, 470); ctx.lineTo(2060, 380); ctx.arc(2240, 380, 180, Math.PI, 0); ctx.lineTo(2420, 470); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = mixHex('#F4ECE0', '#000000', night * .3); ctx.fillRect(2040, 450, 400, 90); ctx.fillStyle = mixHex('#C9D0B8', '#000000', night * .3); ctx.fillRect(2200, 452, 240, 88); ctx.fillStyle = '#FBF6EE'; ctx.beginPath(); ctx.ellipse(2110, 452, 60, 18, 0, 0, TAU); ctx.fill();
-  ctx.fillStyle = '#6E4A30'; ctx.fillRect(2460, 430, 140, 14); ctx.fillStyle = '#5A3C27'; ctx.fillRect(2470, 444, 120, 116);
-  // divider walls between rooms with arched doorways
-  [1000, 2000].forEach((x) => { ctx.fillStyle = mixHex(K.arch[0], '#000000', .2 + night * .3); ctx.fillRect(x - 16, -30, 32, 630); });
-  // products
-  const sun = -1 + 2 * seg(p, 0, .7);
-  TOUR.items.forEach((o) => { castShadow(ctx, o, o.x, o.y, 1, sun, .7, .16); drawObj(ctx, o, o.x, o.y, 1, sun); });
-  // outer walls of the house
-  ctx.fillStyle = mixHex(K.arch[0], '#000000', .3); ctx.fillRect(-30, -30, 30, 630); ctx.fillRect(3000, -30, 30, 630);
-  // evening: dim the house, then let every candle glow
-  ctx.fillStyle = rgba(K.night, .5 * night); ctx.fillRect(-100, -400, 3200, 1000);
-  TOUR.items.forEach((o) => { if (o.k !== 'jar' && o.k !== 'pillar') return; const fy = o.y - o.h - (o.k === 'jar' ? 15 : 9); flame(ctx, o.x + 1, fy, o.k === 'jar' ? 1.05 : .85, Math.min(1, .55 + glow * .45) * seg(p, .12, .18), t + o.x); });
-  ctx.restore();
-  // spots in screen space
-  const toS = (x, y) => ({ x: (x - cam.x) * cam.z + cx, y: (y - cam.y) * cam.z + cy });
-  const inside = seg(p, .16, .2) * (1 - seg(p, .7, .74));
-  LC.spots = TOUR.items.map((o) => { if (!o.id || o.noSpot) return { x: 0, y: 0, a: 0 }; const up = o.up ?? (o.k === 'jar' ? 34 : o.k === 'pillar' ? 36 : o.k === 'tray' ? -40 : 18); const sp = toS(o.x + (o.k === 'tray' ? -60 : 0), o.y - o.h - up); const vis = sp.x > 40 && sp.x < L.W - 40 && sp.y > 60 && sp.y < L.H - 30 ? 1 : 0; return { x: sp.x, y: sp.y, a: inside * vis }; });
-  // the front of the house: door, plaque, lamps, planters (screen space, flies past as we step in)
-  const open = ease(seg(p, .035, .1)), fly = ease(seg(p, .1, .18));
-  if (fly < 1) {
-    const dcx = L.mobile ? L.W / 2 : L.W * .63, dby = L.mobile ? L.H * .9 : L.H * .92; const u = L.mobile ? L.W / 520 : Math.min(L.W / 1300, L.H / 800);
-    const dw = 250 * u, dh = 410 * u, sc = 1 + 14 * fly * fly;
-    ctx.save(); ctx.globalAlpha = 1 - seg(fly, .7, 1); ctx.translate(dcx, dby - dh * .45); ctx.scale(sc, sc); ctx.translate(-dcx, -(dby - dh * .45));
-    const facade = mixHex(K.wall[0], '#1E130E', .12);
-    const ap = new Path2D(); ap.moveTo(dcx - dw / 2, dby); ap.lineTo(dcx - dw / 2, dby - dh + dw / 2); ap.arc(dcx, dby - dh + dw / 2, dw / 2, Math.PI, 0); ap.lineTo(dcx + dw / 2, dby); ap.closePath();
-    const fp = new Path2D(); fp.rect(-L.W * 2, -L.H * 2, L.W * 5, L.H * 5); fp.addPath(ap);
-    ctx.fillStyle = facade; ctx.fill(fp, 'evenodd');
-    ctx.fillStyle = rgba('#000000', .12); for (let i = 0; i < 14; i++) ctx.fillRect(-L.W, dby - i * 46 * u, L.W * 3, 1);
-    ctx.lineWidth = 22 * u; ctx.strokeStyle = shade(facade, .8); ctx.stroke(ap);
-    ctx.fillStyle = shade(facade, .7); ctx.fillRect(dcx - dw, dby, dw * 2, 14 * u);
-    // doors swing open
-    const leaf = (side) => { const wv = dw / 2 * (1 - open * .92); const x0 = side < 0 ? dcx - dw / 2 : dcx + dw / 2 - wv; ctx.save(); ctx.beginPath(); ctx.clip(ap); const g = ctx.createLinearGradient(x0, 0, x0 + wv, 0); const wood = '#7A4E30'; g.addColorStop(0, shade(wood, side < 0 ? 1 - open * .3 : .8)); g.addColorStop(1, shade(wood, side < 0 ? .8 : 1 - open * .3)); ctx.fillStyle = g; ctx.fillRect(x0, dby - dh, wv, dh);
-      ctx.strokeStyle = rgba('#000000', .25); ctx.lineWidth = 2 * u; ctx.strokeRect(x0 + wv * .18, dby - dh * .55, wv * .64, dh * .4); ctx.strokeRect(x0 + wv * .18, dby - dh * .92 + dw / 2 * .3, wv * .64, dh * .28);
-      ctx.fillStyle = '#C9A24A'; ctx.beginPath(); ctx.arc(side < 0 ? x0 + wv - 12 * u : x0 + 12 * u, dby - dh * .48, 4 * u, 0, TAU); ctx.fill(); ctx.restore(); };
-    leaf(-1); leaf(1);
-    // plaque with the wordmark
-    const py = dby - dh - 70 * u; if (!L.mobile) { ctx.fillStyle = '#F3E8D8'; ctx.fillRect(dcx - 120 * u, py - 22 * u, 240 * u, 48 * u);
-    const wm = tintMark('wordmark', '#3D281E'); if (wm) { const ww = 200 * u, hh = ww * wm.height / wm.width; ctx.drawImage(wm, dcx - ww / 2, py + 2 * u - hh / 2, ww, hh); } }
-    [-1, 1].forEach((sd) => { const lx = dcx + sd * (dw / 2 + 60 * u), ly = dby - dh * .62; ctx.fillStyle = '#2E241E'; ctx.fillRect(lx - 9 * u, ly - 26 * u, 18 * u, 34 * u); const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, 120 * u); g.addColorStop(0, 'rgba(255,206,140,.55)'); g.addColorStop(1, 'rgba(255,206,140,0)'); ctx.fillStyle = g; ctx.fillRect(lx - 120 * u, ly - 120 * u, 240 * u, 240 * u); ctx.fillStyle = '#FFE3B0'; ctx.fillRect(lx - 6 * u, ly - 20 * u, 12 * u, 20 * u);
-      const px = dcx + sd * (dw / 2 + 120 * u); ctx.fillStyle = '#A55B3F'; ctx.beginPath(); ctx.moveTo(px - 34 * u, dby - 70 * u); ctx.lineTo(px + 34 * u, dby - 70 * u); ctx.lineTo(px + 26 * u, dby); ctx.lineTo(px - 26 * u, dby); ctx.closePath(); ctx.fill();
-      const lf = tintLeaf('#55663F'); if (lf) { ctx.save(); ctx.translate(px, dby - 70 * u); ctx.rotate(sd * .25); const hh = 150 * u, ww = hh * lf.width / lf.height; ctx.drawImage(lf, -ww / 2, -hh, ww, hh); ctx.restore(); } });
-    ctx.restore();
   }
+  // fade between rooms
+  if (black > 0) { ctx.fillStyle = rgba('#0B0705', clamp(black)); ctx.fillRect(0, 0, L.W, L.H); }
+  const fin = seg(p, .86, .93); if (fin > 0) { ctx.fillStyle = rgba(K.night, .5 * fin); ctx.fillRect(0, 0, L.W, L.H); }
+  const v = Math.min(1, Math.abs(p - (LC.lastP ?? p)) * 900); LC.lastP = p; LC.wind = (LC.wind || 0) * .9 + v * 40 * .1;
 }
 const MARKS = {}; const MARK_SRC = { wordmark: 'assets/logo-wordmark.png' };
 function tintMark(name, col) {
@@ -1420,6 +1442,7 @@ function lcResize() {
   if (!LC.cv) return; const r = LC.cv.getBoundingClientRect(); LC.W = r.width; LC.H = r.height;
   LC.dpr = Math.min(window.devicePixelRatio || 1, LC.W < 760 ? 1.5 : 2);
   LC.cv.width = Math.round(LC.W * LC.dpr); LC.cv.height = Math.round(LC.H * LC.dpr);
+  if (!LC.mask) { LC.mask = document.createElement('canvas'); LC.mctx = LC.mask.getContext('2d'); } LC.mask.width = LC.cv.width; LC.mask.height = LC.cv.height;
 }
 function lcDraw(p, t) {
   const ctx = LC.ctx; if (!ctx || !LC.W) return; ctx.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); ctx.clearRect(0, 0, LC.W, LC.H);
