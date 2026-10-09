@@ -7,12 +7,18 @@
   --ivory: #F5EFE4; --plaster: #EFE7DA; --linen: #EDE3D3; --sand: #DCC9AE; --sand2: #E2D2B8; --card: #FBF8F2;
   --caramel: #B88352; --terra: #B0644A; --terra-ink: #94503A; --olive: #6B6B43;
   --choc: #3A2920; --choc2: #5C4637; --line: #DCC9AE; --line2: #CDB799; --dusk: #6E5444; --glow: #F0CFA4;
-  --ok: #4E6B3A; --warn: #94503A;
+  --ok: #4E6B3A; --warn: #94503A; --ok-bg: #E3E3CF; --err-bg: #F1DDD3; --head-bg: rgba(239,231,218,.96);
+  --sk-ink: #3A2920; --sk-ink2: #5C4637; --sk-accent: #94503A; --sk-light: #F5EFE4; --sk-dark: #2A1E18; --sk-glow: #F0CFA4; --sk-chip: rgba(245,239,228,.94);
   --display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
   --body: 'Hanken Grotesk', 'Segoe UI', system-ui, sans-serif;
   --wrap: 1280px;
   color-scheme: light;
 }
+/* Themes by use case: festive season, monsoon edit, gifting and weddings, evening (dark). Product colours never change. */
+:root[data-skin="festive"] { --ivory: #FAF1E4; --plaster: #F3E4CE; --linen: #F1E1CB; --sand: #E2C49C; --sand2: #EAD3B3; --card: #FFF8EE; --caramel: #C68A3E; --terra: #B8572A; --terra-ink: #97461A; --olive: #6A5614; --choc: #3B2116; --choc2: #5E3B28; --line: #E2C9A6; --line2: #D2B48C; --glow: #F6C46A; --ok-bg: #ECE6C8; --err-bg: #F6DDCC; --head-bg: rgba(243,228,206,.96); --sk-accent: #97461A; --sk-glow: #F6C46A; --sk-ink: #3B2116; --sk-ink2: #5E3B28; }
+:root[data-skin="monsoon"] { --ivory: #F2F3EE; --plaster: #E6E8DE; --linen: #E5E8DD; --sand: #C9CDB8; --sand2: #D9DCCB; --card: #FAFBF7; --caramel: #A39A6E; --terra: #5E7A57; --terra-ink: #3F5A3C; --olive: #55593F; --choc: #232821; --choc2: #454B3D; --line: #D3D7C6; --line2: #BFC4AE; --glow: #DDE7C8; --ok: #3F5A3C; --ok-bg: #DDE5D2; --err-bg: #EED9D2; --head-bg: rgba(230,232,222,.96); --sk-accent: #3F5A3C; --sk-glow: #DDE7C8; --sk-ink: #232821; --sk-ink2: #454B3D; }
+:root[data-skin="gifting"] { --ivory: #FBF3EF; --plaster: #F3E6E0; --linen: #F2E3DC; --sand: #DDBFB2; --sand2: #EAD5CB; --card: #FFFAF7; --caramel: #C99A86; --terra: #B85C55; --terra-ink: #963B3A; --olive: #6A5743; --choc: #3A2226; --choc2: #5E4146; --line: #E6CFC5; --line2: #D7B6A9; --glow: #F2C2B0; --ok-bg: #E9E3D2; --err-bg: #F5DAD5; --head-bg: rgba(243,230,224,.96); --sk-accent: #963B3A; --sk-glow: #F2C2B0; --sk-ink: #3A2226; --sk-ink2: #5E4146; }
+:root[data-skin="evening"] { --ivory: #1F1612; --plaster: #2A1F19; --linen: #2E231D; --sand: #4A3A30; --sand2: #3A2D25; --card: #271D18; --caramel: #C99A6C; --terra: #D98A66; --terra-ink: #E3A07F; --olive: #C9C69B; --choc: #F2E8DA; --choc2: #CDBBA6; --line: #4A3A30; --line2: #5E4B3F; --glow: #8A4A2E; --ok: #C4D3A6; --ok-bg: #33382A; --err-bg: #4A2A22; --head-bg: rgba(31,22,18,.94); --sk-ink: #F2E8DA; --sk-ink2: #CDBBA6; --sk-accent: #E3A07F; --sk-chip: rgba(36,26,20,.92); color-scheme: dark; }
 * { box-sizing: border-box; }
 body { background: var(--ivory); color: var(--choc); font-family: var(--body); font-size: 16px; line-height: 1.55; }
 h1, h2, h3 { font-family: var(--display); font-weight: 300; line-height: 1.1; margin: 0; text-wrap: balance; }
@@ -52,7 +58,7 @@ button, input, select { font: inherit; color: inherit; }
 .proto .links button { background: transparent; border: 0; cursor: pointer; text-decoration: underline; min-height: 32px; font-size: 13px; }
 
 /* header */
-.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(239,231,218,.96); border-bottom: 1px solid var(--line); }
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--head-bg); border-bottom: 1px solid var(--line); }
 .site-head .wrap { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .logo { font-family: var(--display); font-size: 19px; letter-spacing: .14em; text-decoration: none; white-space: nowrap; }
 .nav { display: flex; gap: 26px; font-size: 15px; font-weight: 500; }
@@ -78,43 +84,47 @@ body.app .site-foot { display: none; }
 .lc { position: relative; height: 420vh; }
 .lc-stage { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 65px); height: calc(100vh - 65px); min-height: 560px; overflow: hidden; background: var(--plaster); }
 .lc-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
-.lc-copy { position: absolute; inset: 0; pointer-events: none; }
+.lc-copy { position: absolute; inset: 0; pointer-events: none; color: var(--sk-ink); }
+.lc-copy a:not(.btn) { color: var(--sk-ink); }
+.lc-hero .eyebrow { color: var(--sk-ink2); }
+.lc-hero .btn { background: var(--sk-ink); color: var(--sk-light); border-color: var(--sk-ink); }
+.lc-hero .btn.ghost { background: transparent; color: var(--sk-ink); }
 .lc-hero { position: absolute; pointer-events: auto; left: max(20px, calc((100vw - var(--wrap)) / 2 + 20px)); top: 9%; width: min(470px, 40vw); display: flex; flex-direction: column; gap: 16px; }
 .lc-hero h1 { font-size: clamp(54px, 7.4vw, 104px); line-height: .95; }
-.lc-hero .tag { font-family: var(--display); font-style: italic; font-weight: 300; font-size: clamp(22px, 2.4vw, 30px); color: var(--terra-ink); line-height: 1.2; }
-.lc-hero .sub { font-size: 17px; max-width: 420px; color: var(--choc2); }
+.lc-hero .tag { font-family: var(--display); font-style: italic; font-weight: 300; font-size: clamp(22px, 2.4vw, 30px); color: var(--sk-accent); line-height: 1.2; }
+.lc-hero .sub { font-size: 17px; max-width: 420px; color: var(--sk-ink2); }
 .lc-cta { display: flex; flex-wrap: wrap; gap: 12px; }
 .lc-cap { position: absolute; left: 0; right: 0; top: 9%; text-align: center; padding-inline: 20px; opacity: 0; pointer-events: none; }
 .lc-cap p { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4.2vw, 58px); line-height: 1.08; text-wrap: balance; }
-.lc-cap em { color: var(--terra-ink); }
+.lc-cap em { color: var(--sk-accent); }
 .lc-final { position: absolute; left: 0; right: 0; top: 7%; opacity: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; padding-inline: 20px; pointer-events: auto; }
-.lc-final p { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4vw, 52px); color: var(--ivory); text-align: center; }
-.lc-final p em { color: var(--glow); }
+.lc-final p { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4vw, 52px); color: var(--sk-light); text-align: center; }
+.lc-final p em { color: var(--sk-glow); }
 .paths { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: min(1000px, 100%); }
 .paths a { min-height: 92px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; background: var(--linen); font-family: var(--display); font-size: 21px; }
 .paths a span { font-family: var(--body); font-size: 13px; font-weight: 600; }
 .paths a.feel { background: var(--terra-ink); color: var(--ivory); font-style: italic; }
-.lc-spots a { position: absolute; left: 0; top: 0; padding: 6px 10px; background: rgba(245,239,228,.94); color: var(--choc); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 0 6px 18px rgba(58,41,32,.14); }
+.lc-spots a { position: absolute; left: 0; top: 0; padding: 6px 10px; background: var(--sk-chip); color: var(--sk-ink); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 0 6px 18px rgba(58,41,32,.14); }
 .lc-spots a::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 14px; background: currentColor; opacity: .6; }
-.lc-spots a .num { font-weight: 500; color: var(--choc2); margin-left: 4px; }
+.lc-spots a .num { font-weight: 500; color: var(--sk-ink2); margin-left: 4px; }
 .lc-spots a.on { pointer-events: auto; }
-.lc-spots a:hover { background: var(--ivory); color: var(--terra-ink); }
+.lc-spots a:hover { color: var(--sk-accent); }
 .lc-rail { position: absolute; right: 20px; top: 40%; display: flex; flex-direction: column; gap: 14px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; list-style: none; margin: 0; padding: 0; pointer-events: none; }
-.lc-rail li { display: flex; align-items: center; gap: 8px; color: var(--choc2); }
+.lc-rail li { display: flex; align-items: center; gap: 8px; color: var(--sk-ink2); }
 .lc-rail li::before { content: ""; width: 14px; height: 1px; background: currentColor; }
-.lc-rail li.on { color: var(--choc); font-weight: 600; }
+.lc-rail li.on { color: var(--sk-ink); font-weight: 600; }
 .lc-rail li.on::before { width: 26px; height: 2px; }
 .lc-skip { position: absolute; right: 20px; bottom: 16px; min-height: 44px; display: flex; align-items: center; font-weight: 500; pointer-events: auto; }
-.lc-progress { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--terra-ink); transform-origin: 0 50%; transform: scaleX(0); opacity: .7; }
-.ink-light .lc-hero h1, .ink-light .lc-hero .sub, .ink-light .lc-cap p, .ink-light .lc-skip { color: var(--ivory); }
-.ink-light .lc-hero .tag, .ink-light .lc-cap em, .ink-light .lc-hero .eyebrow { color: var(--glow); }
-.ink-light .lc-hero .btn.ghost { color: var(--ivory); border-color: var(--ivory); }
+.lc-progress { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--sk-accent); transform-origin: 0 50%; transform: scaleX(0); opacity: .7; }
+.ink-light .lc-hero h1, .ink-light .lc-hero .sub, .ink-light .lc-cap p, .ink-light .lc-skip { color: var(--sk-light); }
+.ink-light .lc-hero .tag, .ink-light .lc-cap em, .ink-light .lc-hero .eyebrow { color: var(--sk-glow); }
+.ink-light .lc-hero .btn.ghost { background: transparent; color: var(--sk-light); border-color: var(--sk-light); }
 .ink-light .lc-hero .btn.ghost:hover { background: rgba(245,239,228,.12); }
-.ink-light .lc-hero .btn:not(.ghost) { background: var(--ivory); color: var(--choc); border-color: var(--ivory); }
+.ink-light .lc-hero .btn:not(.ghost) { background: var(--sk-light); color: var(--sk-dark); border-color: var(--sk-light); }
 .ink-light .lc-cap p, .ink-light .lc-hero h1, .ink-light .lc-hero .tag, .ink-light .lc-hero .sub { text-shadow: 0 2px 22px rgba(20,12,8,.75); }
 .ink-light .lc-rail li { color: #D9CBB5; }
-.ink-light .lc-rail li.on { color: var(--ivory); }
-.ink-light .lc-progress { background: var(--glow); }
+.ink-light .lc-rail li.on { color: var(--sk-light); }
+.ink-light .lc-progress { background: var(--sk-glow); }
 @media (max-width: 760px) {
   .lc { height: 330vh; }
   .lc-hero { left: 20px; right: 20px; width: auto; top: 4%; gap: 10px; }
@@ -206,8 +216,8 @@ label { font-size: 14px; font-weight: 600; }
 .facts strong { display: block; margin-bottom: 2px; }
 .pair { background: var(--linen); padding: 26px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
 .status { padding: 12px 14px; background: var(--sand2); font-size: 15px; }
-.status.ok { background: #E3E3CF; }
-.status.err { background: #F1DDD3; color: var(--terra-ink); }
+.status.ok { background: var(--ok-bg); }
+.status.err { background: var(--err-bg); color: var(--terra-ink); }
 
 /* finder */
 .finder { display: flex; flex-wrap: wrap; min-height: 70vh; }
@@ -215,7 +225,8 @@ label { font-size: 14px; font-weight: 600; }
 .finder-side h1 { font-size: clamp(30px, 3.4vw, 42px); }
 .finder-side .eyebrow { color: var(--ivory); }
 .progress { display: flex; gap: 4px; }
-.progress span { flex: 1; height: 3px; background: rgba(245,239,228,.35); }
+.progress span { flex: 1; height: 3px; background: var(--ivory); opacity: .35; }
+.progress span.on { opacity: 1; }
 .progress span.on { background: var(--ivory); }
 .finder-main { flex: 2 1 520px; min-width: 0; padding: 48px 32px; display: flex; flex-direction: column; gap: 20px; }
 .options { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
@@ -285,11 +296,11 @@ th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--li
 th { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--choc2); background: var(--linen); white-space: nowrap; }
 td input[type="number"] { width: 84px; min-height: 40px; }
 .pill { display: inline-block; padding: 3px 10px; font-size: 12px; font-weight: 600; background: var(--sand2); white-space: nowrap; }
-.pill.Placed { background: #F1DDD3; color: var(--terra-ink); }
+.pill.Placed { background: var(--err-bg); color: var(--terra-ink); }
 .pill.Packed { background: var(--sand2); }
-.pill.Shipped { background: #E3E3CF; color: var(--ok); }
+.pill.Shipped { background: var(--ok-bg); color: var(--ok); }
 .pill.Delivered { background: var(--olive); color: var(--ivory); }
-.pill.low { background: #F1DDD3; color: var(--terra-ink); }
+.pill.low { background: var(--err-bg); color: var(--terra-ink); }
 .pill.out { background: var(--choc); color: var(--ivory); }
 .owner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 30px; }
 .stat { background: var(--linen); padding: 18px; display: flex; flex-direction: column; gap: 4px; }
@@ -317,7 +328,9 @@ body.app .toast { bottom: 96px; }
         <button type="button" data-act="mode" data-v="app" id="mode-app">Installed app</button>
       </span>
       <label class="sr" for="opening-sel">Opening animation</label>
-      <select id="opening-sel" data-act="opening"><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option><option value="jaali">Opening C · Jaali Light</option></select>
+      <select id="opening-sel" data-act="opening"><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option></select>
+      <label class="sr" for="skin-sel">Theme</label>
+      <select id="skin-sel" data-act="skin"><option value="atelier">Theme · Everyday</option><option value="festive">Theme · Festive season</option><option value="monsoon">Theme · Monsoon edit</option><option value="gifting">Theme · Gifting &amp; weddings</option><option value="evening">Theme · Evening (dark)</option></select>
       <a href="#admin">Owner view</a>
       <button type="button" data-act="reset">Reset demo</button>
     </span>
@@ -407,10 +420,11 @@ function defaults() {
   Object.keys(skuMap).forEach((sku, i) => { stock[sku] = [8, 6, 5, 3][i % 4]; });
   stock['BT-JS-SF-TC'] = 0;
   stock['BT-JS-MR-CS'] = 2;
-  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'arches' };
+  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'arches', skin: 'atelier' };
 }
 let S = defaults();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
+if (!['arches', 'pour'].includes(S.opening)) S.opening = 'arches';
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
 const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: { step: 'contact', contact: {}, address: {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, orderDraftId: null }, toast: null };
 
@@ -481,7 +495,7 @@ function renderChrome() {
   const sb = $('#saved-btn'); sb.querySelector('.count')?.remove(); if (S.saved.length) sb.insertAdjacentHTML('beforeend', `<span class="count num">${S.saved.length}</span>`);
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
-  $('#opening-sel').value = S.opening; $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
+  $('#opening-sel').value = S.opening; $('#skin-sel').value = S.skin; document.documentElement.dataset.skin = S.skin; $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
   $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
     + tab('shop', 'Shop', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>')
@@ -554,7 +568,7 @@ function viewHome() {
       <div class="lc-spots" id="lc-spots">${ARR.map((o, i) => `<a href="#p-${o.id}" data-spot="${i}" tabindex="-1" aria-hidden="true">${esc(byId[o.id].name)}<span class="num">${priceFrom(byId[o.id])}</span></a>`).join('')}</div>
       <div class="lc-copy" id="lc-copy">
         <div class="lc-hero" id="lc-hero">
-          <span class="eyebrow">Objects &amp; little rituals</span>
+          <span class="eyebrow">${esc(SKINS[S.skin].eyebrow)}</span>
           <h1>BUD &amp;<br>THINGS</h1>
           <p class="tag">Thoughtful objects.<br>Meaningful moments.</p>
           <p class="sub">Objects and little rituals, thoughtfully made for everyday living and meaningful giving.</p>
@@ -597,7 +611,7 @@ function viewHome() {
     <div style="display:flex;flex-wrap:wrap;gap:10px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
 
   <section class="dark-band" aria-labelledby="story-h"><div class="wrap section"><div class="split"><div class="texture" aria-hidden="true"></div>
-    <div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow" style="color:var(--glow)">Materials &amp; making</span><h2 id="story-h" style="font-size:clamp(30px,3.4vw,42px)">Every piece is a little different, on purpose.</h2><p style="color:#E9DDC9;max-width:520px">Our objects are cast in Jesmonite, a water-based composite, and made in small batches. Small marks, swirls and tones vary from piece to piece.</p><a href="#story" style="font-weight:600">A note from Ashi →</a></div></div></div></section>
+    <div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow" style="color:var(--glow)">Materials &amp; making</span><h2 id="story-h" style="font-size:clamp(30px,3.4vw,42px)">Every piece is a little different, on purpose.</h2><p style="opacity:.86;max-width:520px">Our objects are cast in Jesmonite, a water-based composite, and made in small batches. Small marks, swirls and tones vary from piece to piece.</p><a href="#story" style="font-weight:600">A note from Ashi →</a></div></div></div></section>
 
   <section class="section wrap" aria-labelledby="news-h"><div class="intro" style="gap:14px"><h2 id="news-h" style="font-size:36px">Hear about new pieces first</h2><p class="muted" style="font-family:var(--body);font-size:16px">New batches and restocks, about once a month. Unsubscribe any time.</p>
     <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email address</label><input id="news-email" type="email" autocomplete="email" style="flex:1 1 240px"><button class="btn" type="submit">Subscribe</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`;
@@ -615,7 +629,7 @@ function viewShop(cat) {
   const title = sh.cat === 'candles' ? 'Candles' : sh.cat === 'jesmonite' ? 'Jesmonite Objects' : 'All products';
   const blurb = sh.cat === 'candles' ? 'Fragrance-led candles and sculpted pillars for everyday rituals and gifting.' : sh.cat === 'jesmonite' ? 'Trays, ring dishes and sculptural forms cast in Jesmonite, a water-based composite. Each piece varies a little in tone and texture.' : 'Everything ready to order today: candles and Jesmonite objects.';
   const cards = list.map(card);
-  if (sh.cat === 'jesmonite' && cards.length > 3 && sh.type === 'all' && sh.occ === 'all') cards.splice(3, 0, `<div class="note-card"><span class="eyebrow">A little discovery</span><h3>Why no two trays look quite the same</h3><p style="color:#E9DDC9">Jesmonite is mixed and poured in small batches, so swirls and speckles settle a little differently each time.</p><a href="#story">Read the material note →</a></div>`);
+  if (sh.cat === 'jesmonite' && cards.length > 3 && sh.type === 'all' && sh.occ === 'all') cards.splice(3, 0, `<div class="note-card"><span class="eyebrow">A little discovery</span><h3>Why no two trays look quite the same</h3><p style="opacity:.86">Jesmonite is mixed and poured in small batches, so swirls and speckles settle a little differently each time.</p><a href="#story">Read the material note →</a></div>`);
   if (cards.length) cards.push(`<a class="feel-card" href="#feeling"><span class="eyebrow" style="color:var(--terra-ink)">Not sure yet?</span><h3>Find Your Feeling</h3><span class="muted">Five short questions about your space or occasion, then pieces to match.</span><strong>Start →</strong></a>`);
   return `<div class="wrap"><div class="page-head"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / ${sh.cat === 'all' ? 'Shop' : `<a href="#shop">Shop</a> / ${title}`}</nav>
     <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px"><h1 tabindex="-1">${title}</h1><p class="muted" style="max-width:520px">${blurb}</p></div></div>
@@ -689,13 +703,13 @@ function viewFeeling() {
     const pair = PAIRINGS.find((x) => r.list.length && x.items.some(([pid]) => pid === r.list[0].p.id));
     return `<div class="finder"><aside class="finder-side"><span class="eyebrow">Your answers</span><h1 tabindex="-1">${f.mood ? esc(MOODS.find((m) => m[0] === f.mood)[1]) : 'Your matches'}</h1>
       <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">${FSTEPS.map((s) => `<li>${s.k === 'mood' ? 'Feeling' : s.k === 'space' ? 'Place' : s.k === 'who' ? 'For' : s.k === 'kind' ? 'Kind' : 'Budget'}: ${f[s.k] ? esc(s.opts.find((o) => o[0] === f[s.k])[1]) : 'skipped'}</li>`).join('')}</ul>
-      <button class="btn light" type="button" data-act="finder-edit">Change answers</button><span style="margin-top:auto;font-size:13px;color:#F3E3D6">Matches come from simple tags on each product. No account needed, and nothing is added to your cart.</span></aside>
+      <button class="btn light" type="button" data-act="finder-edit">Change answers</button><span style="margin-top:auto;font-size:13px;opacity:.88">Matches come from simple tags on each product. No account needed, and nothing is added to your cart.</span></aside>
       <div class="finder-main"><span class="eyebrow num">${r.list.length} matches from the draft range</span>${r.fallback ? '<div class="status">Nothing matched every answer, so these are the closest pieces.</div>' : ''}
       <div class="grid">${r.list.map((x, i) => `<div class="card"><a class="tile${i % 2 ? ' alt' : ''}" href="#p-${x.p.id}" data-act="finder-pick" data-id="${x.p.id}" aria-label="${esc(x.p.name)}">${art(x.p, 0, 1)}</a><span class="eyebrow">${x.p.cat === 'candles' ? 'Candle' : 'Jesmonite'}</span><a class="name" href="#p-${x.p.id}" data-act="finder-pick" data-id="${x.p.id}">${esc(x.p.name)}</a><span class="num" style="font-weight:600">${priceFrom(x.p)}</span><span class="why">Why: ${esc(x.why.join(', ') || 'a good place to start')}</span></div>`).join('')}</div>
       ${pair ? `<div class="pair"><span><strong>Make it a ritual:</strong> ${esc(pair.name)}. ${esc(pair.why)}</span><a class="btn small ghost" href="#ritual" data-act="pick-ritual" data-v="${pair.id}">Build Your Ritual</a></div>` : ''}</div></div>`;
   }
   const s = FSTEPS[f.step];
-  return `<div class="finder"><aside class="finder-side"><span class="eyebrow num">Find Your Feeling · step ${f.step + 1} of 5</span><div class="progress" aria-hidden="true">${FSTEPS.map((_, i) => `<span class="${i <= f.step ? 'on' : ''}"></span>`).join('')}</div><h1 tabindex="-1">${esc(s.q)}</h1><span style="margin-top:auto;font-size:13px;color:#F3E3D6">Every step can be skipped. Back keeps your answers.</span></aside>
+  return `<div class="finder"><aside class="finder-side"><span class="eyebrow num">Find Your Feeling · step ${f.step + 1} of 5</span><div class="progress" aria-hidden="true">${FSTEPS.map((_, i) => `<span class="${i <= f.step ? 'on' : ''}"></span>`).join('')}</div><h1 tabindex="-1">${esc(s.q)}</h1><span style="margin-top:auto;font-size:13px;opacity:.88">Every step can be skipped. Back keeps your answers.</span></aside>
     <div class="finder-main"><div class="options" role="radiogroup" aria-label="${esc(s.q)}">${s.opts.map(([k, l]) => `<button type="button" role="radio" aria-checked="${f[s.k] === k}" data-act="finder-opt" data-k="${s.k}" data-v="${k}">${l}</button>`).join('')}</div>
     <div class="finder-nav">${f.step > 0 ? '<button class="btn ghost" type="button" data-act="finder-back">Back</button>' : ''}<button class="btn" type="button" data-act="finder-next">${f.step === 4 ? 'See my matches' : 'Next'}</button><button class="linkbtn" type="button" data-act="finder-skip">Skip this question</button></div></div></div>`;
 }
@@ -838,7 +852,6 @@ function render(nav) {
 // ---------- living canvas ----------
 const TAU = Math.PI * 2;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-const canHover = window.matchMedia('(hover: hover)');
 const clamp = (x) => Math.max(0, Math.min(1, x));
 const seg = (p, a, b) => clamp((p - a) / (b - a));
 const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -857,16 +870,38 @@ const ARR = [
   { id: 'pillar-studies', k: 'pillar', dx: 232, c: '#B0644A', h: 112, w: 34 }
 ];
 const OPENINGS = {
-  arches: { name: 'A · Through the Arches', rail: ['Doorway', 'Arches', 'The room', 'Dusk'], cuts: [.3, .6, .8], hero: [.05, .11], staticP: .66, dark: false,
+  arches: { name: 'A · Through the Arches', rail: ['Doorway', 'Arches', 'The room', 'Dusk'], cuts: [.3, .6, .8], hero: [.05, .11], staticP: .66,
     caps: [['Step <em>inside.</em>', [.13, .17, .26, .3]], ['Form, texture,<br><em>and the quiet in between.</em>', [.35, .4, .5, .55]], ['Made with thought.<br><em>Given with feeling.</em>', [.62, .66, .74, .78]]],
     spots: [.6, .65, .78, .82], final: [.82, .9] },
-  pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Wax', 'Set'], cuts: [.3, .48, .72], hero: [.05, .11], staticP: .84, dark: false,
+  pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Wax', 'Set'], cuts: [.3, .48, .72], hero: [.05, .11], staticP: .84,
     caps: [['Every piece begins<br><em>as a pour.</em>', [.12, .16, .26, .3]], ['Swirled once.<br><em>Never quite the same twice.</em>', [.31, .35, .44, .48]], ['Then a slow pour<br><em>of scented wax.</em>', [.5, .54, .65, .69]], ['Set, finished,<br><em>ready to give.</em>', [.72, .75, .82, .85]]],
-    spots: [.76, .79, .85, .88], final: [.87, .93] },
-  jaali: { name: 'C · Jaali Light', rail: ['Morning', 'Jaali', 'Your light', 'Candle'], cuts: [.32, .58, .8], hero: [.05, .11], staticP: .45, dark: true,
-    caps: [['Morning light<br><em>through a jaali.</em>', [.12, .16, .28, .32]], [() => canHover.matches ? 'Move your cursor<br><em>to light a corner.</em>' : 'Touch the scene<br><em>to light a corner.</em>', [.34, .38, .52, .56]], ['Every piece<br><em>has its moment.</em>', [.58, .62, .72, .76]]],
-    spots: null, final: [.84, .9] }
+    spots: [.76, .79, .85, .88], final: [.87, .93] }
 };
+const SKINS = {
+  atelier: { name: 'Everyday', use: 'The year-round look: warm daylight, plaster and sand.', eyebrow: 'Objects & little rituals', wall: ['#EFE7DA', '#EBDDC7', '#E9CFA8'], floor: ['#DCC9AE', '#D9C3A2', '#D6B78F'], arch: ['#E2D3BB', '#DACAAF', '#D2BFA0', '#CBB592'], plinth: '#F3EBDF', duskWall: '#4A362B', duskFloor: '#3E2C22', night: '#241812', light: '255,248,232', ink2: '#5C4637', fx: null },
+  festive: { name: 'Festive season', use: 'For Diwali and the festive rush: saffron light, a marigold garland and diyas at dusk.', eyebrow: 'The festive edit', wall: ['#F2E2CC', '#EED3B0', '#E8BE8C'], floor: ['#D9B88E', '#D3A976', '#C9965E'], arch: ['#E9CDA7', '#E2BF93', '#D9AF7E', '#CF9F6B'], plinth: '#F6E9D6', duskWall: '#3B2318', duskFloor: '#2E1A11', night: '#1E100A', light: '255,226,170', ink2: '#5E3B28', fx: 'festive' },
+  monsoon: { name: 'Monsoon edit', use: 'For June to September: cool sage light and soft rain, made for earthy scents like Monsoon Letters.', eyebrow: 'The monsoon edit', wall: ['#E6E8DE', '#DDE1D3', '#D5D8C4'], floor: ['#C9CBB8', '#BFC2AC', '#B4B79E'], arch: ['#DADDCF', '#D0D4C2', '#C6CAB5', '#BCC0A9'], plinth: '#EEEFE7', duskWall: '#2F3328', duskFloor: '#262A20', night: '#151812', light: '236,244,238', ink2: '#454B3D', fx: 'rain' },
+  gifting: { name: 'Gifting & weddings', use: 'For gifting campaigns, weddings and Valentine’s week: rose clay and drifting petals.', eyebrow: 'The gifting edit', wall: ['#F3E6E0', '#EFD9D0', '#EBCDBF'], floor: ['#DDBFB2', '#D6B2A3', '#CFA594'], arch: ['#EBD5CB', '#E3C6B9', '#DAB6A7', '#D1A796'], plinth: '#F8EFEA', duskWall: '#3A2226', duskFloor: '#2E1A1D', night: '#1C0F11', light: '255,236,228', ink2: '#5E4146', fx: 'petals' },
+  evening: { name: 'Evening (dark)', use: 'For night-time browsing and dark-mode phones: the room is lamp-lit and the candle is already burning.', eyebrow: 'After dark', dark: true, wall: ['#4A3A30', '#43352C', '#3C2F27'], floor: ['#3A2C24', '#33271F', '#2C211B'], arch: ['#5A483D', '#524236', '#4A3B31', '#43352C'], plinth: '#5C4A3E', duskWall: '#2A1E18', duskFloor: '#20160F', night: '#120B08', light: '255,206,150', ink2: '#CDBBA6', fx: 'evening' }
+};
+if (!SKINS[S.skin]) S.skin = 'atelier';
+const SK = () => SKINS[S.skin];
+const flameAlpha = (p, a, b) => SK().dark ? Math.max(seg(p, .02, .1), seg(p, a, b)) : seg(p, a, b);
+function fxPre(ctx, L, p, t, bx, by, s) {
+  const K = SK();
+  if (K.fx === 'festive') { const a = seg(p, .74, .84); if (a > 0) { ctx.save(); ctx.globalAlpha = a; for (let i = 0; i < 7; i++) { const x = bx + (-290 + i * 96.7) * s, y = by + 54 * s; ctx.fillStyle = '#A8552E'; ctx.beginPath(); ctx.ellipse(x, y, 13 * s, 6 * s, 0, 0, Math.PI); ctx.fill(); ctx.fillStyle = '#C26A3C'; ctx.beginPath(); ctx.ellipse(x, y, 13 * s, 3.5 * s, 0, 0, TAU); ctx.fill(); } ctx.restore(); } }
+  if (K.fx === 'evening') { const g = ctx.createRadialGradient(L.W * .14, L.H * .32, 0, L.W * .14, L.H * .32, L.W * .55); g.addColorStop(0, 'rgba(255,190,120,.2)'); g.addColorStop(1, 'rgba(255,190,120,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); }
+}
+function fxPost(ctx, L, p, t, bx, by, s) {
+  const K = SK(); const u = Math.max(.7, L.u);
+  if (K.fx === 'festive') {
+    const a = seg(p, .8, .9); for (let i = 0; i < 7; i++) flame(ctx, bx + (-290 + i * 96.7) * s, by + 46 * s, s * .5, a, t + i * 1.7);
+    const cols = ['#E89A2C', '#D9761E', '#F2B441']; const n = Math.ceil(L.W / (13 * u)) + 2;
+    for (let j = 0; j < 2; j++) { const span = L.W / 2; for (let i = 0; i <= n / 2; i++) { const f = i / (n / 2); const x = j * span + f * span; const y = 6 + Math.sin(Math.PI * f) * 34 * u + Math.sin(t * 1.2 + j) * 1.5; ctx.fillStyle = cols[(i + j) % 3]; ctx.beginPath(); ctx.arc(x, y, 6.5 * u, 0, TAU); ctx.fill(); if (i % 6 === 3) { ctx.fillStyle = '#6B6B43'; ctx.beginPath(); ctx.ellipse(x, y + 9 * u, 3 * u, 7 * u, .4, 0, TAU); ctx.fill(); } } }
+  }
+  if (K.fx === 'rain') { ctx.strokeStyle = 'rgba(232,240,234,.32)'; ctx.lineWidth = 1; ctx.beginPath(); for (let i = 0; i < 90; i++) { const sp = .7 + (i % 7) / 10; const x = ((i * 97.3 + t * 40 * sp) % (L.W + 200)) - 100; const y = ((i * 57.1 + t * 620 * sp) % (L.H + 100)) - 50; ctx.moveTo(x, y); ctx.lineTo(x - 5 * u, y + 17 * u); } ctx.stroke(); }
+  if (K.fx === 'petals') { const cols = ['#E3A595', '#F1CBBE', '#C97F70']; for (let i = 0; i < 26; i++) { const x = ((i * 131.7 + t * 16 * (.5 + (i % 4) / 4)) % (L.W + 80)) - 40 + Math.sin(t + i) * 18; const y = ((i * 83.3 + t * 36 * (.6 + (i % 5) / 6)) % (L.H + 60)) - 30; ctx.save(); ctx.translate(x, y); ctx.rotate(t * (.6 + (i % 3) * .3) + i); ctx.fillStyle = cols[i % 3]; ctx.globalAlpha = .8; ctx.beginPath(); ctx.ellipse(0, 0, 6 * u, 3.2 * u, 0, 0, TAU); ctx.fill(); ctx.restore(); } }
+}
 const LC = { cv: null, ctx: null, mask: null, mctx: null, W: 0, H: 0, dpr: 1, p: 0, raf: 0, visible: false, io: null, ptr: { x: 0, y: 0, on: false, touch: false, last: 0 }, marble: null, jaali: null, motes: [], spots: [] };
 for (let i = 0; i < 70; i++) LC.motes.push({ x: Math.random(), y: Math.random(), s: .4 + Math.random(), ph: Math.random() * TAU });
 
@@ -889,17 +924,6 @@ function makeMarble() {
     const k = (j * 256 + i) * 4; img.data[k] = r; img.data[k + 1] = g; img.data[k + 2] = b; img.data[k + 3] = 255;
   }
   x.putImageData(img, 0, 0); return c;
-}
-function makeJaali() {
-  const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d');
-  x.beginPath(); x.moveTo(76, 500); x.lineTo(76, 196); x.arc(256, 196, 180, Math.PI, 0); x.lineTo(436, 500); x.closePath(); x.clip();
-  x.fillStyle = '#fff';
-  for (let j = 0; j < 9; j++) for (let i = 0; i < 9; i++) {
-    const cx = 32 + i * 56, cy = 24 + j * 56;
-    for (const rot of [0, Math.PI / 4]) { x.save(); x.translate(cx, cy); x.rotate(rot); x.fillRect(-15, -15, 30, 30); x.restore(); }
-    x.beginPath(); x.arc(cx + 28, cy + 28, 6, 0, TAU); x.fill();
-  }
-  return c;
 }
 function rp(ctx, x, y, w, h, r) { ctx.moveTo(x, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.closePath(); }
 function sil(o, x, y, s) {
@@ -971,33 +995,33 @@ function spotFor(it, s, a) { const o = it.o; if (o.k === 'tray') return { x: it.
 // A · Through the Arches: the camera walks forward through four plaster arches into the room.
 function sceneArches(ctx, L, p, t) {
   const cfg = OPENINGS.arches; const day = seg(p, 0, .86), dusk = ease(seg(p, .78, .96));
-  const wall = mixHex(mixSeq(['#EFE7DA', '#EBDDC7', '#E9CFA8'], day), '#4A362B', dusk);
-  const floor = mixHex(mixSeq(['#DCC9AE', '#D9C3A2', '#D6B78F'], day), '#3E2C22', dusk);
+  const K = SK(); const wall = mixHex(mixSeq(K.wall, day), K.duskWall, dusk);
+  const floor = mixHex(mixSeq(K.floor, day), K.duskFloor, dusk);
   const cam = 3.92 * ease(seg(p, .03, .6)), k = .5, sP = k / (4.42 - cam);
   const yAt = (s) => L.hz + (L.ay - L.hz) * s;
   room(ctx, L, wall, floor, L.hz);
   const sun = -1 + 2 * day, elev = .15 + .85 * Math.sin(Math.PI * day);
   // window light on the back wall, and the beam that carries the dust
   const s0 = L.u * sP; const px = L.ax + (-420 + 840 * day) * s0, py = yAt(sP) - 250 * s0, pw = 150 * s0, ph = 220 * s0;
-  const la = .4 * (1 - dusk) * (.6 + .4 * elev);
+  const la = .4 * (1 - dusk) * (.6 + .4 * elev) * (K.dark ? .45 : 1);
   ctx.save(); ctx.translate(px, py); ctx.transform(1, 0, -.3 * sun, 1, 0, 0);
-  const lg = ctx.createLinearGradient(0, -ph / 2, 0, ph / 2); lg.addColorStop(0, `rgba(255,248,232,${la})`); lg.addColorStop(1, `rgba(255,248,232,${la * .4})`);
+  const lg = ctx.createLinearGradient(0, -ph / 2, 0, ph / 2); lg.addColorStop(0, `rgba(${K.light},${la})`); lg.addColorStop(1, `rgba(${K.light},${la * .4})`);
   ctx.fillStyle = lg; ctx.beginPath(); ctx.moveTo(-pw / 2, ph / 2); ctx.lineTo(-pw / 2, -ph / 2 + pw / 2); ctx.arc(0, -ph / 2 + pw / 2, pw / 2, Math.PI, 0); ctx.lineTo(pw / 2, ph / 2); ctx.closePath(); ctx.fill(); ctx.restore();
   const bx0 = px - sun * L.H * .55;
-  ctx.fillStyle = `rgba(255,246,226,${.1 * (1 - dusk)})`; ctx.beginPath(); ctx.moveTo(bx0 - 70 * L.u, -10); ctx.lineTo(bx0 + 70 * L.u, -10); ctx.lineTo(px + pw / 2, py); ctx.lineTo(px - pw / 2, py); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = `rgba(${K.light},${.1 * (1 - dusk) * (K.dark ? .5 : 1)})`; ctx.beginPath(); ctx.moveTo(bx0 - 70 * L.u, -10); ctx.lineTo(bx0 + 70 * L.u, -10); ctx.lineTo(px + pw / 2, py); ctx.lineTo(px - pw / 2, py); ctx.closePath(); ctx.fill();
   for (const m of LC.motes) {
     const y = (m.y * py + t * 7 * m.s) % Math.max(py, 1); const f = y / Math.max(py, 1); const cx = bx0 + (px - bx0) * f;
     const x = cx + (m.x - .5) * (140 * L.u + pw) * (.4 + f * .6) + Math.sin(t * m.s + m.ph) * 6;
-    ctx.fillStyle = `rgba(255,250,236,${.55 * (1 - dusk) * Math.sin(Math.PI * f)})`; ctx.beginPath(); ctx.arc(x, y, (1 + m.s * .6) * Math.max(.6, L.u), 0, TAU); ctx.fill();
+    ctx.fillStyle = `rgba(${K.light},${.55 * (1 - dusk) * Math.sin(Math.PI * f)})`; ctx.beginPath(); ctx.arc(x, y, (1 + m.s * .6) * Math.max(.6, L.u), 0, TAU); ctx.fill();
   }
   // the room at the end of the walk
-  const s = L.u * sP * 1.08; const by = yAt(sP); plinth(ctx, L.ax, by, s, '#F3EBDF');
+  const s = L.u * sP * 1.08; const by = yAt(sP); plinth(ctx, L.ax, by, s, K.plinth);
   const items = placeAll(L, s, L.ax, by);
   items.forEach((it) => castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .22 * (1 - dusk * .5)));
   items.forEach((it) => drawObj(ctx, it.o, it.x, it.y, s, sun));
   const spotA = win(p, cfg.spots); LC.spots = items.map((it) => spotFor(it, s, spotA));
   // arches, far to near, each a wall with an arched opening
-  const AZ = [1.2, 1.95, 2.7, 3.45], AC = ['#E2D3BB', '#DACAAF', '#D2BFA0', '#CBB592'];
+  const AZ = [1.2, 1.95, 2.7, 3.45], AC = K.arch;
   for (let i = 3; i >= 0; i--) {
     const dz = AZ[i] - cam; if (dz <= .045) continue;
     const sa = k / dz, aw = 660 * L.u * sa, ah = 880 * L.u * sa, yb = yAt(sa), x = L.ax;
@@ -1009,8 +1033,10 @@ function sceneArches(ctx, L, p, t) {
     ctx.fillStyle = mixHex(shade(floor, .94), '#3A2920', dusk * .5); ctx.fillRect(-20, yb, L.W + 40, L.H - yb + 20);
     ctx.globalAlpha = 1;
   }
-  ctx.fillStyle = `rgba(36,24,18,${.42 * dusk})`; ctx.fillRect(0, 0, L.W, L.H);
-  const jar = items[1]; flame(ctx, jar.x + 1 * s, jar.y - jar.o.h * s - 15 * s, s, seg(p, .84, .92), t);
+  fxPre(ctx, L, p, t, L.ax, by, s);
+  ctx.fillStyle = rgba(K.night, .42 * dusk); ctx.fillRect(0, 0, L.W, L.H);
+  const jar = items[1]; flame(ctx, jar.x + 1 * s, jar.y - jar.o.h * s - 15 * s, s, flameAlpha(p, .84, .92), t);
+  fxPost(ctx, L, p, t, L.ax, by, s);
 }
 
 // B · The Pour: sketched outlines fill with a marbled pour and a wax pour, then the pieces are lifted from their moulds.
@@ -1022,15 +1048,15 @@ function stream(ctx, x, y0, y1, w, col, t) {
   ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(x - w * .15, y0, Math.max(1, w * .12), y1 - y0);
 }
 function pourCup(ctx, x, y, s, a, tilt, col) {
-  ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(-.9 * tilt); const w = 46 * s, h = 54 * s;
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(-.45 * tilt); const w = 52 * s, h = 46 * s;
   ctx.fillStyle = '#F6F0E6'; ctx.strokeStyle = rgba('#5C4637', .5); ctx.lineWidth = 1.2 * s; ctx.beginPath(); ctx.moveTo(-6 * s, 0); ctx.lineTo(-6 * s - w, -4 * s); ctx.lineTo(-6 * s - w + 4 * s, -h); ctx.lineTo(-2 * s, -h + 2 * s); ctx.closePath(); ctx.fill(); ctx.stroke();
   ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(-6 * s - w / 2, -2 * s, w / 2 - 2 * s, 4 * s, 0, 0, TAU); ctx.fill(); ctx.restore();
 }
-function dashed(ctx, o, x, y, s, a) { if (a <= 0) return; ctx.save(); ctx.setLineDash([6 * s, 6 * s]); ctx.lineWidth = 1.3 * s; ctx.strokeStyle = rgba('#5C4637', a); ctx.stroke(sil(o, x, y, s)); ctx.restore(); }
+function dashed(ctx, o, x, y, s, a) { if (a <= 0) return; ctx.save(); ctx.setLineDash([6 * s, 6 * s]); ctx.lineWidth = 1.3 * s; ctx.strokeStyle = rgba(SK().ink2, a); ctx.stroke(sil(o, x, y, s)); ctx.restore(); }
 function scenePour(ctx, L, p, t) {
   const cfg = OPENINGS.pour; const dusk = ease(seg(p, .87, .98));
-  room(ctx, L, mixHex(mixSeq(['#EFE7DA', '#EDE1CE', '#EAD6B8'], seg(p, 0, .86)), '#4A362B', dusk), mixHex('#DCC9AE', '#3E2C22', dusk), L.hz);
-  const s = L.u * 1.14; plinth(ctx, L.ax, L.ay, s, '#F3EBDF'); const sun = -.55, elev = .6;
+  const K = SK(); room(ctx, L, mixHex(mixSeq(K.wall, seg(p, 0, .86)), K.duskWall, dusk), mixHex(K.floor[0], K.duskFloor, dusk), L.hz);
+  const s = L.u * 1.14; plinth(ctx, L.ax, L.ay, s, K.plinth); const sun = -.55, elev = .6;
   const items = placeAll(L, s, L.ax, L.ay); const [tray, jar, dish, arch, pillar] = items;
   const f = seg(p, .15, .4), set = seg(p, .4, .47), g = seg(p, .5, .68), jset = seg(p, .68, .74);
   const ms = [seg(p, .72, .8), seg(p, .75, .83), seg(p, .78, .86)];
@@ -1066,7 +1092,7 @@ function scenePour(ctx, L, p, t) {
   const ww = 7 * s * seg(p, .5, .53) * (1 - seg(p, .66, .69)); if (ww > 0) stream(ctx, jar.x + 6 * s, L.H * (L.mobile ? .42 : .3), jar.y - (jh - 6 * s) * easeOut(g), ww, '#F3E7D2', t);
   const notes = byId['chai-at-four'].notes;
   ctx.save(); ctx.textAlign = 'center'; ctx.font = `italic 300 ${Math.round(17 * s)}px Fraunces, Georgia, serif`;
-  notes.forEach((n, i) => { const wp = seg(p, .54 + i * .035, .7 + i * .035); if (wp <= 0 || wp >= 1) return; ctx.fillStyle = rgba('#5C4637', Math.sin(Math.PI * wp) * .95); ctx.fillText(n, jar.x + (i - 1) * 46 * s + Math.sin(t + i) * 6 * s, jar.y - jh - 26 * s - wp * 120 * s); });
+  notes.forEach((n, i) => { const wp = seg(p, .54 + i * .035, .7 + i * .035); if (wp <= 0 || wp >= 1) return; ctx.fillStyle = rgba(K.ink2, Math.sin(Math.PI * wp) * .95); ctx.fillText(n, jar.x + (i - 1) * 46 * s + Math.sin(t + i) * 6 * s, jar.y - jh - 26 * s - wp * 120 * s); });
   ctx.restore();
   // demould: dish, arch and pillar lift out of their moulds one after another
   [dish, arch, pillar].forEach((it, i) => {
@@ -1078,48 +1104,10 @@ function scenePour(ctx, L, p, t) {
     ctx.beginPath(); ctx.rect(it.x - bw / 2, it.y - bh + 4 * s - lift, bw, bh); ctx.fill(); ctx.stroke(); ctx.restore();
   });
   LC.spots = items.map((it) => spotFor(it, s, win(p, cfg.spots)));
-  ctx.fillStyle = `rgba(36,24,18,${.42 * dusk})`; ctx.fillRect(0, 0, L.W, L.H);
-  flame(ctx, jar.x + 1 * s, jar.y - jh - 15 * s, s, seg(p, .89, .95), t);
-}
-
-// C · Jaali Light: the room waits in shade; a lattice-window light sweeps it, the visitor carries a second light, the candle takes over at dusk.
-function sceneJaali(ctx, L, p, t) {
-  const day = seg(p, 0, .82), dusk = ease(seg(p, .8, .95));
-  room(ctx, L, mixHex(mixSeq(['#ECDFCA', '#EEDDC2', '#EACB9E'], day), '#5A4336', dusk * .5), mixHex('#DCC9AE', '#4A3529', dusk * .5), L.hz);
-  const s = L.u * 1.14; plinth(ctx, L.ax, L.ay, s, '#F3EBDF');
-  const sun = -1 + 2 * day, elev = .2 + .7 * Math.sin(Math.PI * day);
-  const items = placeAll(L, s, L.ax, L.ay);
-  items.forEach((it) => castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .24));
-  items.forEach((it) => drawObj(ctx, it.o, it.x, it.y, s, sun));
-  const jar = items[1]; const fx = jar.x + 1 * s, fy = jar.y - jar.o.h * s - 15 * s;
-  // darkness mask with light cut out of it
-  const m = LC.mctx; m.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); m.globalCompositeOperation = 'source-over'; m.clearRect(0, 0, L.W, L.H);
-  m.fillStyle = `rgba(24,16,11,${.8 + .08 * dusk})`; m.fillRect(0, 0, L.W, L.H); m.globalCompositeOperation = 'destination-out';
-  const js = (1 - seg(p, .72, .84)) * (.75 + .25 * seg(p, 0, .1));
-  const jx = L.W * (L.mobile ? .25 + .5 * day : .4 + .52 * day), jy = L.mobile ? L.H * (.7 + .1 * day) : L.H * (.55 + .12 * day), sc = (L.mobile ? .5 : .74) * (1 + .4 * day) * Math.max(.7, L.u * 1.2);
-  if (js > 0) {
-    m.save(); m.translate(jx, jy); m.transform(1, .08, -.55 + 1.1 * day, 1, 0, 0); m.scale(sc, sc);
-    const sp = m.createRadialGradient(0, 0, 0, 0, 0, 380); sp.addColorStop(0, `rgba(0,0,0,${.32 * js})`); sp.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = sp; m.fillRect(-400, -400, 800, 800);
-    m.globalAlpha = js * .35; m.drawImage(LC.jaali, -268, -268, 536, 536); m.globalAlpha = js; m.drawImage(LC.jaali, -256, -256, 512, 512); m.restore();
-  }
-  const pr = LC.ptr; const now = performance.now(); let gx = 0, gy = 0, ga = 0;
-  const live = pr.on && (!pr.touch || now - pr.last < 2600);
-  if (live) { gx = pr.x; gy = pr.y; ga = .95; }
-  else if (p > .3 && p < .8) { gx = L.ax + Math.cos(t * .5) * 250 * L.u; gy = L.ay - 70 * L.u + Math.sin(t * .9) * 36 * L.u; ga = .55 * win(p, [.3, .36, .74, .8]); }
-  const gr = (L.mobile ? 120 : 170) * Math.max(.8, L.u);
-  if (ga > 0) { const pg = m.createRadialGradient(gx, gy, 0, gx, gy, gr); pg.addColorStop(0, `rgba(0,0,0,${ga})`); pg.addColorStop(.55, `rgba(0,0,0,${ga * .6})`); pg.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = pg; m.fillRect(gx - gr, gy - gr, gr * 2, gr * 2); }
-  const ca = seg(p, .8, .9); const cr = (230 + 14 * Math.sin(t * 9)) * s;
-  if (ca > 0) { const cg = m.createRadialGradient(fx, fy, 0, fx, fy, cr); cg.addColorStop(0, `rgba(0,0,0,${.96 * ca})`); cg.addColorStop(.5, `rgba(0,0,0,${.6 * ca})`); cg.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = cg; m.fillRect(fx - cr, fy - cr, cr * 2, cr * 2); }
-  m.globalCompositeOperation = 'source-over';
-  ctx.drawImage(LC.mask, 0, 0, L.W, L.H);
-  if (js > 0) { ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = `rgba(255,214,150,${.25 * js})`; ctx.fillRect(0, 0, L.W, L.H); ctx.restore(); }
-  flame(ctx, fx, fy, s, ca, t);
-  const gauss = (d, r) => Math.exp(-(d * d) / (2 * r * r));
-  LC.spots = items.map((it) => {
-    const sp = spotFor(it, s, 0); const cx = it.x, cy = it.y - it.o.h * s / 2;
-    const lit = Math.max(js * gauss(Math.hypot(cx - jx, cy - jy), 170 * sc), ga * gauss(Math.hypot(cx - gx, cy - gy), gr * .6), ca * gauss(Math.hypot(cx - fx, cy - fy), cr * .45));
-    sp.a = seg(lit, .4, .7) * seg(p, .12, .16) * (1 - seg(p, .82, .86)); return sp;
-  });
+  fxPre(ctx, L, p, t, L.ax, L.ay, s);
+  ctx.fillStyle = rgba(K.night, .42 * dusk); ctx.fillRect(0, 0, L.W, L.H);
+  flame(ctx, jar.x + 1 * s, jar.y - jh - 15 * s, s, jset > .5 ? flameAlpha(p, .89, .95) : 0, t);
+  fxPost(ctx, L, p, t, L.ax, L.ay, s);
 }
 
 function lcTarget() { const lc = $('#lc'), st = $('#lc-stage'); if (!lc) return 0; const total = lc.offsetHeight - st.offsetHeight; return total > 0 ? clamp((65 - lc.getBoundingClientRect().top) / total) : 0; }
@@ -1127,13 +1115,11 @@ function lcResize() {
   if (!LC.cv) return; const r = LC.cv.getBoundingClientRect(); LC.W = r.width; LC.H = r.height;
   LC.dpr = Math.min(window.devicePixelRatio || 1, LC.W < 760 ? 1.5 : 2);
   LC.cv.width = Math.round(LC.W * LC.dpr); LC.cv.height = Math.round(LC.H * LC.dpr);
-  if (!LC.mask) { LC.mask = document.createElement('canvas'); LC.mctx = LC.mask.getContext('2d'); }
-  LC.mask.width = LC.cv.width; LC.mask.height = LC.cv.height;
 }
 function lcDraw(p, t) {
   const ctx = LC.ctx; if (!ctx || !LC.W) return; ctx.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); ctx.clearRect(0, 0, LC.W, LC.H);
   const L = layout(); LC.spots = [];
-  if (S.opening === 'pour') scenePour(ctx, L, p, t); else if (S.opening === 'jaali') sceneJaali(ctx, L, p, t); else sceneArches(ctx, L, p, t);
+  if (S.opening === 'pour') scenePour(ctx, L, p, t); else sceneArches(ctx, L, p, t);
 }
 function lcCopy(p, still) {
   const cfg = OPENINGS[S.opening]; const set = (el, a, tf) => { if (!el) return; el.style.opacity = String(a); el.style.visibility = a < .02 ? 'hidden' : 'visible'; if (tf !== undefined) el.style.transform = tf; };
@@ -1142,7 +1128,7 @@ function lcCopy(p, still) {
   const fa = still ? 0 : seg(p, cfg.final[0], cfg.final[1]); set($('#lc-final'), fa, `translateY(${(1 - fa) * 18}px)`);
   const idx = p < cfg.cuts[0] ? 0 : p < cfg.cuts[1] ? 1 : p < cfg.cuts[2] ? 2 : 3;
   [...($('#lc-rail')?.children || [])].forEach((li, k) => li.classList.toggle('on', k === idx));
-  $('#lc-stage')?.classList.toggle('ink-light', cfg.dark || p > cfg.final[0] - .04);
+  $('#lc-stage')?.classList.toggle('ink-light', SKINS[S.skin].dark || p > cfg.final[0] - .04);
   const pg = $('#lc-progress'); if (pg) pg.style.transform = `scaleX(${p})`;
   const box = $('#lc-spots'); if (!box) return;
   [...box.children].forEach((el, i) => {
@@ -1162,12 +1148,7 @@ function lcSetup(on) {
   const still = on && reduce.matches; document.body.classList.toggle('static-lc', still);
   LC.cv = on ? $('#lc-canvas') : null; if (!LC.cv) return;
   LC.ctx = LC.cv.getContext('2d'); lcResize();
-  if (!LC.marble) LC.marble = makeMarble(); if (!LC.jaali) LC.jaali = makeJaali();
-  const stage = $('#lc-stage');
-  const setPtr = (e, touch) => { const r = LC.cv.getBoundingClientRect(); LC.ptr.x = e.clientX - r.left; LC.ptr.y = e.clientY - r.top; LC.ptr.on = true; LC.ptr.touch = touch; LC.ptr.last = performance.now(); };
-  stage.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') setPtr(e, false); });
-  stage.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') setPtr(e, true); });
-  stage.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') LC.ptr.on = false; });
+  if (!LC.marble) LC.marble = makeMarble();
   if (still) { lcDraw(OPENINGS[S.opening].staticP, 0); lcCopy(OPENINGS[S.opening].staticP, true); return; }
   LC.p = lcTarget(); lcDraw(LC.p, performance.now() / 1000); lcCopy(LC.p, false);
   LC.io = new IntersectionObserver((en) => { LC.visible = en[0].isIntersecting; if (LC.visible && !LC.raf) LC.raf = requestAnimationFrame(lcFrame); }, { rootMargin: '100px' });
@@ -1247,6 +1228,7 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
+  if (d.act === 'skin') { S.skin = t.value; save(); track('theme_switch', { theme: t.value }); render(); say('Theme: ' + SKINS[S.skin].name + '. ' + SKINS[S.skin].use); return; }
   if (d.act === 'opening') { S.opening = t.value; save(); track('opening_switch', { opening: t.value }); if (route() !== 'home') location.hash = 'home'; else render(); say('Showing ' + OPENINGS[S.opening].name + '. Scroll the homepage to play it.'); return; }
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
   if (d.act === 'home-rit') { UI.ritual.homeSel = UI.ritual.homeSel || { a: true, b: true }; UI.ritual.homeSel[d.k] = t.checked; render(); $('#' + t.id)?.focus(); }
