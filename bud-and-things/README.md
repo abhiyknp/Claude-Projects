@@ -3,6 +3,9 @@
 Working notes for the BUD & THINGS ecommerce build (budandthings.com).
 Design boards: https://claude.ai/artifact/SvoPbC72TMZQaFhVgGdNau
 Clickable prototype: https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr (source: `prototype/index.html`)
+Public preview: https://abhiyknp.github.io/Claude-Projects/
+
+**How it is built, tested and published:** see [WORKFLOW.md](WORKFLOW.md) (design history, prototype structure, the Blender → browser 3D pipeline, adding a room, moods, testing, publishing, next steps).
 
 ## Decisions so far
 
