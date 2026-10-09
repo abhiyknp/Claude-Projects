@@ -121,7 +121,7 @@ function build(res) {
   // what glows rather than takes light: the fanlight, the sky beyond the windows
   const fan = new THREE.Mesh(new THREE.CircleGeometry(1.3, 48, 0, Math.PI), new THREE.MeshBasicMaterial({ color: new THREE.Color(1.5, 1.12, .78), toneMapped: false, side: THREE.DoubleSide })); fan.position.set(0, 3.5, -.14); scene.add(fan);
   const sky = new THREE.Mesh(new THREE.PlaneGeometry(9, 3), new THREE.MeshBasicMaterial({ map: skyTex('#AFC3DE', '#F2DDBF', '#F7E7CF'), toneMapped: false })); sky.rotation.y = -Math.PI / 2; sky.position.set(3.75, 3.6, 4.5); scene.add(sky);
-  const dusk = new THREE.Mesh(new THREE.PlaneGeometry(3, 3.6), new THREE.MeshBasicMaterial({ map: skyTex('#3B4466', '#C98E78', '#E7B48E'), toneMapped: false })); dusk.position.set(-6.5, 1.8, 3.15); scene.add(dusk);
+  const dusk = new THREE.Mesh(new THREE.PlaneGeometry(3, 3.6), new THREE.MeshBasicMaterial({ map: skyTex('#26304F', '#7E5A66', '#C98A6C'), toneMapped: true })); dusk.position.set(-6.5, 1.8, 3.15); scene.add(dusk);
   // sheer curtains at the bedroom window, which move
   const curtains = [-5.62, -7.38].map((x) => { const c = curtain(.5, 2.95, '#F6EFE4'); c.position.set(x, 3.35, 3.72); scene.add(c); return c; });
   // light for the products: low sun through the windows, a warm room fill, and a point light per lit candle
