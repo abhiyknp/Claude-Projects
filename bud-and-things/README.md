@@ -2,6 +2,7 @@
 
 Working notes for the BUD & THINGS ecommerce build (budandthings.com).
 Design boards: https://claude.ai/artifact/SvoPbC72TMZQaFhVgGdNau
+Clickable prototype: https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr (source: `prototype/index.html`)
 
 ## Decisions so far
 
