@@ -163,7 +163,7 @@ function build(skin) {
   const contactM = new THREE.MeshBasicMaterial({ map: canvasTex(64, 64, (x, w) => { const g = x.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); g.addColorStop(0, 'rgba(0,0,0,.55)'); g.addColorStop(.5, 'rgba(0,0,0,.22)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, w, w); }), transparent: true, depthWrite: false });
   const list = window.TOUR_ITEMS || [];
   T.items = list.map((o) => {
-    const p = window.BT_BYID && o.id ? window.BT_BYID[o.id] : null; const mk = MAKERS[o.k]; if (!mk) return null;
+    const p = window.BT_BYID && o.id ? window.BT_BYID[o.id] : null; const mk = MAKERS[o.k]; if (!mk || !groups[o.room]) return null; // opening D's bedroom pieces live elsewhere
     const obj = mk({ ...o, name: p ? p.name : '' }); obj.position.set(...o.pos); obj.rotation.y = o.ry || 0; obj.scale.setScalar(SC); groups[o.room].add(obj);
     const r = { jar: .09, pillar: .07, tray: .24, plate: .17, dish: .12, arch: .12, pebbles: .09, archtray: .14, box: .2 }[o.k] || .1;
     const cs = new THREE.Mesh(new THREE.PlaneGeometry(r * 2.6, r * 2.6), contactM); cs.rotation.x = -Math.PI / 2; cs.position.y = .002; obj.add(cs);

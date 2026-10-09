@@ -177,10 +177,18 @@ body.app .site-foot { display: none; }
   .lc-spots a .num { display: none; }
 }
 .lc.tour { height: 1000vh; }
-.lc.tour.house { height: 760vh; }
-.lc-stage.focused .lc-cap, .lc-stage.focused .lc-rail, .lc-stage.focused .lc-hero { opacity: 0 !important; visibility: hidden !important; transition: opacity .4s; }
+.lc.tour.house { height: 1300vh; }
+.lc-stage.focused .lc-cap, .lc-stage.focused .lc-rail, .lc-stage.focused .lc-hero, .lc-stage.focused .house-mood { opacity: 0 !important; visibility: hidden !important; transition: opacity .4s; }
 .house-ui { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
 .house-ui > * { pointer-events: auto; }
+.house-mood { position: absolute; right: 20px; top: 18px; text-align: right; }
+.hm-btn { background: rgba(248,240,228,.92); color: #3D281E; border: 0; padding: 9px 13px; font: 13px Lato, sans-serif; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); min-height: 40px; }
+.hm-pop { margin-top: 8px; background: rgba(248,240,228,.97); color: #3D281E; padding: 14px 16px; width: min(330px, calc(100vw - 40px)); text-align: left; box-shadow: 0 12px 40px rgba(30,18,10,.25); }
+.hm-k { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #94503A; margin: 0 0 8px; }
+.hm-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.hm-row button { border: 1px solid rgba(61,40,30,.3); background: transparent; color: inherit; padding: 8px 12px; font: 14px Lato, sans-serif; cursor: pointer; min-height: 40px; }
+.hm-row button[aria-pressed="true"] { background: #A55B3F; border-color: #A55B3F; color: #fff; }
+.hm-pop .linkish { background: none; border: 0; padding: 0; color: #94503A; text-decoration: underline; font: 13px Lato, sans-serif; cursor: pointer; }
 .house-list-btn { position: absolute; left: 20px; bottom: 22px; background: rgba(248,240,228,.92); color: #3D281E; border: 0; padding: 10px 14px; font: 600 13px Lato, sans-serif; letter-spacing: .02em; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); }
 .house-list { position: absolute; left: 20px; bottom: 70px; width: min(340px, calc(100% - 40px)); max-height: 60%; overflow: auto; background: rgba(248,240,228,.97); color: #3D281E; box-shadow: 0 12px 40px rgba(30,18,10,.25); }
 .house-list .hl-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 10px 6px 16px; }
@@ -201,7 +209,7 @@ body.app .site-foot { display: none; }
 .house-panel .hp-nav { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(61,40,30,.15); margin-top: 10px; padding-top: 8px; }
 .house-panel .hp-close { position: absolute; right: 8px; top: 8px; }
 .house-panel .hp-hint { font-size: 12px; margin: 6px 0 0; }
-@media (max-width: 760px) { .lc.tour.house { height: 640vh; } .house-panel { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; transform: none; padding: 18px 16px 12px; animation: none; } .house-panel h3 { font-size: 24px; } .house-panel .hp-line { font-size: 14px; } .house-list-btn { left: 12px; bottom: 14px; } }
+@media (max-width: 760px) { .lc.tour.house { height: 1050vh; } .house-panel { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; transform: none; padding: 18px 16px 12px; animation: none; } .house-panel h3 { font-size: 24px; } .house-panel .hp-line { font-size: 14px; } .house-list-btn { left: 12px; bottom: 14px; } }
 .lc.tour .lc-cap { top: auto; bottom: 8%; }
 @media (max-width: 760px) { .lc.tour { height: 820vh; } }
 .world { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
@@ -963,7 +971,7 @@ function render(nav) {
 }
 // a shared link to one piece: open the house at that piece, already in focus
 function houseDeepLink(id) {
-  const i = TOUR_ITEMS.findIndex((o) => o.room === 'F' && o.id === id && o.label); if (i < 0) return;
+  const i = TOUR_ITEMS.findIndex((o) => (o.room === 'F' || o.room === 'BR') && o.id === id && o.label); if (i < 0) return;
   const go = () => { const lc = $('#lc'), st = $('#lc-stage'); if (!lc) return; const total = lc.offsetHeight - st.offsetHeight; const p = window.HOUSE.timeOf(i) + .015; window.scrollTo(0, lc.getBoundingClientRect().top + scrollY - 65 + p * total); LC.p = p; setTimeout(() => houseFocus(i), 300); };
   if (window.HOUSE && window.HOUSE.ready) go(); else window.addEventListener('house-ready', go, { once: true });
 }
@@ -998,8 +1006,8 @@ const OPENINGS = {
   pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Cast', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
     caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Cast, set,<br><em>lifted from the mould.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
     spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 },
-  house: { name: 'D · The House', rail: ['Front door', 'The niche', 'Left shelves', 'Right shelves', 'The foyer'], cuts: [.2, .4, .51, .62], hero: [.02, .05], staticP: .67,
-    caps: [['The door is open.<br><em>Come in.</em>', [.08, .1, .15, .18]], ['One by one,<br><em>the candles are lit.</em>', [.31, .32, .37, .39]], ['Trays and plates on the left.<br><em>Tap any piece to look closer.</em>', [.42, .44, .49, .51]], ['Little forms on the right,<br><em>made to be used.</em>', [.53, .55, .6, .62]], ['Made with thought.<br><em>Given with feeling.</em>', [.68, .7, .78, .8]], ['The next room is being furnished.<br><em>Shop the foyer below.</em>', [.86, .88, .93, .95]]],
+  house: { name: 'D · The House', rail: ['Front door', 'The niche', 'The shelves', 'The bedroom', 'Gifting corner'], cuts: [.12, .23, .48, .76], hero: [.012, .03], staticP: .62,
+    caps: [['The door is open.<br><em>Come in.</em>', [.045, .055, .085, .1]], ['One by one,<br><em>the candles are lit.</em>', [.172, .18, .207, .215]], ['Trays and plates on the left.<br><em>Tap any piece to look closer.</em>', [.235, .245, .27, .28]], ['Little forms on the right,<br><em>made to be used.</em>', [.297, .307, .33, .34]], ['Through the arch,<br><em>the bedroom waits in the dark.</em>', [.475, .485, .53, .545]], ['Then the bedside candles<br><em>take over from the dusk.</em>', [.56, .57, .61, .625]], ['A corner kept<br><em>for giving.</em>', [.765, .775, .81, .82]], ['Made with thought.<br><em>Given with feeling.</em>', [.9, .91, .94, .95]]],
     spots: null, final: [.955, .995], light: 0 },
   tour: { name: 'C · Home Tour', rail: ['Front door', 'Foyer', 'Living room', 'Bedroom'], cuts: [.16, .48, .79], hero: [.02, .05], staticP: .33,
     caps: [['The door is open.<br><em>Come in.</em>', [.07, .09, .13, .15]], ['One by one,<br><em>the candles are lit.</em>', [.19, .21, .25, .27]], ['Trays and plates to the left,<br><em>little forms to the right.</em>', [.29, .31, .4, .42]], ['The next room<br><em>waits in the dark.</em>', [.48, .5, .54, .56]], ['Pieces for the living room,<br><em>made to be used.</em>', [.6, .62, .71, .73]], ['A corner kept<br><em>for giving.</em>', [.86, .875, .945, .96]]],
@@ -1334,7 +1342,22 @@ const TOUR_ITEMS = [
   T3I('B', 'box', null, '#C9A27A', [2.95, .765, 2.9], .885, { ry: LW, place: true, w: .3, h: .18, d: .24 }), T3I('B', 'box', null, '#E6D5C1', [2.85, .765, 3.35], .89, { ry: LW, place: true, w: .22, h: .14, d: .2 }),
   T3I('B', 'jar', 'terrace-garden', '#C9D0B8', [3.05, .765, 3.65], .895, { ry: LW, place: true }), T3I('B', 'dish', 'moonlet-ring-dish', '#F1E8DA', [2.9, .765, 2.55], .9, { ry: LW, place: true }),
   T3I('B', 'pebbles', 'pebble-coasters', '#F1E8DA', [-3.16, 1.2725, 2.8], .93, { ry: RW, place: true }), T3I('B', 'arch', 'still-form-no-1', '#6B6B43', [-3.16, 1.8225, 3.2], .935, { ry: RW, place: true }),
-  T3I('B', 'archtray', 'jharokha-catch-all', '#C99A6C', [-3.16, 1.2725, 3.8], .94, { ry: RW, place: true }), T3I('B', 'pillar', null, '#A55B3F', [-3.16, 1.8225, 3.9], .945, { ry: RW, place: true })
+  T3I('B', 'archtray', 'jharokha-catch-all', '#C99A6C', [-3.16, 1.2725, 3.8], .94, { ry: RW, place: true }), T3I('B', 'pillar', null, '#A55B3F', [-3.16, 1.8225, 3.9], .945, { ry: RW, place: true }),
+  // opening D's bedroom (page coordinates; 'at' is the walk position directly)
+  ...[
+    ['pillar', null, '#F1E8DA', [-10.4, 1.55, 5.6], .55, { h: .2 }], ['pillar', 'pillar-studies', '#A55B3F', [-10.4, 1.55, 5.9], .56, { h: .26 }],
+    ['jar', 'first-light', '#F4ECE0', [-10.4, 1.55, 7.0], .57], ['jar', 'brass-and-saffron', '#A55B3F', [-10.4, 1.55, 7.45], .58],
+    ['jar', 'chai-at-four', '#C08A5B', [-10.2, .55, 5.0], .59], ['plate', 'halo-candle-plate', '#DCC9AE', [-10.2, .55, 8.2], .6, { withPillar: true }]
+  ].map(([k, id, c, pos, at, x]) => T3I('BR', k, id, c, pos, at, { ry: RW, hp: true, where: 'By the bed', ...(x || {}) })),
+  ...[
+    ['arch', 'still-form-no-1', '#6B6B43', [-4.9, 1.845, 9.47], .695], ['dish', 'moonlet-ring-dish', '#C99A6C', [-5.8, 1.845, 9.47], .705], ['pillar', null, '#A55B3F', [-6.3, 1.845, 9.47], .712, { h: .22 }],
+    ['archtray', 'jharokha-catch-all', '#F1E8DA', [-4.9, 1.245, 9.47], .72], ['pebbles', 'pebble-coasters', '#B0644A', [-5.9, 1.245, 9.47], .728]
+  ].map(([k, id, c, pos, at, x]) => T3I('BR', k, id, c, pos, at, { ry: Math.PI, hp: true, place: true, where: 'Left shelves', ...(x || {}) })),
+  ...[
+    ['box', null, '#C9A27A', [-7.25, .77, 9.3], .765, { w: .3, h: .18, d: .24 }], ['box', null, '#E6D5C1', [-7.65, .77, 9.35], .772, { w: .22, h: .14, d: .2 }], ['jar', 'terrace-garden', '#C9D0B8', [-7.95, .77, 9.3], .78]
+  ].map(([k, id, c, pos, at, x]) => T3I('BR', k, id, c, pos, at, { ry: Math.PI, hp: true, place: true, where: 'The gifting table', ...(x || {}) })),
+  ...[['tray', 'ghat-tray', '#DCC9AE', [-6.0, .5, 3.8], .845], ['jar', 'monsoon-letters', '#A9B39A', [-6.9, .5, 3.8], .855]]
+    .map(([k, id, c, pos, at]) => T3I('BR', k, id, c, pos, at, { ry: 0, hp: true, place: true, where: 'By the window' }))
 ].map((o) => ({ ...o, noSpot: !o.label }));
 window.TOUR_ITEMS = TOUR_ITEMS; window.BT_BYID = byId;
 function sceneTour(ctx, L, p, t) {
@@ -1359,28 +1382,36 @@ function sceneHouse(ctx, L, p, t) {
     ctx.font = '13px Lato, sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(243,230,214,.8)'; ctx.fillText('Opening the house…', L.W / 2, y + 26); LC.spots = []; LC.houseIn = 0; return;
   }
   LC.spots = Hs.render(p, t); LC.houseIn = Math.min(1, (LC.houseIn || 0) + .04);
+  const rm = Hs.roomAt(p); if (rm !== LC.houseRoom) { LC.houseRoom = rm; if (UI.house.focus < 0) renderHouseUI(); }
   if (LC.houseIn < 1) { ctx.fillStyle = `rgba(14,9,7,${1 - LC.houseIn})`; ctx.fillRect(0, 0, L.W, L.H); }
   const fin = seg(p, .955, .995); if (fin > 0) { ctx.fillStyle = `rgba(18,11,8,${.55 * fin})`; ctx.fillRect(0, 0, L.W, L.H); }
   const hs = 1 - seg(p, .02, .06); if (hs > 0) { const g = ctx.createLinearGradient(0, 0, L.mobile ? 0 : L.W * .6, L.mobile ? L.H : 0); g.addColorStop(0, `rgba(30,18,12,${.55 * hs})`); g.addColorStop(1, 'rgba(30,18,12,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); } // keeps the hero readable over the sunny porch
   const vg = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * .45, L.W / 2, L.H / 2, Math.max(L.W, L.H) * .8); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.22)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, L.W, L.H);
 }
-const HOUSE_IDX = () => TOUR_ITEMS.map((o, i) => (o.room === 'F' && o.label ? i : -1)).filter((i) => i >= 0);
+const HOUSE_ROOM = () => (window.HOUSE && window.HOUSE.ready ? window.HOUSE.roomAt(LC.p) : 'F');
+const HOUSE_IDX = (room) => { const r = room || (HOUSE_ROOM() === 'B' ? 'BR' : 'F'); return TOUR_ITEMS.map((o, i) => (o.room === r && o.label && (!window.HOUSE || window.HOUSE.matches(i)) ? i : -1)).filter((i) => i >= 0); };
+// the house can be dressed for a feeling or for the kind of gift; it also sets the site theme
+const HOUSE_MOODS = { feel: [['calm', 'Calm'], ['cosy', 'Cosy'], ['fresh', 'Fresh'], ['creative', 'Creative']], gift: [['birthday', 'Birthday'], ['housewarming', 'Housewarming'], ['festive', 'Festive'], ['thank-you', 'Thank you']] };
+const MOOD_SKIN = { house: 'signature', calm: 'signature', cosy: 'evening', fresh: 'monsoon', creative: 'atelier', birthday: 'gifting', housewarming: 'atelier', festive: 'festive', 'thank-you': 'signature' };
+const moodName = (k) => [...HOUSE_MOODS.feel, ...HOUSE_MOODS.gift].find((m) => m[0] === k)?.[1] || 'Just the house';
 UI.house = { focus: -1, list: false, pending: null };
 function renderHouseUI() {
   const box = $('#house-ui'); if (!box) return; const f = UI.house.focus; const ids = HOUSE_IDX();
+  const room = HOUSE_ROOM(), roomName = room === 'B' ? 'The bedroom' : 'The foyer', mood = (window.HOUSE && window.HOUSE.mood) || 'house';
   let h = `<button class="house-list-btn" type="button" data-act="house-list" aria-expanded="${UI.house.list}">Shop this room <span class="num">(${ids.length})</span></button>`;
-  if (UI.house.list) h += `<div class="house-list" role="dialog" aria-label="Pieces in the foyer"><div class="hl-head"><strong>The foyer</strong><button class="icon-btn" type="button" data-act="house-list" aria-label="Close list">${CLOSE}</button></div><ol>${ids.map((i) => { const p = byId[TOUR_ITEMS[i].id]; return `<li><button type="button" data-act="house-focus" data-i="${i}"><span>${esc(p.name)}</span><span class="num muted">${priceFrom(p)}</span></button></li>`; }).join('')}</ol></div>`;
+  h += `<div class="house-mood"><button type="button" class="hm-btn" data-act="house-moods" aria-expanded="${!!UI.house.moods}">Set the mood: <strong>${esc(moodName(mood))}</strong></button>${UI.house.moods ? `<div class="hm-pop" role="dialog" aria-label="Set the mood"><p class="hm-k">How should it feel?</p><div class="hm-row">${HOUSE_MOODS.feel.map(([k, l]) => `<button type="button" data-act="house-mood" data-k="${k}" aria-pressed="${mood === k}">${l}</button>`).join('')}</div><p class="hm-k">Who is it for?</p><div class="hm-row">${HOUSE_MOODS.gift.map(([k, l]) => `<button type="button" data-act="house-mood" data-k="${k}" aria-pressed="${mood === k}">${l}</button>`).join('')}</div>${mood !== 'house' ? '<button type="button" class="linkish" data-act="house-mood" data-k="house">Back to just the house</button>' : ''}</div>` : ''}</div>`;
+  if (UI.house.list) h += `<div class="house-list" role="dialog" aria-label="Pieces in ${roomName.toLowerCase()}"><div class="hl-head"><strong>${roomName}${mood !== 'house' ? ' · ' + esc(moodName(mood)) : ''}</strong><button class="icon-btn" type="button" data-act="house-list" aria-label="Close list">${CLOSE}</button></div><ol>${ids.map((i) => { const p = byId[TOUR_ITEMS[i].id]; return `<li><button type="button" data-act="house-focus" data-i="${i}"><span>${esc(p.name)}</span><span class="num muted">${priceFrom(p)}</span></button></li>`; }).join('')}</ol></div>`;
   if (f >= 0) {
-    const o = TOUR_ITEMS[f], p = byId[o.id]; const k = ids.indexOf(f); const candle = p.cat === 'candles' || o.withPillar;
-    const where = o.pos[0] > 1 ? 'Left shelf' : o.pos[0] < -1 ? 'Right shelf' : 'The niche';
+    const o = TOUR_ITEMS[f], p = byId[o.id]; const ids2 = HOUSE_IDX(o.room); const k = ids2.indexOf(f); const candle = p.cat === 'candles' || o.withPillar;
+    const where = o.where || (o.pos[0] > 1 ? 'Left shelf' : o.pos[0] < -1 ? 'Right shelf' : 'The niche');
     h += `<aside class="house-panel" role="dialog" aria-labelledby="hp-h">
       <button class="icon-btn hp-close" type="button" data-act="house-close" aria-label="Back to the room">${CLOSE}</button>
-      <span class="eyebrow">Foyer · ${where}</span><h3 id="hp-h">${esc(p.name)}</h3><p class="hp-line">${esc(p.line)}</p>
+      <span class="eyebrow">${o.room === 'BR' ? 'Bedroom' : 'Foyer'} · ${where}</span><h3 id="hp-h">${esc(p.name)}</h3><p class="hp-line">${esc(p.line)}</p>
       <p class="hp-meta">${esc((p.notes || []).join(' · '))}${p.size ? ' · ' + esc(p.size) : ''}</p>
       <p class="hp-price num">${priceFrom(p)}</p>
       <div class="hp-actions">${candle ? `<button class="btn ghost" type="button" data-act="house-light" data-i="${f}">${window.HOUSE && window.HOUSE.isLit(f) ? 'Blow it out' : 'Light it'}</button>` : ''}<button class="btn" type="button" data-act="house-add" data-id="${o.id}">Add to cart</button></div>
       <p class="hp-links"><a href="#p-${o.id}">View details</a><button type="button" class="linkish" data-act="house-share" data-id="${o.id}">Share this piece</button></p>
-      <div class="hp-nav"><button class="icon-btn" type="button" data-act="house-step" data-d="-1" aria-label="Previous piece">‹</button><span class="num">${k + 1} / ${ids.length}</span><button class="icon-btn" type="button" data-act="house-step" data-d="1" aria-label="Next piece">›</button></div>
+      <div class="hp-nav"><button class="icon-btn" type="button" data-act="house-step" data-d="-1" aria-label="Previous piece">‹</button><span class="num">${k + 1} / ${ids2.length}</span><button class="icon-btn" type="button" data-act="house-step" data-d="1" aria-label="Next piece">›</button></div>
       <p class="hp-hint muted">Drag to turn it.</p></aside>`;
   }
   box.innerHTML = h;
@@ -1390,7 +1421,7 @@ function houseFocus(i) {
   if (Hs.focusOn(i)) { UI.house.focus = i; UI.house.list = false; renderHouseUI(); $('#lc-stage')?.classList.add('focused'); track('house_focus', { id: TOUR_ITEMS[i].id }); setTimeout(() => $('.house-panel .hp-close')?.focus(), 50); }
 }
 window.addEventListener('house-unfocus', () => { UI.house.focus = -1; renderHouseUI(); $('#lc-stage')?.classList.remove('focused'); });
-window.addEventListener('house-ready', () => { if (LC.cv && S.opening === 'house') { renderHouseUI(); if (UI.house.pending != null) { const i = UI.house.pending; UI.house.pending = null; setTimeout(() => houseFocus(i), 400); } } });
+window.addEventListener('house-ready', () => { if (window.HOUSE && S.houseMood) window.HOUSE.setMood(S.houseMood); if (LC.cv && S.opening === 'house') { renderHouseUI(); if (UI.house.pending != null) { const i = UI.house.pending; UI.house.pending = null; setTimeout(() => houseFocus(i), 400); } } });
 // drag to turn the piece in focus
 (() => { let x0 = null; document.addEventListener('pointerdown', (e) => { if (UI.house.focus >= 0 && e.target.closest('#lc-stage') && !e.target.closest('.house-panel, .house-list, a, button')) x0 = e.clientX; });
   document.addEventListener('pointermove', (e) => { if (x0 != null && window.HOUSE) { window.HOUSE.spin(e.clientX - x0); x0 = e.clientX; } });
@@ -1492,10 +1523,12 @@ document.addEventListener('click', (e) => {
     case 'mode': S.mode = d.v; save(); renderChrome(); say(d.v === 'app' ? 'Showing the installed-app layout.' : 'Showing the website layout.'); break;
     case 'reset': { const mode = S.mode; S = defaults(); S.mode = mode; save(); UI.pdp = {}; UI.finder = { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }; UI.co = { step: 'contact', contact: {}, address: {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false }; render(); say('Demo reset. Cart, saved items, orders and stock are back to the start.'); break; }
     case 'menu': UI.menu = !UI.menu; renderChrome(); break;
-    case 'house-list': UI.house.list = !UI.house.list; renderHouseUI(); break;
+    case 'house-list': UI.house.list = !UI.house.list; UI.house.moods = false; renderHouseUI(); break;
+    case 'house-moods': UI.house.moods = !UI.house.moods; UI.house.list = false; renderHouseUI(); break;
+    case 'house-mood': { const Hs = window.HOUSE; if (Hs) Hs.setMood(d.k); S.skin = MOOD_SKIN[d.k] || 'signature'; S.houseMood = d.k; save(); document.documentElement.dataset.skin = S.skin; renderChrome(); UI.house.moods = false; renderHouseUI(); say(d.k === 'house' ? 'Back to just the house.' : `The house is set for ${moodName(d.k).toLowerCase()}. Pieces that suit it are labelled.`); track('house_mood', { mood: d.k }); break; }
     case 'house-focus': houseFocus(+d.i); break;
     case 'house-close': window.HOUSE && window.HOUSE.unfocus(); break;
-    case 'house-step': { const ids = HOUSE_IDX(); const k = ids.indexOf(UI.house.focus); houseFocus(ids[(k + +d.d + ids.length) % ids.length]); break; }
+    case 'house-step': { const ids = HOUSE_IDX(TOUR_ITEMS[UI.house.focus].room); const k = ids.indexOf(UI.house.focus); houseFocus(ids[(k + +d.d + ids.length) % ids.length]); break; }
     case 'house-light': { const Hs = window.HOUSE; Hs.forceLit[+d.i] = Hs.isLit(+d.i) ? -1 : 1; setTimeout(renderHouseUI, 60); break; }
     case 'house-add': { const p = byId[d.id]; const v = p.variants.find((x) => stockOf(x.sku) > 0); if (v) addToCart(v.sku, 1, { source: 'house' }); else say('Sorry, that one is sold out.'); break; }
     case 'house-share': { const url = location.href.split('#')[0] + '#house-' + d.id; try { navigator.clipboard.writeText(url).then(() => say('Link copied. It opens the house at this piece.'), () => say(url)); } catch (err) { say(url); } track('house_share', { id: d.id }); break; }
