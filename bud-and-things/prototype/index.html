@@ -4,21 +4,22 @@
 <style>
 /* Layout: Atelier of Light. One plaster room; warm light carries the colour; square, quiet UI around a single scroll moment. Single light theme by brand choice. */
 :root {
-  --ivory: #F5EFE4; --plaster: #EFE7DA; --linen: #EDE3D3; --sand: #DCC9AE; --sand2: #E2D2B8; --card: #FBF8F2;
-  --caramel: #B88352; --terra: #B0644A; --terra-ink: #94503A; --olive: #6B6B43;
-  --choc: #3A2920; --choc2: #5C4637; --line: #DCC9AE; --line2: #CDB799; --dusk: #6E5444; --glow: #F0CFA4;
-  --ok: #4E6B3A; --warn: #94503A; --ok-bg: #E3E3CF; --err-bg: #F1DDD3; --head-bg: rgba(239,231,218,.96);
-  --sk-ink: #3A2920; --sk-ink2: #5C4637; --sk-accent: #94503A; --sk-light: #F5EFE4; --sk-dark: #2A1E18; --sk-glow: #F0CFA4; --sk-chip: rgba(245,239,228,.94);
+  --ivory: #F4EBDF; --plaster: #EBDCCB; --linen: #EADBC8; --sand: #D9B99A; --sand2: #E4CDB2; --card: #FBF5EE;
+  --caramel: #B88352; --terra: #C2522B; --terra-ink: #A63D17; --olive: #5E6B1F;
+  --choc: #22140E; --choc2: #4E3326; --line: #DCC3A8; --line2: #C9A685; --dusk: #6E5444; --glow: #FFB37A;
+  --cta: #A63D17; --on-cta: #FFF6EE;
+  --ok: #4E6B3A; --warn: #A63D17; --ok-bg: #E5E6C4; --err-bg: #F6D3C2; --head-bg: rgba(244,235,223,.96);
+  --sk-ink: #22140E; --sk-ink2: #4E3326; --sk-accent: #A63D17; --sk-light: #FFF6EC; --sk-dark: #22140E; --sk-glow: #FFB37A; --sk-cta: #FFB37A; --sk-on-cta: #22140E; --sk-chip: rgba(255,246,236,.94);
   --display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
   --body: 'Hanken Grotesk', 'Segoe UI', system-ui, sans-serif;
   --wrap: 1280px;
   color-scheme: light;
 }
-/* Themes by use case: festive season, monsoon edit, gifting and weddings, evening (dark). Product colours never change. */
-:root[data-skin="festive"] { --ivory: #FAF1E4; --plaster: #F3E4CE; --linen: #F1E1CB; --sand: #E2C49C; --sand2: #EAD3B3; --card: #FFF8EE; --caramel: #C68A3E; --terra: #B8572A; --terra-ink: #97461A; --olive: #6A5614; --choc: #3B2116; --choc2: #5E3B28; --line: #E2C9A6; --line2: #D2B48C; --glow: #F6C46A; --ok-bg: #ECE6C8; --err-bg: #F6DDCC; --head-bg: rgba(243,228,206,.96); --sk-accent: #97461A; --sk-glow: #F6C46A; --sk-ink: #3B2116; --sk-ink2: #5E3B28; }
-:root[data-skin="monsoon"] { --ivory: #F2F3EE; --plaster: #E6E8DE; --linen: #E5E8DD; --sand: #C9CDB8; --sand2: #D9DCCB; --card: #FAFBF7; --caramel: #A39A6E; --terra: #5E7A57; --terra-ink: #3F5A3C; --olive: #55593F; --choc: #232821; --choc2: #454B3D; --line: #D3D7C6; --line2: #BFC4AE; --glow: #DDE7C8; --ok: #3F5A3C; --ok-bg: #DDE5D2; --err-bg: #EED9D2; --head-bg: rgba(230,232,222,.96); --sk-accent: #3F5A3C; --sk-glow: #DDE7C8; --sk-ink: #232821; --sk-ink2: #454B3D; }
-:root[data-skin="gifting"] { --ivory: #FBF3EF; --plaster: #F3E6E0; --linen: #F2E3DC; --sand: #DDBFB2; --sand2: #EAD5CB; --card: #FFFAF7; --caramel: #C99A86; --terra: #B85C55; --terra-ink: #963B3A; --olive: #6A5743; --choc: #3A2226; --choc2: #5E4146; --line: #E6CFC5; --line2: #D7B6A9; --glow: #F2C2B0; --ok-bg: #E9E3D2; --err-bg: #F5DAD5; --head-bg: rgba(243,230,224,.96); --sk-accent: #963B3A; --sk-glow: #F2C2B0; --sk-ink: #3A2226; --sk-ink2: #5E4146; }
-:root[data-skin="evening"] { --ivory: #1F1612; --plaster: #2A1F19; --linen: #2E231D; --sand: #4A3A30; --sand2: #3A2D25; --card: #271D18; --caramel: #C99A6C; --terra: #D98A66; --terra-ink: #E3A07F; --olive: #C9C69B; --choc: #F2E8DA; --choc2: #CDBBA6; --line: #4A3A30; --line2: #5E4B3F; --glow: #8A4A2E; --ok: #C4D3A6; --ok-bg: #33382A; --err-bg: #4A2A22; --head-bg: rgba(31,22,18,.94); --sk-ink: #F2E8DA; --sk-ink2: #CDBBA6; --sk-accent: #E3A07F; --sk-chip: rgba(36,26,20,.92); color-scheme: dark; }
+/* Themes by use case. Bold, colour-blocked rooms on stage; the shop stays light and readable. Product colours never change. */
+:root[data-skin="festive"] { --ivory: #FFF3E3; --plaster: #FBE3C6; --linen: #FAE0C2; --sand: #F2B969; --sand2: #F7CF96; --card: #FFF9F0; --terra: #C8175C; --terra-ink: #B0124F; --olive: #7A4A00; --choc: #3A0A14; --choc2: #6B2333; --line: #F0C891; --line2: #E2A85A; --glow: #FFB020; --cta: #B0124F; --on-cta: #FFF3E3; --ok-bg: #F2E6C2; --err-bg: #FAD6DE; --head-bg: rgba(255,243,227,.96); --sk-accent: #B0124F; --sk-dark: #3A0A14; --sk-glow: #FFB020; --sk-cta: #FFB020; --sk-on-cta: #3A0A14; }
+:root[data-skin="monsoon"] { --ivory: #EEF4F1; --plaster: #DDE9E4; --linen: #DCE8E2; --sand: #9FC0B5; --sand2: #C3D9D0; --card: #F8FBF9; --terra: #0E8077; --terra-ink: #0B6B63; --olive: #4F5E12; --choc: #0C2624; --choc2: #2E4A46; --line: #C5DAD2; --line2: #9DBFB3; --glow: #C9E265; --cta: #0B6B63; --on-cta: #F2FBF8; --ok: #2F5A2C; --ok-bg: #DCEBCF; --err-bg: #F3DAD3; --head-bg: rgba(238,244,241,.96); --sk-accent: #0B6B63; --sk-dark: #0C2624; --sk-glow: #C9E265; --sk-cta: #C9E265; --sk-on-cta: #0C2624; }
+:root[data-skin="gifting"] { --ivory: #FFF4F1; --plaster: #FBE2DC; --linen: #FADFD8; --sand: #F0AFA3; --sand2: #F6CCC3; --card: #FFFAF8; --terra: #C21A36; --terra-ink: #A3122A; --olive: #6B3A2E; --choc: #3B0A12; --choc2: #6A2A33; --line: #F1C6BD; --line2: #E39E91; --glow: #FFB4A8; --cta: #A3122A; --on-cta: #FFF4F1; --ok-bg: #ECE4CC; --err-bg: #FBD7D6; --head-bg: rgba(255,244,241,.96); --sk-accent: #A3122A; --sk-dark: #3B0A12; --sk-glow: #FFB4A8; --sk-cta: #FFB4A8; --sk-on-cta: #3B0A12; }
+:root[data-skin="evening"] { --ivory: #12142B; --plaster: #1A1D3A; --linen: #1D2040; --sand: #2E3260; --sand2: #252950; --card: #171A33; --caramel: #C99A6C; --terra: #E2B45C; --terra-ink: #E2B45C; --olive: #B9C38A; --choc: #F1EDE4; --choc2: #C2C0D6; --line: #2E3260; --line2: #3D4278; --glow: #7A5410; --cta: #E2B45C; --on-cta: #12142B; --ok: #B9D38A; --ok-bg: #24302A; --err-bg: #3A2236; --head-bg: rgba(18,20,43,.94); --sk-ink: #F1EDE4; --sk-ink2: #C2C0D6; --sk-accent: #E2B45C; --sk-dark: #12142B; --sk-glow: #E2B45C; --sk-cta: #E2B45C; --sk-on-cta: #12142B; color-scheme: dark; }
 * { box-sizing: border-box; }
 body { background: var(--ivory); color: var(--choc); font-family: var(--body); font-size: 16px; line-height: 1.55; }
 h1, h2, h3 { font-family: var(--display); font-weight: 300; line-height: 1.1; margin: 0; text-wrap: balance; }
@@ -33,9 +34,9 @@ button, input, select { font: inherit; color: inherit; }
 .num { font-variant-numeric: tabular-nums; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px; border: 1.5px solid var(--choc); background: var(--choc); color: var(--ivory); font-weight: 600; font-size: 15px; text-decoration: none; cursor: pointer; }
-.btn:hover { background: var(--choc2); color: var(--ivory); }
-.btn.ghost { background: transparent; color: var(--choc); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px; border: 1.5px solid var(--cta); background: var(--cta); color: var(--on-cta); font-weight: 600; font-size: 15px; text-decoration: none; cursor: pointer; }
+.btn:hover { background: var(--choc); border-color: var(--choc); color: var(--ivory); }
+.btn.ghost { background: transparent; color: var(--choc); border-color: var(--choc); }
 .btn.ghost:hover { background: var(--linen); color: var(--choc); }
 .btn.light { background: var(--ivory); color: var(--choc); border-color: var(--ivory); }
 .btn.small { min-height: 44px; padding: 0 14px; font-size: 14px; }
@@ -104,11 +105,11 @@ body.app .site-foot { display: none; }
 .paths a { min-height: 92px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; background: var(--linen); font-family: var(--display); font-size: 21px; }
 .paths a span { font-family: var(--body); font-size: 13px; font-weight: 600; }
 .paths a.feel { background: var(--terra-ink); color: var(--ivory); font-style: italic; }
-.lc-spots a { position: absolute; left: 0; top: 0; padding: 6px 10px; background: var(--sk-chip); color: var(--sk-ink); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 0 6px 18px rgba(58,41,32,.14); }
-.lc-spots a::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 14px; background: currentColor; opacity: .6; }
-.lc-spots a .num { font-weight: 500; color: var(--sk-ink2); margin-left: 4px; }
+.lc-spots a { position: absolute; left: 0; top: 0; padding: 6px 10px; background: var(--sk-cta); color: var(--sk-on-cta); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 0 6px 18px rgba(58,41,32,.14); }
+.lc-spots a::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 14px; background: var(--sk-cta); }
+.lc-spots a .num { font-weight: 500; opacity: .75; margin-left: 4px; }
 .lc-spots a.on { pointer-events: auto; }
-.lc-spots a:hover { color: var(--sk-accent); }
+.lc-spots a:hover { background: var(--sk-light); color: var(--sk-dark); }
 .lc-rail { position: absolute; right: 20px; top: 40%; display: flex; flex-direction: column; gap: 14px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; list-style: none; margin: 0; padding: 0; pointer-events: none; }
 .lc-rail li { display: flex; align-items: center; gap: 8px; color: var(--sk-ink2); }
 .lc-rail li::before { content: ""; width: 14px; height: 1px; background: currentColor; }
@@ -120,7 +121,7 @@ body.app .site-foot { display: none; }
 .ink-light .lc-hero .tag, .ink-light .lc-cap em, .ink-light .lc-hero .eyebrow { color: var(--sk-glow); }
 .ink-light .lc-hero .btn.ghost { background: transparent; color: var(--sk-light); border-color: var(--sk-light); }
 .ink-light .lc-hero .btn.ghost:hover { background: rgba(245,239,228,.12); }
-.ink-light .lc-hero .btn:not(.ghost) { background: var(--sk-light); color: var(--sk-dark); border-color: var(--sk-light); }
+.ink-light .lc-hero .btn:not(.ghost) { background: var(--sk-cta); color: var(--sk-on-cta); border-color: var(--sk-cta); }
 .ink-light .lc-cap p, .ink-light .lc-hero h1, .ink-light .lc-hero .tag, .ink-light .lc-hero .sub { text-shadow: 0 2px 22px rgba(20,12,8,.75); }
 .ink-light .lc-rail li { color: #D9CBB5; }
 .ink-light .lc-rail li.on { color: var(--sk-light); }
@@ -330,7 +331,7 @@ body.app .toast { bottom: 96px; }
       <label class="sr" for="opening-sel">Opening animation</label>
       <select id="opening-sel" data-act="opening"><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option></select>
       <label class="sr" for="skin-sel">Theme</label>
-      <select id="skin-sel" data-act="skin"><option value="atelier">Theme · Everyday</option><option value="festive">Theme · Festive season</option><option value="monsoon">Theme · Monsoon edit</option><option value="gifting">Theme · Gifting &amp; weddings</option><option value="evening">Theme · Evening (dark)</option></select>
+      <select id="skin-sel" data-act="skin"><option value="atelier">Theme · Everyday: Clay &amp; Cocoa</option><option value="festive">Theme · Festive: Saffron &amp; Rani</option><option value="monsoon">Theme · Monsoon: Peacock &amp; Moss</option><option value="gifting">Theme · Gifting: Cherry &amp; Blush</option><option value="evening">Theme · Evening: Indigo &amp; Brass</option></select>
       <a href="#admin">Owner view</a>
       <button type="button" data-act="reset">Reset demo</button>
     </span>
@@ -878,19 +879,34 @@ const OPENINGS = {
     spots: [.76, .79, .85, .88], final: [.87, .93] }
 };
 const SKINS = {
-  atelier: { name: 'Everyday', use: 'The year-round look: warm daylight, plaster and sand.', eyebrow: 'Objects & little rituals', wall: ['#EFE7DA', '#EBDDC7', '#E9CFA8'], floor: ['#DCC9AE', '#D9C3A2', '#D6B78F'], arch: ['#E2D3BB', '#DACAAF', '#D2BFA0', '#CBB592'], plinth: '#F3EBDF', duskWall: '#4A362B', duskFloor: '#3E2C22', night: '#241812', light: '255,248,232', ink2: '#5C4637', fx: null },
-  festive: { name: 'Festive season', use: 'For Diwali and the festive rush: saffron light, a marigold garland and diyas at dusk.', eyebrow: 'The festive edit', wall: ['#F2E2CC', '#EED3B0', '#E8BE8C'], floor: ['#D9B88E', '#D3A976', '#C9965E'], arch: ['#E9CDA7', '#E2BF93', '#D9AF7E', '#CF9F6B'], plinth: '#F6E9D6', duskWall: '#3B2318', duskFloor: '#2E1A11', night: '#1E100A', light: '255,226,170', ink2: '#5E3B28', fx: 'festive' },
-  monsoon: { name: 'Monsoon edit', use: 'For June to September: cool sage light and soft rain, made for earthy scents like Monsoon Letters.', eyebrow: 'The monsoon edit', wall: ['#E6E8DE', '#DDE1D3', '#D5D8C4'], floor: ['#C9CBB8', '#BFC2AC', '#B4B79E'], arch: ['#DADDCF', '#D0D4C2', '#C6CAB5', '#BCC0A9'], plinth: '#EEEFE7', duskWall: '#2F3328', duskFloor: '#262A20', night: '#151812', light: '236,244,238', ink2: '#454B3D', fx: 'rain' },
-  gifting: { name: 'Gifting & weddings', use: 'For gifting campaigns, weddings and Valentine’s week: rose clay and drifting petals.', eyebrow: 'The gifting edit', wall: ['#F3E6E0', '#EFD9D0', '#EBCDBF'], floor: ['#DDBFB2', '#D6B2A3', '#CFA594'], arch: ['#EBD5CB', '#E3C6B9', '#DAB6A7', '#D1A796'], plinth: '#F8EFEA', duskWall: '#3A2226', duskFloor: '#2E1A1D', night: '#1C0F11', light: '255,236,228', ink2: '#5E4146', fx: 'petals' },
-  evening: { name: 'Evening (dark)', use: 'For night-time browsing and dark-mode phones: the room is lamp-lit and the candle is already burning.', eyebrow: 'After dark', dark: true, wall: ['#4A3A30', '#43352C', '#3C2F27'], floor: ['#3A2C24', '#33271F', '#2C211B'], arch: ['#5A483D', '#524236', '#4A3B31', '#43352C'], plinth: '#5C4A3E', duskWall: '#2A1E18', duskFloor: '#20160F', night: '#120B08', light: '255,206,150', ink2: '#CDBBA6', fx: 'evening' }
+  atelier: { name: 'Everyday · Clay & Cocoa', use: 'The year-round look: a terracotta room, cocoa floor and a peach glow.', eyebrow: 'Objects & little rituals', dark: true, wall: ['#9C4322', '#8F3B1D', '#823318'], floor: ['#5A2E1C', '#4E2717', '#422013'], arch: ['#A84B27', '#B5562F', '#C06238', '#CA6E42'], plinth: '#F4E4D2', duskWall: '#2A140C', duskFloor: '#1E0E08', night: '#140805', light: '255,200,150', type: '#FFB37A', ink2: '#F5E3D3', fx: null },
+  festive: { name: 'Festive · Saffron & Rani', use: 'For Diwali and the festive rush: a rani-pink room, saffron light, marigolds and diyas at dusk.', eyebrow: 'The festive edit', dark: true, wall: ['#7A1230', '#6A0F2A', '#5A0C24'], floor: ['#3E0A18', '#350815', '#2C0612'], arch: ['#6E0F2B', '#801434', '#92193D', '#A31F46'], plinth: '#FBE3C6', duskWall: '#2A0610', duskFloor: '#1E040B', night: '#120207', light: '255,186,80', type: '#FFB020', ink2: '#FFD9A8', fx: 'festive' },
+  monsoon: { name: 'Monsoon · Peacock & Moss', use: 'For June to September: a deep peacock room, moss light and soft rain, made for earthy scents like Monsoon Letters.', eyebrow: 'The monsoon edit', dark: true, wall: ['#0F4C4A', '#0D4341', '#0B3A38'], floor: ['#082B29', '#072624', '#06201F'], arch: ['#0C3F3D', '#11504D', '#16605C', '#1B706B'], plinth: '#DDE9E4', duskWall: '#06201F', duskFloor: '#041716', night: '#020C0B', light: '214,236,190', type: '#C9E265', ink2: '#CFE7DE', fx: 'rain' },
+  gifting: { name: 'Gifting · Cherry & Blush', use: 'For gifting campaigns, weddings and Valentine’s week: a cherry room with blush petals.', eyebrow: 'The gifting edit', dark: true, wall: ['#8E0F24', '#7E0D20', '#6E0B1C'], floor: ['#45060F', '#3B050D', '#31040B'], arch: ['#6F0A1C', '#820E22', '#951228', '#A8162E'], plinth: '#FBE2DC', duskWall: '#2E0409', duskFloor: '#220307', night: '#140104', light: '255,200,190', type: '#FFB4A8', ink2: '#FFD6CF', fx: 'petals' },
+  evening: { name: 'Evening · Indigo & Brass', use: 'For night-time browsing and dark-mode phones: an indigo room, brass light and the candle already burning.', eyebrow: 'After dark', dark: true, lit: true, wall: ['#1B1F45', '#181B3D', '#141735'], floor: ['#0F1129', '#0D0F24', '#0B0C1F'], arch: ['#14173A', '#1C2050', '#242962', '#2C3274'], plinth: '#2E3260', duskWall: '#0B0C1F', duskFloor: '#07081A', night: '#05060F', light: '226,180,92', type: '#E2B45C', ink2: '#C2C0D6', fx: 'evening' }
 };
 if (!SKINS[S.skin]) S.skin = 'atelier';
 const SK = () => SKINS[S.skin];
-const flameAlpha = (p, a, b) => SK().dark ? Math.max(seg(p, .02, .1), seg(p, a, b)) : seg(p, a, b);
+const flameAlpha = (p, a, b) => SK().lit ? Math.max(seg(p, .02, .1), seg(p, a, b)) : seg(p, a, b);
+const WORDS = { arches: ['THOUGHTFUL OBJECTS', 'MEANINGFUL MOMENTS'], pour: ['POUR · SWIRL · SET', 'MADE WITH THOUGHT'] };
+function bigType(ctx, L, p, by, sP) {
+  const K = SK(); const rows = WORDS[S.opening] || WORDS.arches; const sz = Math.round((L.mobile ? .11 : .2) * L.H * (sP || 1)); if (sz < 8) return;
+  ctx.save(); ctx.font = `italic 300 ${sz}px Fraunces, Georgia, serif`; ctx.textBaseline = 'alphabetic';
+  rows.forEach((w, i) => {
+    const txt = (w + '  ·  ').repeat(4); const tw = ctx.measureText(txt).width / 4; const dir = i ? 1 : -1;
+    const x = (L.W / 2) + dir * (p * 1.4 - .5) * tw - tw * 1.5; const y = by - (i ? .1 : 1.05) * sz * 1.05;
+    ctx.globalAlpha = .14 + .06 * i; ctx.fillStyle = K.type; ctx.fillText(txt, x, y);
+  });
+  ctx.restore();
+}
+function grain(ctx, L, t) {
+  if (!LC.grain) { const g = document.createElement('canvas'); g.width = g.height = 160; const x = g.getContext('2d'); const d = x.createImageData(160, 160); for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } x.putImageData(d, 0, 0); LC.grain = ctx.createPattern(g, 'repeat'); }
+  ctx.save(); ctx.globalAlpha = .07; ctx.globalCompositeOperation = 'overlay'; ctx.translate((t * 37) % 160, (t * 23) % 160); ctx.fillStyle = LC.grain; ctx.fillRect(-160, -160, L.W + 320, L.H + 320); ctx.restore();
+}
 function fxPre(ctx, L, p, t, bx, by, s) {
   const K = SK();
   if (K.fx === 'festive') { const a = seg(p, .74, .84); if (a > 0) { ctx.save(); ctx.globalAlpha = a; for (let i = 0; i < 7; i++) { const x = bx + (-290 + i * 96.7) * s, y = by + 54 * s; ctx.fillStyle = '#A8552E'; ctx.beginPath(); ctx.ellipse(x, y, 13 * s, 6 * s, 0, 0, Math.PI); ctx.fill(); ctx.fillStyle = '#C26A3C'; ctx.beginPath(); ctx.ellipse(x, y, 13 * s, 3.5 * s, 0, 0, TAU); ctx.fill(); } ctx.restore(); } }
-  if (K.fx === 'evening') { const g = ctx.createRadialGradient(L.W * .14, L.H * .32, 0, L.W * .14, L.H * .32, L.W * .55); g.addColorStop(0, 'rgba(255,190,120,.2)'); g.addColorStop(1, 'rgba(255,190,120,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); }
+  if (K.fx === 'evening') { const g = ctx.createRadialGradient(L.W * .14, L.H * .32, 0, L.W * .14, L.H * .32, L.W * .55); g.addColorStop(0, 'rgba(226,180,92,.22)'); g.addColorStop(1, 'rgba(226,180,92,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); }
 }
 function fxPost(ctx, L, p, t, bx, by, s) {
   const K = SK(); const u = Math.max(.7, L.u);
@@ -1000,15 +1016,16 @@ function sceneArches(ctx, L, p, t) {
   const cam = 3.92 * ease(seg(p, .03, .6)), k = .5, sP = k / (4.42 - cam);
   const yAt = (s) => L.hz + (L.ay - L.hz) * s;
   room(ctx, L, wall, floor, L.hz);
+  bigType(ctx, L, p, L.hz + (L.ay - L.hz) * sP - 40 * L.u * sP, Math.max(.35, Math.min(1, sP * 1.4)));
   const sun = -1 + 2 * day, elev = .15 + .85 * Math.sin(Math.PI * day);
   // window light on the back wall, and the beam that carries the dust
   const s0 = L.u * sP; const px = L.ax + (-420 + 840 * day) * s0, py = yAt(sP) - 250 * s0, pw = 150 * s0, ph = 220 * s0;
-  const la = .4 * (1 - dusk) * (.6 + .4 * elev) * (K.dark ? .45 : 1);
+  const la = .5 * (1 - dusk) * (.6 + .4 * elev) * (K.lit ? .6 : 1);
   ctx.save(); ctx.translate(px, py); ctx.transform(1, 0, -.3 * sun, 1, 0, 0);
   const lg = ctx.createLinearGradient(0, -ph / 2, 0, ph / 2); lg.addColorStop(0, `rgba(${K.light},${la})`); lg.addColorStop(1, `rgba(${K.light},${la * .4})`);
   ctx.fillStyle = lg; ctx.beginPath(); ctx.moveTo(-pw / 2, ph / 2); ctx.lineTo(-pw / 2, -ph / 2 + pw / 2); ctx.arc(0, -ph / 2 + pw / 2, pw / 2, Math.PI, 0); ctx.lineTo(pw / 2, ph / 2); ctx.closePath(); ctx.fill(); ctx.restore();
   const bx0 = px - sun * L.H * .55;
-  ctx.fillStyle = `rgba(${K.light},${.1 * (1 - dusk) * (K.dark ? .5 : 1)})`; ctx.beginPath(); ctx.moveTo(bx0 - 70 * L.u, -10); ctx.lineTo(bx0 + 70 * L.u, -10); ctx.lineTo(px + pw / 2, py); ctx.lineTo(px - pw / 2, py); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = `rgba(${K.light},${.13 * (1 - dusk)})`; ctx.beginPath(); ctx.moveTo(bx0 - 70 * L.u, -10); ctx.lineTo(bx0 + 70 * L.u, -10); ctx.lineTo(px + pw / 2, py); ctx.lineTo(px - pw / 2, py); ctx.closePath(); ctx.fill();
   for (const m of LC.motes) {
     const y = (m.y * py + t * 7 * m.s) % Math.max(py, 1); const f = y / Math.max(py, 1); const cx = bx0 + (px - bx0) * f;
     const x = cx + (m.x - .5) * (140 * L.u + pw) * (.4 + f * .6) + Math.sin(t * m.s + m.ph) * 6;
@@ -1056,6 +1073,7 @@ function dashed(ctx, o, x, y, s, a) { if (a <= 0) return; ctx.save(); ctx.setLin
 function scenePour(ctx, L, p, t) {
   const cfg = OPENINGS.pour; const dusk = ease(seg(p, .87, .98));
   const K = SK(); room(ctx, L, mixHex(mixSeq(K.wall, seg(p, 0, .86)), K.duskWall, dusk), mixHex(K.floor[0], K.duskFloor, dusk), L.hz);
+  bigType(ctx, L, p, L.hz - 10 * L.u, 1);
   const s = L.u * 1.14; plinth(ctx, L.ax, L.ay, s, K.plinth); const sun = -.55, elev = .6;
   const items = placeAll(L, s, L.ax, L.ay); const [tray, jar, dish, arch, pillar] = items;
   const f = seg(p, .15, .4), set = seg(p, .4, .47), g = seg(p, .5, .68), jset = seg(p, .68, .74);
@@ -1120,6 +1138,7 @@ function lcDraw(p, t) {
   const ctx = LC.ctx; if (!ctx || !LC.W) return; ctx.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); ctx.clearRect(0, 0, LC.W, LC.H);
   const L = layout(); LC.spots = [];
   if (S.opening === 'pour') scenePour(ctx, L, p, t); else sceneArches(ctx, L, p, t);
+  grain(ctx, L, t);
 }
 function lcCopy(p, still) {
   const cfg = OPENINGS[S.opening]; const set = (el, a, tf) => { if (!el) return; el.style.opacity = String(a); el.style.visibility = a < .02 ? 'hidden' : 'visible'; if (tf !== undefined) el.style.transform = tf; };
