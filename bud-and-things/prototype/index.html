@@ -121,6 +121,7 @@ body.app .site-foot { display: none; }
 .lc { position: relative; height: 420vh; }
 .lc-stage { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 65px); height: calc(100vh - 65px); min-height: 560px; overflow: hidden; background: var(--plaster); }
 .lc-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+#lc-gl { pointer-events: none; }
 .lc-copy { position: absolute; inset: 0; pointer-events: none; color: var(--sk-ink); }
 .lc-copy a:not(.btn) { color: var(--sk-ink); }
 .lc-hero .eyebrow { color: var(--sk-ink2); }
@@ -175,9 +176,9 @@ body.app .site-foot { display: none; }
   .lc-spots a { font-size: 12px; padding: 5px 8px; }
   .lc-spots a .num { display: none; }
 }
-.lc.tour { height: 780vh; }
+.lc.tour { height: 1000vh; }
 .lc.tour .lc-cap { top: auto; bottom: 8%; }
-@media (max-width: 760px) { .lc.tour { height: 620vh; } }
+@media (max-width: 760px) { .lc.tour { height: 820vh; } }
 .world { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .world-cell { padding: 22px; border: 1px dashed var(--line2); display: flex; flex-direction: column; gap: 6px; min-height: 170px; text-decoration: none; }
 .world-cell strong { font-family: var(--display); font-weight: 500; font-size: 28px; }
@@ -419,6 +420,8 @@ body.app .toast { bottom: 96px; }
 <div id="overlay"></div>
 <div class="sr" aria-live="polite" id="live"></div>
 
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+<script type="module" src="tour3d.js"></script>
 <script>
 (function () {
 'use strict';
@@ -958,9 +961,9 @@ const OPENINGS = {
   pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Cast', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
     caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Cast, set,<br><em>lifted from the mould.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
     spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 },
-  tour: { name: 'C · Home Tour', rail: ['Front door', 'Foyer', 'Hall', 'Living room', 'Dining nook', 'Bedroom'], cuts: [.16, .35, .55, .73, .87], hero: [.02, .05], staticP: .42,
-    caps: [['The door is open.<br><em>Come in.</em>', [.06, .08, .12, .14]], ['One by one,<br><em>the candles are lit.</em>', [.2, .22, .27, .29]], ['Trays and plates on the left,<br><em>little forms on the right.</em>', [.39, .41, .49, .51]], ['Through the arch,<br><em>the living room.</em>', [.57, .59, .67, .69]], ['The dining nook<br><em>waits in the dark.</em>', [.74, .75, .8, .82]], ['Made with thought.<br><em>Given with feeling.</em>', [.865, .875, .89, .9]]],
-    spots: null, final: [.9, .95], light: 0 }
+  tour: { name: 'C · Home Tour', rail: ['Front door', 'Foyer', 'Living room', 'Bedroom'], cuts: [.16, .48, .79], hero: [.02, .05], staticP: .33,
+    caps: [['The door is open.<br><em>Come in.</em>', [.07, .09, .13, .15]], ['One by one,<br><em>the candles are lit.</em>', [.19, .21, .25, .27]], ['Trays and plates to the left,<br><em>little forms to the right.</em>', [.29, .31, .4, .42]], ['The next room<br><em>waits in the dark.</em>', [.48, .5, .54, .56]], ['Pieces for the living room,<br><em>made to be used.</em>', [.6, .62, .71, .73]], ['A corner kept<br><em>for giving.</em>', [.86, .875, .945, .96]]],
+    spots: null, final: [.965, .995], light: 0 }
 };
 const SKINS = {
   signature: { name: 'Signature · Approved palette', use: 'The approved palette: ivory, sand, caramel, terracotta, olive and chocolate.', eyebrow: 'Collection 01 · Everyday Rituals', dark: true, wall: ['#A55B3F', '#8F4C33', '#7A3F2A'], floor: ['#4A3125', '#3D281E', '#33211A'], arch: ['#8F4C33', '#A55B3F', '#B36C49', '#C08A5B'], plinth: '#F8F0E4', duskWall: '#2A1B14', duskFloor: '#1F140F', night: '#120B08', light: '255,236,210', type: '#F8F0E4', ink2: '#F3E6D6', fx: null },
@@ -1265,110 +1268,47 @@ function scenePour(ctx, L, p, t) {
   fxPost(ctx, L, p, t, L.ax, L.ay, s);
 }
 
-// C · Home Tour: a walk through real rooms. The front door swings open, then the foyer, hall, living room,
-// dining nook and bedroom, each entered through a doorway. Candles light and shelf pieces come into the light on scroll.
-const IW = 1600, IH = 1200;
-const ROOMS = {};
-function roomImg(k) { let im = ROOMS[k]; if (!im) { im = ROOMS[k] = new Image(); im.decoding = 'async'; im.src = 'assets/room-' + k + '.jpg'; } return im.complete && im.naturalWidth ? im : null; }
-// each room: when it is on screen [a, b], and camera keyframes [p, centre x, centre y, zoom] in image pixels
-const TL = [
-  { k: 'entrance', a: 0, b: .17, cam: [[0, 800, 600, 1], [.05, 800, 600, 1], [.11, 870, 620, 1.12], [.17, 905, 640, 3.4]] },
-  { k: 'foyer', a: .15, b: .36, dark: .84, cam: [[.15, 800, 640, 1.4], [.19, 790, 640, 1.04], [.28, 790, 630, 1.04], [.31, 760, 640, 1.18], [.36, 160, 560, 2.6]],
-    flames: [[521, 528], [450, 598], [538, 640], [578, 588], [1022, 622], [1120, 585], [960, 702], [1046, 683]], light: [.19, .27] },
-  { k: 'hall', a: .34, b: .56, cam: [[.34, 800, 520, 1.4], [.37, 800, 540, 1.02], [.39, 300, 480, 1.45], [.44, 300, 480, 1.45], [.47, 1330, 480, 1.45], [.51, 1330, 480, 1.45], [.53, 800, 520, 1.05], [.56, 800, 520, 3.2]] },
-  { k: 'living', a: .54, b: .74, cam: [[.54, 780, 560, 1.4], [.57, 780, 560, 1.02], [.59, 180, 520, 1.45], [.63, 180, 520, 1.45], [.66, 1390, 520, 1.45], [.69, 1390, 520, 1.45], [.71, 760, 580, 1.05], [.74, 760, 600, 3]] },
-  { k: 'dining', a: .72, b: .88, dark: .9, cam: [[.72, 800, 560, 1.4], [.75, 800, 560, 1.04], [.82, 800, 520, 1.22], [.88, 800, 500, 1.7]],
-    flames: [[726, 462], [762, 448], [803, 398], [840, 462], [877, 462], [772, 652], [826, 648]], light: [.75, .81] },
-  { k: 'bedroom', a: .86, b: 1.01, cam: [[.86, 900, 620, 1.3], [.9, 860, 600, 1.04], [1, 860, 600, 1]] }
-];
-// labelled pieces: [room, product, x, y, appears at]
+// C · Home Tour: a 3D walk through the house (tour3d.js). These are the pieces placed in it, in the order the labels use.
+// room F foyer, L living room, B bedroom; pos is room-local (metres); at is the scroll point where it is lit or placed.
+const T3_TOP = { jar: .17, tray: .1, plate: .09, dish: .08, arch: .3, pebbles: .14, archtray: .3, box: .26 };
+const T3I = (room, k, id, c, pos, at, x = {}) => ({ room, k, id, c, pos, at, ry: { F: Math.PI, L: Math.PI, B: Math.PI }[room], label: !!id, top: k === 'pillar' ? (x.h || .2) + .07 : x.withPillar ? .27 : T3_TOP[k], ...x });
+const LW = -Math.PI / 2, RW = Math.PI / 2;
 const TOUR_ITEMS = [
-  ['foyer', 'pillar-studies', 521, 505, .24], ['foyer', 'first-light', 1120, 560, .27],
-  ['hall', 'ghat-tray', 300, 285, .395], ['hall', 'halo-candle-plate', 300, 435, .41], ['hall', 'pebble-coasters', 290, 640, .425],
-  ['hall', 'jharokha-catch-all', 1320, 285, .475], ['hall', 'moonlet-ring-dish', 1310, 445, .49], ['hall', 'still-form-no-1', 1360, 625, .505],
-  ['living', 'ghat-tray', 160, 300, .595], ['living', 'halo-candle-plate', 190, 470, .61], ['living', 'moonlet-ring-dish', 170, 650, .625],
-  ['living', 'pebble-coasters', 1290, 300, .665], ['living', 'moonlet-ring-dish', 1460, 470, .675], ['living', 'still-form-no-1', 1290, 660, .685],
-  ['dining', 'brass-and-saffron', 803, 370, .8], ['bedroom', 'chai-at-four', 1060, 800, .9]
-].map(([r, id, x, y, at]) => ({ r, id, x, y, at }));
-function tourCam(R, p) {
-  const c = R.cam; let i = 0; while (i < c.length - 2 && p > c[i + 1][0]) i++;
-  const a = c[i], b = c[i + 1], f = ease(seg(p, a[0], b[0]));
-  // zoom in log space so pushes through a doorway feel even
-  return { x: a[1] + (b[1] - a[1]) * f, y: a[2] + (b[2] - a[2]) * f, z: Math.exp(Math.log(a[3]) + (Math.log(b[3]) - Math.log(a[3])) * f) };
-}
-function tourView(L, cam) {
-  const s = Math.max(L.W / IW, L.H / IH) * cam.z, vw = L.W / s, vh = L.H / s;
-  const fit = (c, v, I) => I - v < 1 ? I / 2 : Math.min(I - v / 2, Math.max(v / 2, c)); const cx = fit(cam.x, vw, IW), cy = fit(cam.y, vh, IH);
-  return { s, ox: L.W / 2 - cx * s, oy: L.H / 2 - cy * s, at(x, y) { return { x: this.ox + x * this.s, y: this.oy + y * this.s }; } };
-}
-function tourLeaf(im) {
-  if (LC.leaf) return LC.leaf; const c = document.createElement('canvas'); c.width = 400; c.height = 925; const x = c.getContext('2d');
-  x.translate(400, 0); x.scale(-1, 1); x.drawImage(im, 420, 120, 400, 925, 0, 0, 400, 925); return (LC.leaf = c);
-}
-// the right-hand leaf, rebuilt as a mirror of the left one, swinging inward on its hinge
-function tourDoor(ctx, v, im, open) {
-  const leaf = tourLeaf(im), th = open * 1.32, N = 56, ey = 600;
-  for (let j = 0; j < N; j++) {
-    const u0 = j / N, u1 = (j + 1) / N; const sx = (u) => 1220 - u * 400 * Math.cos(th); const hs = (u) => 1 - .2 * Math.sin(th) * u;
-    const x0 = sx(u1), x1 = sx(u0); if (x1 - x0 < .05) continue; const h = hs((u0 + u1) / 2);
-    const top = ey + (120 - ey) * h, bot = ey + (1045 - ey) * h; const a = v.at(x0, top), b = v.at(x1, bot);
-    ctx.drawImage(leaf, 400 - u1 * 400, 0, 400 / N, 925, a.x, a.y, b.x - a.x + .6, b.y - a.y);
-    ctx.fillStyle = `rgba(14,8,4,${.42 * Math.sin(th)})`; ctx.fillRect(a.x, a.y, b.x - a.x + .6, b.y - a.y);
-  }
-}
-function tourCurtain(ctx, L, v, im, t, alpha) {
-  if (!LC.cur) LC.cur = document.createElement('canvas'); const c = LC.cur; if (c.width !== LC.cv.width) { c.width = LC.cv.width; c.height = LC.cv.height; }
-  const x = c.getContext('2d'); x.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); x.clearRect(0, 0, L.W, L.H);
-  const amp = 5 + (LC.wind || 0) * .8, band = 6;
-  for (let y = 0; y < IH; y += band) { const dx = amp * Math.sin(t * 1.25 + y * .006) * (.25 + .75 * y / IH) + amp * .25 * Math.sin(t * 1.7 + y * .004); const a = v.at(0, y), b = v.at(880, y + band); x.drawImage(im, 0, y, 880, band, a.x + dx * v.s, a.y, b.x - a.x, b.y - a.y + .6); }
-  x.globalCompositeOperation = 'destination-in'; const e0 = v.at(660, 0).x, e1 = v.at(860, 0).x; const g = x.createLinearGradient(e0, 0, e1, 0); g.addColorStop(0, '#000'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, L.W, L.H); x.globalCompositeOperation = 'source-over';
-  ctx.save(); ctx.globalAlpha = alpha; ctx.drawImage(c, 0, 0, L.W, L.H); ctx.restore();
-}
-function tourDark(ctx, L, K, v, R, p, t, alpha) {
-  const n = R.flames.length; let lit = 0; const on = R.flames.map((f, i) => { const a0 = R.light[0] + (R.light[1] - R.light[0]) * i / n; const o = seg(p, a0, a0 + .012); lit += o; return o; });
-  const d = R.dark - (R.dark - .1) * (lit / n);
-  const m = LC.mctx; m.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); m.globalCompositeOperation = 'source-over'; m.clearRect(0, 0, L.W, L.H);
-  m.fillStyle = rgba(K.night, d); m.fillRect(0, 0, L.W, L.H); m.globalCompositeOperation = 'destination-out';
-  R.flames.forEach((f, i) => { if (on[i] <= 0) return; const q = v.at(f[0], f[1]), rr = 330 * v.s * (.6 + .4 * on[i]); const g = m.createRadialGradient(q.x, q.y, 0, q.x, q.y, rr); g.addColorStop(0, `rgba(0,0,0,${.95 * on[i]})`); g.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = g; m.fillRect(q.x - rr, q.y - rr, rr * 2, rr * 2); });
-  m.globalCompositeOperation = 'source-over';
-  ctx.save(); ctx.globalAlpha = alpha; ctx.drawImage(LC.mask, 0, 0, L.W, L.H);
-  R.flames.forEach((f, i) => { const q = v.at(f[0], f[1]); flame(ctx, q.x, q.y + 4 * v.s, v.s * .55, on[i] * .5, t * 1.1 + i * 1.7); }); ctx.restore();
-}
+  // foyer: the arched niche, then the left and right shelves
+  T3I('F', 'jar', 'chai-at-four', '#C08A5B', [-.5, .93, 9.2], .2), T3I('F', 'jar', 'brass-and-saffron', '#A55B3F', [0, .93, 9.2], .215), T3I('F', 'jar', 'first-light', '#F4ECE0', [.5, .93, 9.2], .23),
+  T3I('F', 'pillar', 'pillar-studies', '#F1E8DA', [-.36, 1.643, 9.25], .238, { h: .24 }), T3I('F', 'pillar', null, '#A55B3F', [0, 1.643, 9.25], .246, { h: .19 }), T3I('F', 'pillar', null, '#6B7B5B', [.36, 1.643, 9.25], .254, { h: .21 }),
+  T3I('F', 'tray', 'ghat-tray', '#DCC9AE', [3.06, 1.1725, 3.7], .3, { ry: LW, place: true }), T3I('F', 'plate', 'halo-candle-plate', '#C99A6C', [3.06, 1.1725, 5], .315, { ry: LW, place: true, withPillar: true }),
+  T3I('F', 'dish', 'moonlet-ring-dish', '#F1E8DA', [3.06, 1.7725, 4], .325, { ry: LW, place: true }), T3I('F', 'jar', 'terrace-garden', '#C9D0B8', [3.06, 1.7725, 5], .333, { ry: LW, place: true }),
+  T3I('F', 'arch', 'still-form-no-1', '#F1E8DA', [-3.06, 1.7725, 3.4], .375, { ry: RW, place: true }), T3I('F', 'archtray', 'jharokha-catch-all', '#DCC9AE', [-3.06, 1.7725, 4.6], .385, { ry: RW, place: true }),
+  T3I('F', 'pebbles', 'pebble-coasters', '#6B6B43', [-3.06, 1.1725, 3.6], .393, { ry: RW, place: true }), T3I('F', 'plate', null, '#B0644A', [-3.06, 1.1725, 4.6], .4, { ry: RW, place: true, withPillar: true }),
+  // living room: the credenza, the coffee table, then the left and right shelves
+  T3I('L', 'pillar', null, '#F1E8DA', [-.75, .72, 7.62], .52, { h: .26 }), T3I('L', 'pillar', null, '#A55B3F', [-.55, .72, 7.6], .528), T3I('L', 'jar', 'monsoon-letters', '#A9B39A', [-.1, .72, 7.6], .536), T3I('L', 'jar', null, '#C9D0B8', [.3, .72, 7.6], .546), T3I('L', 'plate', 'halo-candle-plate', '#6B6B43', [.8, .72, 7.6], .555, { withPillar: true }),
+  T3I('L', 'tray', 'ghat-tray', '#B0644A', [-.85, .43, 4.25], .57, { ry: RW }), T3I('L', 'jar', null, '#C08A5B', [-.85, .43, 4.75], .575, { ry: RW }),
+  T3I('L', 'dish', 'moonlet-ring-dish', '#C99A6C', [3.37, 1.7725, 3.3], .605, { ry: LW, place: true }), T3I('L', 'pebbles', 'pebble-coasters', '#B0644A', [3.37, 1.1725, 3.6], .615, { ry: LW, place: true }),
+  T3I('L', 'arch', 'still-form-no-1', '#B0644A', [3.37, 1.7725, 4.5], .625, { ry: LW, place: true }), T3I('L', 'archtray', null, '#F1E8DA', [3.37, 1.1725, 4.7], .635, { ry: LW, place: true }),
+  T3I('L', 'plate', 'halo-candle-plate', '#F1E8DA', [-3.37, 1.7725, 2.9], .675, { ry: RW, place: true }), T3I('L', 'tray', 'ghat-tray', '#6B6B43', [-3.37, 1.1725, 3.4], .685, { ry: RW, place: true }),
+  T3I('L', 'pillar', null, '#6B7B5B', [-3.37, 1.7725, 4.2], .695, { ry: RW, place: true, h: .22 }), T3I('L', 'arch', null, '#DCC9AE', [-3.37, 1.1725, 4.4], .705, { ry: RW, place: true }),
+  // bedroom: the ledge above the bed, the bedside tables, the gifting table and the shelves
+  T3I('B', 'pillar', null, '#F1E8DA', [-.9, 1.775, 6.86], .81), T3I('B', 'pillar', 'pillar-studies', '#A55B3F', [-.6, 1.775, 6.86], .818, { h: .26 }), T3I('B', 'jar', 'first-light', '#F4ECE0', [.55, 1.775, 6.86], .826), T3I('B', 'jar', 'brass-and-saffron', '#A55B3F', [.9, 1.775, 6.86], .834),
+  T3I('B', 'jar', null, '#C08A5B', [-1.4, .55, 6.6], .845), T3I('B', 'plate', null, '#DCC9AE', [1.4, .55, 6.6], .852, { withPillar: true }),
+  T3I('B', 'box', null, '#C9A27A', [2.95, .765, 2.9], .885, { ry: LW, place: true, w: .3, h: .18, d: .24 }), T3I('B', 'box', null, '#E6D5C1', [2.85, .765, 3.35], .89, { ry: LW, place: true, w: .22, h: .14, d: .2 }),
+  T3I('B', 'jar', 'terrace-garden', '#C9D0B8', [3.05, .765, 3.65], .895, { ry: LW, place: true }), T3I('B', 'dish', 'moonlet-ring-dish', '#F1E8DA', [2.9, .765, 2.55], .9, { ry: LW, place: true }),
+  T3I('B', 'pebbles', 'pebble-coasters', '#F1E8DA', [-3.16, 1.2725, 2.8], .93, { ry: RW, place: true }), T3I('B', 'arch', 'still-form-no-1', '#6B6B43', [-3.16, 1.8225, 3.2], .935, { ry: RW, place: true }),
+  T3I('B', 'archtray', 'jharokha-catch-all', '#C99A6C', [-3.16, 1.2725, 3.8], .94, { ry: RW, place: true }), T3I('B', 'pillar', null, '#A55B3F', [-3.16, 1.8225, 3.9], .945, { ry: RW, place: true })
+].map((o) => ({ ...o, noSpot: !o.label }));
+window.TOUR_ITEMS = TOUR_ITEMS; window.BT_BYID = byId;
 function sceneTour(ctx, L, p, t) {
-  if (!LC.pre) { LC.pre = 1; TL.forEach((R) => roomImg(R.k)); }
-  const K = SK(); ctx.fillStyle = '#0B0705'; ctx.fillRect(0, 0, L.W, L.H);
-  const spots = TOUR_ITEMS.map(() => ({ x: 0, y: 0, a: 0 }));
-  TL.forEach((R, ri) => {
-    if (p < R.a || p > R.b) return; const im = roomImg(R.k); TL[ri + 1] && roomImg(TL[ri + 1].k); if (!im) return;
-    const prev = TL[ri - 1]; const alpha = prev ? ease(seg(p, R.a, prev.b)) : 1; if (alpha <= 0) return;
-    const v = tourView(L, tourCam(R, p));
-    ctx.save(); ctx.globalAlpha = alpha; ctx.drawImage(im, v.ox, v.oy, IW * v.s, IH * v.s); ctx.restore();
-    if (R.k === 'entrance') {
-      const open = ease(seg(p, .045, .115)); if (open < 1) tourDoor(ctx, v, im, open);
-      const g0 = v.at(910, 640), gr = 520 * v.s; const g = ctx.createRadialGradient(g0.x, g0.y, 0, g0.x, g0.y, gr); g.addColorStop(0, `rgba(255,214,160,${.28 * open})`); g.addColorStop(1, 'rgba(255,214,160,0)'); ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = g; ctx.fillRect(g0.x - gr, g0.y - gr, gr * 2, gr * 2); ctx.restore();
-    }
-    if (R.k === 'bedroom') tourCurtain(ctx, L, v, im, t, alpha);
-    if (R.flames) tourDark(ctx, L, K, v, R, p, t, alpha);
-    // shelf rooms: the room settles into a soft dusk and each piece comes into its own pool of light
-    const mine = TOUR_ITEMS.map((o, i) => ({ o, i })).filter((x) => x.o.r === R.k);
-    if (R.k === 'hall' || R.k === 'living') {
-      const dusk = .26 * seg(p, R.cam[1][0], R.cam[2][0]) * (1 - seg(p, R.cam[R.cam.length - 3][0], R.cam[R.cam.length - 2][0]));
-      ctx.save(); ctx.globalAlpha = alpha * dusk; ctx.fillStyle = K.night; ctx.fillRect(0, 0, L.W, L.H); ctx.restore();
-      ctx.save(); ctx.globalCompositeOperation = 'lighter';
-      mine.forEach(({ o }) => { const on = seg(p, o.at - .012, o.at) * (dusk / .26); if (on <= 0) return; const q = v.at(o.x, o.y + 60), rr = 190 * v.s; const g = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, rr); g.addColorStop(0, `rgba(${K.light},${.42 * on * alpha})`); g.addColorStop(1, `rgba(${K.light},0)`); ctx.fillStyle = g; ctx.fillRect(q.x - rr, q.y - rr, rr * 2, rr * 2); });
-      ctx.restore();
-    }
-    // theme tint over the photographs
-    if (S.skin !== 'signature') { ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = .55 * alpha; ctx.fillStyle = K.wall[0]; ctx.fillRect(0, 0, L.W, L.H); ctx.restore(); }
-    const leaving = TL[ri + 1] ? 1 - seg(p, TL[ri + 1].a, TL[ri + 1].a + .012) : 1;
-    mine.forEach(({ o, i }) => { const q = v.at(o.x, o.y); const vis = q.x > 60 && q.x < L.W - 60 && q.y > 80 && q.y < L.H - 60 ? 1 : 0; spots[i] = { x: q.x, y: q.y, a: seg(p, o.at - .008, o.at + .004) * vis * leaving * alpha }; });
-  });
+  const T = window.TOUR3;
+  if (!T || !T.ready || T.failed) { ctx.fillStyle = '#120B08'; ctx.fillRect(0, 0, L.W, L.H); if (T && T.failed) { ctx.fillStyle = '#F3E6D6'; ctx.font = '16px Lato, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('This device cannot show the 3D tour. Try opening A or B.', L.W / 2, L.H / 2); } LC.spots = []; return; }
+  if (!T.canvas || !document.body.contains(T.canvas)) { T.mount($('#lc-stage')); T.resize(L.W, L.H, window.devicePixelRatio || 1); }
+  else if (T.W !== L.W || T.H !== L.H) T.resize(L.W, L.H, window.devicePixelRatio || 1);
+  LC.spots = T.render(p, t, SK(), S.skin);
+  const fin = seg(p, .965, .995); if (fin > 0) { ctx.fillStyle = rgba(SK().night, .5 * fin); ctx.fillRect(0, 0, L.W, L.H); }
+  const vg = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * .4, L.W / 2, L.H / 2, Math.max(L.W, L.H) * .78); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.32)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, L.W, L.H);
   fxPost(ctx, L, p, t, L.W / 2, L.H * .82, L.u);
-  const fin = seg(p, .89, .95); if (fin > 0) { ctx.fillStyle = rgba(K.night, .55 * fin); ctx.fillRect(0, 0, L.W, L.H); }
-  const vg = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * .35, L.W / 2, L.H / 2, Math.max(L.W, L.H) * .75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.35)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, L.W, L.H);
-  LC.spots = spots;
-  const vel = Math.min(1, Math.abs(p - (LC.lastP ?? p)) * 900); LC.lastP = p; LC.wind = (LC.wind || 0) * .9 + vel * 40 * .1;
 }
+window.BT_DEBUG = { LC, lcTarget };
+window.addEventListener('tour3-ready', () => { if (LC.cv && S.opening === 'tour') { const sp = reduce.matches ? OPENINGS.tour.staticP : LC.p; lcDraw(sp, performance.now() / 1000); lcCopy(sp, reduce.matches); } });
 const MARKS = {}; const MARK_SRC = { wordmark: 'assets/logo-wordmark.png' };
 function tintMark(name, col) {
   const key = name + col; if (MARKS[key]) return MARKS[key];
