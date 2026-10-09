@@ -5,7 +5,6 @@
 // Scroll walks the camera through; tapping a piece glides the camera to it, like a museum.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -50,8 +49,8 @@ function load(onProgress) {
   const maps = {}; PIECES.forEach((n) => { maps[n] = { day: lm('day', n), lit: lm('lit', n) }; });
   const oak = tl.load('assets/tex-oak.jpg'); oak.colorSpace = THREE.SRGBColorSpace; oak.wrapS = oak.wrapT = THREE.RepeatWrapping; oak.anisotropy = 8;
   return Promise.all([
-    new Promise((res, rej) => new GLTFLoader(mgr).load(BASE + 'foyer.glb', res, undefined, rej)),
-    new Promise((res, rej) => new RGBELoader(mgr).load(BASE + 'env.hdr', res, undefined, rej))
+    new Promise((res, rej) => new GLTFLoader(mgr).load(BASE + 'foyer.json', res, undefined, rej)),
+    new Promise((res, rej) => tl.load(BASE + 'env.jpg', (t) => { t.colorSpace = THREE.SRGBColorSpace; t.mapping = THREE.EquirectangularReflectionMapping; res(t); }, undefined, rej))
   ]).then(([gltf, env]) => ({ gltf, env, maps, oak }));
 }
 
@@ -125,8 +124,11 @@ function pathAt(p) {
 }
 // where to stand to look at a piece: in front of it, a little above
 function focusView(it) {
-  const o = it.o; const c = V(...o.pos); c.y += (o.top || .2) * .45; const n = V(Math.sin(o.ry || 0), 0, Math.cos(o.ry || 0)).multiplyScalar(-1);
-  const d = H.W < 760 ? 1.05 : .8; return { pos: c.clone().add(n.multiplyScalar(d)).add(V(0, .12, 0)), look: c };
+  const o = it.o; const c = V(...o.pos); c.y += (o.top || .2) * .45; const n = V(Math.sin(o.ry || 0), 0, Math.cos(o.ry || 0)); // the side the piece faces
+  const mob = H.W < 760, d = mob ? 1.1 : .8; const pos = c.clone().add(n.clone().multiplyScalar(d)).add(V(0, .12, 0)); const look = c.clone();
+  // leave room for the panel: on a wide screen the piece sits left of centre, on a phone above the sheet
+  if (mob) { look.y -= .16; } else { const side = V(0, 1, 0).cross(n).normalize().multiplyScalar(.22); pos.add(side); look.add(side); }
+  return { pos, look };
 }
 const F = { from: null, to: null, t0: 0, dir: 0, k: 0, spin: 0, p: 0 };
 H.focusOn = function (i) {
@@ -135,7 +137,7 @@ H.focusOn = function (i) {
 };
 H.unfocus = function () { if (H.focus < 0) return; F.t0 = performance.now(); F.dir = -1; };
 H.spin = function (dx) { F.spin += dx * .012; };
-H.forceLit = {}; H.timeOf = (i) => labelAt(H.items[i].o);
+H.forceLit = {}; H.isLit = (i) => { const f = H.items[i] && H.items[i].obj.userData.flame; return !!(f && f.visible); }; H.timeOf = (i) => labelAt(H.items[i].o);
 
 const tmp = V(0, 0, 0), dir = V(0, 0, 0);
 H.render = function (p, t) {
@@ -148,7 +150,7 @@ H.render = function (p, t) {
   H.items.forEach((it, i) => {
     if (!it) return; const { o, obj } = it; const f = obj.userData.flame;
     if (o.place) { const k = ease(seg(p, placeAt(o) - .02, placeAt(o))); obj.visible = k > 0 || H.focus === i; obj.position.y = obj.userData.base.y + (1 - k) * .3; }
-    if (f) { const on = Math.max(H.forceLit[i] ? 1 : 0, seg(p, litAt(o), litAt(o) + .008)); f.visible = on > 0; litSum += on; litN++;
+    if (f) { const fo = H.forceLit[i]; const on = fo === 1 ? 1 : fo === -1 ? 0 : seg(p, litAt(o), litAt(o) + .008); f.visible = on > 0; litSum += on; litN++;
       if (on > 0) { const fl = 1 + .1 * Math.sin(t * 13 + i * 7) + .05 * Math.sin(t * 7.3 + i); f.scale.set(on, on * fl, on); f.rotation.z = .05 * Math.sin(t * 3 + i); }
       if (obj.userData.wax && obj.userData.wax.emissiveIntensity !== undefined) obj.userData.wax.emissiveIntensity = on * .06; }
   });

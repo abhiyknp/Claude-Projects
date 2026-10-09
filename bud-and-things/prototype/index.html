@@ -178,6 +178,7 @@ body.app .site-foot { display: none; }
 }
 .lc.tour { height: 1000vh; }
 .lc.tour.house { height: 760vh; }
+.lc-stage.focused .lc-cap, .lc-stage.focused .lc-rail, .lc-stage.focused .lc-hero { opacity: 0 !important; visibility: hidden !important; transition: opacity .4s; }
 .house-ui { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
 .house-ui > * { pointer-events: auto; }
 .house-list-btn { position: absolute; left: 20px; bottom: 22px; background: rgba(248,240,228,.92); color: #3D281E; border: 0; padding: 10px 14px; font: 600 13px Lato, sans-serif; letter-spacing: .02em; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); }
@@ -1360,6 +1361,7 @@ function sceneHouse(ctx, L, p, t) {
   LC.spots = Hs.render(p, t); LC.houseIn = Math.min(1, (LC.houseIn || 0) + .04);
   if (LC.houseIn < 1) { ctx.fillStyle = `rgba(14,9,7,${1 - LC.houseIn})`; ctx.fillRect(0, 0, L.W, L.H); }
   const fin = seg(p, .955, .995); if (fin > 0) { ctx.fillStyle = `rgba(18,11,8,${.55 * fin})`; ctx.fillRect(0, 0, L.W, L.H); }
+  const hs = 1 - seg(p, .02, .06); if (hs > 0) { const g = ctx.createLinearGradient(0, 0, L.mobile ? 0 : L.W * .6, L.mobile ? L.H : 0); g.addColorStop(0, `rgba(30,18,12,${.55 * hs})`); g.addColorStop(1, 'rgba(30,18,12,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); } // keeps the hero readable over the sunny porch
   const vg = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * .45, L.W / 2, L.H / 2, Math.max(L.W, L.H) * .8); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.22)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, L.W, L.H);
 }
 const HOUSE_IDX = () => TOUR_ITEMS.map((o, i) => (o.room === 'F' && o.label ? i : -1)).filter((i) => i >= 0);
@@ -1376,7 +1378,7 @@ function renderHouseUI() {
       <span class="eyebrow">Foyer · ${where}</span><h3 id="hp-h">${esc(p.name)}</h3><p class="hp-line">${esc(p.line)}</p>
       <p class="hp-meta">${esc((p.notes || []).join(' · '))}${p.size ? ' · ' + esc(p.size) : ''}</p>
       <p class="hp-price num">${priceFrom(p)}</p>
-      <div class="hp-actions">${candle ? `<button class="btn ghost" type="button" data-act="house-light" data-i="${f}">${window.HOUSE && window.HOUSE.forceLit[f] ? 'Blow it out' : 'Light it'}</button>` : ''}<button class="btn" type="button" data-act="house-add" data-id="${o.id}">Add to cart</button></div>
+      <div class="hp-actions">${candle ? `<button class="btn ghost" type="button" data-act="house-light" data-i="${f}">${window.HOUSE && window.HOUSE.isLit(f) ? 'Blow it out' : 'Light it'}</button>` : ''}<button class="btn" type="button" data-act="house-add" data-id="${o.id}">Add to cart</button></div>
       <p class="hp-links"><a href="#p-${o.id}">View details</a><button type="button" class="linkish" data-act="house-share" data-id="${o.id}">Share this piece</button></p>
       <div class="hp-nav"><button class="icon-btn" type="button" data-act="house-step" data-d="-1" aria-label="Previous piece">‹</button><span class="num">${k + 1} / ${ids.length}</span><button class="icon-btn" type="button" data-act="house-step" data-d="1" aria-label="Next piece">›</button></div>
       <p class="hp-hint muted">Drag to turn it.</p></aside>`;
@@ -1385,9 +1387,9 @@ function renderHouseUI() {
 }
 function houseFocus(i) {
   const Hs = window.HOUSE; if (!Hs || !Hs.ready) { UI.house.pending = i; return; }
-  if (Hs.focusOn(i)) { UI.house.focus = i; UI.house.list = false; renderHouseUI(); track('house_focus', { id: TOUR_ITEMS[i].id }); setTimeout(() => $('.house-panel .hp-close')?.focus(), 50); }
+  if (Hs.focusOn(i)) { UI.house.focus = i; UI.house.list = false; renderHouseUI(); $('#lc-stage')?.classList.add('focused'); track('house_focus', { id: TOUR_ITEMS[i].id }); setTimeout(() => $('.house-panel .hp-close')?.focus(), 50); }
 }
-window.addEventListener('house-unfocus', () => { UI.house.focus = -1; renderHouseUI(); });
+window.addEventListener('house-unfocus', () => { UI.house.focus = -1; renderHouseUI(); $('#lc-stage')?.classList.remove('focused'); });
 window.addEventListener('house-ready', () => { if (LC.cv && S.opening === 'house') { renderHouseUI(); if (UI.house.pending != null) { const i = UI.house.pending; UI.house.pending = null; setTimeout(() => houseFocus(i), 400); } } });
 // drag to turn the piece in focus
 (() => { let x0 = null; document.addEventListener('pointerdown', (e) => { if (UI.house.focus >= 0 && e.target.closest('#lc-stage') && !e.target.closest('.house-panel, .house-list, a, button')) x0 = e.clientX; });
@@ -1494,7 +1496,7 @@ document.addEventListener('click', (e) => {
     case 'house-focus': houseFocus(+d.i); break;
     case 'house-close': window.HOUSE && window.HOUSE.unfocus(); break;
     case 'house-step': { const ids = HOUSE_IDX(); const k = ids.indexOf(UI.house.focus); houseFocus(ids[(k + +d.d + ids.length) % ids.length]); break; }
-    case 'house-light': { const Hs = window.HOUSE; Hs.forceLit[+d.i] = !Hs.forceLit[+d.i]; renderHouseUI(); break; }
+    case 'house-light': { const Hs = window.HOUSE; Hs.forceLit[+d.i] = Hs.isLit(+d.i) ? -1 : 1; setTimeout(renderHouseUI, 60); break; }
     case 'house-add': { const p = byId[d.id]; const v = p.variants.find((x) => stockOf(x.sku) > 0); if (v) addToCart(v.sku, 1, { source: 'house' }); else say('Sorry, that one is sold out.'); break; }
     case 'house-share': { const url = location.href.split('#')[0] + '#house-' + d.id; try { navigator.clipboard.writeText(url).then(() => say('Link copied. It opens the house at this piece.'), () => say(url)); } catch (err) { say(url); } track('house_share', { id: d.id }); break; }
     case 'search': UI.search = true; renderOverlay(); setTimeout(() => $('#search-q')?.focus(), 0); break;

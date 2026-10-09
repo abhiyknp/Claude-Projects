@@ -375,6 +375,12 @@ scene.cycles.use_denoising = True
 scene.render.image_settings.file_format = 'HDR'
 scene.render.filepath = os.path.join(OUT, 'env.hdr')
 bpy.ops.render.render(write_still=True)
+# the page loads an sRGB JPEG (plain web image type) rather than the HDR
+import cv2  # noqa: E402
+_e = cv2.imread(scene.render.filepath, cv2.IMREAD_UNCHANGED)
+_s = np.where(_e <= .0031308, _e * 12.92, 1.055 * np.power(np.clip(_e, 0, None), 1 / 2.4) - .055)
+cv2.imwrite(os.path.join(OUT, 'env.jpg'), np.clip(_s * 255, 0, 255).astype(np.uint8), [cv2.IMWRITE_JPEG_QUALITY, 90])
+os.remove(scene.render.filepath)
 
 # ---------- export ----------
 for p in proxies:
@@ -382,6 +388,8 @@ for p in proxies:
 bpy.ops.object.select_all(action='DESELECT')
 for ob in EXPORT:
     ob.select_set(True)
-bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, 'foyer.glb'), use_selection=True, export_format='GLB', export_texcoords=True,
+# embedded glTF saved as .json: plain JSON is a served web type where .glb is not
+bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, 'foyer.gltf'), use_selection=True, export_format='GLTF_EMBEDDED', export_texcoords=True,
                           export_normals=True, export_materials='NONE', export_yup=True, export_apply=True)
+os.replace(os.path.join(OUT, 'foyer.gltf'), os.path.join(OUT, 'foyer.json'))
 print('done', OUT)
