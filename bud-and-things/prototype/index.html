@@ -74,61 +74,64 @@ body.app main { padding-bottom: 84px; }
 body.app .nav, body.app .menu-btn { display: none; }
 body.app .site-foot { display: none; }
 
-/* living canvas */
-.lc { position: relative; height: 320vh; }
+/* living canvas: one sticky stage, a canvas scene, and HTML copy above it */
+.lc { position: relative; height: 420vh; }
 .lc-stage { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 65px); height: calc(100vh - 65px); min-height: 560px; overflow: hidden; background: var(--plaster); }
-.lc-layer { position: absolute; will-change: transform, opacity; }
-.lc-floor { left: 0; right: 0; bottom: 0; height: 22%; background: var(--sand); }
-.lc-beam { left: 46%; top: -30%; width: 26%; height: 160%; background: linear-gradient(90deg, rgba(255,250,241,0), rgba(255,250,241,.55), rgba(255,250,241,0)); transform-origin: 50% 0; }
-.lc-arches { left: 50%; bottom: 22%; width: min(46vw, 520px); height: min(62vh, 560px); transform-origin: 50% 100%; }
-.lc-arches span { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); border-radius: 999px 999px 0 0; }
-.lc-leaf { right: 4%; top: 6%; width: min(34vw, 400px); opacity: .13; filter: blur(2.5px); }
-.lc-forms, .lc-objects { left: 50%; bottom: 22%; width: min(46vw, 520px); height: 30%; display: flex; align-items: flex-end; justify-content: center; gap: 4%; transform: translateX(-10%); }
-.lc-plinth { position: absolute; left: 50%; bottom: 14%; width: min(30vw, 320px); height: 10%; background: #F3EBDF; box-shadow: 14px 18px 34px rgba(58,41,32,.16); transform: translateX(-30%); }
-.lc-dusk { inset: 0; background: #3A2920; opacity: 0; pointer-events: none; }
-.lc-flame { width: 9px; height: 18px; border-radius: 50% 50% 40% 40%; background: #FFD9A0; box-shadow: 0 0 26px 10px rgba(255,200,130,.45); opacity: 0; }
-.lc-sash { left: -5%; bottom: 0; width: 110%; height: 34%; opacity: 0; }
-.lc-copy { left: 0; right: 0; top: 0; bottom: 0; pointer-events: none; }
-.lc-copy > div { position: absolute; pointer-events: auto; }
-.lc-hero { left: max(20px, calc((100vw - var(--wrap)) / 2 + 20px)); top: 10%; width: min(560px, 46vw); display: flex; flex-direction: column; gap: 18px; }
-.lc-hero h1 { font-size: clamp(56px, 8vw, 108px); line-height: .95; }
-.lc-hero .tag { font-family: var(--display); font-style: italic; font-weight: 300; font-size: clamp(22px, 2.6vw, 32px); color: var(--terra-ink); line-height: 1.2; }
-.lc-hero .sub { font-size: 17px; max-width: 430px; color: var(--choc2); }
+.lc-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.lc-copy { position: absolute; inset: 0; pointer-events: none; }
+.lc-hero { position: absolute; pointer-events: auto; left: max(20px, calc((100vw - var(--wrap)) / 2 + 20px)); top: 9%; width: min(470px, 40vw); display: flex; flex-direction: column; gap: 16px; }
+.lc-hero h1 { font-size: clamp(54px, 7.4vw, 104px); line-height: .95; }
+.lc-hero .tag { font-family: var(--display); font-style: italic; font-weight: 300; font-size: clamp(22px, 2.4vw, 30px); color: var(--terra-ink); line-height: 1.2; }
+.lc-hero .sub { font-size: 17px; max-width: 420px; color: var(--choc2); }
 .lc-cta { display: flex; flex-wrap: wrap; gap: 12px; }
-.lc-caption { left: 0; right: 0; top: 12%; text-align: center; padding-inline: 20px; opacity: 0; }
-.lc-caption p { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4.4vw, 60px); line-height: 1.08; }
-.lc-caption em { color: var(--terra-ink); }
-.lc-final { left: 0; right: 0; top: 8%; opacity: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; padding-inline: 20px; }
+.lc-cap { position: absolute; left: 0; right: 0; top: 9%; text-align: center; padding-inline: 20px; opacity: 0; pointer-events: none; }
+.lc-cap p { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4.2vw, 58px); line-height: 1.08; text-wrap: balance; }
+.lc-cap em { color: var(--terra-ink); }
+.lc-final { position: absolute; left: 0; right: 0; top: 7%; opacity: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; padding-inline: 20px; pointer-events: auto; }
 .lc-final p { font-family: var(--display); font-weight: 300; font-size: clamp(30px, 4vw, 52px); color: var(--ivory); text-align: center; }
 .lc-final p em { color: var(--glow); }
 .paths { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: min(1000px, 100%); }
 .paths a { min-height: 92px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; background: var(--linen); font-family: var(--display); font-size: 21px; }
 .paths a span { font-family: var(--body); font-size: 13px; font-weight: 600; }
 .paths a.feel { background: var(--terra-ink); color: var(--ivory); font-style: italic; }
-.lc-rail { right: 20px; top: 40%; display: flex; flex-direction: column; gap: 14px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; list-style: none; margin: 0; padding: 0; }
+.lc-spots a { position: absolute; left: 0; top: 0; padding: 6px 10px; background: rgba(245,239,228,.94); color: var(--choc); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; opacity: 0; pointer-events: none; box-shadow: 0 6px 18px rgba(58,41,32,.14); }
+.lc-spots a::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 14px; background: currentColor; opacity: .6; }
+.lc-spots a .num { font-weight: 500; color: var(--choc2); margin-left: 4px; }
+.lc-spots a.on { pointer-events: auto; }
+.lc-spots a:hover { background: var(--ivory); color: var(--terra-ink); }
+.lc-rail { position: absolute; right: 20px; top: 40%; display: flex; flex-direction: column; gap: 14px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; list-style: none; margin: 0; padding: 0; pointer-events: none; }
 .lc-rail li { display: flex; align-items: center; gap: 8px; color: var(--choc2); }
 .lc-rail li::before { content: ""; width: 14px; height: 1px; background: currentColor; }
 .lc-rail li.on { color: var(--choc); font-weight: 600; }
 .lc-rail li.on::before { width: 26px; height: 2px; }
-.lc-rail.dark li { color: #E9DDC9; }
-.lc-rail.dark li.on { color: var(--ivory); }
-.lc-skip { right: 20px; bottom: 18px; min-height: 44px; display: flex; align-items: center; font-weight: 500; }
-.lc-skip.dark { color: var(--ivory); }
+.lc-skip { position: absolute; right: 20px; bottom: 16px; min-height: 44px; display: flex; align-items: center; font-weight: 500; pointer-events: auto; }
+.lc-progress { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--terra-ink); transform-origin: 0 50%; transform: scaleX(0); opacity: .7; }
+.ink-light .lc-hero h1, .ink-light .lc-hero .sub, .ink-light .lc-cap p, .ink-light .lc-skip { color: var(--ivory); }
+.ink-light .lc-hero .tag, .ink-light .lc-cap em, .ink-light .lc-hero .eyebrow { color: var(--glow); }
+.ink-light .lc-hero .btn.ghost { color: var(--ivory); border-color: var(--ivory); }
+.ink-light .lc-hero .btn.ghost:hover { background: rgba(245,239,228,.12); }
+.ink-light .lc-hero .btn:not(.ghost) { background: var(--ivory); color: var(--choc); border-color: var(--ivory); }
+.ink-light .lc-cap p, .ink-light .lc-hero h1, .ink-light .lc-hero .tag, .ink-light .lc-hero .sub { text-shadow: 0 2px 22px rgba(20,12,8,.75); }
+.ink-light .lc-rail li { color: #D9CBB5; }
+.ink-light .lc-rail li.on { color: var(--ivory); }
+.ink-light .lc-progress { background: var(--glow); }
 @media (max-width: 760px) {
-  .lc { height: 230vh; }
-  .lc-hero { left: 20px; right: 20px; width: auto; top: 46%; gap: 12px; }
+  .lc { height: 330vh; }
+  .lc-hero { left: 20px; right: 20px; width: auto; top: 4%; gap: 10px; }
+  .lc-hero h1 { font-size: 52px; }
   .lc-hero .sub { font-size: 15px; }
-  .lc-arches { width: 72vw; height: 40vh; bottom: 56%; }
-  .lc-forms, .lc-objects { width: 80vw; height: 18%; bottom: 56%; transform: translateX(-50%); }
-  .lc-plinth { bottom: 52%; width: 56vw; transform: translateX(-50%); }
-  .lc-floor { height: 48%; }
-  .lc-leaf, .lc-rail { display: none; }
+  .lc-cap { top: 6%; }
+  .lc-rail { display: none; }
   .paths { grid-template-columns: 1fr; }
-  .paths a { min-height: 60px; flex-direction: row; align-items: center; }
+  .paths a { min-height: 56px; flex-direction: row; align-items: center; font-size: 19px; }
   .lc-final { top: 4%; gap: 14px; }
+  .lc-spots a { font-size: 12px; padding: 5px 8px; }
+  .lc-spots a .num { display: none; }
 }
 .static-lc .lc { height: auto; }
-.static-lc .lc-stage { position: relative; top: 0; height: 640px; }
+.static-lc .lc-stage { position: relative; top: 0; height: 680px; }
+.static-lc .lc-cap, .static-lc .lc-final, .static-lc .lc-rail, .static-lc .lc-progress { display: none; }
+.proto select { min-height: 32px; padding: 0 8px; background: var(--choc); color: var(--ivory); border: 1px solid rgba(245,239,228,.5); font-size: 13px; }
 
 /* sections */
 .section { padding-block: 80px; }
@@ -313,6 +316,8 @@ body.app .toast { bottom: 96px; }
         <button type="button" data-act="mode" data-v="web" id="mode-web">Website</button>
         <button type="button" data-act="mode" data-v="app" id="mode-app">Installed app</button>
       </span>
+      <label class="sr" for="opening-sel">Opening animation</label>
+      <select id="opening-sel" data-act="opening"><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option><option value="jaali">Opening C · Jaali Light</option></select>
       <a href="#admin">Owner view</a>
       <button type="button" data-act="reset">Reset demo</button>
     </span>
@@ -402,7 +407,7 @@ function defaults() {
   Object.keys(skuMap).forEach((sku, i) => { stock[sku] = [8, 6, 5, 3][i % 4]; });
   stock['BT-JS-SF-TC'] = 0;
   stock['BT-JS-MR-CS'] = 2;
-  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web' };
+  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'arches' };
 }
 let S = defaults();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
@@ -476,7 +481,7 @@ function renderChrome() {
   const sb = $('#saved-btn'); sb.querySelector('.count')?.remove(); if (S.saved.length) sb.insertAdjacentHTML('beforeend', `<span class="count num">${S.saved.length}</span>`);
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
-  $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
+  $('#opening-sel').value = S.opening; $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
   $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
     + tab('shop', 'Shop', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>')
@@ -543,27 +548,11 @@ function viewHome() {
   const ritSel = UI.ritual.homeSel || { a: true, b: true };
   const ritTotal = (ritSel.a ? a.price : 0) + (ritSel.b ? b.price : 0);
   return `
-  <section class="lc" aria-label="Living Canvas: scroll from morning to dusk" id="lc">
+  <section class="lc" aria-label="Living Canvas, ${esc(OPENINGS[S.opening].name)}" id="lc">
     <div class="lc-stage" id="lc-stage">
-      <div class="lc-layer lc-floor" id="lc-floor"></div>
-      <div class="lc-layer lc-beam" id="lc-beam"></div>
-      <svg class="lc-layer lc-leaf" id="lc-leaf" viewBox="0 0 420 360" aria-hidden="true"><g fill="#3A2920"><path d="M20 340 C120 260 220 160 400 20" stroke="#3A2920" stroke-width="4" fill="none"/><ellipse cx="90" cy="270" rx="44" ry="15" transform="rotate(-40 90 270)"/><ellipse cx="140" cy="250" rx="40" ry="13" transform="rotate(30 140 250)"/><ellipse cx="180" cy="190" rx="46" ry="15" transform="rotate(-50 180 190)"/><ellipse cx="236" cy="168" rx="40" ry="13" transform="rotate(20 236 168)"/><ellipse cx="270" cy="110" rx="44" ry="14" transform="rotate(-55 270 110)"/><ellipse cx="330" cy="90" rx="38" ry="12" transform="rotate(15 330 90)"/></g></svg>
-      <div class="lc-layer lc-arches" id="lc-arches" aria-hidden="true"><span style="width:100%;height:100%;background:#E4D6C0"></span><span style="width:78%;height:89%;background:#D7C3A5"></span><span style="width:58%;height:78%;background:#C8AD89"></span></div>
-      <div class="lc-layer lc-plinth" id="lc-plinth"></div>
-      <div class="lc-layer lc-forms" id="lc-forms" aria-hidden="true">
-        <span class="obj" style="width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#F8F2E8 0%,#D9C6AA 58%,#A98F6F 100%)"></span>
-        <span class="obj" style="width:56px;height:42px;border-radius:56px 56px 0 0;background:#B0644A"></span>
-        <span class="obj" style="width:34px;height:76px;background:#F3EBDF;box-shadow:inset -7px 0 0 #E2D4BE"></span>
-        <span class="obj" style="width:54px;height:66px;border-radius:27px 27px 4px 4px;background:#6B6B43"></span>
-      </div>
-      <div class="lc-layer lc-objects" id="lc-objects" aria-hidden="true">
-        ${art(byId['ghat-tray'], 1, .55)}
-        <span style="display:flex;flex-direction:column;align-items:center;gap:4px"><span class="lc-flame" id="lc-flame"></span>${art(byId['chai-at-four'], 0, .7)}</span>
-        ${art(byId['moonlet-ring-dish'], 0, .6)}${art(byId['still-form-no-1'], 0, .5)}
-      </div>
-      <svg class="lc-layer lc-sash" id="lc-sash" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true"><path d="M-40 200 C240 60 420 240 720 140 C980 50 1180 -40 1480 0 L1480 90 C1200 60 1010 140 740 230 C440 330 240 170 -40 300 Z" fill="#F7F1E6" opacity=".94"/></svg>
-      <div class="lc-layer lc-dusk" id="lc-dusk"></div>
-      <div class="lc-layer lc-copy">
+      <canvas id="lc-canvas" aria-hidden="true"></canvas>
+      <div class="lc-spots" id="lc-spots">${ARR.map((o, i) => `<a href="#p-${o.id}" data-spot="${i}" tabindex="-1" aria-hidden="true">${esc(byId[o.id].name)}<span class="num">${priceFrom(byId[o.id])}</span></a>`).join('')}</div>
+      <div class="lc-copy" id="lc-copy">
         <div class="lc-hero" id="lc-hero">
           <span class="eyebrow">Objects &amp; little rituals</span>
           <h1>BUD &amp;<br>THINGS</h1>
@@ -571,13 +560,13 @@ function viewHome() {
           <p class="sub">Objects and little rituals, thoughtfully made for everyday living and meaningful giving.</p>
           <div class="lc-cta"><a class="btn" href="#shop">Explore the Collection</a><a class="btn ghost" href="#feeling">Find Your Feeling</a></div>
         </div>
-        <div class="lc-caption" id="lc-cap2"><p>Form, texture,<br><em>and the quiet in between.</em></p></div>
-        <div class="lc-caption" id="lc-cap3"><p>Made with thought.<br><em>Given with feeling.</em></p></div>
+        ${OPENINGS[S.opening].caps.map((c, i) => `<div class="lc-cap" id="lc-cap${i}"><p>${typeof c[0] === 'function' ? c[0]() : c[0]}</p></div>`).join('')}
         <div class="lc-final" id="lc-final"><p>Where would you<br><em>like to begin?</em></p>
           <nav class="paths" aria-label="Ways into the shop"><a href="#candles">Shop Candles<span>6 →</span></a><a href="#jesmonite">Shop Jesmonite Objects<span>6 →</span></a><a href="#shop">Explore All Products<span>12 →</span></a><a class="feel" href="#feeling">Find Your Feeling<span>5 questions →</span></a></nav>
         </div>
-        <ol class="lc-layer lc-rail" id="lc-rail" aria-hidden="true"><li class="on">Morning</li><li>Midday</li><li>Golden hour</li><li>Dusk</li></ol>
-        <a class="lc-layer lc-skip" id="lc-skip" href="#home" data-act="skip-intro">Skip intro</a>
+        <ol class="lc-rail" id="lc-rail" aria-hidden="true">${OPENINGS[S.opening].rail.map((l, i) => `<li class="${i ? '' : 'on'}">${l}</li>`).join('')}</ol>
+        <a class="lc-skip" id="lc-skip" href="#home" data-act="skip-intro">Skip intro</a>
+        <span class="lc-progress" id="lc-progress" aria-hidden="true"></span>
       </div>
     </div>
   </section>
@@ -843,50 +832,349 @@ function render(nav) {
   renderChrome(); renderOverlay();
   if (r === 'checkout' && UI.co.step === 'pay' && UI.co.method === 'qr') drawQR();
   if (nav) { window.scrollTo(0, 0); const h = app.querySelector('h1[tabindex]'); if (h && r !== 'home') h.focus({ preventScroll: true }); }
-  setupCanvas(r === 'home');
+  lcSetup(r === 'home');
 }
 
 // ---------- living canvas ----------
+const TAU = Math.PI * 2;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-let lcOn = false, lcTick = false;
+const canHover = window.matchMedia('(hover: hover)');
 const clamp = (x) => Math.max(0, Math.min(1, x));
 const seg = (p, a, b) => clamp((p - a) / (b - a));
 const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-function mix(c1, c2, t) { const a = parseInt(c1.slice(1), 16), b = parseInt(c2.slice(1), 16); const ch = (s) => Math.round(((a >> s) & 255) + ((((b >> s) & 255) - ((a >> s) & 255)) * t)); return `rgb(${ch(16)},${ch(8)},${ch(0)})`; }
-const SKY = ['#EFE7DA', '#E4D6C0', '#E6CFAE', '#6E5444'];
-function setupCanvas(on) {
-  document.body.classList.toggle('static-lc', on && reduce.matches);
-  lcOn = on && !reduce.matches;
-  if (on) updateCanvas();
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const win = (p, w) => seg(p, w[0], w[1]) * (1 - seg(p, w[2], w[3]));
+function mixHex(c1, c2, t) { const a = parseInt(c1.slice(1), 16), b = parseInt(c2.slice(1), 16); const ch = (s) => Math.round(((a >> s) & 255) + ((((b >> s) & 255) - ((a >> s) & 255)) * t)); return '#' + [ch(16), ch(8), ch(0)].map((x) => x.toString(16).padStart(2, '0')).join(''); }
+function mixSeq(cols, t) { const q = clamp(t) * (cols.length - 1); const i = Math.min(cols.length - 2, Math.floor(q)); return mixHex(cols[i], cols[i + 1], ease(q - i)); }
+function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+
+// The arrangement every opening resolves into: two candles, three Jesmonite pieces.
+const ARR = [
+  { id: 'ghat-tray', k: 'tray', dx: -175, c: '#DCC9AE', h: 16, w: 236 },
+  { id: 'chai-at-four', k: 'jar', dx: -175, dy: -12, c: '#C99A6C', h: 88, w: 64, candle: true },
+  { id: 'moonlet-ring-dish', k: 'dish', dx: -15, c: '#6B6B43', h: 26, w: 92 },
+  { id: 'still-form-no-1', k: 'arch', dx: 112, c: '#F1E8DA', h: 140, w: 96 },
+  { id: 'pillar-studies', k: 'pillar', dx: 232, c: '#B0644A', h: 112, w: 34 }
+];
+const OPENINGS = {
+  arches: { name: 'A · Through the Arches', rail: ['Doorway', 'Arches', 'The room', 'Dusk'], cuts: [.3, .6, .8], hero: [.05, .11], staticP: .66, dark: false,
+    caps: [['Step <em>inside.</em>', [.13, .17, .26, .3]], ['Form, texture,<br><em>and the quiet in between.</em>', [.35, .4, .5, .55]], ['Made with thought.<br><em>Given with feeling.</em>', [.62, .66, .74, .78]]],
+    spots: [.6, .65, .78, .82], final: [.82, .9] },
+  pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Wax', 'Set'], cuts: [.3, .48, .72], hero: [.05, .11], staticP: .84, dark: false,
+    caps: [['Every piece begins<br><em>as a pour.</em>', [.12, .16, .26, .3]], ['Swirled once.<br><em>Never quite the same twice.</em>', [.31, .35, .44, .48]], ['Then a slow pour<br><em>of scented wax.</em>', [.5, .54, .65, .69]], ['Set, finished,<br><em>ready to give.</em>', [.72, .75, .82, .85]]],
+    spots: [.76, .79, .85, .88], final: [.87, .93] },
+  jaali: { name: 'C · Jaali Light', rail: ['Morning', 'Jaali', 'Your light', 'Candle'], cuts: [.32, .58, .8], hero: [.05, .11], staticP: .45, dark: true,
+    caps: [['Morning light<br><em>through a jaali.</em>', [.12, .16, .28, .32]], [() => canHover.matches ? 'Move your cursor<br><em>to light a corner.</em>' : 'Touch the scene<br><em>to light a corner.</em>', [.34, .38, .52, .56]], ['Every piece<br><em>has its moment.</em>', [.58, .62, .72, .76]]],
+    spots: null, final: [.84, .9] }
+};
+const LC = { cv: null, ctx: null, mask: null, mctx: null, W: 0, H: 0, dpr: 1, p: 0, raf: 0, visible: false, io: null, ptr: { x: 0, y: 0, on: false, touch: false, last: 0 }, marble: null, jaali: null, motes: [], spots: [] };
+for (let i = 0; i < 70; i++) LC.motes.push({ x: Math.random(), y: Math.random(), s: .4 + Math.random(), ph: Math.random() * TAU });
+
+function layout() {
+  const W = LC.W, H = LC.H, mobile = W < 760;
+  const u = mobile ? W / 640 : Math.min(W / 1320, H / 800);
+  return { W, H, u, mobile, ax: mobile ? W * .52 : W * .63, ay: mobile ? H * .86 : H * .78, hz: mobile ? H * .64 : H * .5 };
 }
-function updateCanvas() {
-  lcTick = false; const lc = $('#lc'); if (!lc) return;
-  const stage = $('#lc-stage'); const total = lc.offsetHeight - stage.offsetHeight;
-  let p = lcOn && total > 0 ? clamp((window.scrollY - lc.offsetTop + 65) / total) : 0;
-  const q = p * 3; const i = Math.min(2, Math.floor(q)); const sky = mix(SKY[i], SKY[i + 1], ease(q - i));
-  stage.style.background = sky;
-  $('#lc-floor').style.background = mix('#DCC9AE', '#5C4637', ease(seg(p, .72, .95)));
-  $('#lc-beam').style.transform = `rotate(${-28 + 20 * p}deg)`; $('#lc-beam').style.opacity = String(1 - seg(p, .7, .9));
-  $('#lc-leaf').style.transform = `translate(${-40 * p}px, ${30 * p}px) rotate(${-8 * p}deg)`;
-  const open = ease(seg(p, .16, .5));
-  $('#lc-arches').style.transform = `translateX(-50%) scale(${1 + 1.8 * open})`; $('#lc-arches').style.opacity = String(1 - seg(p, .36, .52));
-  $('#lc-plinth').style.opacity = String(1 - seg(p, .3, .45));
-  $('#lc-forms').style.opacity = String(1 - seg(p, .28, .42)); $('#lc-forms').style.transform = (window.innerWidth <= 760 ? 'translateX(-50%) ' : 'translateX(-10%) ') + `scale(${1 - .3 * seg(p, .28, .42)})`;
-  const ob = ease(seg(p, .34, .56));
-  $('#lc-objects').style.opacity = String(ob); $('#lc-objects').style.transform = (window.innerWidth <= 760 ? 'translateX(-50%) ' : 'translateX(-10%) ') + `translateY(${(1 - ob) * 40}px)`;
-  $('#lc-sash').style.opacity = String(seg(p, .2, .3) * (1 - seg(p, .42, .52))); $('#lc-sash').style.transform = `translateX(${(seg(p, .2, .52) - .5) * 30}%)`;
-  $('#lc-dusk').style.opacity = String(.35 * ease(seg(p, .74, .95)));
-  $('#lc-flame').style.opacity = String(seg(p, .82, .92));
-  const hero = $('#lc-hero'); const ho = 1 - seg(p, .08, .18); hero.style.opacity = String(ho); hero.style.transform = `translateY(${-30 * seg(p, .08, .18)}px)`; hero.style.visibility = ho < .02 ? 'hidden' : 'visible';
-  $('#lc-cap2').style.opacity = String(seg(p, .2, .28) * (1 - seg(p, .44, .52)));
-  $('#lc-cap3').style.opacity = String(seg(p, .54, .6) * (1 - seg(p, .72, .78)));
-  const fin = seg(p, .8, .9); const f = $('#lc-final'); f.style.opacity = String(fin); f.style.visibility = fin < .02 ? 'hidden' : 'visible'; f.style.transform = `translateY(${(1 - fin) * 20}px)`;
-  const idx = p < .25 ? 0 : p < .55 ? 1 : p < .8 ? 2 : 3;
-  const rail = $('#lc-rail'); [...rail.children].forEach((li, k) => li.classList.toggle('on', k === idx)); rail.classList.toggle('dark', idx === 3);
-  $('#lc-skip').classList.toggle('dark', idx === 3);
+function makeMarble() {
+  const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d'); const img = x.createImageData(256, 256); let seed = 7;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  const sm = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+  for (let j = 0; j < 256; j++) for (let i = 0; i < 256; i++) {
+    const nx = i / 256 * TAU, ny = j / 256 * TAU;
+    const v = (Math.sin(nx * 1.5 + Math.sin(ny * 2 + Math.sin(nx * 2.5) * .9) * 1.8 + Math.sin(ny * 3.1) * .6) + 1) / 2;
+    const c1 = sm(.66, .86, v), c2 = sm(.9, .985, v) * .85;
+    let r = 241 + (201 - 241) * c1, g = 232 + (154 - 232) * c1, b = 218 + (108 - 218) * c1;
+    r += (176 - r) * c2; g += (100 - g) * c2; b += (74 - b) * c2;
+    if (rnd() < .004) { r = 92; g = 70; b = 55; }
+    const k = (j * 256 + i) * 4; img.data[k] = r; img.data[k + 1] = g; img.data[k + 2] = b; img.data[k + 3] = 255;
+  }
+  x.putImageData(img, 0, 0); return c;
 }
-window.addEventListener('scroll', () => { if (lcOn && !lcTick) { lcTick = true; requestAnimationFrame(updateCanvas); } }, { passive: true });
-window.addEventListener('resize', () => { if (route() === 'home') updateCanvas(); });
+function makeJaali() {
+  const c = document.createElement('canvas'); c.width = c.height = 512; const x = c.getContext('2d');
+  x.beginPath(); x.moveTo(76, 500); x.lineTo(76, 196); x.arc(256, 196, 180, Math.PI, 0); x.lineTo(436, 500); x.closePath(); x.clip();
+  x.fillStyle = '#fff';
+  for (let j = 0; j < 9; j++) for (let i = 0; i < 9; i++) {
+    const cx = 32 + i * 56, cy = 24 + j * 56;
+    for (const rot of [0, Math.PI / 4]) { x.save(); x.translate(cx, cy); x.rotate(rot); x.fillRect(-15, -15, 30, 30); x.restore(); }
+    x.beginPath(); x.arc(cx + 28, cy + 28, 6, 0, TAU); x.fill();
+  }
+  return c;
+}
+function rp(ctx, x, y, w, h, r) { ctx.moveTo(x, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.closePath(); }
+function sil(o, x, y, s) {
+  const P = new Path2D(); const w = o.w * s, h = o.h * s;
+  if (o.k === 'jar') rp(P, x - w / 2, y - h, w, h, 8 * s);
+  else if (o.k === 'pillar') P.rect(x - w / 2, y - h, w, h);
+  else if (o.k === 'tray') P.ellipse(x, y - 9 * s, w / 2, 22 * s, 0, 0, TAU);
+  else if (o.k === 'dish') { const rx = w / 2; P.moveTo(x - rx, y - h); P.quadraticCurveTo(x - rx * .9, y + 2 * s, x, y); P.quadraticCurveTo(x + rx * .9, y + 2 * s, x + rx, y - h); P.ellipse(x, y - h, rx, 12 * s, 0, 0, Math.PI, true); P.closePath(); }
+  else if (o.k === 'arch') { const r = w / 2; P.moveTo(x - r, y); P.lineTo(x - r, y - h + r); P.arc(x, y - h + r, r, Math.PI, 0); P.lineTo(x + r, y); P.closePath(); P.moveTo(x + 22 * s, y - h * .42); P.arc(x, y - h * .42, 22 * s, 0, TAU); }
+  return P;
+}
+function side(ctx, x0, x1, c, sun) { const g = ctx.createLinearGradient(x0, 0, x1, 0); const hi = shade(c, 1.2), lo = shade(c, .76); if (sun < 0) { g.addColorStop(0, hi); g.addColorStop(.5, c); g.addColorStop(1, lo); } else { g.addColorStop(0, lo); g.addColorStop(.5, c); g.addColorStop(1, hi); } return g; }
+function wick(ctx, x, y, s) { ctx.strokeStyle = '#3A2920'; ctx.lineWidth = 1.6 * s; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 1 * s, y - 7 * s); ctx.stroke(); }
+function drawObj(ctx, o, x, y, s, sun, marble) {
+  const c = o.c, w = o.w * s, h = o.h * s;
+  if (o.k === 'jar') {
+    ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fill(sil(o, x, y, s));
+    ctx.fillStyle = shade(c, 1.22); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 6 * s, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#EFE3CF'; ctx.beginPath(); ctx.ellipse(x, y - h + 1 * s, w / 2 - 5 * s, 4 * s, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = 'rgba(245,239,228,.85)'; ctx.fillRect(x - w * .28, y - h * .58, w * .56, h * .2); wick(ctx, x, y - h, s);
+  } else if (o.k === 'pillar') {
+    ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fillRect(x - w / 2, y - h, w, h);
+    ctx.fillStyle = 'rgba(58,41,32,.14)'; for (let i = 1; i < 6; i++) ctx.fillRect(x - w / 2 + i * w / 6, y - h, 1.2 * s, h);
+    ctx.fillStyle = shade(c, 1.16); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 4 * s, 0, 0, TAU); ctx.fill(); wick(ctx, x, y - h, s);
+  } else if (o.k === 'tray') {
+    const rx = w / 2, ry = 22 * s, d = 9 * s;
+    ctx.fillStyle = shade(c, .78); ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI); ctx.lineTo(x - rx, y - d); ctx.ellipse(x, y - d, rx, ry, 0, Math.PI, 0, true); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y - d, rx, ry, 0, 0, TAU); ctx.fill();
+    if (marble) { ctx.save(); ctx.beginPath(); ctx.ellipse(x, y - d, rx, ry, 0, 0, TAU); ctx.clip(); ctx.translate(x, y - d); ctx.rotate(marble.rot || 0); ctx.scale(1, ry / rx); ctx.globalAlpha *= .9; ctx.drawImage(LC.marble, -rx * 1.4, -rx * 1.4, rx * 2.8, rx * 2.8); ctx.restore(); }
+    ctx.fillStyle = 'rgba(58,41,32,.09)'; ctx.beginPath(); ctx.ellipse(x, y - d + 2 * s, rx * .86, ry * .74, 0, 0, TAU); ctx.fill();
+  } else if (o.k === 'dish') {
+    ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fill(sil(o, x, y, s));
+    ctx.fillStyle = shade(c, 1.22); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 12 * s, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = shade(c, .82); ctx.beginPath(); ctx.ellipse(x, y - h + 1 * s, w * .4, 8 * s, 0, 0, TAU); ctx.fill();
+  } else if (o.k === 'arch') {
+    ctx.save(); ctx.translate((sun < 0 ? 7 : -7) * s, 0); ctx.fillStyle = shade(c, .74); ctx.fill(sil(o, x, y, s), 'evenodd'); ctx.restore();
+    ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fill(sil(o, x, y, s), 'evenodd');
+  }
+}
+function castShadow(ctx, o, x, y, s, sun, elev, a) {
+  if (a <= 0) return; const w = o.w * s, h = Math.max(o.h, 14) * s;
+  const len = h * (.35 + (1 - elev) * 2.4); const dx = -sun * len, dy = -len * .16;
+  const g = ctx.createLinearGradient(x, y, x + dx, y + dy); g.addColorStop(0, rgba('#3A2920', a)); g.addColorStop(1, rgba('#3A2920', 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - w / 2, y); ctx.lineTo(x + w / 2, y); ctx.lineTo(x + w * .3 + dx, y + dy); ctx.lineTo(x - w * .3 + dx, y + dy); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = rgba('#3A2920', a * .8); ctx.beginPath(); ctx.ellipse(x, y + 1, w * .52, 3.5 * s, 0, 0, TAU); ctx.fill();
+}
+function flame(ctx, x, y, s, a, t) {
+  if (a <= 0) return; const f = 1 + .07 * Math.sin(t * 12.7) + .05 * Math.sin(t * 7.1 + 1);
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(x, y, 0, x, y, 150 * s * f); g.addColorStop(0, `rgba(255,190,115,${.55 * a})`); g.addColorStop(.4, `rgba(255,170,90,${.18 * a})`); g.addColorStop(1, 'rgba(255,170,90,0)');
+  ctx.fillStyle = g; ctx.fillRect(x - 160 * s, y - 160 * s, 320 * s, 320 * s); ctx.restore();
+  ctx.fillStyle = `rgba(255,222,160,${a})`; ctx.beginPath(); ctx.ellipse(x, y, 3.8 * s, 9.5 * s * f, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = `rgba(255,250,235,${a})`; ctx.beginPath(); ctx.ellipse(x, y + 2.5 * s, 1.8 * s, 4.5 * s, 0, 0, TAU); ctx.fill();
+}
+function room(ctx, L, wall, floor, hz) {
+  ctx.fillStyle = wall; ctx.fillRect(0, 0, L.W, L.H);
+  const g = ctx.createLinearGradient(0, hz, 0, L.H); g.addColorStop(0, shade(floor, 1.06)); g.addColorStop(1, shade(floor, .9));
+  ctx.fillStyle = g; ctx.fillRect(0, hz, L.W, L.H - hz);
+  ctx.fillStyle = rgba('#3A2920', .06); ctx.fillRect(0, hz, L.W, 1);
+}
+function plinth(ctx, x, y, s, col) {
+  ctx.fillStyle = shade(col, 1.04); ctx.fillRect(x - 330 * s, y - 4 * s, 660 * s, 6 * s);
+  ctx.fillStyle = shade(col, .9); ctx.fillRect(x - 330 * s, y + 2 * s, 660 * s, 30 * s);
+  ctx.fillStyle = rgba('#3A2920', .12); ctx.fillRect(x - 330 * s, y + 32 * s, 660 * s, 6 * s);
+}
+function placeAll(L, s, bx, by) { return ARR.map((o) => ({ o, x: bx + o.dx * s, y: by + (o.dy || 0) * s })); }
+function spotFor(it, s, a) { const o = it.o; if (o.k === 'tray') return { x: it.x - o.w * s * .32, y: it.y + 30 * s, a }; const up = o.k === 'jar' ? 26 : o.k === 'pillar' ? 60 : 14; return { x: it.x, y: it.y - o.h * s - up * s, a }; }
+
+// A · Through the Arches: the camera walks forward through four plaster arches into the room.
+function sceneArches(ctx, L, p, t) {
+  const cfg = OPENINGS.arches; const day = seg(p, 0, .86), dusk = ease(seg(p, .78, .96));
+  const wall = mixHex(mixSeq(['#EFE7DA', '#EBDDC7', '#E9CFA8'], day), '#4A362B', dusk);
+  const floor = mixHex(mixSeq(['#DCC9AE', '#D9C3A2', '#D6B78F'], day), '#3E2C22', dusk);
+  const cam = 3.92 * ease(seg(p, .03, .6)), k = .5, sP = k / (4.42 - cam);
+  const yAt = (s) => L.hz + (L.ay - L.hz) * s;
+  room(ctx, L, wall, floor, L.hz);
+  const sun = -1 + 2 * day, elev = .15 + .85 * Math.sin(Math.PI * day);
+  // window light on the back wall, and the beam that carries the dust
+  const s0 = L.u * sP; const px = L.ax + (-420 + 840 * day) * s0, py = yAt(sP) - 250 * s0, pw = 150 * s0, ph = 220 * s0;
+  const la = .4 * (1 - dusk) * (.6 + .4 * elev);
+  ctx.save(); ctx.translate(px, py); ctx.transform(1, 0, -.3 * sun, 1, 0, 0);
+  const lg = ctx.createLinearGradient(0, -ph / 2, 0, ph / 2); lg.addColorStop(0, `rgba(255,248,232,${la})`); lg.addColorStop(1, `rgba(255,248,232,${la * .4})`);
+  ctx.fillStyle = lg; ctx.beginPath(); ctx.moveTo(-pw / 2, ph / 2); ctx.lineTo(-pw / 2, -ph / 2 + pw / 2); ctx.arc(0, -ph / 2 + pw / 2, pw / 2, Math.PI, 0); ctx.lineTo(pw / 2, ph / 2); ctx.closePath(); ctx.fill(); ctx.restore();
+  const bx0 = px - sun * L.H * .55;
+  ctx.fillStyle = `rgba(255,246,226,${.1 * (1 - dusk)})`; ctx.beginPath(); ctx.moveTo(bx0 - 70 * L.u, -10); ctx.lineTo(bx0 + 70 * L.u, -10); ctx.lineTo(px + pw / 2, py); ctx.lineTo(px - pw / 2, py); ctx.closePath(); ctx.fill();
+  for (const m of LC.motes) {
+    const y = (m.y * py + t * 7 * m.s) % Math.max(py, 1); const f = y / Math.max(py, 1); const cx = bx0 + (px - bx0) * f;
+    const x = cx + (m.x - .5) * (140 * L.u + pw) * (.4 + f * .6) + Math.sin(t * m.s + m.ph) * 6;
+    ctx.fillStyle = `rgba(255,250,236,${.55 * (1 - dusk) * Math.sin(Math.PI * f)})`; ctx.beginPath(); ctx.arc(x, y, (1 + m.s * .6) * Math.max(.6, L.u), 0, TAU); ctx.fill();
+  }
+  // the room at the end of the walk
+  const s = L.u * sP * 1.08; const by = yAt(sP); plinth(ctx, L.ax, by, s, '#F3EBDF');
+  const items = placeAll(L, s, L.ax, by);
+  items.forEach((it) => castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .22 * (1 - dusk * .5)));
+  items.forEach((it) => drawObj(ctx, it.o, it.x, it.y, s, sun));
+  const spotA = win(p, cfg.spots); LC.spots = items.map((it) => spotFor(it, s, spotA));
+  // arches, far to near, each a wall with an arched opening
+  const AZ = [1.2, 1.95, 2.7, 3.45], AC = ['#E2D3BB', '#DACAAF', '#D2BFA0', '#CBB592'];
+  for (let i = 3; i >= 0; i--) {
+    const dz = AZ[i] - cam; if (dz <= .045) continue;
+    const sa = k / dz, aw = 660 * L.u * sa, ah = 880 * L.u * sa, yb = yAt(sa), x = L.ax;
+    const col = mixHex(mixHex(AC[i], wall, .25), '#3A2920', dusk * .7);
+    ctx.globalAlpha = seg(dz, .045, .28);
+    ctx.fillStyle = col; ctx.beginPath(); ctx.rect(-20, -20, L.W + 40, Math.max(0, yb + 20));
+    ctx.moveTo(x - aw / 2, yb); ctx.lineTo(x - aw / 2, yb - ah + aw / 2); ctx.arc(x, yb - ah + aw / 2, aw / 2, Math.PI, 0); ctx.lineTo(x + aw / 2, yb); ctx.closePath(); ctx.fill('evenodd');
+    ctx.strokeStyle = shade(col, .84); ctx.lineWidth = 28 * L.u * sa; ctx.beginPath(); ctx.moveTo(x - aw / 2, yb); ctx.lineTo(x - aw / 2, yb - ah + aw / 2); ctx.arc(x, yb - ah + aw / 2, aw / 2, Math.PI, 0); ctx.lineTo(x + aw / 2, yb); ctx.stroke();
+    ctx.fillStyle = mixHex(shade(floor, .94), '#3A2920', dusk * .5); ctx.fillRect(-20, yb, L.W + 40, L.H - yb + 20);
+    ctx.globalAlpha = 1;
+  }
+  ctx.fillStyle = `rgba(36,24,18,${.42 * dusk})`; ctx.fillRect(0, 0, L.W, L.H);
+  const jar = items[1]; flame(ctx, jar.x + 1 * s, jar.y - jar.o.h * s - 15 * s, s, seg(p, .84, .92), t);
+}
+
+// B · The Pour: sketched outlines fill with a marbled pour and a wax pour, then the pieces are lifted from their moulds.
+function stream(ctx, x, y0, y1, w, col, t) {
+  if (w <= .2) return; ctx.fillStyle = col; ctx.beginPath(); const n = 18;
+  for (let i = 0; i <= n; i++) { const y = y0 + (y1 - y0) * i / n; const wob = Math.sin(y * .04 + t * 9) * 1.4; ctx.lineTo(x - w / 2 + wob - (i / n) * w * .15, y); }
+  for (let i = n; i >= 0; i--) { const y = y0 + (y1 - y0) * i / n; const wob = Math.sin(y * .04 + t * 9) * 1.4; ctx.lineTo(x + w / 2 + wob + (i / n) * w * .15, y); }
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(x - w * .15, y0, Math.max(1, w * .12), y1 - y0);
+}
+function pourCup(ctx, x, y, s, a, tilt, col) {
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(-.9 * tilt); const w = 46 * s, h = 54 * s;
+  ctx.fillStyle = '#F6F0E6'; ctx.strokeStyle = rgba('#5C4637', .5); ctx.lineWidth = 1.2 * s; ctx.beginPath(); ctx.moveTo(-6 * s, 0); ctx.lineTo(-6 * s - w, -4 * s); ctx.lineTo(-6 * s - w + 4 * s, -h); ctx.lineTo(-2 * s, -h + 2 * s); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(-6 * s - w / 2, -2 * s, w / 2 - 2 * s, 4 * s, 0, 0, TAU); ctx.fill(); ctx.restore();
+}
+function dashed(ctx, o, x, y, s, a) { if (a <= 0) return; ctx.save(); ctx.setLineDash([6 * s, 6 * s]); ctx.lineWidth = 1.3 * s; ctx.strokeStyle = rgba('#5C4637', a); ctx.stroke(sil(o, x, y, s)); ctx.restore(); }
+function scenePour(ctx, L, p, t) {
+  const cfg = OPENINGS.pour; const dusk = ease(seg(p, .87, .98));
+  room(ctx, L, mixHex(mixSeq(['#EFE7DA', '#EDE1CE', '#EAD6B8'], seg(p, 0, .86)), '#4A362B', dusk), mixHex('#DCC9AE', '#3E2C22', dusk), L.hz);
+  const s = L.u * 1.14; plinth(ctx, L.ax, L.ay, s, '#F3EBDF'); const sun = -.55, elev = .6;
+  const items = placeAll(L, s, L.ax, L.ay); const [tray, jar, dish, arch, pillar] = items;
+  const f = seg(p, .15, .4), set = seg(p, .4, .47), g = seg(p, .5, .68), jset = seg(p, .68, .74);
+  const ms = [seg(p, .72, .8), seg(p, .75, .83), seg(p, .78, .86)];
+  const sketch = 1 - seg(p, .86, .9);
+  castShadow(ctx, tray.o, tray.x, tray.y, s, sun, elev, .2 * set);
+  [dish, arch, pillar].forEach((it, i) => castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .2 * ms[i]));
+  castShadow(ctx, jar.o, jar.x, jar.y, s, sun, elev, .2 * jset);
+  // tray: marbled puddle spreading inside its mould, then set
+  const rot = 2.8 * ease(f) + .3;
+  dashed(ctx, tray.o, tray.x, tray.y, s, .55 * (1 - set) * sketch);
+  if (f > 0 && set < 1) {
+    const e = easeOut(f), rx = tray.o.w / 2 * s, ry = 22 * s;
+    ctx.save(); ctx.globalAlpha = 1 - set; ctx.beginPath(); ctx.ellipse(tray.x + 20 * s * (1 - e), tray.y - 9 * s, rx * e, ry * e, 0, 0, TAU); ctx.clip();
+    ctx.translate(tray.x, tray.y - 9 * s); ctx.rotate(rot); ctx.scale(1, ry / rx); ctx.drawImage(LC.marble, -rx * 1.4, -rx * 1.4, rx * 2.8, rx * 2.8); ctx.restore();
+    if (f < 1) for (let r = 0; r < 3; r++) { const ph = ((t * .8 + r / 3) % 1); ctx.strokeStyle = `rgba(255,255,255,${.5 * (1 - ph)})`; ctx.lineWidth = 1.2 * s; ctx.beginPath(); ctx.ellipse(tray.x + 20 * s, tray.y - 9 * s, 14 * s + ph * 60 * s * e, (4 * s + ph * 12 * s * e), 0, 0, TAU); ctx.stroke(); }
+  }
+  if (set > 0) { ctx.save(); ctx.globalAlpha = set; drawObj(ctx, tray.o, tray.x, tray.y, s, sun, { rot }); ctx.restore(); }
+  if (set > 0 && set < 1) { const rx = tray.o.w / 2 * s; ctx.save(); ctx.beginPath(); ctx.ellipse(tray.x, tray.y - 9 * s, rx, 22 * s, 0, 0, TAU); ctx.clip(); const gx = tray.x - rx + set * rx * 2.4; const sg = ctx.createLinearGradient(gx - 40 * s, 0, gx + 40 * s, 0); sg.addColorStop(0, 'rgba(255,255,255,0)'); sg.addColorStop(.5, 'rgba(255,255,255,.55)'); sg.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = sg; ctx.fillRect(gx - 40 * s, tray.y - 40 * s, 80 * s, 60 * s); ctx.restore(); }
+  const pw = 9 * s * (1 - seg(p, .37, .41)) * seg(p, .14, .17);
+  const cupA = seg(p, .12, .16) * (1 - seg(p, .41, .45)); if (cupA > 0) pourCup(ctx, tray.x + 20 * s, L.H * (L.mobile ? .42 : .3), s, cupA, .5 + .5 * seg(p, .14, .2), '#E6CFAE');
+  if (pw > 0) stream(ctx, tray.x + 20 * s, L.H * (L.mobile ? .42 : .3), tray.y - 9 * s, pw, '#E6CFAE', t);
+  // jar: a see-through vessel fills with scented wax, then turns to stone
+  const jo = jar.o, jw = jo.w * s, jh = jo.h * s;
+  dashed(ctx, jo, jar.x, jar.y, s, .55 * (1 - seg(p, .46, .5)) * sketch);
+  if (p > .46 && jset < 1) {
+    const va = seg(p, .46, .5) * (1 - jset);
+    ctx.save(); ctx.globalAlpha = va; ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.fill(sil(jo, jar.x, jar.y, s)); ctx.strokeStyle = rgba('#5C4637', .5); ctx.lineWidth = 1.4 * s; ctx.stroke(sil(jo, jar.x, jar.y, s));
+    ctx.clip(sil(jo, jar.x, jar.y, s)); const lvl = jar.y - (jh - 6 * s) * easeOut(g);
+    ctx.fillStyle = '#F1E4CC'; ctx.beginPath(); ctx.moveTo(jar.x - jw, jar.y + 4 * s); for (let i = 0; i <= 16; i++) { const xx = jar.x - jw / 2 + jw * i / 16; ctx.lineTo(xx, lvl + Math.sin(i * .9 + t * 6) * 1.6 * s * (1 - g)); } ctx.lineTo(jar.x + jw, jar.y + 4 * s); ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  if (jset > 0) { ctx.save(); ctx.globalAlpha = jset; drawObj(ctx, jo, jar.x, jar.y, s, sun); ctx.restore(); }
+  const cupB = seg(p, .48, .52) * (1 - seg(p, .68, .72)); if (cupB > 0) pourCup(ctx, jar.x + 6 * s, L.H * (L.mobile ? .42 : .3), s, cupB, .5 + .5 * seg(p, .5, .55), '#F3E7D2');
+  const ww = 7 * s * seg(p, .5, .53) * (1 - seg(p, .66, .69)); if (ww > 0) stream(ctx, jar.x + 6 * s, L.H * (L.mobile ? .42 : .3), jar.y - (jh - 6 * s) * easeOut(g), ww, '#F3E7D2', t);
+  const notes = byId['chai-at-four'].notes;
+  ctx.save(); ctx.textAlign = 'center'; ctx.font = `italic 300 ${Math.round(17 * s)}px Fraunces, Georgia, serif`;
+  notes.forEach((n, i) => { const wp = seg(p, .54 + i * .035, .7 + i * .035); if (wp <= 0 || wp >= 1) return; ctx.fillStyle = rgba('#5C4637', Math.sin(Math.PI * wp) * .95); ctx.fillText(n, jar.x + (i - 1) * 46 * s + Math.sin(t + i) * 6 * s, jar.y - jh - 26 * s - wp * 120 * s); });
+  ctx.restore();
+  // demould: dish, arch and pillar lift out of their moulds one after another
+  [dish, arch, pillar].forEach((it, i) => {
+    const m = ms[i]; dashed(ctx, it.o, it.x, it.y, s, .4 * (1 - seg(m, 0, .3)) * sketch);
+    if (m <= 0) return; const e = ease(m);
+    ctx.save(); ctx.globalAlpha = e; const sc = .94 + .06 * e; ctx.translate(it.x, it.y); ctx.scale(sc, sc); ctx.translate(-it.x, -it.y); drawObj(ctx, it.o, it.x, it.y, s, sun); ctx.restore();
+    const bw = it.o.w * s + 26 * s, bh = it.o.h * s + 22 * s, lift = 90 * s * e;
+    ctx.save(); ctx.globalAlpha = (1 - e) * .9; ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.strokeStyle = rgba('#5C4637', .55); ctx.lineWidth = 1.2 * s;
+    ctx.beginPath(); ctx.rect(it.x - bw / 2, it.y - bh + 4 * s - lift, bw, bh); ctx.fill(); ctx.stroke(); ctx.restore();
+  });
+  LC.spots = items.map((it) => spotFor(it, s, win(p, cfg.spots)));
+  ctx.fillStyle = `rgba(36,24,18,${.42 * dusk})`; ctx.fillRect(0, 0, L.W, L.H);
+  flame(ctx, jar.x + 1 * s, jar.y - jh - 15 * s, s, seg(p, .89, .95), t);
+}
+
+// C · Jaali Light: the room waits in shade; a lattice-window light sweeps it, the visitor carries a second light, the candle takes over at dusk.
+function sceneJaali(ctx, L, p, t) {
+  const day = seg(p, 0, .82), dusk = ease(seg(p, .8, .95));
+  room(ctx, L, mixHex(mixSeq(['#ECDFCA', '#EEDDC2', '#EACB9E'], day), '#5A4336', dusk * .5), mixHex('#DCC9AE', '#4A3529', dusk * .5), L.hz);
+  const s = L.u * 1.14; plinth(ctx, L.ax, L.ay, s, '#F3EBDF');
+  const sun = -1 + 2 * day, elev = .2 + .7 * Math.sin(Math.PI * day);
+  const items = placeAll(L, s, L.ax, L.ay);
+  items.forEach((it) => castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .24));
+  items.forEach((it) => drawObj(ctx, it.o, it.x, it.y, s, sun));
+  const jar = items[1]; const fx = jar.x + 1 * s, fy = jar.y - jar.o.h * s - 15 * s;
+  // darkness mask with light cut out of it
+  const m = LC.mctx; m.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); m.globalCompositeOperation = 'source-over'; m.clearRect(0, 0, L.W, L.H);
+  m.fillStyle = `rgba(24,16,11,${.8 + .08 * dusk})`; m.fillRect(0, 0, L.W, L.H); m.globalCompositeOperation = 'destination-out';
+  const js = (1 - seg(p, .72, .84)) * (.75 + .25 * seg(p, 0, .1));
+  const jx = L.W * (L.mobile ? .25 + .5 * day : .4 + .52 * day), jy = L.mobile ? L.H * (.7 + .1 * day) : L.H * (.55 + .12 * day), sc = (L.mobile ? .5 : .74) * (1 + .4 * day) * Math.max(.7, L.u * 1.2);
+  if (js > 0) {
+    m.save(); m.translate(jx, jy); m.transform(1, .08, -.55 + 1.1 * day, 1, 0, 0); m.scale(sc, sc);
+    const sp = m.createRadialGradient(0, 0, 0, 0, 0, 380); sp.addColorStop(0, `rgba(0,0,0,${.32 * js})`); sp.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = sp; m.fillRect(-400, -400, 800, 800);
+    m.globalAlpha = js * .35; m.drawImage(LC.jaali, -268, -268, 536, 536); m.globalAlpha = js; m.drawImage(LC.jaali, -256, -256, 512, 512); m.restore();
+  }
+  const pr = LC.ptr; const now = performance.now(); let gx = 0, gy = 0, ga = 0;
+  const live = pr.on && (!pr.touch || now - pr.last < 2600);
+  if (live) { gx = pr.x; gy = pr.y; ga = .95; }
+  else if (p > .3 && p < .8) { gx = L.ax + Math.cos(t * .5) * 250 * L.u; gy = L.ay - 70 * L.u + Math.sin(t * .9) * 36 * L.u; ga = .55 * win(p, [.3, .36, .74, .8]); }
+  const gr = (L.mobile ? 120 : 170) * Math.max(.8, L.u);
+  if (ga > 0) { const pg = m.createRadialGradient(gx, gy, 0, gx, gy, gr); pg.addColorStop(0, `rgba(0,0,0,${ga})`); pg.addColorStop(.55, `rgba(0,0,0,${ga * .6})`); pg.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = pg; m.fillRect(gx - gr, gy - gr, gr * 2, gr * 2); }
+  const ca = seg(p, .8, .9); const cr = (230 + 14 * Math.sin(t * 9)) * s;
+  if (ca > 0) { const cg = m.createRadialGradient(fx, fy, 0, fx, fy, cr); cg.addColorStop(0, `rgba(0,0,0,${.96 * ca})`); cg.addColorStop(.5, `rgba(0,0,0,${.6 * ca})`); cg.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = cg; m.fillRect(fx - cr, fy - cr, cr * 2, cr * 2); }
+  m.globalCompositeOperation = 'source-over';
+  ctx.drawImage(LC.mask, 0, 0, L.W, L.H);
+  if (js > 0) { ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = `rgba(255,214,150,${.25 * js})`; ctx.fillRect(0, 0, L.W, L.H); ctx.restore(); }
+  flame(ctx, fx, fy, s, ca, t);
+  const gauss = (d, r) => Math.exp(-(d * d) / (2 * r * r));
+  LC.spots = items.map((it) => {
+    const sp = spotFor(it, s, 0); const cx = it.x, cy = it.y - it.o.h * s / 2;
+    const lit = Math.max(js * gauss(Math.hypot(cx - jx, cy - jy), 170 * sc), ga * gauss(Math.hypot(cx - gx, cy - gy), gr * .6), ca * gauss(Math.hypot(cx - fx, cy - fy), cr * .45));
+    sp.a = seg(lit, .4, .7) * seg(p, .12, .16) * (1 - seg(p, .82, .86)); return sp;
+  });
+}
+
+function lcTarget() { const lc = $('#lc'), st = $('#lc-stage'); if (!lc) return 0; const total = lc.offsetHeight - st.offsetHeight; return total > 0 ? clamp((65 - lc.getBoundingClientRect().top) / total) : 0; }
+function lcResize() {
+  if (!LC.cv) return; const r = LC.cv.getBoundingClientRect(); LC.W = r.width; LC.H = r.height;
+  LC.dpr = Math.min(window.devicePixelRatio || 1, LC.W < 760 ? 1.5 : 2);
+  LC.cv.width = Math.round(LC.W * LC.dpr); LC.cv.height = Math.round(LC.H * LC.dpr);
+  if (!LC.mask) { LC.mask = document.createElement('canvas'); LC.mctx = LC.mask.getContext('2d'); }
+  LC.mask.width = LC.cv.width; LC.mask.height = LC.cv.height;
+}
+function lcDraw(p, t) {
+  const ctx = LC.ctx; if (!ctx || !LC.W) return; ctx.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); ctx.clearRect(0, 0, LC.W, LC.H);
+  const L = layout(); LC.spots = [];
+  if (S.opening === 'pour') scenePour(ctx, L, p, t); else if (S.opening === 'jaali') sceneJaali(ctx, L, p, t); else sceneArches(ctx, L, p, t);
+}
+function lcCopy(p, still) {
+  const cfg = OPENINGS[S.opening]; const set = (el, a, tf) => { if (!el) return; el.style.opacity = String(a); el.style.visibility = a < .02 ? 'hidden' : 'visible'; if (tf !== undefined) el.style.transform = tf; };
+  const ho = still ? 1 : 1 - seg(p, cfg.hero[0], cfg.hero[1]); set($('#lc-hero'), ho, `translateY(${-24 * (1 - ho)}px)`);
+  cfg.caps.forEach((c, i) => { const a = still ? 0 : win(p, c[1]); set($('#lc-cap' + i), a, `translateY(${(1 - a) * 14}px)`); });
+  const fa = still ? 0 : seg(p, cfg.final[0], cfg.final[1]); set($('#lc-final'), fa, `translateY(${(1 - fa) * 18}px)`);
+  const idx = p < cfg.cuts[0] ? 0 : p < cfg.cuts[1] ? 1 : p < cfg.cuts[2] ? 2 : 3;
+  [...($('#lc-rail')?.children || [])].forEach((li, k) => li.classList.toggle('on', k === idx));
+  $('#lc-stage')?.classList.toggle('ink-light', cfg.dark || p > cfg.final[0] - .04);
+  const pg = $('#lc-progress'); if (pg) pg.style.transform = `scaleX(${p})`;
+  const box = $('#lc-spots'); if (!box) return;
+  [...box.children].forEach((el, i) => {
+    const sp = LC.spots[i]; const a = sp ? (still ? 1 : sp.a) : 0;
+    el.style.opacity = String(a); el.style.transform = sp ? `translate(${sp.x}px, ${sp.y}px) translate(-50%, -100%)` : '';
+    const on = a > .6; el.classList.toggle('on', on); el.tabIndex = on ? 0 : -1; el.setAttribute('aria-hidden', String(!on));
+  });
+}
+function lcFrame(ts) {
+  LC.raf = 0; if (!LC.cv || !document.body.contains(LC.cv)) return;
+  const target = lcTarget(); LC.p += (target - LC.p) * .12; if (Math.abs(target - LC.p) < .0004) LC.p = target;
+  lcDraw(LC.p, ts / 1000); lcCopy(LC.p, false);
+  if (LC.visible) LC.raf = requestAnimationFrame(lcFrame);
+}
+function lcSetup(on) {
+  if (LC.io) { LC.io.disconnect(); LC.io = null; } if (LC.raf) { cancelAnimationFrame(LC.raf); LC.raf = 0; }
+  const still = on && reduce.matches; document.body.classList.toggle('static-lc', still);
+  LC.cv = on ? $('#lc-canvas') : null; if (!LC.cv) return;
+  LC.ctx = LC.cv.getContext('2d'); lcResize();
+  if (!LC.marble) LC.marble = makeMarble(); if (!LC.jaali) LC.jaali = makeJaali();
+  const stage = $('#lc-stage');
+  const setPtr = (e, touch) => { const r = LC.cv.getBoundingClientRect(); LC.ptr.x = e.clientX - r.left; LC.ptr.y = e.clientY - r.top; LC.ptr.on = true; LC.ptr.touch = touch; LC.ptr.last = performance.now(); };
+  stage.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') setPtr(e, false); });
+  stage.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') setPtr(e, true); });
+  stage.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') LC.ptr.on = false; });
+  if (still) { lcDraw(OPENINGS[S.opening].staticP, 0); lcCopy(OPENINGS[S.opening].staticP, true); return; }
+  LC.p = lcTarget(); lcDraw(LC.p, performance.now() / 1000); lcCopy(LC.p, false);
+  LC.io = new IntersectionObserver((en) => { LC.visible = en[0].isIntersecting; if (LC.visible && !LC.raf) LC.raf = requestAnimationFrame(lcFrame); }, { rootMargin: '100px' });
+  LC.io.observe($('#lc'));
+}
+window.addEventListener('resize', () => { if (LC.cv && document.body.contains(LC.cv)) { lcResize(); if (reduce.matches) { const sp = OPENINGS[S.opening].staticP; lcDraw(sp, 0); lcCopy(sp, true); } } });
+document.fonts && document.fonts.ready.then(() => { if (LC.cv && reduce.matches) lcDraw(OPENINGS[S.opening].staticP, 0); });
 
 // ---------- QR (demo) ----------
 function drawQR() {
@@ -959,6 +1247,7 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
+  if (d.act === 'opening') { S.opening = t.value; save(); track('opening_switch', { opening: t.value }); if (route() !== 'home') location.hash = 'home'; else render(); say('Showing ' + OPENINGS[S.opening].name + '. Scroll the homepage to play it.'); return; }
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
   if (d.act === 'home-rit') { UI.ritual.homeSel = UI.ritual.homeSel || { a: true, b: true }; UI.ritual.homeSel[d.k] = t.checked; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'ritual-pick') { UI.ritual.pick[UI.ritual.preset][d.i] = t.checked; render(); $('#' + t.id)?.focus(); }
