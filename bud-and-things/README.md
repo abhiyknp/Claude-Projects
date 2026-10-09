@@ -43,3 +43,7 @@ boards only, never as product listings.
 ## Brand assets
 
 `prototype/assets/` holds images extracted from the master document PDF: the logo lockup, wordmark, B&T monogram, encircled seal and leaf mark (cut out as transparent masks so they recolour per theme), the logo photograph and the seven packaging photographs. They come from low-resolution PDF images; replace them with the original logo files and product photography before launch.
+
+## Public preview
+
+Every push to `main` that touches `prototype/` publishes it to GitHub Pages (`.github/workflows/pages.yml`): https://abhiyknp.github.io/Claude-Projects/ . One-time setup in the repository: Settings → Pages → Build and deployment → Source: **GitHub Actions**.

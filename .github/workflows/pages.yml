@@ -1,0 +1,54 @@
+# Publishes the BUD & THINGS prototype (bud-and-things/prototype) to GitHub Pages on every push to main.
+# One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Prototype preview (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'bud-and-things/prototype/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp -r bud-and-things/prototype/. _site/
+          # The prototype page is written as page content (it is also published as a Claude artifact, which adds the
+          # document shell). Give it a full HTML document here.
+          {
+            printf '%s\n' '<!doctype html>' '<html lang="en-IN">' '<head>' '<meta charset="utf-8">' \
+              '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' \
+              '<meta name="description" content="BUD & THINGS by Ashi: thoughtful objects, meaningful moments. Prototype preview.">' \
+              '<style>[hidden]{display:none!important}body{margin:0}</style>' '</head>' '<body>'
+            cat bud-and-things/prototype/index.html
+            printf '%s\n' '</body>' '</html>'
+          } > _site/index.html
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
