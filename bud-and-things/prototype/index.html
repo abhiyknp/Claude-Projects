@@ -175,6 +175,17 @@ body.app .site-foot { display: none; }
   .lc-spots a { font-size: 12px; padding: 5px 8px; }
   .lc-spots a .num { display: none; }
 }
+.lc.tour { height: 780vh; }
+.lc.tour .lc-cap { top: auto; bottom: 8%; }
+@media (max-width: 760px) { .lc.tour { height: 620vh; } }
+.world { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.world-cell { padding: 22px; border: 1px dashed var(--line2); display: flex; flex-direction: column; gap: 6px; min-height: 170px; text-decoration: none; }
+.world-cell strong { font-family: var(--display); font-weight: 500; font-size: 28px; }
+.world-cell.now { border: 0; background: var(--choc); color: var(--ivory); }
+.world-cell.now .muted, .world-cell.now .eyebrow { color: var(--glow); }
+.world-cell .go { margin-top: auto; font-weight: 700; }
+.world-cell.now:hover { background: var(--terra-ink); color: var(--ivory); }
+.photo-tile img { width: 100%; height: 100%; object-fit: cover; }
 .static-lc .lc { height: auto; }
 .static-lc .lc-stage { position: relative; top: 0; height: 680px; }
 .static-lc .lc-cap, .static-lc .lc-final, .static-lc .lc-rail, .static-lc .lc-progress { display: none; }
@@ -365,7 +376,7 @@ body.app .toast { bottom: 96px; }
         <button type="button" data-act="mode" data-v="app" id="mode-app">Installed app</button>
       </span>
       <label class="sr" for="opening-sel">Opening animation</label>
-      <select id="opening-sel" data-act="opening"><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option></select>
+      <select id="opening-sel" data-act="opening"><option value="tour">Opening C · Home Tour</option><option value="arches">Opening A · Through the Arches</option><option value="pour">Opening B · The Pour</option></select>
       <label class="sr" for="skin-sel">Theme</label>
       <select id="skin-sel" data-act="skin"><option value="signature">Theme · Signature: approved palette</option><option value="atelier">Theme · Everyday: Clay &amp; Cocoa</option><option value="festive">Theme · Festive: Saffron &amp; Rani</option><option value="monsoon">Theme · Monsoon: Peacock &amp; Moss</option><option value="gifting">Theme · Gifting: Cherry &amp; Blush</option><option value="evening">Theme · Evening: Indigo &amp; Brass</option></select>
       <a href="#admin">Owner view</a>
@@ -397,7 +408,7 @@ body.app .toast { bottom: 96px; }
       <span class="muted">Made with thought. Given with feeling.</span>
       <span class="muted">BUD &amp; THINGS by Ashi</span>
     </div>
-    <nav aria-label="Shop"><strong>Shop</strong><a href="#shop">Candles</a><a href="#collection">Everyday Rituals</a><a href="#ritual">Build Your Ritual</a><a href="#gifting">Gifting</a></nav>
+    <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a></nav>
     <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact · WhatsApp</a><a href="#help">Shipping &amp; delivery</a><a href="#help">Exchanges</a><a href="#help">Product care</a></nav>
     <nav aria-label="About"><strong>About</strong><a href="#story">Our Story</a><a href="#help">Where to find us</a><a href="#help">Privacy</a><a href="#help">Terms</a></nav>
   </div>
@@ -413,30 +424,38 @@ body.app .toast { bottom: 96px; }
 'use strict';
 
 // ---------- catalogue (draft) ----------
-// Launch scope from the master document: candles only, Collection 01 · Everyday Rituals.
-// Names, scents and prices are drafts until prototype and burn testing are complete.
+// Launch range: candles and Jesmonite objects. Names, scents and prices are drafts until testing is complete.
 const IMG = { box: 'assets/pack-box.jpg', jar: 'assets/pack-jar.jpg', tag: 'assets/pack-tag.jpg', card: 'assets/pack-card.jpg', pouch: 'assets/pack-pouch.jpg', seal: 'assets/pack-seal.jpg', leather: 'assets/pack-leather.jpg', logoPhoto: 'assets/logo-photo.jpg' };
 const CANDLE_CARE = ['Let the first burn melt to the edges (about 2 hours).', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'];
 const JAR_MAT = 'Scented candle in a speckled stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.';
 const JAR_SIZE = '120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm';
 const twoSizes = (code) => [{ sku: 'BT-CN-' + code + '-120', label: '120 g', price: 899 }, { sku: 'BT-CN-' + code + '-220', label: '220 g', price: 1399 }];
 const PILLAR_COL = { 'Ivory': '#F1E8DA', 'Terracotta': '#A55B3F', 'Olive': '#6B7B5B' };
+const FIN = { 'Ivory': '#F1E8DA', 'Ivory Terrazzo': '#EFE7DA', 'Sand': '#DCC9AE', 'Terracotta': '#B0644A', 'Caramel Swirl': '#C99A6C', 'Caramel': '#C99A6C', 'Olive': '#6B6B43', 'Mixed Earth · set of 4': '#6B6B43', 'All Ivory · set of 4': '#F1E8DA' };
+const JES_CARE = ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Keep away from long contact with water.'];
+const JES_MAT = 'Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.';
 const P = [
   { id: 'first-light', name: 'First Light', cat: 'candles', type: 'Scented candle', line: 'The first quiet hour, poured.', notes: ['Mogra', 'Neroli', 'White tea'], variants: twoSizes('FL'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'fresh'], space: ['bedroom', 'workspace'], occ: ['just-because', 'thank-you'], gift: true, art: 'jar', c: '#F4ECE0' },
   { id: 'monsoon-letters', name: 'Monsoon Letters', cat: 'candles', type: 'Scented candle', line: 'Wet earth, old paper, a window left open.', notes: ['Petrichor', 'Vetiver', 'Green cardamom'], variants: twoSizes('ML'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'creative'], space: ['living', 'workspace'], occ: ['just-because', 'milestone'], gift: true, art: 'jar', c: '#A9B39A' },
   { id: 'chai-at-four', name: 'Chai at Four', cat: 'candles', type: 'Scented candle', line: 'The hour everyone comes home to.', notes: ['Masala chai', 'Tonka', 'Warm milk'], variants: twoSizes('CF'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['cosy'], space: ['living', 'kitchen'], occ: ['housewarming', 'thank-you'], gift: true, art: 'jar', c: '#C08A5B' },
   { id: 'brass-and-saffron', name: 'Brass & Saffron', cat: 'candles', type: 'Scented candle', line: 'For lamps, doorways and celebrations.', notes: ['Saffron', 'Amber', 'Sandalwood'], variants: [{ sku: 'BT-CN-BS-220', label: '220 g', price: 1499 }], material: 'Scented candle in a terracotta stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.', size: '8.5 × 9 cm', care: CANDLE_CARE, mood: ['cosy', 'gift-ready'], space: ['living', 'entrance'], occ: ['festive', 'housewarming', 'milestone'], gift: true, art: 'jar', c: '#A55B3F' },
   { id: 'terrace-garden', name: 'Terrace Garden', cat: 'candles', type: 'Scented candle', line: 'Tulsi, lemongrass and a little sunlight.', notes: ['Tulsi', 'Lemongrass', 'Fig leaf'], variants: twoSizes('TG'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['fresh'], space: ['kitchen', 'workspace', 'bathroom'], occ: ['just-because', 'birthday'], gift: true, art: 'jar', c: '#C9D0B8' },
-  { id: 'pillar-studies', name: 'Pillar Studies', cat: 'candles', type: 'Pillar candle', line: 'Sculpted candles that look good even unlit.', notes: ['Unscented'], variants: [{ sku: 'BT-CN-PS-IV', label: 'Ivory', price: 549 }, { sku: 'BT-CN-PS-TC', label: 'Terracotta', price: 549 }, { sku: 'BT-CN-PS-OL', label: 'Olive', price: 549 }, { sku: 'BT-CN-PS-SET3', label: 'Set of 3', price: 1499 }], material: 'Unscented ribbed pillar candle. Wax type to be confirmed after testing.', size: '5 × 12 cm', care: ['Burn on a heat-safe plate.', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'], mood: ['creative', 'calm'], space: ['living', 'dining'], occ: ['festive', 'birthday', 'just-because'], gift: true, art: 'pillar', c: '#F1E8DA' }
+  { id: 'pillar-studies', name: 'Pillar Studies', cat: 'candles', type: 'Pillar candle', line: 'Sculpted candles that look good even unlit.', notes: ['Unscented'], variants: [{ sku: 'BT-CN-PS-IV', label: 'Ivory', price: 549 }, { sku: 'BT-CN-PS-TC', label: 'Terracotta', price: 549 }, { sku: 'BT-CN-PS-OL', label: 'Olive', price: 549 }, { sku: 'BT-CN-PS-SET3', label: 'Set of 3', price: 1499 }], material: 'Unscented ribbed pillar candle. Wax type to be confirmed after testing.', size: '5 × 12 cm', care: ['Burn on a heat-safe plate.', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'], mood: ['creative', 'calm'], space: ['living', 'dining'], occ: ['festive', 'birthday', 'just-because'], gift: true, art: 'pillar', c: '#F1E8DA' },
+  { id: 'ghat-tray', name: 'Ghat Tray', cat: 'jesmonite', type: 'Tray', line: 'Steps for your small everyday things.', variants: [{ sku: 'BT-JS-GT-IT', label: 'Ivory Terrazzo', price: 1490 }, { sku: 'BT-JS-GT-SD', label: 'Sand', price: 1490 }, { sku: 'BT-JS-GT-TC', label: 'Terracotta', price: 1490 }], material: JES_MAT, size: '30 × 15 × 2 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['living', 'bedroom', 'entrance'], occ: ['housewarming', 'milestone'], gift: true, art: 'tray' },
+  { id: 'moonlet-ring-dish', name: 'Moonlet Ring Dish', cat: 'jesmonite', type: 'Ring dish', line: 'A half-moon for the rings you take off at night.', variants: [{ sku: 'BT-JS-MR-IV', label: 'Ivory', price: 590 }, { sku: 'BT-JS-MR-CS', label: 'Caramel Swirl', price: 590 }, { sku: 'BT-JS-MR-OL', label: 'Olive', price: 590 }], material: JES_MAT, size: '10 × 5 × 2.5 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['bedroom', 'bathroom'], occ: ['birthday', 'thank-you', 'just-because'], gift: true, art: 'dish' },
+  { id: 'jharokha-catch-all', name: 'Jharokha Catch-all', cat: 'jesmonite', type: 'Catch-all', line: 'A little window for keys, coins and notes.', variants: [{ sku: 'BT-JS-JC-IV', label: 'Ivory', price: 1090 }, { sku: 'BT-JS-JC-SD', label: 'Sand', price: 1090 }], material: JES_MAT, size: '14 × 17 × 2.5 cm', care: JES_CARE, mood: ['creative'], space: ['entrance', 'workspace'], occ: ['housewarming', 'thank-you'], gift: true, art: 'archtray' },
+  { id: 'pebble-coasters', name: 'Pebble Coasters', cat: 'jesmonite', type: 'Coasters', line: 'River stones for your morning cup.', variants: [{ sku: 'BT-JS-PC-ME4', label: 'Mixed Earth · set of 4', price: 1190 }, { sku: 'BT-JS-PC-IV4', label: 'All Ivory · set of 4', price: 1190 }], material: JES_MAT, size: 'Each about 10 × 9 × 1 cm', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe.', 'Use with hot mugs; keep away from flames.'], mood: ['cosy', 'fresh'], space: ['living', 'workspace', 'dining'], occ: ['housewarming', 'birthday'], gift: true, art: 'pebbles' },
+  { id: 'still-form-no-1', name: 'Still Form No. 1', cat: 'jesmonite', type: 'Sculptural', line: 'An arch to lean books, or thoughts, against.', variants: [{ sku: 'BT-JS-SF-IV', label: 'Ivory', price: 1690 }, { sku: 'BT-JS-SF-TC', label: 'Terracotta', price: 1690 }], material: JES_MAT, size: '12 × 18 × 4 cm', care: ['Dust with a dry, soft cloth.', 'Keep indoors.'], mood: ['creative', 'calm'], space: ['living', 'workspace'], occ: ['milestone', 'housewarming'], gift: true, art: 'arch' },
+  { id: 'halo-candle-plate', name: 'Halo Candle Plate', cat: 'jesmonite', type: 'Candle plate', line: 'Give your candle somewhere to stand.', variants: [{ sku: 'BT-JS-HP-IV', label: 'Ivory', price: 690 }, { sku: 'BT-JS-HP-OL', label: 'Olive', price: 690 }, { sku: 'BT-JS-HP-CR', label: 'Caramel', price: 690 }], material: JES_MAT, size: '14 cm across, 1.5 cm rim', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Let wax cool before removing.'], mood: ['calm', 'cosy'], space: ['living', 'dining', 'bedroom'], occ: ['festive', 'just-because'], gift: false, art: 'plate' }
 ];
 const PAIRINGS = [
-  { id: 'morning-evening', name: 'Morning & Evening', items: [['first-light', 0], ['chai-at-four', 0]], why: 'A fresh candle to start the day and a warm one for when everyone is home.' },
-  { id: 'four-oclock', name: 'Four O’Clock', items: [['chai-at-four', 1], ['pillar-studies', 1]], why: 'Masala chai and a terracotta pillar for the tea table.' },
-  { id: 'doorway-welcome', name: 'Doorway Welcome', items: [['brass-and-saffron', 0], ['pillar-studies', 3]], why: 'Saffron by the door and three pillars for the steps. Made for festive evenings.' },
-  { id: 'rainy-desk', name: 'Rainy Desk', items: [['monsoon-letters', 1], ['first-light', 0]], why: 'Wet earth for long afternoons and a light scent for the morning after.' },
-  { id: 'night-stand', name: 'Night Stand', items: [['terrace-garden', 0], ['pillar-studies', 0]], why: 'A green, light scent and an ivory pillar for the end of the day.' }
+  { id: 'morning-ritual', name: 'The Morning Ritual', items: [['first-light', 0], ['halo-candle-plate', 0]], why: 'A fresh candle and a plate to stand it on.' },
+  { id: 'four-oclock', name: 'Four O’Clock', items: [['chai-at-four', 1], ['ghat-tray', 1]], why: 'Warm scent and a tray for the tea things.' },
+  { id: 'doorway-welcome', name: 'Doorway Welcome', items: [['brass-and-saffron', 0], ['jharokha-catch-all', 0]], why: 'A festive scent and a catch-all by the door. Made for housewarmings.' },
+  { id: 'rainy-desk', name: 'Rainy Desk', items: [['monsoon-letters', 1], ['pebble-coasters', 0]], why: 'Earthy scent and coasters for long work afternoons.' },
+  { id: 'night-stand', name: 'Night Stand', items: [['terrace-garden', 0], ['moonlet-ring-dish', 0]], why: 'A light scent and a dish for rings at the end of the day.' }
 ];
-const FUTURE = [['Showpieces & home objects', 'Expansion 01'], ['Gift sets & curated gifting', 'Expansion 02'], ['Broader lifestyle collections', 'Expansion 03']];
+const FUTURE = [['Gift sets & curated gifting', 'Next'], ['Home décor & lifestyle objects', 'Later'], ['Celebration & corporate gifting', 'Later']];
 const MOODS = [['calm', 'Calm and grounded'], ['cosy', 'Warm and cosy'], ['fresh', 'Fresh and uplifting'], ['creative', 'Creative and expressive'], ['gift-ready', 'Thoughtful and gift-ready']];
 const SPACES = [['bedroom', 'Bedroom'], ['living', 'Living room'], ['workspace', 'Desk or workspace'], ['kitchen', 'Kitchen'], ['entrance', 'Entrance'], ['bathroom', 'Bathroom'], ['dining', 'Dining table']];
 const OCCASIONS = [['birthday', 'Birthday'], ['housewarming', 'Housewarming'], ['thank-you', 'Thank you'], ['festive', 'Festive'], ['milestone', 'A milestone'], ['just-because', 'Just because']];
@@ -462,13 +481,13 @@ function defaults() {
   Object.keys(skuMap).forEach((sku, i) => { stock[sku] = [8, 6, 5, 3][i % 4]; });
   stock['BT-CN-PS-OL'] = 0;
   stock['BT-CN-BS-220'] = 2;
-  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'arches', skin: 'signature' };
+  return { cart: [], saved: [], notify: {}, orders: [], stock, settings: { shipFee: 99, freeOver: 1999 }, events: [], mode: 'web', opening: 'tour', skin: 'signature' };
 }
 let S = defaults();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
-if (!['arches', 'pour'].includes(S.opening)) S.opening = 'arches';
+if (!['arches', 'pour', 'tour'].includes(S.opening)) S.opening = 'tour';
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
-const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'first-light', object: 'chai-at-four' } }, co: { step: 'contact', contact: {}, address: {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, orderDraftId: null }, toast: null };
+const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: { step: 'contact', contact: {}, address: {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, orderDraftId: null }, toast: null };
 
 // ---------- helpers ----------
 const $ = (s, r = document) => r.querySelector(s);
@@ -480,7 +499,7 @@ const stockOf = (sku) => (S.stock[sku] ?? 0);
 const inStock = (p) => p.variants.some((v) => stockOf(v.sku) > 0);
 function track(name, data) { S.events.unshift({ t: new Date().toISOString(), name, data: data || {} }); S.events = S.events.slice(0, 60); save(); }
 function shade(hex, f) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; if (f < 1) { r *= f; g *= f; b *= f; } else { const k = f - 1; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; } return '#' + [r, g, b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join(''); }
-function colorFor(p, vi) { const v = p.variants[vi || 0]; if (p.art === 'jar') return p.c; return PILLAR_COL[v.label] || p.c; }
+function colorFor(p, vi) { const v = p.variants[vi || 0]; if (p.art === 'jar') return p.c; if (p.art === 'pillar') return PILLAR_COL[v.label] || p.c; return FIN[v.label] || '#DCC9AE'; }
 function art(p, vi, sc) { sc = sc || 1; const z = Math.round(170 * sc); return `<img class="obj" src="${prodImg(p, vi || 0)}" alt="" width="${z}" height="${z}" style="width:${z}px;height:${z}px">`; }
 const HEART = (on) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="${on ? '#94503A' : 'none'}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
 const CLOSE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -509,9 +528,9 @@ window.addEventListener('hashchange', () => { UI.menu = false; render(true); });
 // ---------- chrome ----------
 const NAV = [['shop', 'Shop'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story']];
 function renderChrome() {
-  const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'collection'].includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
+  const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'jesmonite', 'collection'].includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
   $('#nav').innerHTML = NAV.map(([k, l]) => `<a href="#${k}"${cur(k)}>${l}</a>`).join('');
-  $('#mobile-menu-inner').innerHTML = [['shop', 'Candles'], ['collection', 'Everyday Rituals'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['help', 'Help & contact']].map(([k, l]) => `<a href="#${k}">${l}</a>`).join('');
+  $('#mobile-menu-inner').innerHTML = [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['shop', 'All products'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['help', 'Help & contact']].map(([k, l]) => `<a href="#${k}">${l}</a>`).join('');
   $('#mobile-menu').hidden = !UI.menu; $('#menu-btn').setAttribute('aria-expanded', String(UI.menu));
   const cc = cartCount(); const cb = $('#cart-btn');
   cb.setAttribute('aria-label', `Cart, ${cc} item${cc === 1 ? '' : 's'}`);
@@ -520,7 +539,7 @@ function renderChrome() {
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
   $('#opening-sel').value = S.opening; $('#skin-sel').value = S.skin; document.documentElement.dataset.skin = S.skin; $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
-  const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'collection'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
+  const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite', 'collection'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
   $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
     + tab('shop', 'Shop', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>')
     + tab('feeling', 'Feeling', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16"/></svg>')
@@ -547,7 +566,7 @@ function renderOverlay() {
     h += `<div class="search-panel" role="dialog" aria-modal="true" aria-label="Search"><div class="wrap">
       <div style="display:flex;justify-content:space-between;align-items:center"><span class="logo"><span class="mark wordmark" aria-hidden="true"></span><span class="sr">BUD &amp; THINGS</span></span><button class="icon-btn" type="button" data-act="close-search" aria-label="Close search">${CLOSE}</button></div>
       <label for="search-q">Search candles and objects</label>
-      <input id="search-q" type="text" autocomplete="off" value="${esc(UI.searchQ)}" placeholder="Try “chai”, “saffron” or “pillar”">
+      <input id="search-q" type="text" autocomplete="off" value="${esc(UI.searchQ)}" placeholder="Try “tray”, “chai” or “calm”">
       <div id="search-res">${searchResults(q, res)}</div>
     </div></div>`;
   }
@@ -556,7 +575,7 @@ function renderOverlay() {
 }
 function searchResults(q, res) {
   if (!q) return '<p class="muted">Search by name, scent or type.</p>';
-  if (!res.length) return `<div class="empty"><strong>No match for “${esc(q)}”.</strong><span class="muted">Try a scent (chai, tulsi, saffron), “pillar”, or let us suggest something.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn small" href="#feeling" data-act="close-search">Find Your Feeling</a><a class="btn small ghost" href="#shop" data-act="close-search">See all products</a></span></div>`;
+  if (!res.length) return `<div class="empty"><strong>No match for “${esc(q)}”.</strong><span class="muted">Try a scent (chai, tulsi), a type (tray, coasters), or let us suggest something.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn small" href="#feeling" data-act="close-search">Find Your Feeling</a><a class="btn small ghost" href="#shop" data-act="close-search">See all products</a></span></div>`;
   return res.map((p, i) => `<a class="result" href="#p-${p.id}" data-act="close-search"><span class="tile${i % 2 ? ' alt' : ''}">${art(p, 0, .36)}</span><span><strong>${esc(p.name)}</strong><br><span class="muted" style="font-size:14px">${esc(p.type)} · ${priceFrom(p)}</span></span></a>`).join('');
 }
 function totalsHTML(t) {
@@ -581,26 +600,28 @@ function card(p, i) {
 
 // ---------- views ----------
 function viewHome() {
-  const feat = ['chai-at-four', 'first-light', 'brass-and-saffron', 'pillar-studies'].map((id) => byId[id]);
+  const feat = ['chai-at-four', 'ghat-tray', 'brass-and-saffron', 'moonlet-ring-dish'].map((id) => byId[id]);
   const fo = PAIRINGS[1]; const a = byId[fo.items[0][0]].variants[fo.items[0][1]], b = byId[fo.items[1][0]].variants[fo.items[1][1]];
   const ritSel = UI.ritual.homeSel || { a: true, b: true };
   const ritTotal = (ritSel.a ? a.price : 0) + (ritSel.b ? b.price : 0);
+  const SRC = S.opening === 'tour' ? TOUR.items : ARR;
+  const world = [['Home', 'Jesmonite trays, dishes and sculptural pieces', 'Now', '#jesmonite'], ['Fragrance', 'Scented and sculpted candles', 'Now', '#candles'], ['Gifts', 'Gift sets and curated gifting', 'Coming later', null], ['Celebrations', 'Wedding, festive and return gifts', 'Coming later', null], ['Living', 'Broader lifestyle collections', 'Coming later', null]];
   return `
-  <section class="lc" aria-label="Living Canvas, ${esc(OPENINGS[S.opening].name)}" id="lc">
+  <section class="lc${S.opening === 'tour' ? ' tour' : ''}" aria-label="Living Canvas, ${esc(OPENINGS[S.opening].name)}" id="lc">
     <div class="lc-stage" id="lc-stage">
       <canvas id="lc-canvas" aria-hidden="true"></canvas>
-      <div class="lc-spots" id="lc-spots">${ARR.map((o, i) => o.id && !o.noSpot ? `<a href="#p-${o.id}" data-spot="${i}" tabindex="-1" aria-hidden="true">${esc(byId[o.id].name)}<span class="num">${priceFrom(byId[o.id])}</span></a>` : '<span hidden></span>').join('')}</div>
+      <div class="lc-spots" id="lc-spots">${SRC.map((o, i) => o.id && !o.noSpot ? `<a href="#p-${o.id}" data-spot="${i}" tabindex="-1" aria-hidden="true">${esc(byId[o.id].name)}<span class="num">${priceFrom(byId[o.id])}</span></a>` : '<span hidden></span>').join('')}</div>
       <div class="lc-copy" id="lc-copy">
         <div class="lc-hero" id="lc-hero">
           <span class="eyebrow">${esc(SKINS[S.skin].eyebrow)}</span>
           <h1 class="hero-logo"><span class="sr">BUD &amp; THINGS by Ashi</span><span class="mark lockup" aria-hidden="true"></span></h1>
-          <p class="tag">Made with thought.<br>Given with feeling.</p>
-          <p class="sub">Candles for small rituals, slow evenings and meaningful giving. Collection 01, Everyday Rituals.</p>
-          <div class="lc-cta"><a class="btn" href="#shop">Shop the candles</a><a class="btn ghost" href="#feeling">Find Your Feeling</a></div>
+          <p class="tag">Thoughtful objects.<br>Meaningful moments.</p>
+          <p class="sub">Objects and little rituals, thoughtfully made for everyday living and meaningful giving.</p>
+          <div class="lc-cta"><a class="btn" href="#shop">Explore the Collection</a><a class="btn ghost" href="#feeling">Find Your Feeling</a></div>
         </div>
         ${OPENINGS[S.opening].caps.map((c, i) => `<div class="lc-cap" id="lc-cap${i}"><p>${c[0]}</p></div>`).join('')}
         <div class="lc-final" id="lc-final"><p>Where would you<br><em>like to begin?</em></p>
-          <nav class="paths" aria-label="Ways into the shop"><a href="#shop">Shop Candles<span>6 →</span></a><a href="#collection">Everyday Rituals<span>Collection 01 →</span></a><a href="#ritual">Build Your Ritual<span>Pair two →</span></a><a class="feel" href="#feeling">Find Your Feeling<span>5 questions →</span></a></nav>
+          <nav class="paths" aria-label="Ways into the shop"><a href="#candles">Shop Candles<span>6 →</span></a><a href="#jesmonite">Shop Jesmonite Objects<span>6 →</span></a><a href="#shop">Explore All Products<span>12 →</span></a><a class="feel" href="#feeling">Find Your Feeling<span>5 questions →</span></a></nav>
         </div>
         <ol class="lc-rail" id="lc-rail" aria-hidden="true">${OPENINGS[S.opening].rail.map((l, i) => `<li class="${i ? '' : 'on'}">${l}</li>`).join('')}</ol>
         <a class="lc-skip" id="lc-skip" href="#home" data-act="skip-intro">Skip intro</a>
@@ -609,70 +630,75 @@ function viewHome() {
     </div>
   </section>
 
-  <section class="section wrap" id="after-intro" aria-label="About"><div class="intro"><span class="mark leafmark" aria-hidden="true"></span><p>The little things we choose, make and give can carry a lot of meaning. We begin with candles, made in small batches for everyday rituals.</p><a href="#story" style="font-weight:600">Read our story</a></div></section>
+  <section class="section wrap" id="after-intro" aria-label="About"><div class="intro"><span class="mark leafmark" aria-hidden="true"></span><p>The little things we choose, make and give can carry a lot of meaning. Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving.</p><a href="#story" style="font-weight:600">Read our story</a></div></section>
 
-  <section class="wrap" id="collection-sec" aria-labelledby="col-h" style="padding-bottom:80px"><div class="split">
-    <figure class="photo" style="margin:0"><img src="${IMG.jar}" alt="A speckled stone candle jar with a wooden lid and the BUD &amp; THINGS by Ashi label, on a terrazzo stone." width="464" height="544"><figcaption>Approved label direction</figcaption></figure>
-    <div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow">Collection 01</span><h2 id="col-h" style="font-size:clamp(34px,4vw,52px)">Everyday Rituals</h2>
-      <p class="muted" style="max-width:520px">Candles are not only for decoration. They are part of small routines, moods, evenings, hosting and personal moments. Six candles to begin with: five scented, one sculpted and unscented.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#shop">Shop the collection</a><a class="btn ghost" href="#ritual">Pair two candles</a></div>
-      <div class="next-up"><span class="eyebrow">Coming later, not yet available</span><span class="muted">${FUTURE.map((f) => esc(f[0])).join(' · ')}</span></div>
-    </div></div></section>
+  <section class="wrap" aria-labelledby="world-h" style="padding-bottom:80px"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">The BUD &amp; THINGS world</span><h2 id="world-h">Thoughtful things, room by room</h2></div></div>
+    <div class="world">${world.map(([n, d, st, h]) => h ? `<a class="world-cell now" href="${h}"><span class="eyebrow">${st}</span><strong>${n}</strong><span class="muted">${d}</span><span class="go">Shop →</span></a>` : `<div class="world-cell"><span class="eyebrow">${st}</span><strong>${n}</strong><span class="muted">${d}</span></div>`).join('')}</div></section>
+
+  <section class="wrap" aria-labelledby="cats-h" style="padding-bottom:80px"><div class="section-head"><h2 id="cats-h">Shop by category</h2></div>
+    <div class="cats">
+      <a class="cat" href="#candles"><span class="tile photo-tile"><img src="${IMG.jar}" alt="A speckled stone candle jar with a wooden lid and the BUD &amp; THINGS label." loading="lazy"></span><span class="row"><strong>Candles</strong><span style="font-weight:600">6 scents and studies →</span></span></a>
+      <a class="cat" href="#jesmonite"><span class="tile alt">${art(byId['ghat-tray'], 0, 1.3)}${art(byId['still-form-no-1'], 0, 1)}</span><span class="row"><strong>Jesmonite Objects</strong><span style="font-weight:600">6 pieces →</span></span></a>
+    </div></section>
 
   <section class="band" aria-labelledby="feel-h"><div class="wrap"><div style="flex:1 1 360px"><span class="eyebrow">Find Your Feeling · 1 of 5</span><h2 id="feel-h">What would you like your space, or your moment, to feel like?</h2></div>
     <div class="opts" role="group" aria-label="Choose a feeling">${MOODS.map(([k, l]) => `<button type="button" data-act="home-mood" data-v="${k}">${ICON[MOOD_ICON[k]]}<span>${l}</span></button>`).join('')}</div></div></section>
 
-  <section class="section wrap" aria-labelledby="feat-h"><div class="section-head"><h2 id="feat-h">Candles to begin with</h2><a href="#shop" style="font-weight:600">See all 6 →</a></div>
+  <section class="section wrap" aria-labelledby="feat-h"><div class="section-head"><h2 id="feat-h">Pieces to begin with</h2><a href="#shop" style="font-weight:600">See all 12 →</a></div>
     <div class="grid">${feat.map(card).join('')}</div></section>
 
   <section style="background:var(--linen)" aria-labelledby="rit-h"><div class="wrap section"><div class="split">
-    <div style="display:flex;flex-direction:column;gap:14px;flex:1 1 300px"><span class="eyebrow">Build Your Ritual</span><h2 id="rit-h" style="font-size:clamp(30px,3.4vw,44px)">${fo.name}</h2><p class="muted">${fo.why} Pick the candles you want; nothing goes into your cart until you add it.</p><a href="#ritual" style="font-weight:600">Make your own pairing →</a></div>
+    <div style="display:flex;flex-direction:column;gap:14px;flex:1 1 300px"><span class="eyebrow">Build Your Ritual</span><h2 id="rit-h" style="font-size:clamp(30px,3.4vw,44px)">${fo.name}</h2><p class="muted">${fo.why} Pick the pieces you want; nothing goes into your cart until you add it.</p><a href="#ritual" style="font-weight:600">Make your own pairing →</a></div>
     <div class="builder" style="flex:2 1 520px;margin-top:0">
       <label class="piece"><span class="tile">${art(byId[fo.items[0][0]], fo.items[0][1], .9)}</span><span class="check"><input type="checkbox" id="home-rit-a" data-act="home-rit" data-k="a" ${ritSel.a ? 'checked' : ''}> ${esc(byId[fo.items[0][0]].name)} · ${esc(a.label)}</span><span class="num">${inr(a.price)}</span></label>
       <label class="piece"><span class="tile">${art(byId[fo.items[1][0]], fo.items[1][1], .9)}</span><span class="check"><input type="checkbox" id="home-rit-b" data-act="home-rit" data-k="b" ${ritSel.b ? 'checked' : ''}> ${esc(byId[fo.items[1][0]].name)} · ${esc(b.label)}</span><span class="num">${inr(b.price)}</span></label>
       <div class="sum"><span class="muted">Together</span><span class="num" style="font-family:var(--display);font-size:38px;font-weight:500">${inr(ritTotal)}</span><button class="btn" type="button" data-act="home-rit-add" ${ritTotal ? '' : 'disabled'}>${ritSel.a && ritSel.b ? 'Add both to cart' : 'Add selected to cart'}</button></div>
     </div></div></div></section>
 
-  <section class="section wrap" aria-labelledby="arrive-h"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Made to be given</span><h2 id="arrive-h">How it arrives</h2></div><span class="muted" style="max-width:420px;font-size:14px">The approved packaging direction. Final pieces may differ once packaging is produced.</span></div>
+  <section class="section wrap" aria-labelledby="arrive-h"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Made to be given</span><h2 id="arrive-h">How it arrives</h2></div><span class="muted" style="max-width:420px;font-size:14px">Packaging direction. Final pieces may differ once packaging is produced.</span></div>
     <div class="pack-grid">
-      <figure><img src="${IMG.box}" alt="Kraft packaging box with the BUD &amp; THINGS label and tagline." loading="lazy" width="528" height="544"><figcaption>Packaging box</figcaption></figure>
-      <figure><img src="${IMG.tag}" alt="Textured hang tag with the logo and the line Made with thought. Given with feeling." loading="lazy" width="402" height="544"><figcaption>Hang tag</figcaption></figure>
-      <figure><img src="${IMG.card}" alt="Thank-you card with a leaf mark." loading="lazy" width="496" height="544"><figcaption>Thank-you note</figcaption></figure>
-      <figure><img src="${IMG.seal}" alt="Terracotta wax seal stamped with the B&amp;T monogram." loading="lazy" width="348" height="544"><figcaption>B&amp;T seal</figcaption></figure>
+      <figure><img src="${IMG.box}" alt="Kraft packaging box with the BUD &amp; THINGS label and tagline." loading="lazy"><figcaption>Packaging box</figcaption></figure>
+      <figure><img src="${IMG.tag}" alt="Textured hang tag with the logo and tagline." loading="lazy"><figcaption>Hang tag</figcaption></figure>
+      <figure><img src="${IMG.card}" alt="Thank-you card with a leaf mark." loading="lazy"><figcaption>Thank-you note</figcaption></figure>
+      <figure><img src="${IMG.seal}" alt="Terracotta wax seal stamped with the B&amp;T monogram." loading="lazy"><figcaption>B&amp;T seal</figcaption></figure>
     </div></section>
 
   <section class="section wrap" id="gifting-sec" aria-labelledby="gift-h" style="padding-top:0"><div class="section-head"><h2 id="gift-h">Something for the moment</h2></div>
     <div style="display:flex;flex-wrap:wrap;gap:10px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
 
-  <section class="dark-band" aria-labelledby="story-h"><div class="wrap section"><div class="split"><figure class="photo dark" style="margin:0"><img src="${IMG.leather}" alt="Leather brand detail embossed with the leaf mark." loading="lazy" width="320" height="544"></figure>
-    <div style="display:flex;flex-direction:column;gap:16px"><span class="mark monogram" aria-hidden="true"></span><span class="eyebrow" style="color:var(--glow)">Thought → Object → Feeling → Memory</span><h2 id="story-h" style="font-size:clamp(30px,3.4vw,44px)">A bud is something beginning to grow.</h2><p style="opacity:.86;max-width:520px">BUD carries a personal connection to Buddy: companionship, warmth and everyday memories. &amp; THINGS keeps the brand open, for the objects, fragrances and gifts that become part of homes and celebrations.</p><a href="#story" style="font-weight:600">Read our story →</a></div></div></div></section>
+  <section class="dark-band" aria-labelledby="story-h"><div class="wrap section"><div class="split"><figure class="photo dark" style="margin:0"><img src="${IMG.leather}" alt="Leather brand detail embossed with the leaf mark." loading="lazy"></figure>
+    <div style="display:flex;flex-direction:column;gap:16px"><span class="mark monogram" aria-hidden="true"></span><span class="eyebrow" style="color:var(--glow)">Thought → Object → Feeling → Memory</span><h2 id="story-h" style="font-size:clamp(30px,3.4vw,44px)">Every piece is a little different, on purpose.</h2><p style="opacity:.86;max-width:520px">Our objects are cast in Jesmonite, a water-based composite, and our candles poured in small batches. Small marks, swirls and tones vary from piece to piece.</p><a href="#story" style="font-weight:600">Read our story →</a></div></div></div></section>
 
-  <section class="section wrap" aria-labelledby="news-h"><div class="intro" style="gap:14px"><h2 id="news-h" style="font-size:40px">Hear about new candles first</h2><p class="muted" style="font-family:var(--body);font-size:16px">New batches and restocks, about once a month. Unsubscribe any time.</p>
+  <section class="section wrap" aria-labelledby="news-h"><div class="intro" style="gap:14px"><h2 id="news-h" style="font-size:40px">Hear about new pieces first</h2><p class="muted" style="font-family:var(--body);font-size:16px">New batches and restocks, about once a month. Unsubscribe any time.</p>
     <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email address</label><input id="news-email" type="email" autocomplete="email" style="flex:1 1 240px"><button class="btn" type="submit">Subscribe</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`;
 }
 
 function viewShop(cat) {
-  const sh = UI.shop; sh.cat = 'candles';
-  let list = P.slice();
+  const sh = UI.shop; sh.cat = cat === 'collection' ? 'all' : (cat || 'all');
+  let list = P.filter((p) => sh.cat === 'all' || p.cat === sh.cat);
   const types = [...new Set(list.map((p) => p.type))];
   if (!types.includes(sh.type)) sh.type = 'all';
   if (sh.type !== 'all') list = list.filter((p) => p.type === sh.type);
   if (sh.occ !== 'all') list = list.filter((p) => p.occ.includes(sh.occ));
   if (sh.sort === 'low') list = [...list].sort((a, b) => minPrice(a) - minPrice(b));
   if (sh.sort === 'high') list = [...list].sort((a, b) => minPrice(b) - minPrice(a));
-  const coll = cat === 'collection';
+  const title = sh.cat === 'candles' ? 'Candles' : sh.cat === 'jesmonite' ? 'Jesmonite Objects' : 'All products';
+  const blurb = sh.cat === 'candles' ? 'Five scented candles and one sculpted, unscented pillar. Poured in small batches.' : sh.cat === 'jesmonite' ? 'Trays, ring dishes and sculptural forms cast in Jesmonite, a water-based composite. Each piece varies a little in tone and texture.' : 'Everything ready to order today: candles and Jesmonite objects.';
   const cards = list.map(card);
-  if (cards.length > 3 && sh.type === 'all' && sh.occ === 'all') cards.splice(3, 0, `<div class="note-card"><span class="eyebrow">A little discovery</span><h3>Why the first burn matters</h3><p style="opacity:.86">Let the first burn melt the wax right to the edges, about two hours. It sets the candle’s memory and helps it burn evenly every time after.</p><a href="#help">Candle care →</a></div>`);
-  if (cards.length) cards.push(`<a class="feel-card" href="#feeling"><span class="eyebrow" style="color:var(--terra-ink)">Not sure yet?</span><h3>Find Your Feeling</h3><span class="muted">Five short questions about your space or occasion, then candles to match.</span><strong>Start →</strong></a>`);
-  return `<div class="wrap"><div class="page-head"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / ${coll ? '<a href="#shop">Shop</a> / Everyday Rituals' : 'Shop'}</nav>
-    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Collection 01</span><h1 tabindex="-1">${coll ? 'Everyday Rituals' : 'Candles'}</h1></div><p class="muted" style="max-width:520px">${coll ? 'Our first collection: candles for small routines, moods, evenings, hosting and personal moments.' : 'Five scented candles and one sculpted, unscented pillar. Made in small batches.'}</p></div></div>
-    <div class="toolbar"><div class="group" role="group" aria-label="Type">
-      ${[['all', 'All candles'], ['Scented candle', 'Scented'], ['Pillar candle', 'Pillars']].map(([k, l]) => `<button class="chip" type="button" data-act="shop-type" data-v="${k}" aria-pressed="${sh.type === k}">${l}</button>`).join('')}</div>
-      <div class="group"><label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${OCCASIONS.map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
+  if (cards.length > 3 && sh.type === 'all' && sh.occ === 'all') cards.splice(3, 0, sh.cat === 'candles'
+    ? `<div class="note-card"><span class="eyebrow">A little discovery</span><h3>Why the first burn matters</h3><p style="opacity:.86">Let the first burn melt the wax right to the edges, about two hours. It helps the candle burn evenly every time after.</p><a href="#help">Candle care →</a></div>`
+    : `<div class="note-card"><span class="eyebrow">A little discovery</span><h3>Why no two trays look quite the same</h3><p style="opacity:.86">Jesmonite is mixed and poured in small batches, so swirls and speckles settle a little differently each time.</p><a href="#story">Read the material note →</a></div>`);
+  if (cards.length) cards.push(`<a class="feel-card" href="#feeling"><span class="eyebrow" style="color:var(--terra-ink)">Not sure yet?</span><h3>Find Your Feeling</h3><span class="muted">Five short questions about your space or occasion, then pieces to match.</span><strong>Start →</strong></a>`);
+  return `<div class="wrap"><div class="page-head"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / ${sh.cat === 'all' ? 'Shop' : `<a href="#shop">Shop</a> / ${title}`}</nav>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px"><h1 tabindex="-1">${title}</h1><p class="muted" style="max-width:520px">${blurb}</p></div></div>
+    <div class="toolbar"><div class="group" role="group" aria-label="Category">
+      ${[['all', 'All', 'shop'], ['candles', 'Candles', 'candles'], ['jesmonite', 'Jesmonite Objects', 'jesmonite']].map(([k, l, h]) => `<a class="chip" href="#${h}" aria-pressed="${sh.cat === k}">${l}</a>`).join('')}</div>
+      <div class="group"><label for="f-type">Type</label><select id="f-type" data-act="shop-filter" data-k="type"><option value="all">All types</option>${types.map((t) => `<option ${sh.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select>
+      <label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${OCCASIONS.map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
       <label for="f-sort">Sort</label><select id="f-sort" data-act="shop-filter" data-k="sort"><option value="featured" ${sh.sort === 'featured' ? 'selected' : ''}>Featured</option><option value="low" ${sh.sort === 'low' ? 'selected' : ''}>Price: low to high</option><option value="high" ${sh.sort === 'high' ? 'selected' : ''}>Price: high to low</option></select></div></div>
-    <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'candle' : 'candles'}</p>
+    <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'piece' : 'pieces'}</p>
     ${list.length ? `<div class="grid" style="padding-bottom:40px">${cards.join('')}</div>` : `<div class="empty" style="margin-bottom:40px"><strong>Nothing matches these filters yet.</strong><span class="muted">Clear a filter, or try Find Your Feeling for suggestions.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="clear-filters">Clear filters</button><a class="btn small ghost" href="#feeling">Find Your Feeling</a></span></div>`}
-    <div class="next-up" style="margin-bottom:80px"><span class="eyebrow">Coming later, not yet available</span><span class="muted">${FUTURE.map((f) => esc(f[0])).join(' · ')}. <a href="#home" data-act="focus-news">Hear about them first</a>.</span></div>
+    <div class="next-up" style="margin-bottom:80px"><span class="eyebrow">Coming later, not yet available</span><span class="muted">${FUTURE.map((f) => esc(f[0])).join(' · ')}.</span></div>
   </div>`;
 }
 
@@ -682,40 +708,40 @@ function viewProduct(id) {
   const v = p.variants[st.vi]; const left = stockOf(v.sku); const saved = S.saved.includes(p.id);
   if (!st.viewed) { st.viewed = true; track('product_view', { id }); }
   const pair = PAIRINGS.find((x) => x.items.some(([pid]) => pid === id)); const oi = pair && pair.items.find(([pid]) => pid !== id); const other = oi && byId[oi[0]];
-  const related = P.filter((x) => x.id !== id).slice(0, 3);
+  const related = P.filter((x) => x.cat === p.cat && x.id !== id).slice(0, 3);
   const stockNote = left === 0 ? '<span class="pill out">Sold out</span>' : left <= 3 ? `<span class="pill low">Only ${left} left in this batch</span>` : '<span class="pill">In stock</span>';
-  const gal = [['render', esc(p.name) + ', ' + esc(v.label)], ['jar', 'Approved label and lid direction'], ['box', 'Packaging box'], ['tag', 'Hang tag']];
+  const gal = p.cat === 'candles' ? [['render', esc(p.name) + ', ' + esc(v.label)], ['jar', 'Label and lid direction'], ['box', 'Packaging box'], ['tag', 'Hang tag']] : [['render', esc(p.name) + ', ' + esc(v.label)], ['box', 'Packaging box'], ['tag', 'Hang tag'], ['seal', 'B&T seal']];
   const gi = st.img || 0;
   const main = gi === 0 ? `<div class="tile" style="background:var(--linen)">${art(p, st.vi, 2.1)}<span class="hint" style="position:absolute;right:14px;bottom:10px;letter-spacing:.12em;text-transform:uppercase;font-size:11px">Render · product photo to come</span></div>` : `<figure class="photo gal" style="margin:0"><img src="${IMG[gal[gi][0]]}" alt="${gal[gi][1]}"><figcaption>${gal[gi][1]}</figcaption></figure>`;
-  return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#collection">Everyday Rituals</a> / ${esc(p.name)}</nav>
+  return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${p.cat}">${p.cat === 'candles' ? 'Candles' : 'Jesmonite Objects'}</a> / ${esc(p.name)}</nav>
   <div class="pdp"><div class="pdp-gallery">${main}
     <div class="thumbs" role="group" aria-label="Images">${gal.map((g, i) => `<button type="button" data-act="pdp-img" data-id="${id}" data-i="${i}" aria-pressed="${i === gi}" aria-label="${g[1]}">${i === 0 ? art(p, st.vi, .42) : `<img src="${IMG[g[0]]}" alt="">`}</button>`).join('')}</div></div>
-  <div class="pdp-info"><span class="eyebrow">Everyday Rituals · ${p.notes.join(', ')}</span>
+  <div class="pdp-info"><span class="eyebrow">${p.cat === 'candles' ? 'Candle' : 'Jesmonite'} · ${p.notes ? p.notes.join(', ') : esc(p.type)}</span>
     <h1 tabindex="-1">${esc(p.name)}</h1><p class="line">${esc(p.line)}</p>
     <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="price num">${inr(v.price)}</span>${stockNote}</div>
-    <div role="radiogroup" aria-label="${p.art === 'jar' ? 'Size' : 'Colour'}" style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">${p.art === 'jar' ? 'Size' : 'Colour'}</span>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">${p.variants.map((x, i) => `<button class="chip" type="button" role="radio" aria-checked="${i === st.vi}" data-act="variant" data-id="${id}" data-i="${i}">${p.art === 'pillar' && PILLAR_COL[x.label] ? `<span style="width:14px;height:14px;border-radius:50%;margin-right:8px;background:${PILLAR_COL[x.label]};border:1px solid var(--line2)"></span>` : ''}${esc(x.label)}${new Set(p.variants.map((y) => y.price)).size > 1 ? ' · ' + inr(x.price) : ''}${stockOf(x.sku) === 0 ? ' · sold out' : ''}</button>`).join('')}</div></div>
+    <div role="radiogroup" aria-label="${p.art === 'jar' ? 'Size' : p.cat === 'candles' ? 'Colour' : 'Finish'}" style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">${p.art === 'jar' ? 'Size' : p.cat === 'candles' ? 'Colour' : 'Finish'}</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${p.variants.map((x, i) => `<button class="chip" type="button" role="radio" aria-checked="${i === st.vi}" data-act="variant" data-id="${id}" data-i="${i}">${p.art !== 'jar' && x.label !== 'Set of 3' ? `<span style="width:14px;height:14px;border-radius:50%;margin-right:8px;background:${colorFor(p, i)};border:1px solid var(--line2)"></span>` : ''}${esc(x.label)}${new Set(p.variants.map((y) => y.price)).size > 1 ? ' · ' + inr(x.price) : ''}${stockOf(x.sku) === 0 ? ' · sold out' : ''}</button>`).join('')}</div></div>
     <div class="buy">${left > 0 ? `<span class="qty"><button type="button" data-act="pdp-qty" data-id="${id}" data-d="-1" aria-label="Decrease quantity">−</button><span class="num" aria-live="polite">${st.qty}</span><button type="button" data-act="pdp-qty" data-id="${id}" data-d="1" aria-label="Increase quantity">+</button></span><button class="btn add" type="button" data-act="add" data-id="${id}">Add to cart · <span class="num">${inr(v.price * st.qty)}</span></button>` : `<button class="btn add ${S.notify[v.sku] ? 'ghost' : ''}" type="button" data-act="notify" data-sku="${v.sku}">${S.notify[v.sku] ? 'We’ll tell you when it’s back' : 'Notify me when it’s back'}</button>`}
       <button class="icon-btn" style="border:1px solid var(--line2);width:52px;height:52px" type="button" data-act="save" data-id="${id}" aria-pressed="${saved}" aria-label="${saved ? 'Remove from saved' : 'Save ' + esc(p.name)}">${HEART(saved)}</button></div>
     <form data-form="pin" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap" novalidate><span class="field" style="flex:1 1 200px"><label for="pin-${id}">Check delivery to your PIN code</label><input id="pin-${id}" inputmode="numeric" maxlength="6" autocomplete="postal-code" value="${esc(st.pin)}"></span><button class="btn ghost" type="submit">Check</button></form>
     ${st.pinMsg ? `<div class="status ${st.pinMsg.ok ? 'ok' : 'err'}" role="status">${esc(st.pinMsg.text)}</div>` : ''}
     <p class="muted" style="font-size:14px">A thoughtful little gesture for ${p.occ.map((o) => OCCASIONS.find((x) => x[0] === o)[1].toLowerCase()).join(', ')}.</p>
     <div class="facts">
-      <div><strong>Scent</strong><span class="muted">${p.notes.join(' · ')}</span></div>
+      ${p.notes ? `<div><strong>Scent</strong><span class="muted">${p.notes.join(' · ')}</span></div>` : ''}
       <div><strong>Size &amp; material</strong><span class="muted">${esc(p.size)}. ${esc(p.material)}</span></div>
-      <div><strong>Burn &amp; care</strong><span class="muted">${p.care.map(esc).join(' ')} Burn time to be confirmed by testing.</span></div>
+      <div><strong>${p.cat === 'candles' ? 'Burn &amp; care' : 'Care'}</strong><span class="muted">${p.care.map(esc).join(' ')}${p.cat === 'candles' ? ' Burn time to be confirmed by testing.' : ''}</span></div>
       <div><strong>Delivery &amp; exchanges</strong><span class="muted">Shipping: ${inr(S.settings.shipFee)}, free over ${inr(S.settings.freeOver)} (demo rule). See <a href="#help">exchange policy</a>.</span></div>
     </div></div></div>
   ${other ? `<div class="pair"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Pairs well with</span><strong style="font-family:var(--display);font-weight:500;font-size:30px">${esc(other.name)} · ${esc(other.variants[oi[1]].label)}</strong><span class="muted">${esc(pair.why)}</span><a href="#ritual" data-act="pick-ritual" data-v="${pair.id}" style="font-weight:600">Build this ritual →</a></div><span style="display:flex">${art(other, oi[1], .8)}</span></div>` : ''}
   <section class="section" aria-labelledby="box-h" style="padding-top:56px;padding-bottom:0"><div class="section-head"><h2 id="box-h">In the box</h2><span class="muted" style="font-size:14px">Approved packaging direction; final pieces may differ.</span></div>
     <div class="pack-grid"><figure><img src="${IMG.box}" alt="Kraft packaging box with the BUD &amp; THINGS label." loading="lazy"><figcaption>Box with care card</figcaption></figure><figure><img src="${IMG.tag}" alt="Hang tag with the tagline." loading="lazy"><figcaption>Hang tag</figcaption></figure><figure><img src="${IMG.card}" alt="Thank-you card." loading="lazy"><figcaption>Thank-you note</figcaption></figure><figure><img src="${IMG.seal}" alt="B&amp;T wax seal." loading="lazy"><figcaption>B&amp;T seal</figcaption></figure></div></section>
-  <section class="section" aria-labelledby="rel-h" style="padding-top:56px"><div class="section-head"><h2 id="rel-h">More from Everyday Rituals</h2></div><div class="grid">${related.map(card).join('')}</div></section></div>`;
+  <section class="section" aria-labelledby="rel-h" style="padding-top:56px"><div class="section-head"><h2 id="rel-h">More ${p.cat === 'candles' ? 'candles' : 'objects'}</h2></div><div class="grid">${related.map(card).join('')}</div></section></div>`;
 }
 
 function finderScore() {
   const f = UI.finder; const max = f.budget === 'u1000' ? 1000 : f.budget === 'u2000' ? 2000 : Infinity;
   const moodL = f.mood && MOODS.find((m) => m[0] === f.mood)[1].toLowerCase(); const spaceL = f.space && SPACES.find((m) => m[0] === f.space)[1].toLowerCase();
-  let list = P.filter((p) => minPrice(p) <= max && (f.kind !== 'candle' || p.art === 'jar') && (f.kind !== 'object' || p.art === 'pillar'));
+  let list = P.filter((p) => minPrice(p) <= max && (f.kind !== 'candle' || p.cat === 'candles') && (f.kind !== 'object' || p.cat === 'jesmonite'));
   list = list.map((p) => { let sc = 0; const why = [];
     if (f.mood && p.mood.includes(f.mood)) { sc += 3; why.push('fits “' + moodL + '”'); }
     if (f.space && p.space.includes(f.space)) { sc += 2; why.push('made for the ' + spaceL); }
@@ -730,7 +756,7 @@ const FSTEPS = [
   { k: 'mood', q: 'What would you like your space, or your moment, to feel like?', opts: MOODS },
   { k: 'space', q: 'Where will it live?', opts: SPACES },
   { k: 'who', q: 'Is it for you, or a gift?', opts: [['me', 'For me'], ['gift', 'A gift for someone']] },
-  { k: 'kind', q: 'Scented, or a sculpted unscented pillar?', opts: [['candle', 'Scented'], ['object', 'Unscented pillar'], ['either', 'Either']] },
+  { k: 'kind', q: 'Which kind of piece?', opts: [['candle', 'A candle'], ['object', 'A Jesmonite object'], ['either', 'Either']] },
   { k: 'budget', q: 'What would you like to spend on one piece?', opts: [['u1000', 'Under ₹1,000'], ['u2000', 'Under ₹2,000'], ['any', 'Any amount']] }
 ];
 function viewFeeling() {
@@ -761,9 +787,9 @@ function viewRitual() {
   const sel = R.pick[key];
   const lines = items.map(([pid, vi], i) => ({ p: byId[pid], v: byId[pid].variants[vi], vi, i }));
   const total = lines.reduce((a, l) => a + (sel[l.i] ? l.v.price : 0), 0);
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Build Your Ritual</span><h1 tabindex="-1">Pair two candles for two moments</h1><p class="muted" style="max-width:620px">Start from a pairing we like, or make your own. Each price is shown, and nothing goes into your cart until you add it.</p></div>
-    <div class="rituals" role="group" aria-label="Pairings">${PAIRINGS.map((x) => `<button type="button" aria-pressed="${R.preset === x.id}" data-act="ritual" data-v="${x.id}"><strong>${esc(x.name)}</strong><span class="muted" style="font-size:14px">${esc(x.why)}</span></button>`).join('')}<button type="button" aria-pressed="${R.preset === 'custom'}" data-act="ritual" data-v="custom"><strong>Make your own</strong><span class="muted" style="font-size:14px">Choose any two candles.</span></button></div>
-    ${R.preset === 'custom' ? `<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px"><span class="field" style="flex:1 1 240px"><label for="r-candle">First candle</label><select id="r-candle" data-act="ritual-custom" data-k="candle">${P.map((x) => `<option value="${x.id}" ${R.custom.candle === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span><span class="field" style="flex:1 1 240px"><label for="r-object">Second candle</label><select id="r-object" data-act="ritual-custom" data-k="object">${P.map((x) => `<option value="${x.id}" ${R.custom.object === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span></div>` : ''}
+  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Build Your Ritual</span><h1 tabindex="-1">Pair a candle with an object</h1><p class="muted" style="max-width:620px">Start from a pairing we like, or make your own. Each price is shown, and nothing goes into your cart until you add it.</p></div>
+    <div class="rituals" role="group" aria-label="Pairings">${PAIRINGS.map((x) => `<button type="button" aria-pressed="${R.preset === x.id}" data-act="ritual" data-v="${x.id}"><strong>${esc(x.name)}</strong><span class="muted" style="font-size:14px">${esc(x.why)}</span></button>`).join('')}<button type="button" aria-pressed="${R.preset === 'custom'}" data-act="ritual" data-v="custom"><strong>Make your own</strong><span class="muted" style="font-size:14px">Choose any candle and any object.</span></button></div>
+    ${R.preset === 'custom' ? `<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px"><span class="field" style="flex:1 1 240px"><label for="r-candle">Candle</label><select id="r-candle" data-act="ritual-custom" data-k="candle">${P.filter((x) => x.cat === 'candles').map((x) => `<option value="${x.id}" ${R.custom.candle === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span><span class="field" style="flex:1 1 240px"><label for="r-object">Object</label><select id="r-object" data-act="ritual-custom" data-k="object">${P.filter((x) => x.cat === 'jesmonite').map((x) => `<option value="${x.id}" ${R.custom.object === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span></div>` : ''}
     <div class="builder">${lines.map((l) => `<label class="piece"><span class="tile">${art(l.p, l.vi, .9)}</span><span class="check"><input type="checkbox" id="rit-${l.i}" data-act="ritual-pick" data-i="${l.i}" ${sel[l.i] ? 'checked' : ''} ${stockOf(l.v.sku) ? '' : 'disabled'}> ${esc(l.p.name)} · ${esc(l.v.label)}</span><span class="num">${inr(l.v.price)}${stockOf(l.v.sku) ? '' : ' · sold out'}</span><a href="#p-${l.p.id}" style="font-size:14px">View details</a></label>`).join('<span aria-hidden="true" style="align-self:center;font-family:var(--display);font-size:32px">+</span>')}
       <div class="sum"><span class="muted">Together</span><span class="num" style="font-family:var(--display);font-size:36px;font-weight:300">${inr(total)}</span><span class="hint">No bundle discount; prices are the same as buying separately.</span><button class="btn" type="button" data-act="ritual-add" ${total ? '' : 'disabled'}>Add selected to cart</button></div></div></div>`;
 }
@@ -852,26 +878,26 @@ function viewStory() {
     <div class="split" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:18px;max-width:640px">
       <p style="font-family:var(--display);font-weight:500;font-size:28px;line-height:1.3">BUD &amp; THINGS is built around the belief that the little things we choose, make, keep and give can carry a lot of meaning.</p>
       <p class="muted">The name BUD carries a personal connection to Buddy, representing companionship, warmth, familiarity and everyday memories. A bud also represents something beginning to grow: a small beginning with the potential to become something beautiful. &amp; THINGS keeps the brand open and evolving, for the objects, fragrances, gifts and details that become part of homes, celebrations and everyday life.</p>
-      <p class="muted">We start deliberately small: home-based, in small batches, beginning with candles. Inspired by everyday rituals, Indian warmth and the details that make a place feel like home, BUD &amp; THINGS creates things meant to be used, enjoyed, gifted and remembered.</p>
+      <p class="muted">We start deliberately small: home-based, in small batches, beginning with candles and Jesmonite objects. Inspired by everyday rituals, Indian warmth and the details that make a place feel like home, BUD &amp; THINGS creates things meant to be used, enjoyed, gifted and remembered.</p>
       <div class="pair" style="flex-direction:column;align-items:flex-start"><span class="mark monogram" aria-hidden="true"></span><span class="eyebrow">A note from Ashi</span><p>[Ashi’s founder note goes here, in her own words.]</p></div>
     </div>
     <div style="display:grid;gap:16px"><figure class="photo" style="margin:0"><img src="${IMG.seal}" alt="Terracotta wax seal with the B&amp;T monogram." loading="lazy"></figure><figure class="photo" style="margin:0"><img src="${IMG.leather}" alt="Leather brand detail with the leaf mark." loading="lazy"></figure></div></div>
     <section class="section" aria-labelledby="pill-h" style="padding-bottom:0"><div class="section-head"><h2 id="pill-h">What we hold to</h2><span class="eyebrow">Thought → Object → Feeling → Memory</span></div>
       <div class="pillars">${pillars.map(([ic, h, t]) => `<div>${ICON[ic]}<strong>${h}</strong><span class="muted">${t}</span></div>`).join('')}</div></section>
     <section class="section" aria-labelledby="next-h" style="padding-bottom:0"><div class="section-head"><h2 id="next-h">How we will grow</h2></div>
-      <div class="facts" style="border-top:0"><div><strong>Now · Candles</strong><span class="muted">Collection 01, Everyday Rituals.</span></div>${FUTURE.map(([f, s]) => `<div><strong>${s} · Later</strong><span class="muted">${esc(f)}. Not yet available.</span></div>`).join('')}</div></section></div>`;
+      <div class="facts" style="border-top:0"><div><strong>Now · Candles &amp; Jesmonite objects</strong><span class="muted">Our first range, made in small batches.</span></div>${FUTURE.map(([f, s]) => `<div><strong>${s} · Later</strong><span class="muted">${esc(f)}. Not yet available.</span></div>`).join('')}</div></section></div>`;
 }
 function viewHelp() {
   return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">Placeholder policies. They must reflect how the business actually runs.</p></div>
     <div class="facts" style="border-top:0"><div><strong>Contact</strong><span class="muted">Email: <span class="sel">hello@budandthings.com</span><br>WhatsApp: [your business number]<br>Instagram: <span class="sel">@budandthings</span></span></div><div><strong>Shipping &amp; delivery</strong><span class="muted">[Your shipping fee, areas and delivery times]</span></div><div><strong>Exchanges</strong><span class="muted">[Your exchange policy]</span></div><div><strong>Candle care</strong><span class="muted">${CANDLE_CARE.join(' ')} Keep away from children, pets and anything that can catch fire.</span></div><div><strong>Where to find us</strong><span class="muted">[Stores, pop-ups and stockists]. Also on Amazon, Flipkart and Meesho.</span></div></div></div>`;
 }
 function viewGifting() {
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">Small gift. Real feeling.</h1><p class="muted" style="max-width:620px">A thoughtful little gesture for the people who make life feel like home. Pick an occasion to see candles that suit it.</p></div>
+  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">Small gift. Real feeling.</h1><p class="muted" style="max-width:620px">A thoughtful little gesture for the people who make life feel like home. Pick an occasion to see pieces that suit it.</p></div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div>
     <div class="split" style="margin-bottom:48px"><figure class="photo" style="margin:0"><img src="${IMG.card}" alt="Thank-you card with a leaf mark." loading="lazy"><figcaption>A thank-you note, where we can include one</figcaption></figure>
-      <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">Chosen with thought.</h2><p class="muted">In the approved packaging plan, each candle arrives boxed, tagged and sealed with the B&amp;T mark, ready to give. Gift sets, personal notes and gift pouches will come later and are not available yet.</p>
+      <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">Chosen with thought.</h2><p class="muted">In the packaging plan, each piece arrives boxed, tagged and sealed with the B&amp;T mark, ready to give. Gift sets, personal notes and gift pouches will come later and are not available yet.</p>
       <figure class="photo" style="margin:0;max-width:260px"><img src="${IMG.pouch}" alt="Cotton gift pouch with the BUD &amp; THINGS logo." loading="lazy"><figcaption>Gift pouch · coming with gift sets</figcaption></figure></div></div>
-    <div class="section-head"><h2>Popular to give</h2></div><div class="grid">${['brass-and-saffron', 'chai-at-four', 'first-light', 'pillar-studies'].map((id, i) => card(byId[id], i)).join('')}</div></div>`;
+    <div class="section-head"><h2>Popular to give</h2></div><div class="grid">${['brass-and-saffron', 'ghat-tray', 'moonlet-ring-dish', 'first-light'].map((id, i) => card(byId[id], i)).join('')}</div></div>`;
 }
 function viewNotFound() { return `<div class="wrap" style="padding-block:60px 100px"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
 
@@ -880,7 +906,8 @@ function render(nav) {
   const r = route(); let html;
   if (r === 'home') html = viewHome();
   else if (r === 'shop') html = viewShop('all');
-  else if (r === 'candles' || r === 'jesmonite') html = viewShop('candles');
+  else if (r === 'candles') html = viewShop('candles');
+  else if (r === 'jesmonite') html = viewShop('jesmonite');
   else if (r === 'collection') html = viewShop('collection');
   else if (r.startsWith('p-')) html = viewProduct(r.slice(2));
   else if (r === 'feeling') html = viewFeeling();
@@ -913,25 +940,27 @@ function mixHex(c1, c2, t) { const a = parseInt(c1.slice(1), 16), b = parseInt(c
 function mixSeq(cols, t) { const q = clamp(t) * (cols.length - 1); const i = Math.min(cols.length - 2, Math.floor(q)); return mixHex(cols[i], cols[i + 1], ease(q - i)); }
 function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
 
-// The arrangement both openings resolve into: Collection 01 candles, styled with a terrazzo stone and a botanical sprig (props, not for sale).
+// The arrangement openings A and B resolve into: candles and Jesmonite objects, with a botanical sprig (a prop, not for sale).
 const ARR = [
   { k: 'sprig', dx: -318, w: 70, h: 64, c: '#6B7B5B', prop: true },
-  { k: 'slab', dx: -195, w: 150, h: 12, c: '#E9E1D3', prop: true },
-  { id: 'chai-at-four', k: 'jar', dx: -195, dy: -20, c: '#C08A5B', h: 92, w: 70 },
-  { id: 'first-light', k: 'jar', dx: -82, c: '#F4ECE0', h: 68, w: 58 },
-  { id: 'brass-and-saffron', k: 'jar', dx: 28, c: '#A55B3F', h: 92, w: 70, lift: 50 },
-  { id: 'pillar-studies', k: 'pillar', dx: 132, c: '#F1E8DA', h: 124, w: 34, lift: 62 },
-  { id: 'pillar-studies', k: 'pillar', dx: 174, c: '#A55B3F', h: 96, w: 34, noSpot: true },
-  { id: 'pillar-studies', k: 'pillar', dx: 216, c: '#6B7B5B', h: 110, w: 34, noSpot: true },
-  { id: 'monsoon-letters', k: 'jar', dx: 300, c: '#A9B39A', h: 78, w: 62 }
+  { id: 'ghat-tray', k: 'tray', dx: -205, w: 180, h: 16, c: '#DCC9AE', lift: -38 },
+  { id: 'chai-at-four', k: 'jar', dx: -205, dy: -12, c: '#C08A5B', h: 88, w: 66, lift: 65 },
+  { id: 'first-light', k: 'jar', dx: -80, c: '#F4ECE0', h: 66, w: 56, lift: 29 },
+  { id: 'moonlet-ring-dish', k: 'dish', dx: 15, c: '#C99A6C', h: 24, w: 80, rings: true, lift: 141 },
+  { id: 'still-form-no-1', k: 'arch', dx: 115, c: '#F1E8DA', h: 124, w: 84, lift: 76 },
+  { id: 'pillar-studies', k: 'pillar', dx: 205, c: '#A55B3F', h: 110, w: 32, lift: 55 },
+  { id: 'pebble-coasters', k: 'pebbles', dx: 282, c: '#6B7B5B', h: 30, w: 72, lift: 65 }
 ];
 const OPENINGS = {
   arches: { name: 'A · Through the Arches', rail: ['Doorway', 'Arches', 'The room', 'Dusk'], cuts: [.3, .6, .8], hero: [.05, .11], staticP: .66,
     caps: [['Step <em>inside.</em>', [.13, .17, .26, .3]], ['Thought, object,<br><em>feeling, memory.</em>', [.35, .4, .5, .55]], ['Some evenings need nothing more<br><em>than a warm light.</em>', [.62, .66, .74, .78]]],
     spots: [.6, .65, .78, .82], final: [.86, .93], light: .8 },
-  pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Label', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
-    caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Labelled, wicked,<br><em>made to be given.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
-    spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 }
+  pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Cast', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
+    caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Cast, set,<br><em>lifted from the mould.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
+    spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 },
+  tour: { name: 'C · Home Tour', rail: ['Front door', 'Hall', 'Living room', 'Bedroom', 'Whole house'], cuts: [.16, .31, .51, .72], hero: [.03, .08], staticP: .45,
+    caps: [['Come in.<br><em>The door is open.</em>', [.07, .1, .15, .18]], ['The hall:<br><em>a welcome that lingers.</em>', [.19, .22, .28, .31]], ['The living room:<br><em>shelves of little things.</em>', [.35, .38, .47, .5]], ['The bedroom:<br><em>the last light of the day.</em>', [.55, .58, .66, .69]], ['Made with thought.<br><em>Given with feeling.</em>', [.73, .76, .83, .86]]],
+    spots: null, final: [.86, .93], light: 0 }
 };
 const SKINS = {
   signature: { name: 'Signature · Approved palette', use: 'The approved palette: ivory, sand, caramel, terracotta, olive and chocolate.', eyebrow: 'Collection 01 · Everyday Rituals', dark: true, wall: ['#A55B3F', '#8F4C33', '#7A3F2A'], floor: ['#4A3125', '#3D281E', '#33211A'], arch: ['#8F4C33', '#A55B3F', '#B36C49', '#C08A5B'], plinth: '#F8F0E4', duskWall: '#2A1B14', duskFloor: '#1F140F', night: '#120B08', light: '255,236,210', type: '#F8F0E4', ink2: '#F3E6D6', fx: null },
@@ -1006,6 +1035,8 @@ function sil(o, x, y, s) {
   const P = new Path2D(); const w = o.w * s, h = o.h * s;
   if (o.k === 'jar') rp(P, x - w / 2, y - h, w, h, 8 * s);
   else if (o.k === 'pillar') P.rect(x - w / 2, y - h, w, h);
+  else if (o.k === 'tray' || o.k === 'plate' || o.k === 'pebbles') P.ellipse(x, y - 8 * s, w / 2, 20 * s, 0, 0, TAU);
+  else if (o.k === 'archtray') { const r = w / 2; P.moveTo(x - r, y); P.lineTo(x - r, y - h + r); P.arc(x, y - h + r, r, Math.PI, 0); P.lineTo(x + r, y); P.closePath(); }
   else if (o.k === 'tray') P.ellipse(x, y - 9 * s, w / 2, 22 * s, 0, 0, TAU);
   else if (o.k === 'dish') { const rx = w / 2; P.moveTo(x - rx, y - h); P.quadraticCurveTo(x - rx * .9, y + 2 * s, x, y); P.quadraticCurveTo(x + rx * .9, y + 2 * s, x + rx, y - h); P.ellipse(x, y - h, rx, 12 * s, 0, 0, Math.PI, true); P.closePath(); }
   else if (o.k === 'arch') { const r = w / 2; P.moveTo(x - r, y); P.lineTo(x - r, y - h + r); P.arc(x, y - h + r, r, Math.PI, 0); P.lineTo(x + r, y); P.closePath(); P.moveTo(x + 22 * s, y - h * .42); P.arc(x, y - h * .42, 22 * s, 0, TAU); }
@@ -1043,6 +1074,34 @@ function drawObj(ctx, o, x, y, s, sun) {
     ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fillRect(x - w / 2, y - h, w, h);
     ctx.fillStyle = 'rgba(58,41,32,.14)'; for (let i = 1; i < 6; i++) ctx.fillRect(x - w / 2 + i * w / 6, y - h, 1.2 * s, h);
     ctx.fillStyle = shade(c, 1.16); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 4 * s, 0, 0, TAU); ctx.fill(); wick(ctx, x, y - h, s);
+  } else if (o.k === 'tray') {
+    const rx = w / 2, ry = 20 * s, d = 9 * s;
+    ctx.fillStyle = shade(c, .78); ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI); ctx.lineTo(x - rx, y - d); ctx.ellipse(x, y - d, rx, ry, 0, Math.PI, 0, true); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y - d, rx, ry, 0, 0, TAU); ctx.fill();
+    if (LC.marble && o.marble !== false) { ctx.save(); ctx.beginPath(); ctx.ellipse(x, y - d, rx, ry, 0, 0, TAU); ctx.clip(); ctx.globalAlpha *= .35; ctx.translate(x, y - d); ctx.scale(1, ry / rx); ctx.drawImage(LC.marble, -rx * 1.4, -rx * 1.4, rx * 2.8, rx * 2.8); ctx.restore(); }
+    ctx.fillStyle = 'rgba(58,41,32,.1)'; ctx.beginPath(); ctx.ellipse(x, y - d + 2 * s, rx * .84, ry * .72, 0, 0, TAU); ctx.fill();
+  } else if (o.k === 'dish') {
+    ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fill(sil(o, x, y, s));
+    ctx.fillStyle = shade(c, 1.2); ctx.beginPath(); ctx.ellipse(x, y - h, w / 2, 11 * s, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = shade(c, .82); ctx.beginPath(); ctx.ellipse(x, y - h + 1 * s, w * .38, 7 * s, 0, 0, TAU); ctx.fill();
+    if (o.rings) { ctx.strokeStyle = '#D9B36A'; ctx.lineWidth = 2 * s; ctx.beginPath(); ctx.ellipse(x - 6 * s, y - h, 7 * s, 3 * s, .3, 0, TAU); ctx.stroke(); ctx.beginPath(); ctx.ellipse(x + 8 * s, y - h + 1 * s, 6 * s, 2.6 * s, -.2, 0, TAU); ctx.stroke(); }
+  } else if (o.k === 'archtray') {
+    const r = w / 2; const path = new Path2D(); path.moveTo(x - r, y); path.lineTo(x - r, y - h + r); path.arc(x, y - h + r, r, Math.PI, 0); path.lineTo(x + r, y); path.closePath();
+    ctx.save(); ctx.translate((sun < 0 ? 6 : -6) * s, 0); ctx.fillStyle = shade(c, .74); ctx.fill(path); ctx.restore();
+    ctx.fillStyle = side(ctx, x - r, x + r, c, sun); ctx.fill(path);
+    const ir = r - 12 * s; const ip = new Path2D(); ip.moveTo(x - ir, y - 10 * s); ip.lineTo(x - ir, y - h + r); ip.arc(x, y - h + r, ir, Math.PI, 0); ip.lineTo(x + ir, y - 10 * s); ip.closePath();
+    ctx.fillStyle = shade(c, .86); ctx.fill(ip);
+  } else if (o.k === 'pebbles') {
+    const cols = c === '#F1E8DA' ? ['#F1E8DA', '#E6DAC6', '#F6EFE3', '#DDD0BA'] : ['#6B7B5B', '#C08A5B', '#F1E8DA', '#A55B3F'];
+    for (let i = 0; i < 4; i++) { const yy = y - i * 7 * s, rx = (w / 2) * (1 - i * .06), cc = cols[i]; ctx.fillStyle = shade(cc, .8); ctx.beginPath(); ctx.ellipse(x + (i % 2 ? 4 : -3) * s, yy, rx, 10 * s, 0, 0, TAU); ctx.fill(); ctx.fillStyle = cc; ctx.beginPath(); ctx.ellipse(x + (i % 2 ? 4 : -3) * s, yy - 3 * s, rx, 9 * s, 0, 0, TAU); ctx.fill(); }
+  } else if (o.k === 'arch') {
+    ctx.save(); ctx.translate((sun < 0 ? 7 : -7) * s, 0); ctx.fillStyle = shade(c, .74); ctx.fill(sil(o, x, y, s), 'evenodd'); ctx.restore();
+    ctx.fillStyle = side(ctx, x - w / 2, x + w / 2, c, sun); ctx.fill(sil(o, x, y, s), 'evenodd');
+  } else if (o.k === 'plate') {
+    const rx = w / 2, ry = 15 * s;
+    ctx.fillStyle = shade(c, .78); ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y - 4 * s, rx, ry, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = shade(c, .88); ctx.beginPath(); ctx.ellipse(x, y - 3 * s, rx * .78, ry * .7, 0, 0, TAU); ctx.fill();
   } else if (o.k === 'slab') {
     const rx = w / 2, ry = 15 * s, d = h;
     ctx.fillStyle = shade(c, .82); ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI); ctx.lineTo(x - rx, y - d); ctx.ellipse(x, y - d, rx, ry, 0, Math.PI, 0, true); ctx.closePath(); ctx.fill();
@@ -1061,7 +1120,8 @@ function prodImg(p, vi) {
   let objs;
   if (p.art === 'pillar') {
     objs = v.label === 'Set of 3' ? [{ k: 'pillar', c: PILLAR_COL.Ivory, w: 34, h: 124, dx: -46 }, { k: 'pillar', c: PILLAR_COL.Terracotta, w: 34, h: 96, dx: 0 }, { k: 'pillar', c: PILLAR_COL.Olive, w: 34, h: 110, dx: 46 }] : [{ k: 'pillar', c: PILLAR_COL[v.label] || p.c, w: 34, h: 124, dx: 0 }];
-  } else objs = [{ k: 'jar', c: p.c, w: 70, h: v.label === '120 g' ? 72 : 92, dx: 0, lid: true }];
+  } else if (p.art === 'jar') objs = [{ k: 'jar', c: p.c, w: 70, h: v.label === '120 g' ? 72 : 92, dx: 0, lid: true }];
+  else { const c0 = colorFor(p, vi); const D = { tray: { w: 150, h: 16 }, dish: { w: 84, h: 24 }, archtray: { w: 84, h: 104 }, pebbles: { w: 76, h: 30 }, arch: { w: 80, h: 118 }, plate: { w: 120, h: 8 } }[p.art]; objs = [{ k: p.art, c: c0, w: D.w, h: D.h, dx: 0, rings: p.art === 'dish' }]; }
   const s = 2; x.fillStyle = 'rgba(61,40,30,.16)'; x.beginPath(); x.ellipse(180, 314, 120, 10, 0, 0, TAU); x.fill();
   objs.forEach((o) => drawObj(x, o, 180 + o.dx * s, 312, s, -.6));
   return (PIMG[key] = c.toDataURL('image/png'));
@@ -1168,7 +1228,7 @@ function scenePour(ctx, L, p, t) {
   const s = L.u * 1.14; plinth(ctx, L.ax, L.ay, s, K.plinth); const sun = -.55, elev = .6;
   const items = placeAll(L, s, L.ax, L.ay);
   const sketch = 1 - seg(p, .8, .86);
-  const jars = items.filter((it) => it.o.k === 'jar'); const pillars = items.filter((it) => it.o.k === 'pillar');
+  const jars = items.filter((it) => it.o.k === 'jar'); const pillars = items.filter((it) => it.o.k !== 'jar' && !it.o.prop);
   const props = items.filter((it) => it.o.prop);
   const lab = seg(p, .62, .72);
   props.forEach((it) => { ctx.save(); ctx.globalAlpha = seg(p, .02, .08); castShadow(ctx, it.o, it.x, it.y, s, sun, elev, .18); drawObj(ctx, it.o, it.x, it.y, s, sun); ctx.restore(); });
@@ -1205,6 +1265,156 @@ function scenePour(ctx, L, p, t) {
   fxPost(ctx, L, p, t, L.ax, L.ay, s);
 }
 
+// C · Home Tour: open the front door, walk through the hall, living room and bedroom, then pull back to the whole house at dusk.
+const TOUR = {
+  rooms: [{ x: 0, name: 'Hall' }, { x: 1000, name: 'Living room' }, { x: 2000, name: 'Bedroom' }],
+  windows: [{ x0: 130, x1: 370, y0: 90, y1: 430 }, { x0: 1060, x1: 1330, y0: 70, y1: 470 }, { x0: 2680, x1: 2900, y0: 120, y1: 420 }],
+  items: [
+    { k: 'sprig', x: 690, y: 300, w: 60, h: 70, c: '#6B7B5B', prop: true },
+    { id: 'brass-and-saffron', k: 'jar', x: 560, y: 410, w: 70, h: 92, c: '#A55B3F' },
+    { id: 'jharokha-catch-all', k: 'archtray', x: 680, y: 410, w: 84, h: 104, c: '#DCC9AE', up: 70 },
+    { id: 'pillar-studies', k: 'pillar', x: 780, y: 410, w: 30, h: 124, c: '#F1E8DA' },
+    { id: 'pillar-studies', k: 'pillar', x: 812, y: 410, w: 30, h: 96, c: '#A55B3F', noSpot: true },
+    { id: 'pillar-studies', k: 'pillar', x: 844, y: 410, w: 30, h: 110, c: '#6B7B5B', noSpot: true },
+    { id: 'still-form-no-1', k: 'arch', x: 1525, y: 230, w: 80, h: 118, c: '#F1E8DA' },
+    { id: 'monsoon-letters', k: 'jar', x: 1665, y: 230, w: 62, h: 78, c: '#A9B39A' },
+    { id: 'pebble-coasters', k: 'pebbles', x: 1800, y: 230, w: 76, h: 30, c: '#6B7B5B' },
+    { id: 'ghat-tray', k: 'tray', x: 1570, y: 360, w: 180, h: 16, c: '#DCC9AE' },
+    { id: 'chai-at-four', k: 'jar', x: 1570, y: 348, w: 64, h: 84, c: '#C08A5B' },
+    { id: 'halo-candle-plate', k: 'plate', x: 1780, y: 360, w: 110, h: 8, c: '#6B7B5B' },
+    { k: 'pillar', x: 1780, y: 354, w: 30, h: 86, c: '#F1E8DA', prop: true },
+    { k: 'sprig', x: 2240, y: 290, w: 60, h: 70, c: '#6B7B5B', prop: true },
+    { id: 'terrace-garden', k: 'jar', x: 2495, y: 430, w: 58, h: 70, c: '#C9D0B8' },
+    { id: 'moonlet-ring-dish', k: 'dish', x: 2565, y: 430, w: 70, h: 22, c: '#C99A6C', rings: true },
+    { id: 'first-light', k: 'jar', x: 2790, y: 420, w: 54, h: 66, c: '#F4ECE0' }
+  ]
+};
+function tourCam(L, p) {
+  const m = L.mobile; const Z = m ? L.H * .7 / 640 : Math.min(L.W / 1060, L.H / 680);
+  const dz = Math.min(L.W / 3400, L.H * .62 / 960) / Z;
+  const hall = m ? 700 : 500, liv = m ? 1660 : 1500, bed = m ? 2560 : 2520;
+  const K = [[0, hall, 1, 300], [.17, hall, 1, 300], [.28, hall, 1.07, 310], [.34, liv, 1, 300], [.48, liv, 1.13, 290], [.54, bed, 1, 300], [.68, bed, 1.08, 310], [.82, 1500, dz, 170], [1, 1500, dz, 170]];
+  let i = 0; while (i < K.length - 2 && p > K[i + 1][0]) i++;
+  const a = K[i], b = K[i + 1], t = ease(seg(p, a[0], b[0]));
+  return { x: a[1] + (b[1] - a[1]) * t, z: Z * (a[2] + (b[2] - a[2]) * t), y: a[3] + (b[3] - a[3]) * t };
+}
+function curtains(ctx, w, t, wind, col) {
+  const span = w.x1 - w.x0, pw = span * .3, n = 7;
+  [[w.x0 - 14, w.x0 - 14 + pw, 1], [w.x1 + 14 - pw, w.x1 + 14, -1]].forEach(([a, b, dir]) => {
+    for (let i = 0; i < n; i++) {
+      const f0 = i / n, f1 = (i + 1) / n; const sway = (f) => (wind * (dir > 0 ? f : 1 - f) + 4) * Math.sin(t * 1.5 + f * 5 + dir);
+      const xa = a + (b - a) * f0, xb = a + (b - a) * f1; const yb = w.y1 + 50;
+      ctx.fillStyle = rgba(col, i % 2 ? .62 : .5);
+      ctx.beginPath(); ctx.moveTo(xa, w.y0 - 18); ctx.lineTo(xb, w.y0 - 18); ctx.quadraticCurveTo(xb + sway(f1) * .4, (w.y0 + yb) / 2, xb + sway(f1), yb); ctx.lineTo(xa + sway(f0), yb); ctx.quadraticCurveTo(xa + sway(f0) * .4, (w.y0 + yb) / 2, xa, w.y0 - 18); ctx.closePath(); ctx.fill();
+    }
+  });
+  ctx.fillStyle = '#7A5A3C'; ctx.fillRect(w.x0 - 30, w.y0 - 22, span + 60, 5);
+}
+function sceneTour(ctx, L, p, t) {
+  const K = SK(); const cfg = OPENINGS.tour;
+  const night = ease(seg(p, .5, .8)), glow = .45 + .55 * night;
+  const v = Math.min(1, Math.abs(p - (LC.lastP ?? p)) * 900); LC.lastP = p; LC.wind = (LC.wind || 0) * .9 + v * 40 * .1;
+  const cam = tourCam(L, p); const cx = L.W / 2, cy = L.H * (L.mobile ? .42 : .5);
+  // sky behind the house (seen when the camera pulls back)
+  const sky = ctx.createLinearGradient(0, 0, 0, L.H); sky.addColorStop(0, mixHex(K.duskWall, '#0E0806', .3)); sky.addColorStop(1, mixHex(K.wall[2], K.duskWall, .5));
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, L.W, L.H);
+  ctx.save(); ctx.translate(cx, cy); ctx.scale(cam.z, cam.z); ctx.translate(-cam.x, -cam.y);
+  const W = (x) => x; const roomCols = [K.arch[3], K.arch[2], K.arch[1]];
+  // ground and roof (visible in the whole-house view)
+  ctx.fillStyle = mixHex(K.floor[2], '#000000', .25); ctx.fillRect(-2000, 600, 7000, 900);
+  const roof = mixHex(K.arch[0], '#1A100B', .25);
+  ctx.fillStyle = roof; ctx.beginPath(); ctx.moveTo(-90, -30); ctx.lineTo(1500, -360); ctx.lineTo(3090, -30); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = rgba('#000000', .18); ctx.lineWidth = 6; for (let i = 1; i < 9; i++) { const yy = -30 - i * 36; const half = 1590 * (1 - i * 36 / 330); ctx.beginPath(); ctx.moveTo(1500 - half, yy); ctx.lineTo(1500 + half, yy); ctx.stroke(); }
+  // rooms
+  TOUR.rooms.forEach((r, i) => {
+    const wc = mixHex(roomCols[i], K.duskWall, night * .55);
+    ctx.fillStyle = wc; ctx.fillRect(r.x, 0, 1000, 560);
+    const fl = ctx.createLinearGradient(0, 560, 0, 600); fl.addColorStop(0, mixHex(K.floor[i], '#000000', night * .3)); fl.addColorStop(1, shade(K.floor[i], .8));
+    ctx.fillStyle = fl; ctx.fillRect(r.x, 540, 1000, 60);
+    ctx.fillStyle = rgba('#000000', .12); ctx.fillRect(r.x, 530, 1000, 10);
+    ctx.fillStyle = mixHex(wc, '#000000', .25); ctx.fillRect(r.x, -30, 1000, 30);
+    // pendant lamp
+    const lx = r.x + (i === 1 ? 1180 - 1000 : 500); ctx.strokeStyle = rgba('#000000', .4); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(lx, 0); ctx.lineTo(lx, 70); ctx.stroke();
+    ctx.fillStyle = mixHex(K.plinth, '#000000', .1); ctx.beginPath(); ctx.moveTo(lx - 34, 100); ctx.quadraticCurveTo(lx, 50, lx + 34, 100); ctx.closePath(); ctx.fill();
+    if (night > 0) { const g = ctx.createRadialGradient(lx, 110, 0, lx, 110, 420); g.addColorStop(0, `rgba(255,200,140,${.3 * night})`); g.addColorStop(1, 'rgba(255,200,140,0)'); ctx.fillStyle = g; ctx.fillRect(lx - 420, 0, 840, 560); }
+  });
+  // windows: sky, light on the floor, dust, curtains
+  TOUR.windows.forEach((w, i) => {
+    const r = (w.x1 - w.x0) / 2, mx = (w.x0 + w.x1) / 2; const win2 = new Path2D(); win2.moveTo(w.x0, w.y1); win2.lineTo(w.x0, w.y0 + r); win2.arc(mx, w.y0 + r, r, Math.PI, 0); win2.lineTo(w.x1, w.y1); win2.closePath();
+    const sg = ctx.createLinearGradient(0, w.y0, 0, w.y1); sg.addColorStop(0, mixHex('#F6E3C4', '#2B2340', night)); sg.addColorStop(1, mixHex('#FBEFD9', '#4A3048', night)); ctx.fillStyle = sg; ctx.fill(win2);
+    ctx.strokeStyle = mixHex(K.plinth, '#000000', .2); ctx.lineWidth = 10; ctx.stroke(win2); ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(mx, w.y0); ctx.lineTo(mx, w.y1); ctx.moveTo(w.x0, (w.y0 + w.y1) / 2 + 30); ctx.lineTo(w.x1, (w.y0 + w.y1) / 2 + 30); ctx.stroke();
+    ctx.fillStyle = mixHex(K.plinth, '#000000', .1); ctx.fillRect(w.x0 - 20, w.y1, w.x1 - w.x0 + 40, 12);
+    const la = .32 * (1 - night);
+    if (la > 0) {
+      const dx = 260; ctx.fillStyle = `rgba(${K.light},${la * .5})`; ctx.beginPath(); ctx.moveTo(w.x0, w.y1 + 12); ctx.lineTo(w.x1, w.y1 + 12); ctx.lineTo(w.x1 + dx, 556); ctx.lineTo(w.x0 + dx, 556); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = `rgba(${K.light},${la})`; ctx.beginPath(); ctx.moveTo(w.x0 + dx - 20, 556); ctx.lineTo(w.x1 + dx + 30, 556); ctx.lineTo(w.x1 + dx + 60, 590); ctx.lineTo(w.x0 + dx + 10, 590); ctx.closePath(); ctx.fill();
+      for (let k = 0; k < 18; k++) { const m = LC.motes[(k + i * 18) % LC.motes.length]; const fy = (m.y + t * .03 * m.s) % 1; const yy = w.y1 + fy * (556 - w.y1); const xx = w.x0 + m.x * (w.x1 - w.x0) + fy * dx + Math.sin(t * m.s + m.ph) * 6; ctx.fillStyle = `rgba(${K.light},${.6 * la * Math.sin(Math.PI * fy) * 2})`; ctx.beginPath(); ctx.arc(xx, yy, 1.6 + m.s, 0, TAU); ctx.fill(); }
+    }
+    curtains(ctx, w, t, 6 + (LC.wind || 0), '#F7EEE2');
+  });
+  // hall: arch niche and console; living: shelves, picture lights and sofa; bedroom: bed and bedside table
+  const niche = (x0, x1, y0, y1, col) => { const r = (x1 - x0) / 2; ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x0, y1); ctx.lineTo(x0, y0 + r); ctx.arc((x0 + x1) / 2, y0 + r, r, Math.PI, 0); ctx.lineTo(x1, y1); ctx.closePath(); ctx.fill(); };
+  niche(620, 760, 130, 320, mixHex(roomCols[0], '#000000', .18));
+  ctx.fillStyle = '#6E4A30'; ctx.fillRect(470, 410, 400, 16); ctx.fillStyle = '#5A3C27'; ctx.fillRect(490, 426, 12, 134); ctx.fillRect(838, 426, 12, 134); ctx.fillRect(490, 500, 360, 8);
+  ctx.fillStyle = rgba('#000000', .14); ctx.beginPath(); ctx.ellipse(560, 575, 330, 18, 0, 0, TAU); ctx.fill();
+  [[1440, 1910, 230], [1440, 1910, 360]].forEach(([a, b, y]) => { ctx.fillStyle = mixHex(K.plinth, '#000000', .06); ctx.fillRect(a, y, b - a, 14); ctx.fillStyle = rgba('#000000', .16); ctx.fillRect(a, y + 14, b - a, 8);
+    ctx.fillStyle = '#B8A46A'; ctx.fillRect((a + b) / 2 - 60, y - 140 + 4, 120, 6); const g = ctx.createLinearGradient(0, y - 130, 0, y); g.addColorStop(0, `rgba(255,224,170,${.18 * glow})`); g.addColorStop(1, 'rgba(255,224,170,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo((a + b) / 2 - 60, y - 132); ctx.lineTo((a + b) / 2 + 60, y - 132); ctx.lineTo(b, y); ctx.lineTo(a, y); ctx.closePath(); ctx.fill(); });
+  ctx.fillStyle = mixHex('#E9DFD0', '#000000', night * .3); ctx.beginPath(); rp(ctx, 1090, 440, 290, 100, 18); ctx.fill(); ctx.fillStyle = mixHex('#DCCFBD', '#000000', night * .3); ctx.fillRect(1100, 420, 270, 40); ctx.fillStyle = '#C08A5B'; ctx.fillRect(1120, 425, 60, 32);
+  niche(2180, 2300, 140, 300, mixHex(roomCols[2], '#000000', .18));
+  ctx.fillStyle = mixHex(K.plinth, '#000000', .15); ctx.beginPath(); ctx.moveTo(2060, 470); ctx.lineTo(2060, 380); ctx.arc(2240, 380, 180, Math.PI, 0); ctx.lineTo(2420, 470); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = mixHex('#F4ECE0', '#000000', night * .3); ctx.fillRect(2040, 450, 400, 90); ctx.fillStyle = mixHex('#C9D0B8', '#000000', night * .3); ctx.fillRect(2200, 452, 240, 88); ctx.fillStyle = '#FBF6EE'; ctx.beginPath(); ctx.ellipse(2110, 452, 60, 18, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#6E4A30'; ctx.fillRect(2460, 430, 140, 14); ctx.fillStyle = '#5A3C27'; ctx.fillRect(2470, 444, 120, 116);
+  // divider walls between rooms with arched doorways
+  [1000, 2000].forEach((x) => { ctx.fillStyle = mixHex(K.arch[0], '#000000', .2 + night * .3); ctx.fillRect(x - 16, -30, 32, 630); });
+  // products
+  const sun = -1 + 2 * seg(p, 0, .7);
+  TOUR.items.forEach((o) => { castShadow(ctx, o, o.x, o.y, 1, sun, .7, .16); drawObj(ctx, o, o.x, o.y, 1, sun); });
+  // outer walls of the house
+  ctx.fillStyle = mixHex(K.arch[0], '#000000', .3); ctx.fillRect(-30, -30, 30, 630); ctx.fillRect(3000, -30, 30, 630);
+  // evening: dim the house, then let every candle glow
+  ctx.fillStyle = rgba(K.night, .5 * night); ctx.fillRect(-100, -400, 3200, 1000);
+  TOUR.items.forEach((o) => { if (o.k !== 'jar' && o.k !== 'pillar') return; const fy = o.y - o.h - (o.k === 'jar' ? 15 : 9); flame(ctx, o.x + 1, fy, o.k === 'jar' ? 1.05 : .85, Math.min(1, .55 + glow * .45) * seg(p, .12, .18), t + o.x); });
+  ctx.restore();
+  // spots in screen space
+  const toS = (x, y) => ({ x: (x - cam.x) * cam.z + cx, y: (y - cam.y) * cam.z + cy });
+  const inside = seg(p, .16, .2) * (1 - seg(p, .7, .74));
+  LC.spots = TOUR.items.map((o) => { if (!o.id || o.noSpot) return { x: 0, y: 0, a: 0 }; const up = o.up ?? (o.k === 'jar' ? 34 : o.k === 'pillar' ? 36 : o.k === 'tray' ? -40 : 18); const sp = toS(o.x + (o.k === 'tray' ? -60 : 0), o.y - o.h - up); const vis = sp.x > 40 && sp.x < L.W - 40 && sp.y > 60 && sp.y < L.H - 30 ? 1 : 0; return { x: sp.x, y: sp.y, a: inside * vis }; });
+  // the front of the house: door, plaque, lamps, planters (screen space, flies past as we step in)
+  const open = ease(seg(p, .035, .1)), fly = ease(seg(p, .1, .18));
+  if (fly < 1) {
+    const dcx = L.mobile ? L.W / 2 : L.W * .63, dby = L.mobile ? L.H * .9 : L.H * .92; const u = L.mobile ? L.W / 520 : Math.min(L.W / 1300, L.H / 800);
+    const dw = 250 * u, dh = 410 * u, sc = 1 + 14 * fly * fly;
+    ctx.save(); ctx.globalAlpha = 1 - seg(fly, .7, 1); ctx.translate(dcx, dby - dh * .45); ctx.scale(sc, sc); ctx.translate(-dcx, -(dby - dh * .45));
+    const facade = mixHex(K.wall[0], '#1E130E', .12);
+    const ap = new Path2D(); ap.moveTo(dcx - dw / 2, dby); ap.lineTo(dcx - dw / 2, dby - dh + dw / 2); ap.arc(dcx, dby - dh + dw / 2, dw / 2, Math.PI, 0); ap.lineTo(dcx + dw / 2, dby); ap.closePath();
+    const fp = new Path2D(); fp.rect(-L.W * 2, -L.H * 2, L.W * 5, L.H * 5); fp.addPath(ap);
+    ctx.fillStyle = facade; ctx.fill(fp, 'evenodd');
+    ctx.fillStyle = rgba('#000000', .12); for (let i = 0; i < 14; i++) ctx.fillRect(-L.W, dby - i * 46 * u, L.W * 3, 1);
+    ctx.lineWidth = 22 * u; ctx.strokeStyle = shade(facade, .8); ctx.stroke(ap);
+    ctx.fillStyle = shade(facade, .7); ctx.fillRect(dcx - dw, dby, dw * 2, 14 * u);
+    // doors swing open
+    const leaf = (side) => { const wv = dw / 2 * (1 - open * .92); const x0 = side < 0 ? dcx - dw / 2 : dcx + dw / 2 - wv; ctx.save(); ctx.beginPath(); ctx.clip(ap); const g = ctx.createLinearGradient(x0, 0, x0 + wv, 0); const wood = '#7A4E30'; g.addColorStop(0, shade(wood, side < 0 ? 1 - open * .3 : .8)); g.addColorStop(1, shade(wood, side < 0 ? .8 : 1 - open * .3)); ctx.fillStyle = g; ctx.fillRect(x0, dby - dh, wv, dh);
+      ctx.strokeStyle = rgba('#000000', .25); ctx.lineWidth = 2 * u; ctx.strokeRect(x0 + wv * .18, dby - dh * .55, wv * .64, dh * .4); ctx.strokeRect(x0 + wv * .18, dby - dh * .92 + dw / 2 * .3, wv * .64, dh * .28);
+      ctx.fillStyle = '#C9A24A'; ctx.beginPath(); ctx.arc(side < 0 ? x0 + wv - 12 * u : x0 + 12 * u, dby - dh * .48, 4 * u, 0, TAU); ctx.fill(); ctx.restore(); };
+    leaf(-1); leaf(1);
+    // plaque with the wordmark
+    const py = dby - dh - 70 * u; if (!L.mobile) { ctx.fillStyle = '#F3E8D8'; ctx.fillRect(dcx - 120 * u, py - 22 * u, 240 * u, 48 * u);
+    const wm = tintMark('wordmark', '#3D281E'); if (wm) { const ww = 200 * u, hh = ww * wm.height / wm.width; ctx.drawImage(wm, dcx - ww / 2, py + 2 * u - hh / 2, ww, hh); } }
+    [-1, 1].forEach((sd) => { const lx = dcx + sd * (dw / 2 + 60 * u), ly = dby - dh * .62; ctx.fillStyle = '#2E241E'; ctx.fillRect(lx - 9 * u, ly - 26 * u, 18 * u, 34 * u); const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, 120 * u); g.addColorStop(0, 'rgba(255,206,140,.55)'); g.addColorStop(1, 'rgba(255,206,140,0)'); ctx.fillStyle = g; ctx.fillRect(lx - 120 * u, ly - 120 * u, 240 * u, 240 * u); ctx.fillStyle = '#FFE3B0'; ctx.fillRect(lx - 6 * u, ly - 20 * u, 12 * u, 20 * u);
+      const px = dcx + sd * (dw / 2 + 120 * u); ctx.fillStyle = '#A55B3F'; ctx.beginPath(); ctx.moveTo(px - 34 * u, dby - 70 * u); ctx.lineTo(px + 34 * u, dby - 70 * u); ctx.lineTo(px + 26 * u, dby); ctx.lineTo(px - 26 * u, dby); ctx.closePath(); ctx.fill();
+      const lf = tintLeaf('#55663F'); if (lf) { ctx.save(); ctx.translate(px, dby - 70 * u); ctx.rotate(sd * .25); const hh = 150 * u, ww = hh * lf.width / lf.height; ctx.drawImage(lf, -ww / 2, -hh, ww, hh); ctx.restore(); } });
+    ctx.restore();
+  }
+}
+const MARKS = {}; const MARK_SRC = { wordmark: 'assets/logo-wordmark.png' };
+function tintMark(name, col) {
+  const key = name + col; if (MARKS[key]) return MARKS[key];
+  if (!MARKS['img:' + name]) { const im = new Image(); im.onload = () => { MARKS['ready:' + name] = true; }; im.src = MARK_SRC[name]; MARKS['img:' + name] = im; }
+  const im = MARKS['img:' + name]; if (!im.complete || !im.naturalWidth) return null;
+  const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; const x = c.getContext('2d'); x.drawImage(im, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, c.width, c.height);
+  return (MARKS[key] = c);
+}
+
 function lcTarget() { const lc = $('#lc'), st = $('#lc-stage'); if (!lc) return 0; const total = lc.offsetHeight - st.offsetHeight; return total > 0 ? clamp((65 - lc.getBoundingClientRect().top) / total) : 0; }
 function lcResize() {
   if (!LC.cv) return; const r = LC.cv.getBoundingClientRect(); LC.W = r.width; LC.H = r.height;
@@ -1214,7 +1424,7 @@ function lcResize() {
 function lcDraw(p, t) {
   const ctx = LC.ctx; if (!ctx || !LC.W) return; ctx.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); ctx.clearRect(0, 0, LC.W, LC.H);
   const L = layout(); LC.spots = [];
-  if (S.opening === 'pour') scenePour(ctx, L, p, t); else sceneArches(ctx, L, p, t);
+  if (S.opening === 'pour') scenePour(ctx, L, p, t); else if (S.opening === 'tour') sceneTour(ctx, L, p, t); else sceneArches(ctx, L, p, t);
   grain(ctx, L, t);
 }
 function lcCopy(p, still) {
@@ -1222,13 +1432,13 @@ function lcCopy(p, still) {
   const ho = still ? 1 : 1 - seg(p, cfg.hero[0], cfg.hero[1]); set($('#lc-hero'), ho, `translateY(${-24 * (1 - ho)}px)`);
   cfg.caps.forEach((c, i) => { const a = still ? 0 : win(p, c[1]); set($('#lc-cap' + i), a, `translateY(${(1 - a) * 14}px)`); });
   const fa = still ? 0 : seg(p, cfg.final[0], cfg.final[1]); set($('#lc-final'), fa, `translateY(${(1 - fa) * 18}px)`);
-  const idx = p < cfg.cuts[0] ? 0 : p < cfg.cuts[1] ? 1 : p < cfg.cuts[2] ? 2 : 3;
+  const idx = cfg.cuts.filter((c) => p >= c).length;
   [...($('#lc-rail')?.children || [])].forEach((li, k) => li.classList.toggle('on', k === idx));
   $('#lc-stage')?.classList.toggle('ink-light', SKINS[S.skin].dark || p > cfg.final[0] - .04);
   const pg = $('#lc-progress'); if (pg) pg.style.transform = `scaleX(${p})`;
   const box = $('#lc-spots'); if (!box) return;
   [...box.children].forEach((el, i) => {
-    const sp = LC.spots[i]; const a = sp ? (still ? 1 : sp.a) : 0;
+    const sp = LC.spots[i]; const a = sp ? (still ? (S.opening === 'tour' ? (sp.a > 0 ? 1 : 0) : 1) : sp.a) : 0;
     el.style.opacity = String(a); el.style.transform = sp ? `translate(${sp.x}px, ${sp.y}px) translate(-50%, -100%)` : '';
     const on = a > .6; el.classList.toggle('on', on); el.tabIndex = on ? 0 : -1; el.setAttribute('aria-hidden', String(!on));
   });

@@ -8,9 +8,9 @@ Clickable prototype: https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr (source: 
 
 | Area | Decision |
 |---|---|
-| Brand source | `BUD_AND_THINGS Phase 1 to Phase 3 Step 5 Master Document`: launch is **candles only** (Collection 01 · Everyday Rituals); showpieces and gift sets are later |
-| Visual direction | **A · Atelier of Light**: plaster arches, one moving window of light, the Living Canvas scroll from morning to dusk |
-| Typography | Fraunces (display) + Hanken Grotesk (UI), both SIL OFL |
+| Brand assets source | `BUD_AND_THINGS Phase 1 to Phase 3 Step 5 Master Document`: used for the logo, monogram, leaf mark, palette and packaging photos only. The launch range stays candles + Jesmonite objects |
+| Visual direction | Default opening **C · Home Tour**: front door opens, hall, living room, bedroom, then the whole house at dusk. Openings A (arches) and B (pour) and six themes stay switchable for review |
+| Typography | Cormorant Garamond (display) + Lato (UI), both SIL OFL |
 | Founder | Brand lockup stays **BUD & THINGS**; Ashi signs the Our Story note and the footer |
 | Commerce | Own website takes its own orders. **No shop platform.** Amazon, Flipkart, Meesho etc. are run from their own seller panels |
 | Payments | Payment gateway (Razorpay or similar): dynamic UPI QR on screen, UPI app / UPI ID, cards. Payment confirmed automatically by the gateway |
@@ -32,7 +32,7 @@ Check current India pricing before committing.
 
 ## Catalogue
 
-`data/catalogue.draft.json`: an earlier draft that included Jesmonite objects. **Superseded** by the master document: the prototype now sells only the 6 draft candles. Original note: draft launch range with
+`data/catalogue.draft.json`: draft launch range of 6 candles and 6 Jesmonite objects, with
 variants, prices in ₹, sizes, materials, care, discovery tags and pairings. Every name, scent and
 price is a proposal for review, not a confirmed product. Burn times and wax type stay
 "to be confirmed" until tested.
