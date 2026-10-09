@@ -958,9 +958,9 @@ const OPENINGS = {
   pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Cast', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
     caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Cast, set,<br><em>lifted from the mould.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
     spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 },
-  tour: { name: 'C · Home Tour', rail: ['Front door', 'Room one', 'Room two', 'Room three'], cuts: [.16, .46, .7], hero: [.02, .06], staticP: .44,
-    caps: [['The door is open.<br><em>Come in.</em>', [.06, .09, .14, .17]], ['One by one,<br><em>the candles are lit.</em>', [.23, .25, .3, .32]], ['Trays and plates to the left,<br><em>little forms to the right.</em>', [.33, .35, .41, .43]], ['The next room<br><em>waits in the dark.</em>', [.48, .5, .55, .57]], ['The last room:<br><em>everything wrapped to give.</em>', [.72, .74, .78, .8]], ['Made with thought.<br><em>Given with feeling.</em>', [.8, .83, .86, .88]]],
-    spots: null, final: [.87, .94], light: 0 }
+  tour: { name: 'C · Home Tour', rail: ['Front door', 'Foyer', 'Hall', 'Living room', 'Dining nook', 'Bedroom'], cuts: [.16, .35, .55, .73, .87], hero: [.02, .05], staticP: .42,
+    caps: [['The door is open.<br><em>Come in.</em>', [.06, .08, .12, .14]], ['One by one,<br><em>the candles are lit.</em>', [.2, .22, .27, .29]], ['Trays and plates on the left,<br><em>little forms on the right.</em>', [.39, .41, .49, .51]], ['Through the arch,<br><em>the living room.</em>', [.57, .59, .67, .69]], ['The dining nook<br><em>waits in the dark.</em>', [.74, .75, .8, .82]], ['Made with thought.<br><em>Given with feeling.</em>', [.865, .875, .89, .9]]],
+    spots: null, final: [.9, .95], light: 0 }
 };
 const SKINS = {
   signature: { name: 'Signature · Approved palette', use: 'The approved palette: ivory, sand, caramel, terracotta, olive and chocolate.', eyebrow: 'Collection 01 · Everyday Rituals', dark: true, wall: ['#A55B3F', '#8F4C33', '#7A3F2A'], floor: ['#4A3125', '#3D281E', '#33211A'], arch: ['#8F4C33', '#A55B3F', '#B36C49', '#C08A5B'], plinth: '#F8F0E4', duskWall: '#2A1B14', duskFloor: '#1F140F', night: '#120B08', light: '255,236,210', type: '#F8F0E4', ink2: '#F3E6D6', fx: null },
@@ -1265,168 +1265,109 @@ function scenePour(ctx, L, p, t) {
   fxPost(ctx, L, p, t, L.ax, L.ay, s);
 }
 
-// C · Home Tour: a first-person walk. A huge door opens, then room by room the candles on the centre shelf light,
-// and pieces are placed on the left and right shelves. Each new room starts in the dark.
-const T3 = { D: 1100, W2: 650, H: 780, eye: 330 };
-const TR = [
-  { name: 'Room one', wall: 3, dark: [.62, .22], span: [0, .46], walk: [.14, .22], light: [.22, .3], left: [.3, .36], right: [.36, .42], out: [.42, .46] },
-  { name: 'Room two', wall: 2, dark: [.94, .28], span: [.46, .7], into: [.46, .48], light: [.49, .56], left: [.56, .61], right: [.61, .66], out: [.66, .7] },
-  { name: 'Room three', wall: 1, dark: [.94, .24], span: [.7, 1.01], into: [.7, .72], light: [.73, .79], left: [.79, .83], right: [.82, .86] }
+// C · Home Tour: a walk through real rooms. The front door swings open, then the foyer, hall, living room,
+// dining nook and bedroom, each entered through a doorway. Candles light and shelf pieces come into the light on scroll.
+const IW = 1600, IH = 1200;
+const ROOMS = {};
+function roomImg(k) { let im = ROOMS[k]; if (!im) { im = ROOMS[k] = new Image(); im.decoding = 'async'; im.src = 'assets/room-' + k + '.jpg'; } return im.complete && im.naturalWidth ? im : null; }
+// each room: when it is on screen [a, b], and camera keyframes [p, centre x, centre y, zoom] in image pixels
+const TL = [
+  { k: 'entrance', a: 0, b: .17, cam: [[0, 800, 600, 1], [.05, 800, 600, 1], [.11, 870, 620, 1.12], [.17, 905, 640, 3.4]] },
+  { k: 'foyer', a: .15, b: .36, dark: .84, cam: [[.15, 800, 640, 1.4], [.19, 790, 640, 1.04], [.28, 790, 630, 1.04], [.31, 760, 640, 1.18], [.36, 160, 560, 2.6]],
+    flames: [[521, 528], [450, 598], [538, 640], [578, 588], [1022, 622], [1120, 585], [960, 702], [1046, 683]], light: [.19, .27] },
+  { k: 'hall', a: .34, b: .56, cam: [[.34, 800, 520, 1.4], [.37, 800, 540, 1.02], [.39, 300, 480, 1.45], [.44, 300, 480, 1.45], [.47, 1330, 480, 1.45], [.51, 1330, 480, 1.45], [.53, 800, 520, 1.05], [.56, 800, 520, 3.2]] },
+  { k: 'living', a: .54, b: .74, cam: [[.54, 780, 560, 1.4], [.57, 780, 560, 1.02], [.59, 180, 520, 1.45], [.63, 180, 520, 1.45], [.66, 1390, 520, 1.45], [.69, 1390, 520, 1.45], [.71, 760, 580, 1.05], [.74, 760, 600, 3]] },
+  { k: 'dining', a: .72, b: .88, dark: .9, cam: [[.72, 800, 560, 1.4], [.75, 800, 560, 1.04], [.82, 800, 520, 1.22], [.88, 800, 500, 1.7]],
+    flames: [[726, 462], [762, 448], [803, 398], [840, 462], [877, 462], [772, 652], [826, 648]], light: [.75, .81] },
+  { k: 'bedroom', a: .86, b: 1.01, cam: [[.86, 900, 620, 1.3], [.9, 860, 600, 1.04], [1, 860, 600, 1]] }
 ];
-const NICHE = (id, k, x, y, w, h, c, extra) => Object.assign({ id, k, x, y, w, h, c, where: 'back' }, extra || {});
-const SIDE = (side, id, k, zz, y, w, h, c, extra) => Object.assign({ id, k, side, zz, y, w, h, c, where: side }, extra || {});
+// labelled pieces: [room, product, x, y, appears at]
 const TOUR_ITEMS = [
-  // room one
-  NICHE('chai-at-four', 'jar', -115, 250, 66, 86, '#C08A5B', { r: 0 }), NICHE('brass-and-saffron', 'jar', 0, 250, 70, 92, '#A55B3F', { r: 0 }), NICHE('first-light', 'jar', 112, 250, 58, 68, '#F4ECE0', { r: 0 }),
-  NICHE('pillar-studies', 'pillar', -46, 450, 32, 124, '#F1E8DA', { r: 0 }), NICHE('pillar-studies', 'pillar', 0, 450, 32, 96, '#A55B3F', { r: 0, noSpot: true }), NICHE('pillar-studies', 'pillar', 46, 450, 32, 110, '#6B7B5B', { r: 0, noSpot: true }),
-  SIDE('left', 'ghat-tray', 'tray', 360, 260, 170, 16, '#DCC9AE', { r: 0 }), SIDE('left', 'moonlet-ring-dish', 'dish', 520, 430, 80, 24, '#C99A6C', { r: 0, rings: true }), SIDE('left', 'halo-candle-plate', 'plate', 680, 260, 110, 8, '#6B7B5B', { r: 0 }),
-  SIDE('right', 'still-form-no-1', 'arch', 380, 260, 84, 124, '#F1E8DA', { r: 0 }), SIDE('right', 'pebble-coasters', 'pebbles', 540, 430, 74, 30, '#6B7B5B', { r: 0 }), SIDE('right', 'jharokha-catch-all', 'archtray', 700, 260, 84, 104, '#DCC9AE', { r: 0 }),
-  // room two
-  NICHE('monsoon-letters', 'jar', -115, 250, 64, 80, '#A9B39A', { r: 1 }), NICHE('terrace-garden', 'jar', 0, 250, 66, 86, '#C9D0B8', { r: 1 }), NICHE('chai-at-four', 'jar', 112, 250, 58, 70, '#C08A5B', { r: 1, noSpot: true }),
-  NICHE('pillar-studies', 'pillar', -60, 450, 32, 110, '#6B7B5B', { r: 1, noSpot: true }), NICHE('first-light', 'jar', 0, 450, 58, 68, '#F4ECE0', { r: 1, noSpot: true }), NICHE('pillar-studies', 'pillar', 60, 450, 32, 120, '#F1E8DA', { r: 1, noSpot: true }),
-  SIDE('left', 'halo-candle-plate', 'plate', 380, 260, 110, 8, '#C99A6C', { r: 1, noSpot: true }), SIDE('left', null, 'pillar', 380, 256, 30, 86, '#F1E8DA', { r: 1, prop: true }), SIDE('left', 'ghat-tray', 'tray', 600, 430, 170, 16, '#B0644A', { r: 1, noSpot: true }),
-  SIDE('right', 'pebble-coasters', 'pebbles', 400, 260, 74, 30, '#F1E8DA', { r: 1, noSpot: true }), SIDE('right', 'still-form-no-1', 'arch', 620, 430, 84, 124, '#B0644A', { r: 1, noSpot: true }),
-  // room three: the gifting nook
-  NICHE(null, 'box', -120, 250, 96, 70, '#B98A5A', { r: 2, prop: true }), NICHE('brass-and-saffron', 'jar', 0, 250, 70, 92, '#A55B3F', { r: 2, noSpot: true }), NICHE(null, 'box', 120, 250, 80, 56, '#C9A27A', { r: 2, prop: true }),
-  NICHE('pillar-studies', 'pillar', -46, 450, 32, 124, '#F1E8DA', { r: 2, noSpot: true }), NICHE('pillar-studies', 'pillar', 0, 450, 32, 96, '#A55B3F', { r: 2, noSpot: true }), NICHE('pillar-studies', 'pillar', 46, 450, 32, 110, '#6B7B5B', { r: 2, noSpot: true }),
-  SIDE('left', 'moonlet-ring-dish', 'dish', 420, 260, 80, 24, '#F1E8DA', { r: 2, rings: true, noSpot: true }), SIDE('left', 'first-light', 'jar', 640, 430, 56, 66, '#F4ECE0', { r: 2, noSpot: true }),
-  SIDE('right', 'jharokha-catch-all', 'archtray', 420, 260, 84, 104, '#C99A6C', { r: 2, noSpot: true }), SIDE('right', 'pebble-coasters', 'pebbles', 640, 430, 74, 30, '#6B7B5B', { r: 2, noSpot: true })
-];
-function tourRoom(p) { return p < TR[1].span[0] ? 0 : p < TR[2].span[0] ? 1 : 2; }
-function tourCamera(L, p, ri) {
-  const R = TR[ri], m = L.mobile;
-  const f = m ? Math.min(L.H * .62, L.W * 1.25) : Math.min(L.H * .95, L.W * .8);
-  let z = 250, x = 0;
-  if (ri === 0) z = -950 + 1200 * ease(seg(p, R.walk[0], R.walk[1]));
-  else z = 120 + 130 * ease(seg(p, R.into[0], R.into[0] + .03));
-  z += 120 * ease(seg(p, R.light[0], R.light[1]));
-  // turn to face the left shelves, then the right ones
-  const lw = ease(seg(p, R.left[0], R.left[0] + .025)) * (1 - ease(seg(p, R.right[0], R.right[0] + .025)));
-  const rw = ease(seg(p, R.right[0], R.right[0] + .025)) * (R.out ? 1 - ease(seg(p, R.out[0], R.out[0] + .02)) : 1 - ease(seg(p, .87, .9)));
-  const turn = m ? 1.25 : 1.1; const yaw = turn * (rw - lw); x = 90 * (rw - lw);
-  if (R.out) z += 300 * ease(seg(p, R.out[0], R.out[1]));
-  else z -= 80 * ease(seg(p, .87, .93));
-  return { x, z, f, yaw, eye: T3.eye, cy: L.H * (m ? .5 : .52) };
+  ['foyer', 'pillar-studies', 521, 505, .24], ['foyer', 'first-light', 1120, 560, .27],
+  ['hall', 'ghat-tray', 300, 285, .395], ['hall', 'halo-candle-plate', 300, 435, .41], ['hall', 'pebble-coasters', 290, 640, .425],
+  ['hall', 'jharokha-catch-all', 1320, 285, .475], ['hall', 'moonlet-ring-dish', 1310, 445, .49], ['hall', 'still-form-no-1', 1360, 625, .505],
+  ['living', 'ghat-tray', 160, 300, .595], ['living', 'halo-candle-plate', 190, 470, .61], ['living', 'moonlet-ring-dish', 170, 650, .625],
+  ['living', 'pebble-coasters', 1290, 300, .665], ['living', 'moonlet-ring-dish', 1460, 470, .675], ['living', 'still-form-no-1', 1290, 660, .685],
+  ['dining', 'brass-and-saffron', 803, 370, .8], ['bedroom', 'chai-at-four', 1060, 800, .9]
+].map(([r, id, x, y, at]) => ({ r, id, x, y, at }));
+function tourCam(R, p) {
+  const c = R.cam; let i = 0; while (i < c.length - 2 && p > c[i + 1][0]) i++;
+  const a = c[i], b = c[i + 1], f = ease(seg(p, a[0], b[0]));
+  // zoom in log space so pushes through a doorway feel even
+  return { x: a[1] + (b[1] - a[1]) * f, y: a[2] + (b[2] - a[2]) * f, z: Math.exp(Math.log(a[3]) + (Math.log(b[3]) - Math.log(a[3])) * f) };
 }
-function cam3(X, Y, Z, c) { const dx = X - c.x, dz = Z - c.z, cs = Math.cos(c.yaw || 0), sn = Math.sin(c.yaw || 0); return [dx * cs - dz * sn, Y - c.eye, dx * sn + dz * cs]; }
-function p3(X, Y, Z, c, L) { const v = cam3(X, Y, Z, c); if (v[2] < 4) return null; const s = c.f / v[2]; return { x: L.W / 2 + v[0] * s, y: c.cy - v[1] * s, s }; }
-// fill a 3D polygon, clipped against the near plane so walls behind the camera still draw correctly
-function quad(ctx, pts, c, L, fill) {
-  const NZ = 8, v = pts.map((a) => cam3(a[0], a[1], a[2], c)), out = [];
-  v.forEach((a, i) => { const b = v[(i + 1) % v.length]; if (a[2] >= NZ) out.push(a); if ((a[2] >= NZ) !== (b[2] >= NZ)) { const t = (NZ - a[2]) / (b[2] - a[2]); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, NZ]); } });
-  if (out.length < 3) return; ctx.fillStyle = fill; ctx.beginPath();
-  out.forEach((a, i) => { const s = c.f / a[2], x = L.W / 2 + a[0] * s, y = c.cy - a[1] * s; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); ctx.fill();
+function tourView(L, cam) {
+  const s = Math.max(L.W / IW, L.H / IH) * cam.z, vw = L.W / s, vh = L.H / s;
+  const fit = (c, v, I) => I - v < 1 ? I / 2 : Math.min(I - v / 2, Math.max(v / 2, c)); const cx = fit(cam.x, vw, IW), cy = fit(cam.y, vh, IH);
+  return { s, ox: L.W / 2 - cx * s, oy: L.H / 2 - cy * s, at(x, y) { return { x: this.ox + x * this.s, y: this.oy + y * this.s }; } };
 }
-function itemPos(o, ri) {
-  const { D, W2 } = T3;
-  if (o.where === 'back') return { X: o.x, Y: o.y, Z: D - 70 };
-  return { X: o.side === 'left' ? -W2 + 46 : W2 - 46, Y: o.y, Z: o.zz };
+function tourLeaf(im) {
+  if (LC.leaf) return LC.leaf; const c = document.createElement('canvas'); c.width = 400; c.height = 925; const x = c.getContext('2d');
+  x.translate(400, 0); x.scale(-1, 1); x.drawImage(im, 420, 120, 400, 925, 0, 0, 400, 925); return (LC.leaf = c);
 }
-function itemReveal(o, p) {
-  const R = TR[o.r]; if (o.where === 'back') return 1;
-  const list = TOUR_ITEMS.filter((x) => x.r === o.r && x.where === o.where); const k = list.indexOf(o), n = list.length;
-  const w = o.where === 'left' ? R.left : R.right; const a = w[0] + (w[1] - w[0]) * .8 * k / n;
-  return ease(seg(p, a, a + (w[1] - w[0]) * .45));
+// the right-hand leaf, rebuilt as a mirror of the left one, swinging inward on its hinge
+function tourDoor(ctx, v, im, open) {
+  const leaf = tourLeaf(im), th = open * 1.32, N = 56, ey = 600;
+  for (let j = 0; j < N; j++) {
+    const u0 = j / N, u1 = (j + 1) / N; const sx = (u) => 1220 - u * 400 * Math.cos(th); const hs = (u) => 1 - .2 * Math.sin(th) * u;
+    const x0 = sx(u1), x1 = sx(u0); if (x1 - x0 < .05) continue; const h = hs((u0 + u1) / 2);
+    const top = ey + (120 - ey) * h, bot = ey + (1045 - ey) * h; const a = v.at(x0, top), b = v.at(x1, bot);
+    ctx.drawImage(leaf, 400 - u1 * 400, 0, 400 / N, 925, a.x, a.y, b.x - a.x + .6, b.y - a.y);
+    ctx.fillStyle = `rgba(14,8,4,${.42 * Math.sin(th)})`; ctx.fillRect(a.x, a.y, b.x - a.x + .6, b.y - a.y);
+  }
 }
-function candleOn(o, p) {
-  const R = TR[o.r]; if (o.k !== 'jar' && o.k !== 'pillar') return 0;
-  if (o.where !== 'back') return itemReveal(o, p) * seg(p, (o.where === 'left' ? R.left : R.right)[1] - .01, (o.where === 'left' ? R.left : R.right)[1] + .01);
-  const list = TOUR_ITEMS.filter((x) => x.r === o.r && x.where === 'back' && (x.k === 'jar' || x.k === 'pillar')); const k = list.indexOf(o), n = list.length;
-  const a = R.light[0] + (R.light[1] - R.light[0]) * k / n; return seg(p, a, a + .012);
+function tourCurtain(ctx, L, v, im, t, alpha) {
+  if (!LC.cur) LC.cur = document.createElement('canvas'); const c = LC.cur; if (c.width !== LC.cv.width) { c.width = LC.cv.width; c.height = LC.cv.height; }
+  const x = c.getContext('2d'); x.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); x.clearRect(0, 0, L.W, L.H);
+  const amp = 5 + (LC.wind || 0) * .8, band = 6;
+  for (let y = 0; y < IH; y += band) { const dx = amp * Math.sin(t * 1.25 + y * .006) * (.25 + .75 * y / IH) + amp * .25 * Math.sin(t * 1.7 + y * .004); const a = v.at(0, y), b = v.at(880, y + band); x.drawImage(im, 0, y, 880, band, a.x + dx * v.s, a.y, b.x - a.x, b.y - a.y + .6); }
+  x.globalCompositeOperation = 'destination-in'; const e0 = v.at(660, 0).x, e1 = v.at(860, 0).x; const g = x.createLinearGradient(e0, 0, e1, 0); g.addColorStop(0, '#000'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, L.W, L.H); x.globalCompositeOperation = 'source-over';
+  ctx.save(); ctx.globalAlpha = alpha; ctx.drawImage(c, 0, 0, L.W, L.H); ctx.restore();
 }
-function drawBox(ctx, x, y, s, w, h, c) {
-  ctx.fillStyle = shade(c, .82); ctx.fillRect(x - w / 2 * s + 6 * s, y - h * s - 6 * s, w * s, h * s);
-  ctx.fillStyle = c; ctx.fillRect(x - w / 2 * s, y - h * s, w * s, h * s);
-  ctx.fillStyle = '#F5ECDD'; ctx.fillRect(x - w * .3 * s, y - h * .7 * s, w * .6 * s, h * .4 * s);
-  const lf = tintLeaf('#3D281E'); if (lf) { const hh = h * .22 * s; ctx.drawImage(lf, x - hh * .45, y - h * .66 * s, hh * .9, hh); }
-  ctx.strokeStyle = '#8A6A44'; ctx.lineWidth = 1.4 * s; ctx.beginPath(); ctx.moveTo(x + w * .38 * s, y - h * s); ctx.lineTo(x + w * .38 * s, y); ctx.stroke();
+function tourDark(ctx, L, K, v, R, p, t, alpha) {
+  const n = R.flames.length; let lit = 0; const on = R.flames.map((f, i) => { const a0 = R.light[0] + (R.light[1] - R.light[0]) * i / n; const o = seg(p, a0, a0 + .012); lit += o; return o; });
+  const d = R.dark - (R.dark - .1) * (lit / n);
+  const m = LC.mctx; m.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); m.globalCompositeOperation = 'source-over'; m.clearRect(0, 0, L.W, L.H);
+  m.fillStyle = rgba(K.night, d); m.fillRect(0, 0, L.W, L.H); m.globalCompositeOperation = 'destination-out';
+  R.flames.forEach((f, i) => { if (on[i] <= 0) return; const q = v.at(f[0], f[1]), rr = 330 * v.s * (.6 + .4 * on[i]); const g = m.createRadialGradient(q.x, q.y, 0, q.x, q.y, rr); g.addColorStop(0, `rgba(0,0,0,${.95 * on[i]})`); g.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = g; m.fillRect(q.x - rr, q.y - rr, rr * 2, rr * 2); });
+  m.globalCompositeOperation = 'source-over';
+  ctx.save(); ctx.globalAlpha = alpha; ctx.drawImage(LC.mask, 0, 0, L.W, L.H);
+  R.flames.forEach((f, i) => { const q = v.at(f[0], f[1]); flame(ctx, q.x, q.y + 4 * v.s, v.s * .55, on[i] * .5, t * 1.1 + i * 1.7); }); ctx.restore();
 }
 function sceneTour(ctx, L, p, t) {
-  const K = SK(); const ri = tourRoom(p); const R = TR[ri]; const c = tourCamera(L, p, ri);
-  const { D, W2, H } = T3; const zn = c.z < -10 ? 0 : -300;
-  const wall = mixHex(K.arch[R.wall], '#000000', .05), side = shade(wall, .86), ceil = shade(wall, .62), floor = K.floor[ri];
-  ctx.fillStyle = shade(wall, .5); ctx.fillRect(0, 0, L.W, L.H);
-  // room box
-  quad(ctx, [[-W2, H, zn], [W2, H, zn], [W2, H, D], [-W2, H, D]], c, L, ceil);
-  quad(ctx, [[-W2, 0, zn], [W2, 0, zn], [W2, 0, D], [-W2, 0, D]], c, L, floor);
-  for (let i = 1; i < 8; i++) { const zz = i * D / 8; if (zz > zn) quad(ctx, [[-W2, 0, zz], [W2, 0, zz], [W2, 0, zz + 3], [-W2, 0, zz + 3]], c, L, rgba('#000000', .08)); }
-  quad(ctx, [[-W2, 0, zn], [-W2, 0, D], [-W2, H, D], [-W2, H, zn]], c, L, side);
-  quad(ctx, [[W2, 0, zn], [W2, 0, D], [W2, H, D], [W2, H, zn]], c, L, side);
-  quad(ctx, [[-W2, 0, D], [W2, 0, D], [W2, H, D], [-W2, H, D]], c, L, wall);
-  // skirting and cornice lines
-  [[0, 14], [H - 18, H]].forEach(([y0, y1]) => { quad(ctx, [[-W2, y0, zn], [-W2, y0, D], [-W2, y1, D], [-W2, y1, zn]], c, L, rgba('#000000', .12)); quad(ctx, [[W2, y0, zn], [W2, y0, D], [W2, y1, D], [W2, y1, zn]], c, L, rgba('#000000', .12)); quad(ctx, [[-W2, y0, D], [W2, y0, D], [W2, y1, D], [-W2, y1, D]], c, L, rgba('#000000', .12)); });
-  // centre niche: an arch recess with two shelves
-  const arch = [[-250, 0, D], [-250, 370, D]]; for (let i = 1; i < 16; i++) { const a = Math.PI - i / 16 * Math.PI; arch.push([Math.cos(a) * 250, 370 + Math.sin(a) * 250, D]); } arch.push([250, 370, D], [250, 0, D]);
-  quad(ctx, arch, c, L, shade(wall, .72));
-  [250, 450].forEach((y) => { quad(ctx, [[-240, y, D - 110], [240, y, D - 110], [240, y, D], [-240, y, D]], c, L, mixHex(K.plinth, '#000000', .08)); quad(ctx, [[-240, y - 14, D - 110], [240, y - 14, D - 110], [240, y, D - 110], [-240, y, D - 110]], c, L, mixHex(K.plinth, '#000000', .25)); });
-  // side shelves
-  ['left', 'right'].forEach((sd) => { const sx = sd === 'left' ? -1 : 1; [260, 430].forEach((y) => { const x0 = sx * W2, x1 = sx * (W2 - 92); quad(ctx, [[x0, y, 300], [x1, y, 300], [x1, y, 800], [x0, y, 800]], c, L, mixHex(K.plinth, '#000000', .1)); quad(ctx, [[x1, y - 14, 300], [x1, y, 300], [x1, y, 800], [x1, y - 14, 800]], c, L, mixHex(K.plinth, '#000000', .3)); quad(ctx, [[x0, y - 14, 300], [x1, y - 14, 300], [x1, y, 300], [x0, y, 300]], c, L, mixHex(K.plinth, '#000000', .2)); }); });
-  // sheer curtains either side of the niche, swaying
-  const wind = 5 + (LC.wind || 0);
-  [-1, 1].forEach((sd) => { const a = p3(sd * 300, H - 40, D - 30, c, L), b = p3(sd * 520, 0, D - 30, c, L); if (!a || !b) return; const x0 = Math.min(a.x, b.x), x1 = Math.max(a.x, b.x), n = 6;
-    for (let i = 0; i < n; i++) { const f0 = i / n, f1 = (i + 1) / n; const sw = (f) => wind * a.s * 2 * Math.sin(t * 1.4 + f * 5 + sd) * (sd > 0 ? f : 1 - f); const xa = x0 + (x1 - x0) * f0, xb = x0 + (x1 - x0) * f1;
-      ctx.fillStyle = rgba('#F7EEE2', i % 2 ? .5 : .38); ctx.beginPath(); ctx.moveTo(xa, a.y); ctx.lineTo(xb, a.y); ctx.quadraticCurveTo(xb + sw(f1) * .5, (a.y + b.y) / 2, xb + sw(f1), b.y); ctx.lineTo(xa + sw(f0), b.y); ctx.quadraticCurveTo(xa + sw(f0) * .5, (a.y + b.y) / 2, xa, a.y); ctx.closePath(); ctx.fill(); }
-    ctx.fillStyle = '#7A5A3C'; ctx.fillRect(x0 - 6, a.y - 4, x1 - x0 + 12, 4); });
-  // pieces in this room, far to near
-  const items = TOUR_ITEMS.map((o, i) => ({ o, i })).filter((v) => v.o.r === ri).map((v) => { const ps = itemPos(v.o, ri); return { ...v, ps, rv: itemReveal(v.o, p) }; }).sort((a, b) => b.ps.Z - a.ps.Z);
-  const placed = [];
-  items.forEach((v) => { const o = v.o; if (v.rv <= 0) return; const drop = (1 - v.rv) * 60; const q = p3(v.ps.X, v.ps.Y + drop, v.ps.Z, c, L); if (!q) return;
-    ctx.save(); ctx.globalAlpha = Math.min(1, v.rv * 1.4);
-    if (o.k === 'box') drawBox(ctx, q.x, q.y, q.s, o.w, o.h, o.c); else { castShadow(ctx, o, q.x, q.y, q.s, -.4, .7, .14); drawObj(ctx, o, q.x, q.y, q.s, o.side === 'right' ? 1 : -1); }
-    ctx.restore(); placed.push({ v, q }); });
-  // darkness, with light around every lit candle and every placed piece
-  const lit = items.filter((v) => (v.o.k === 'jar' || v.o.k === 'pillar')).reduce((a, v) => a + candleOn(v.o, p), 0) / Math.max(1, items.filter((v) => v.o.where === 'back' && (v.o.k === 'jar' || v.o.k === 'pillar')).length);
-  const dark = R.dark[0] + (R.dark[1] - R.dark[0]) * clamp(lit);
-  const m = LC.mctx; m.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); m.globalCompositeOperation = 'source-over'; m.clearRect(0, 0, L.W, L.H);
-  m.fillStyle = rgba(K.night, dark); m.fillRect(0, 0, L.W, L.H); m.globalCompositeOperation = 'destination-out';
-  placed.forEach(({ v, q }) => { const on = candleOn(v.o, p); const rr = (on > 0 ? 300 : 150) * q.s; const a = on > 0 ? .9 * on : .55 * v.rv * (v.o.where === 'back' ? .4 : 1);
-    if (a <= 0) return; const g = m.createRadialGradient(q.x, q.y - v.o.h * q.s * .6, 0, q.x, q.y - v.o.h * q.s * .6, rr); g.addColorStop(0, `rgba(0,0,0,${a})`); g.addColorStop(1, 'rgba(0,0,0,0)'); m.fillStyle = g; m.fillRect(q.x - rr, q.y - rr - v.o.h * q.s, rr * 2, rr * 2); });
-  m.globalCompositeOperation = 'source-over';
-  ctx.drawImage(LC.mask, 0, 0, L.W, L.H);
-  placed.forEach(({ v, q }) => { const on = candleOn(v.o, p); if (on <= 0) return; const fy = q.y - v.o.h * q.s - (v.o.k === 'jar' ? 15 : 9) * q.s; flame(ctx, q.x + q.s, fy, q.s * (v.o.k === 'jar' ? 1.1 : .9), on, t + v.i); });
-  // product labels
-  const black = (R.out ? seg(p, R.out[0], R.out[1]) : 0) + (R.into ? 1 - seg(p, R.into[0], R.into[1]) : 0);
-  LC.spots = TOUR_ITEMS.map((o, i) => { if (!o.id || o.noSpot || o.r !== ri) return { x: 0, y: 0, a: 0 }; const pl = placed.find((x) => x.v.i === i); if (!pl) return { x: 0, y: 0, a: 0 };
-    const ready = o.where === 'back' ? candleOn(o, p) : pl.v.rv; const up = (o.k === 'jar' ? 40 : o.k === 'pillar' ? 40 : o.k === 'tray' ? -46 : 22) * pl.q.s;
-    const x = pl.q.x, y = pl.q.y - o.h * pl.q.s - up; const vis = x > 50 && x < L.W - 50 && y > 70 && y < L.H - 40 ? 1 : 0;
-    return { x, y, a: ready * vis * (1 - clamp(black * 3)) * (ri === 0 ? seg(p, .2, .23) : 1) }; });
-  // the front of the house: a huge centred door that swings open, then flies past
-  if (ri === 0 && c.z < -10) {
-    const open = ease(seg(p, .03, .14)); const dw = 300, dh = 1000, ar = dw;
-    const fc = mixHex(K.wall[0], '#1E130E', .1);
-    const f0 = p3(0, 0, 0, c, L); if (f0) {
-      const s = f0.s, top = c.cy - (dh - ar - c.eye) * s, rr = ar * s;
-      const hole = new Path2D(); hole.moveTo(f0.x - rr, f0.y); hole.lineTo(f0.x - rr, top); hole.arc(f0.x, top, rr, Math.PI, 0); hole.lineTo(f0.x + rr, f0.y); hole.closePath();
-      const fp = new Path2D(); fp.rect(-L.W, -L.H, L.W * 3, L.H * 3); fp.addPath(hole);
-      ctx.fillStyle = fc; ctx.fill(fp, 'evenodd');
-      const sky = ctx.createLinearGradient(0, 0, 0, f0.y); sky.addColorStop(0, rgba('#000000', .18)); sky.addColorStop(1, rgba('#000000', 0)); ctx.save(); ctx.fillStyle = sky; ctx.fill(fp, 'evenodd'); ctx.restore();
-      ctx.fillStyle = shade(fc, .7); ctx.fillRect(0, f0.y, L.W, L.H - f0.y);
-      ctx.lineWidth = 30 * s; ctx.strokeStyle = shade(fc, .78); ctx.stroke(hole);
-      ctx.fillStyle = shade(fc, .6); ctx.fillRect(f0.x - rr * 1.4, f0.y, rr * 2.8, 26 * s);
-      // door leaves hinged at each side of the opening, swinging into the house
-      const ang = open * 1.4;
-      [-1, 1].forEach((sd) => {
-        const hx = sd * dw; const pts = [];
-        const N = 14; const loc = [[0, 0], [1, 0]]; // leaf outline: u across from the hinge (0..1), v height; the top follows the arch
-        for (let i = N; i >= 0; i--) { const a = (i / N) * Math.PI / 2; loc.push([1 - Math.cos(a), dh - ar + Math.sin(a) * ar]); }
-        const P3s = loc.map(([u, v]) => { const X = hx - sd * u * dw * Math.cos(ang), Z = u * dw * Math.sin(ang); return p3(X, v, Z, c, L); });
-        if (P3s.some((v) => !v)) return;
-        const g = ctx.createLinearGradient(P3s[0].x, 0, P3s[1].x, 0); g.addColorStop(0, '#6A4229'); g.addColorStop(1, shade('#7A4E30', 1 - open * .35));
-        ctx.fillStyle = g; ctx.beginPath(); P3s.forEach((v, i) => i ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y)); ctx.closePath(); ctx.fill();
-        const panel = (u0, u1, v0, v1) => { const q = [[u0, v0], [u1, v0], [u1, v1], [u0, v1]].map(([u, v]) => p3(hx - sd * u * dw * Math.cos(ang), v, u * dw * Math.sin(ang), c, L)); if (q.some((v) => !v)) return; ctx.strokeStyle = rgba('#000000', .28); ctx.lineWidth = Math.max(1, 3 * s); ctx.beginPath(); q.forEach((v, i) => i ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y)); ctx.closePath(); ctx.stroke(); };
-        panel(.18, .82, 90, 420); panel(.18, .82, 470, 760);
-        const kn = p3(hx - sd * .9 * dw * Math.cos(ang), 470, .9 * dw * Math.sin(ang), c, L); if (kn) { ctx.fillStyle = '#C9A24A'; ctx.beginPath(); ctx.arc(kn.x, kn.y, 6 * kn.s, 0, TAU); ctx.fill(); }
-      });
-      // plaque, lamps, planters
-      const pq = p3(0, dh + 120, 0, c, L); if (pq && !L.mobile) { const ww = 300 * pq.s, hh = 64 * pq.s; ctx.fillStyle = '#F3E8D8'; ctx.fillRect(pq.x - ww / 2, pq.y - hh / 2, ww, hh); const wm = tintMark('wordmark', '#3D281E'); if (wm) { const w2 = ww * .84, h2 = w2 * wm.height / wm.width; ctx.drawImage(wm, pq.x - w2 / 2, pq.y - h2 / 2, w2, h2); } }
-      [-1, 1].forEach((sd) => { const lp = p3(sd * (dw + 150), 640, 0, c, L); if (lp) { ctx.fillStyle = '#2E241E'; ctx.fillRect(lp.x - 14 * lp.s, lp.y - 40 * lp.s, 28 * lp.s, 52 * lp.s); const g = ctx.createRadialGradient(lp.x, lp.y, 0, lp.x, lp.y, 200 * lp.s); g.addColorStop(0, 'rgba(255,206,140,.55)'); g.addColorStop(1, 'rgba(255,206,140,0)'); ctx.fillStyle = g; ctx.fillRect(lp.x - 200 * lp.s, lp.y - 200 * lp.s, 400 * lp.s, 400 * lp.s); ctx.fillStyle = '#FFE3B0'; ctx.fillRect(lp.x - 9 * lp.s, lp.y - 32 * lp.s, 18 * lp.s, 30 * lp.s); }
-        const pp = p3(sd * (dw + 330), 0, -40, c, L); if (pp) { const s2 = pp.s; ctx.fillStyle = '#A55B3F'; ctx.beginPath(); ctx.moveTo(pp.x - 60 * s2, pp.y - 120 * s2); ctx.lineTo(pp.x + 60 * s2, pp.y - 120 * s2); ctx.lineTo(pp.x + 46 * s2, pp.y); ctx.lineTo(pp.x - 46 * s2, pp.y); ctx.closePath(); ctx.fill(); const lf = tintLeaf('#55663F'); if (lf) { ctx.save(); ctx.translate(pp.x, pp.y - 120 * s2); ctx.rotate(sd * .22); const hh = 280 * s2, ww = hh * lf.width / lf.height; ctx.drawImage(lf, -ww / 2, -hh, ww, hh); ctx.restore(); } } });
+  if (!LC.pre) { LC.pre = 1; TL.forEach((R) => roomImg(R.k)); }
+  const K = SK(); ctx.fillStyle = '#0B0705'; ctx.fillRect(0, 0, L.W, L.H);
+  const spots = TOUR_ITEMS.map(() => ({ x: 0, y: 0, a: 0 }));
+  TL.forEach((R, ri) => {
+    if (p < R.a || p > R.b) return; const im = roomImg(R.k); TL[ri + 1] && roomImg(TL[ri + 1].k); if (!im) return;
+    const prev = TL[ri - 1]; const alpha = prev ? ease(seg(p, R.a, prev.b)) : 1; if (alpha <= 0) return;
+    const v = tourView(L, tourCam(R, p));
+    ctx.save(); ctx.globalAlpha = alpha; ctx.drawImage(im, v.ox, v.oy, IW * v.s, IH * v.s); ctx.restore();
+    if (R.k === 'entrance') {
+      const open = ease(seg(p, .045, .115)); if (open < 1) tourDoor(ctx, v, im, open);
+      const g0 = v.at(910, 640), gr = 520 * v.s; const g = ctx.createRadialGradient(g0.x, g0.y, 0, g0.x, g0.y, gr); g.addColorStop(0, `rgba(255,214,160,${.28 * open})`); g.addColorStop(1, 'rgba(255,214,160,0)'); ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = g; ctx.fillRect(g0.x - gr, g0.y - gr, gr * 2, gr * 2); ctx.restore();
     }
-  }
-  // fade between rooms
-  if (black > 0) { ctx.fillStyle = rgba('#0B0705', clamp(black)); ctx.fillRect(0, 0, L.W, L.H); }
-  const fin = seg(p, .86, .93); if (fin > 0) { ctx.fillStyle = rgba(K.night, .5 * fin); ctx.fillRect(0, 0, L.W, L.H); }
-  const v = Math.min(1, Math.abs(p - (LC.lastP ?? p)) * 900); LC.lastP = p; LC.wind = (LC.wind || 0) * .9 + v * 40 * .1;
+    if (R.k === 'bedroom') tourCurtain(ctx, L, v, im, t, alpha);
+    if (R.flames) tourDark(ctx, L, K, v, R, p, t, alpha);
+    // shelf rooms: the room settles into a soft dusk and each piece comes into its own pool of light
+    const mine = TOUR_ITEMS.map((o, i) => ({ o, i })).filter((x) => x.o.r === R.k);
+    if (R.k === 'hall' || R.k === 'living') {
+      const dusk = .26 * seg(p, R.cam[1][0], R.cam[2][0]) * (1 - seg(p, R.cam[R.cam.length - 3][0], R.cam[R.cam.length - 2][0]));
+      ctx.save(); ctx.globalAlpha = alpha * dusk; ctx.fillStyle = K.night; ctx.fillRect(0, 0, L.W, L.H); ctx.restore();
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      mine.forEach(({ o }) => { const on = seg(p, o.at - .012, o.at) * (dusk / .26); if (on <= 0) return; const q = v.at(o.x, o.y + 60), rr = 190 * v.s; const g = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, rr); g.addColorStop(0, `rgba(${K.light},${.42 * on * alpha})`); g.addColorStop(1, `rgba(${K.light},0)`); ctx.fillStyle = g; ctx.fillRect(q.x - rr, q.y - rr, rr * 2, rr * 2); });
+      ctx.restore();
+    }
+    // theme tint over the photographs
+    if (S.skin !== 'signature') { ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = .55 * alpha; ctx.fillStyle = K.wall[0]; ctx.fillRect(0, 0, L.W, L.H); ctx.restore(); }
+    const leaving = TL[ri + 1] ? 1 - seg(p, TL[ri + 1].a, TL[ri + 1].a + .012) : 1;
+    mine.forEach(({ o, i }) => { const q = v.at(o.x, o.y); const vis = q.x > 60 && q.x < L.W - 60 && q.y > 80 && q.y < L.H - 60 ? 1 : 0; spots[i] = { x: q.x, y: q.y, a: seg(p, o.at - .008, o.at + .004) * vis * leaving * alpha }; });
+  });
+  fxPost(ctx, L, p, t, L.W / 2, L.H * .82, L.u);
+  const fin = seg(p, .89, .95); if (fin > 0) { ctx.fillStyle = rgba(K.night, .55 * fin); ctx.fillRect(0, 0, L.W, L.H); }
+  const vg = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * .35, L.W / 2, L.H / 2, Math.max(L.W, L.H) * .75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.35)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, L.W, L.H);
+  LC.spots = spots;
+  const vel = Math.min(1, Math.abs(p - (LC.lastP ?? p)) * 900); LC.lastP = p; LC.wind = (LC.wind || 0) * .9 + vel * 40 * .1;
 }
 const MARKS = {}; const MARK_SRC = { wordmark: 'assets/logo-wordmark.png' };
 function tintMark(name, col) {
