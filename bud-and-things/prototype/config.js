@@ -6,7 +6,7 @@
 // draft content, with owner changes kept in this browser only.
 window.BT_CONFIG = {
   supabase: {
-    url: '',      // for example 'https://abcdefghijkl.supabase.co'
-    anonKey: ''   // the long "anon public" key
+    url: 'https://cgccziskvqyatrjqdtka.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNnY2N6aXNrdnF5YXRyanFkdGthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNjUxOTcsImV4cCI6MjEwNzY0MTE5N30.ghhwMTaqfhfqQkImPNSJFF5Nmiw6Od8WMrYGt5rvrEE'
   }
 };
