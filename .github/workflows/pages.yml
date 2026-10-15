@@ -33,7 +33,7 @@ jobs:
           {
             printf '%s\n' '<!doctype html>' '<html lang="en-IN">' '<head>' '<meta charset="utf-8">' \
               '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' \
-              '<meta name="description" content="BUD & THINGS by Ashi: thoughtful objects, meaningful moments. Prototype preview.">' \
+              '<meta name="description" content="BUD & THINGS by Ashi: thoughtful objects, meaningful moments.">' \
               '<style>[hidden]{display:none!important}body{margin:0}</style>' '</head>' '<body>'
             cat bud-and-things/prototype/index.html
             printf '%s\n' '</body>' '</html>'
