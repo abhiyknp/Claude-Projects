@@ -29,7 +29,8 @@ const { chromium } = require(require('child_process').execSync('npm root -g').to
     console.log(w, 'order page:', (await pg.textContent('h1')).trim(), '|', (await pg.textContent('.checkout-side .grand')).trim());
     await pg.goto(url + '#admin'); await pg.waitForTimeout(100); await over('admin');
     await pg.click('[data-act="advance"]');
-    console.log(w, 'admin status:', await pg.$$eval('td .pill', (e) => e.map((x) => x.textContent).slice(0, 1)), '| stock CF-220:', await pg.inputValue('#st-BT-CN-CF-220'));
+    console.log(w, 'admin status:', await pg.$$eval('td .pill', (e) => e.map((x) => x.textContent).slice(0, 1)));
+    await pg.click('[data-act="adm-tab"][data-v="stock"]'); console.log(w, 'stock CF-220:', await pg.inputValue('#st-BT-CN-CF-220'));
     await pg.goto(url + '#feeling'); await pg.click('[data-act="finder-opt"][data-v="calm"]');
     for (let i = 0; i < 5; i++) await pg.click('[data-act="finder-next"]');
     console.log(w, 'finder:', await pg.$$eval('.finder-main .name', (e) => e.map((x) => x.textContent)));

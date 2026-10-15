@@ -17,14 +17,15 @@ Public preview: https://abhiyknp.github.io/Claude-Projects/
 | Founder | Brand lockup stays **BUD & THINGS**; Ashi signs the Our Story note and the footer |
 | Commerce | Own website takes its own orders. **No shop platform.** Amazon, Flipkart, Meesho etc. are run from their own seller panels |
 | Payments | Payment gateway (Razorpay or similar): dynamic UPI QR on screen, UPI app / UPI ID, cards. Payment confirmed automatically by the gateway |
-| Stock | One shared stock count across all channels (a Google Sheet at launch), marketplace buffers |
+| Stock | One shared stock count across all channels, kept in the database and edited in the Owner view, with marketplace buffers |
+| Content | Products, prices, rituals, every line of site text, settings, stock, photos and videos live in a Supabase database and are edited from the website's **Owner view** (`#admin`). Nothing day to day needs a code change. Setup: [supabase/README.md](supabase/README.md) |
 | Platforms | One codebase: responsive website, installable app (PWA), then Android and iOS store apps |
 
 ## Proposed stack (to confirm at Stage 4)
 
 - **Next.js + TypeScript**: website, PWA and the shell for the store apps
 - **GSAP + ScrollTrigger**: the Living Canvas only; CSS for everything else
-- **Supabase** (free starter plan): orders, stock, owner dashboard
+- **Supabase** (free starter plan): products, text, settings, photos and videos, orders, stock, reviews and sign-ups. Already wired into the prototype (`prototype/db.js`, `supabase/schema.sql`)
 - **Razorpay** (or similar): checkout, dynamic UPI QR, cards, webhooks
 - **Capacitor**: wraps the same app for the Play Store and App Store
 - **Vercel / Netlify / Cloudflare Pages**: hosting, free tier at launch
@@ -40,8 +41,11 @@ variants, prices in ₹, sizes, materials, care, discovery tags and pairings. Ev
 price is a proposal for review, not a confirmed product. Burn times and wax type stay
 "to be confirmed" until tested.
 
-Product photography is still needed. Stock photos may be used as mood placeholders on the design
-boards only, never as product listings.
+Once the database is connected, the catalogue lives there and this file is only the starting point the Owner view copies in.
+
+Product photography is still needed (the shot list is in the project's photo and video checklist). Upload it in the
+Owner view under Photos & videos. Stock photos may be used as mood placeholders on the design boards only, never as
+product listings.
 
 ## Brand assets
 

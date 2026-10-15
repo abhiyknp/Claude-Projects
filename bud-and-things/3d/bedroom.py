@@ -5,19 +5,21 @@ candles, shelves of Jesmonite pieces on the left, a gifting table, and a low con
 two states (dusk, and the extra glow of the candles) like the foyer. Run headless:
 
     python3 bud-and-things/3d/bedroom.py [out_dir] [--fast] [--only=piece,piece]
+    python3 bud-and-things/3d/bedroom.py --preview=/tmp/bed.png    # a quick render of the bed, no bake
 """
 import math
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from houselib import (arch_prism, bake, box, cut, export_module, join, lathe, mat, panorama, point_light,  # noqa: E402
-                      prepare, proxies, setup, srgb, t2b)
+from houselib import (arch_prism, bake, box, cushion, cut, export_module, join, lathe, mat, panorama, point_light,  # noqa: E402
+                      prepare, proxies, setup, soft_box, srgb, t2b)
 import bpy  # noqa: E402
 from mathutils import Vector  # noqa: E402
 
 OUT = next((a for a in sys.argv[1:] if not a.startswith('--')), os.path.join(os.path.dirname(__file__), '..', 'prototype', 'assets', 'house'))
 FAST = '--fast' in sys.argv
+PREVIEW = next((a.split('=', 1)[1] for a in sys.argv if a.startswith('--preview=')), None)
 ONLY = next((a.split('=', 1)[1].split(',') for a in sys.argv if a.startswith('--only=')), None)
 os.makedirs(OUT, exist_ok=True)
 scene = setup(24 if FAST else 160)
@@ -46,26 +48,43 @@ bceil = join('bceil', [box('bc', X0, X1, Y0, Y1, H, H + .1, M['ceiling'])] +
 btrim = join('btrim', [box('s1', X0 + .05, X1, Y1 - .02, Y1, 0, .12, M['plaster']), box('s2', X0 + .05, X1, Y0, Y0 + .02, 0, .12, M['plaster']),
                        box('s3', X1 - .02, X1, Y0, Y1, 0, .12, M['plaster']),
                        box('sill', WIN_X - .78, WIN_X + .78, Y0 - .12, Y0 + .06, .5, .55, M['plaster'])])
-# bed under a ledge of candles, with bedside tables
-bed = join('bed', [
-    box('base', 8.6, X1 - .05, 5.55, 7.65, 0, .36, M['oak']), box('mattress', 8.65, X1 - .1, 5.6, 7.6, .36, .6, M['linen']),
-    box('throw', 8.62, 9.45, 5.55, 7.65, .6, .66, M['throw']),
-    box('pil1', 9.9, 10.32, 5.8, 6.5, .6, .78, M['linen']), box('pil2', 9.9, 10.32, 6.7, 7.4, .6, .78, M['linen']),
-    box('head', X1 - .12, X1, 5.35, 7.85, 0, 1.25, M['head']),
+# bed under a ledge of candles, with bedside tables: a low oak platform, a channel-tufted headboard, a soft mattress,
+# a duvet that drapes over the sides with its top turned down, leaning and lying pillows, and a throw across the foot
+bedframe = join('bedframe', [box('plinth', 8.72, 10.32, 5.66, 7.54, 0, .1, M['wood_dark']),
+                             soft_box('platform', 8.55, 10.42, 5.5, 7.7, .1, .34, .02, M['oak'])])
+headboard = join('headboard', [soft_box('ch%d' % i, 10.3, 10.48, y - .255, y + .255, .3, 1.3, .07, M['head'], 4)
+                               for i, y in enumerate((5.56, 6.08, 6.6, 7.12, 7.64))])
+bedding = join('bedding', [
+    soft_box('mattress', 8.6, 10.3, 5.56, 7.64, .34, .56, .05, M['linen'], 4),
+    soft_box('duvet', 8.5, 9.95, 5.46, 7.74, .565, .645, .035, M['linen'], 4),
+    soft_box('drape1', 8.5, 9.95, 5.46, 5.5, .3, .63, .018, M['linen']),
+    soft_box('drape2', 8.5, 9.95, 7.7, 7.74, .3, .63, .018, M['linen']),
+    soft_box('drape3', 8.5, 8.54, 5.46, 7.74, .3, .63, .018, M['linen']),
+    soft_box('fold', 9.78, 10.06, 5.45, 7.75, .55, .67, .05, M['linen'], 4),
+    cushion('pil1', (10.13, 6.03, .82), (.18, .74, .52), M['linen'], lean=-.28, puff=.38),
+    cushion('pil2', (10.13, 7.17, .82), (.18, .74, .52), M['linen'], lean=-.28, puff=.38),
+    cushion('pil3', (9.93, 6.1, .7), (.44, .64, .17), M['linen'], lean=-.4),
+    cushion('pil4', (9.93, 7.1, .7), (.44, .64, .17), M['linen'], lean=-.4),
+])
+throw = join('throw', [
+    soft_box('tt', 8.7, 9.25, 5.42, 7.78, .62, .685, .025, M['throw']),
+    soft_box('tf1', 8.7, 9.25, 5.42, 5.455, .36, .665, .012, M['throw']),
+    soft_box('tf2', 8.7, 9.25, 7.745, 7.78, .36, .665, .012, M['throw']),
+    cushion('accent', (9.86, 6.6, .76), (.14, .44, .32), M['throw'], lean=-.32),
 ])
 ledge = box('ledge', X1 - .22, X1, 5.25, 7.95, 1.5, 1.55, M['shelf'])
-tables = join('tables', [box('t1', 9.95, X1 - .05, 4.75, 5.25, 0, .55, M['oak']), box('t2', 9.95, X1 - .05, 7.95, 8.45, 0, .55, M['oak'])])
+tables = join('tables', [soft_box('t1', 9.95, X1 - .05, 4.75, 5.25, 0, .55, .015, M['oak']), soft_box('t2', 9.95, X1 - .05, 7.95, 8.45, 0, .55, .015, M['oak'])])
 # shelves and a gifting table on the left wall; a low console under the window on the right
 bshelves = join('bshelves', [box('bs%d' % i, 4.4, 6.6, Y1 - .26, Y1, z, z + .045, M['shelf']) for i, z in enumerate((1.2, 1.8))])
 gift = join('gift', [box('gt', 7.0, 8.2, Y1 - .5, Y1, .72, .77, M['oak'])] +
             [box('gl%d' % i, x - .03, x + .03, y - .03, y + .03, 0, .72, M['wood_dark']) for i, (x, y) in enumerate(((7.05, Y1 - .45), (8.15, Y1 - .45), (7.05, Y1 - .05), (8.15, Y1 - .05)))])
 console = join('console', [box('ct', 5.6, 7.4, Y0, Y0 + .42, .45, .5, M['oak']), box('cb', 5.65, 7.35, Y0, Y0 + .4, 0, .45, M['wood_dark'])])
 brug = box('brug', 7.4, 10.3, 4.8, 8.4, 0, .008, M['rug'])
-chair = join('chair', [box('cs', 4.2, 4.95, 4.0, 4.75, .2, .45, M['head']), box('cbk', 4.2, 4.95, 3.85, 4.05, .2, .95, M['head']),
-                       box('ca1', 4.12, 4.22, 3.9, 4.75, .2, .65, M['head']), box('ca2', 4.93, 5.03, 3.9, 4.75, .2, .65, M['head'])])
+chair = join('chair', [soft_box('cs', 4.2, 4.95, 4.0, 4.75, .2, .47, .06, M['head'], 4), soft_box('cbk', 4.2, 4.95, 3.83, 4.07, .2, .97, .07, M['head'], 4),
+                       soft_box('ca1', 4.1, 4.24, 3.88, 4.75, .2, .67, .05, M['head'], 4), soft_box('ca2', 4.91, 5.05, 3.88, 4.75, .2, .67, .05, M['head'], 4)])
 lamp = lathe('lamp', [(0, 0), (.12, 0), (.12, .03), (.02, .05), (.02, 1.5), (.0, 1.5)], M['wood_dark'], at=(4.45, 9.2, 0))
-EXPORT = [bwalls, bfloor, bceil, btrim, bed, ledge, tables, bshelves, gift, console, brug, chair, lamp]
-RES = {'bwalls': 2048, 'bfloor': 1024, 'bceil': 1024, 'btrim': 256, 'bed': 1024, 'ledge': 256, 'tables': 256, 'bshelves': 256,
+EXPORT = [bwalls, bfloor, bceil, btrim, bedframe, headboard, bedding, throw, ledge, tables, bshelves, gift, console, brug, chair, lamp]
+RES = {'bwalls': 2048, 'bfloor': 1024, 'bceil': 1024, 'btrim': 256, 'bedframe': 512, 'headboard': 512, 'bedding': 1024, 'throw': 512, 'ledge': 256, 'tables': 256, 'bshelves': 256,
        'gift': 256, 'console': 512, 'brug': 512, 'chair': 512, 'lamp': 256}
 if FAST:
     RES = {k: max(128, v // 4) for k, v in RES.items()}
@@ -117,7 +136,23 @@ def lit():
     bg.inputs['Strength'].default_value = 0.0
 
 
-prepare(EXPORT, M['plaster'])
+prepare(EXPORT, M['plaster'], smooth=('headboard', 'bedding', 'throw', 'chair'))
+if PREVIEW:  # dusk with the candles lit, seen from the middle of the room
+    dusk()
+    for c in candles:
+        c.hide_render = False
+    cam = bpy.data.objects.new('cam', bpy.data.cameras.new('cam'))
+    bpy.context.collection.objects.link(cam)
+    cam.location = (6.4, 6.6, 1.55)
+    cam.rotation_euler = Vector((1, 0, -.2)).to_track_quat('-Z', 'Y').to_euler()
+    cam.data.lens = 24
+    scene.camera = cam
+    scene.render.resolution_x, scene.render.resolution_y = 960, 600
+    scene.cycles.samples = 48
+    scene.cycles.use_denoising = True
+    scene.render.filepath = PREVIEW
+    bpy.ops.render.render(write_still=True)
+    sys.exit(0)
 bake(EXPORT, RES, {'day': dusk, 'lit': lit}, OUT, ONLY)
 dusk()
 for c in candles:

@@ -17,7 +17,7 @@ const BASE = 'assets/house/';
 const LM = { F: { day: { value: 1 }, lit: { value: 0 } }, B: { day: { value: 1 }, lit: { value: 0 } } };
 const ROOMS = {
   F: { module: 'foyer', env: 'env.jpg', pieces: ['walls', 'floor', 'ceiling', 'front', 'niche', 'trim', 'frame', 'porch', 'door_l', 'door_r', 'bench', 'rug', 'vase', 'shelves', 'reveals'] },
-  B: { module: 'bedroom', env: 'env-bed.jpg', pieces: ['bwalls', 'bfloor', 'bceil', 'btrim', 'bed', 'ledge', 'tables', 'bshelves', 'gift', 'console', 'brug', 'chair', 'lamp'] }
+  B: { module: 'bedroom', env: 'env-bed.jpg', pieces: ['bwalls', 'bfloor', 'bceil', 'btrim', 'bedframe', 'headboard', 'bedding', 'throw', 'ledge', 'tables', 'bshelves', 'gift', 'console', 'brug', 'chair', 'lamp'] }
 };
 const FS = .56; // the foyer takes this share of the walk, the bedroom the rest
 // moods: a feeling, or the kind of gift. Colours for walls and textiles, how much daylight and candle light, and dressing.
@@ -88,7 +88,8 @@ function glb({ gltf, bin }) {
 function load(onProgress) {
   const mgr = new THREE.LoadingManager(); mgr.onProgress = (u, a, b) => onProgress(a / b);
   const tl = new THREE.TextureLoader(mgr);
-  const lm = (state, n) => { const t = tl.load(`${BASE}lm-${state}-${n}.jpg`); t.flipY = false; t.colorSpace = THREE.NoColorSpace; return t; };
+  const SM = window.innerWidth < 760 ? 'sm/' : ''; // phones load half-size light maps
+  const lm = (state, n) => { const t = tl.load(`${BASE}${SM}lm-${state}-${n}.jpg`); t.flipY = false; t.colorSpace = THREE.NoColorSpace; return t; };
   const env = (f) => new Promise((res, rej) => tl.load(BASE + f, (t) => { t.colorSpace = THREE.SRGBColorSpace; t.mapping = THREE.EquirectangularReflectionMapping; res(t); }, undefined, rej));
   const maps = {}; Object.values(ROOMS).forEach((R) => R.pieces.forEach((n) => { maps[n] = { day: lm('day', n), lit: lm('lit', n) }; }));
   const oak = tl.load('assets/tex-oak.jpg'); oak.colorSpace = THREE.SRGBColorSpace; oak.wrapS = oak.wrapT = THREE.RepeatWrapping; oak.anisotropy = 8;
@@ -112,7 +113,7 @@ function build(res) {
     front: [plaster, '#E8D2B2'], floor: wood(.45, '#C79B70'), frame: wood(.6, '#6E4A33'), door_l: wood(.6, '#7A5038'), door_r: wood(.6, '#7A5038'),
     shelves: wood(.8, '#EAD4B4'), bench: wood(.8, '#B98E66'), porch: [stone, '#ffffff'], rug: [rug, '#ffffff', 'textile'], vase: [plaster, '#CFC0AA'],
     bwalls: [plaster, '#DCD1BD', 'wallB'], btrim: [plaster, '#DCD1BD', 'wallB'], bfloor: wood(.45, '#B88B62'), bceil: [plaster, '#EFE8DD'],
-    bed: [linen, '#EFE6D8', 'bed'], ledge: wood(.8, '#EAD4B4'), tables: wood(.8, '#B98E66'), bshelves: wood(.8, '#EAD4B4'), gift: wood(.8, '#B98E66'),
+    bedframe: wood(.8, '#9C7454'), headboard: [linen, '#C9B79C', 'textile2'], bedding: [linen, '#EFE6D8', 'bed'], throw: [linen, '#A55B3F', 'textile'], ledge: wood(.8, '#EAD4B4'), tables: wood(.8, '#B98E66'), bshelves: wood(.8, '#EAD4B4'), gift: wood(.8, '#B98E66'),
     console: wood(.8, '#9C7454'), brug: [brug, '#ffffff', 'textile'], chair: [linen, '#C9B79C', 'textile2'], lamp: [plaster, '#5A3A26']
   };
   const nodes = {}; const cats = {};
