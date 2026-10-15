@@ -18,7 +18,7 @@ const url = process.env.BT_URL || 'http://localhost:8765/page.html';
     await pg.waitForFunction(() => window.HOUSE && (window.HOUSE.ready || window.HOUSE.failed), null, { timeout: 120000 }).catch(() => errs.push(`shot ${k}: house not ready`));
     await pg.evaluate(() => { BT_DEBUG.LC.p = BT_DEBUG.lcTarget(); BT_DEBUG.LC.houseIn = 1; }); await pg.waitForTimeout(800);
     if (s.mood) { await pg.click('[data-act="house-moods"]'); await pg.click(`[data-act="house-mood"][data-k="${s.mood}"]`); }
-    if (s.focus) await pg.evaluate((id) => { const p = BT_DEBUG.LC.p; const i = TOUR_ITEMS.findIndex((o) => (p < .48 ? o.room === 'F' : o.room === 'BR') && o.label && o.id === id); BT_DEBUG.houseFocus(i); }, s.focus);
+    if (s.focus) await pg.evaluate((id) => { const p = BT_DEBUG.LC.p; const i = TOUR_ITEMS.findIndex((o) => (HOUSE.roomAt(p) === 'F' ? o.room === 'F' : o.room === 'BR') && o.label && o.id === id); BT_DEBUG.houseFocus(i); }, s.focus);
     await pg.waitForTimeout(s.focus ? 4000 : 2500);
     await pg.screenshot({ path: `${out}/house-${k}.png` }); await pg.close();
   }
