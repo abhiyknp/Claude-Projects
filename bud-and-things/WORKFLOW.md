@@ -50,15 +50,23 @@ bud-and-things/
     bedroom.py             bedroom (Blender script)
   prototype/               everything the site serves
     index.html             the whole shop: one file, no build step
+    config.js              where the database is (empty = demo mode)
+    db.js                  the database link (window.BTDB): tables, sign-in, file uploads
     house3d.js             opening D, the house (three.js)
     products3d.js          3D models of the products, shared by C and D
     tour3d.js              opening C, the earlier 3D tour
     assets/                brand images, oak texture
     assets/house/          baked rooms: geometry modules, lightmaps, reflection panoramas
+    assets/house/sm/       half-size lightmaps for phones
+    assets/house/poster*.jpg  the porch, shown while the house loads
+  supabase/
+    schema.sql             tables, access rules, place_order and get_order
+    README.md              how to set up the database and what the Owner view edits
   tools/
     preview.sh             local preview server
     test-flow.js           end-to-end shop test
     test-house.js          screenshots of the house walk
+    mock-supabase.js       in-memory stand-in for Supabase, for testing database mode
 .github/workflows/pages.yml  publishes prototype/ to GitHub Pages
 ```
 
@@ -75,11 +83,23 @@ bud-and-things/
 - **State** (cart, saved items, orders, stock, chosen opening, theme and mood) is kept in `localStorage` under
   `bt-proto-v2`. Every access is wrapped so the page still works when storage is unavailable. **Reset demo** in
   the top bar restores it.
-- **The catalogue** is the `P` array in the script: variants, prices in ₹, materials, care, moods, spaces and
-  occasions. The moods and occasions drive Find Your Feeling and the house moods.
-- **Checkout** is simulated: contact and address validation, then a dynamic UPI QR (drawn from the order), UPI
-  app, UPI ID, or card (Luhn check). Paying creates an order, which the owner view (`#admin`) can advance;
-  stock decreases.
+- **The catalogue** starts as the `P` array in the script: variants, prices in ₹, materials, care, moods, spaces,
+  occasions, scent pyramid and scent story. The moods and occasions drive Find Your Feeling and the house moods.
+- **Editable content.** Products, rituals, settings (`SET_DEFAULTS`, `SET_META`), every line of copy (`TEXT`, keyed
+  like `home.tag`, read with `T(key)`), stock, photos and videos come from the database when `config.js` names one
+  (`loadData()`), with a cached copy for instant repeat visits. Without one, Owner view edits are kept in
+  `localStorage` (`S.db`). The built-in content is the fallback, so the site never shows empty. The 3D house keeps
+  its pieces even when a product is hidden (`prod()`), but only live products get labels and Add to cart.
+- **The Owner view** (`#admin`) is the control panel: orders, products (every field, options and SKUs, batch,
+  scent story, on or off the site), rituals, photos and videos with a checklist per product, site text, stock,
+  settings, review moderation, sign-ups and restock requests (downloadable), analytics events and setup. With a
+  database it asks the owner to sign in first.
+- **Checkout** is simulated: contact (with a WhatsApp updates opt-in) and address validation, an optional gift
+  (their name and mobile, a card note, gift wrap, an arrive-by date), a welcome code, then a dynamic UPI QR, UPI
+  app, UPI ID, card (Luhn check) or cash on delivery. The free-shipping bar, ritual saving (a set % off every
+  candle bought with an object) and the cart's one suggestion all read from settings. With a database, orders
+  go through `place_order`, which re-checks prices and takes stock off atomically; the order page re-reads its
+  status with `get_order`. Help has an order lookup by number and mobile.
 - **The prototype bar** switches website or installed-app layout, the opening (D, C, A, B) and the theme
   (six skins).
 - **The Living Canvas** is the sticky stage at the top of the home page. A 2D canvas draws openings A and B, plus
@@ -209,6 +229,7 @@ in), the preview uses a local copy from npm.
 
 ```sh
 LOCAL_THREE=1 sh bud-and-things/tools/preview.sh &          # http://localhost:8765/page.html
+node bud-and-things/tools/mock-supabase.js &                 # optional: a test database on :54321 (see supabase/README.md)
 node bud-and-things/tools/test-flow.js                       # cart → checkout → UPI → order → owner view → finder
 node bud-and-things/tools/test-house.js '[{"p":0.2,"w":1280},{"p":0.6,"w":390,"mood":"festive","focus":"chai-at-four"}]' /tmp
 ```
@@ -237,17 +258,12 @@ node bud-and-things/tools/test-house.js '[{"p":0.2,"w":1280},{"p":0.6,"w":390,"m
 
 ## 8. Known limits and next steps
 
-- **Intro length.** The house walk is long (13 screen heights). Next:
-  - a short default intro (door → niche → shop);
-  - the full house as an optional "Walk through the house" page;
-  - "Shop now" always visible;
-  - returning visitors skip it;
-  - track scroll depth and skips to judge engagement.
-- **Responsiveness and speed:**
-  - lighter textures on phones;
-  - panel and label layout on small screens;
-  - touch gestures;
-  - testing on real devices.
+- **Intro length.** Done: a Shop button stays on screen through the walk, returning visitors open at the end
+  ("Welcome back"), and walk completion, skips and Shop taps are tracked (`walk_complete`, `walk_skip`,
+  `walk_shop`). Next: a short default intro (door → niche → shop), with the full house as an optional page.
+- **Responsiveness and speed.** Done: a poster of the porch while the house loads, half-size lightmaps on phones,
+  labels that stack instead of overlapping, quieter chrome on the hero and end screens. Next: touch gestures and
+  testing on real devices.
 - **Real products.** The 3D pieces are stand-ins built in code. Model the real candles and Jesmonite pieces from
   photos and sizes, and replace the PDF-cut brand images with original files.
 - **More rooms** (living room, dining nook) follow the checklist in 4.4.

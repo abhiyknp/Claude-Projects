@@ -76,6 +76,35 @@ def box(name, x0, x1, y0, y1, z0, z1, material=None):
     return obj_from_bm(name, bm, material)
 
 
+def soft_box(name, x0, x1, y0, y1, z0, z1, r, material=None, segs=3):
+    """A box with rounded edges, for upholstery, bedding and furniture that should not read as blocks."""
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1)
+    for v in bm.verts:
+        v.co = Vector(((x0 + x1) / 2 + v.co.x * (x1 - x0), (y0 + y1) / 2 + v.co.y * (y1 - y0), (z0 + z1) / 2 + v.co.z * (z1 - z0)))
+    bmesh.ops.bevel(bm, geom=list(bm.edges), offset=r, segments=segs, profile=.5, affect='EDGES', clamp_overlap=True)
+    return obj_from_bm(name, bm, material)
+
+
+def cushion(name, c, size, material=None, lean=0.0, puff=.55, cuts=7):
+    """A pillow: a subdivided cube pushed part-way to a sphere, so it is full in the middle and soft at the seams.
+    c is the centre, size the (x, y, z) extent; lean tilts it back about the y axis (radians)."""
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=2)
+    bmesh.ops.subdivide_edges(bm, edges=list(bm.edges), cuts=cuts, use_grid_fill=True)
+    for v in bm.verts:
+        x, y, z = v.co.x, v.co.y, v.co.z
+        sx = x * math.sqrt(max(0, 1 - y * y / 2 - z * z / 2 + y * y * z * z / 3))
+        sy = y * math.sqrt(max(0, 1 - z * z / 2 - x * x / 2 + z * z * x * x / 3))
+        sz = z * math.sqrt(max(0, 1 - x * x / 2 - y * y / 2 + x * x * y * y / 3))
+        x, y, z = x + (sx - x) * puff, y + (sy - y) * puff, z + (sz - z) * puff
+        z *= 1 - .35 * max(abs(x), abs(y)) ** 3  # thinner towards the seams
+        x, y, z = x * size[0] / 2, y * size[1] / 2, z * size[2] / 2
+        x, z = x * math.cos(lean) - z * math.sin(lean), x * math.sin(lean) + z * math.cos(lean)
+        v.co = Vector((c[0] + x, c[1] + y, c[2] + z))
+    return obj_from_bm(name, bm, material)
+
+
 def arch_prism(name, plane, c, w, h_rect, d0, d1, z0=0.0, seg=28):
     """An arched opening shape (rectangle + half circle) extruded between d0 and d1.
     plane 'xz' extrudes along y (front/back walls); 'yz' extrudes along x (side walls)."""
@@ -188,14 +217,14 @@ def _lightmap_uv(ob):
     bpy.ops.object.mode_set(mode='OBJECT')
 
 
-def prepare(objs, fallback):
+def prepare(objs, fallback, smooth=()):
     for ob in objs:
         first = next((sl.material for sl in ob.material_slots if sl.material), fallback)
         for sl in ob.material_slots:
             if sl.material is None:
                 sl.material = first  # boolean cuts leave an empty slot behind
         for p in ob.data.polygons:
-            p.use_smooth = False
+            p.use_smooth = ob.name in smooth
         _tile_uv(ob)
         _lightmap_uv(ob)
 
