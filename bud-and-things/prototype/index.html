@@ -1562,11 +1562,13 @@ function admSetup() {
     ${BTDB.on ? `<div class="adm-card"><h2 style="font-size:24px">Signed in</h2><button class="btn ghost" type="button" data-act="adm-signout">Sign out</button></div>` : `<div class="adm-card"><h2 style="font-size:24px">Connect the database</h2><ol class="muted adm-steps"><li>Create a free project at supabase.com.</li><li>Open SQL Editor, paste <span class="num">supabase/schema.sql</span> from the code and run it. Put Ashi’s email in its last line first.</li><li>In Authentication → Users, add that email with a password, and turn off new sign-ups.</li><li>From Project Settings → API, paste the Project URL and the anon public key into <span class="num">prototype/config.js</span>.</li><li>Come back here, sign in, and press “Copy into the database”.</li></ol><p class="muted">The full steps are in <span class="num">bud-and-things/supabase/README.md</span>.</p><button class="btn ghost" type="button" data-act="adm-local-clear">Clear this browser’s demo edits</button></div>`}`;
 }
 async function admSeed() {
-  const have = new Set((DATA.products || []).map((r) => r.id)), haveP = new Set((DATA.pairings || []).map((r) => r.id));
-  const prods = BASE_P.map(baseRow).filter((r) => !have.has(r.id)); const pairs = BASE_PAIRINGS.map(pairRow).filter((r) => !haveP.has(r.id));
+  const haveR = new Set((DATA.products || []).map((r) => r.id)), haveP = new Set((DATA.pairings || []).map((r) => r.id));
+  const prods = BASE_P.map(baseRow).filter((r) => !haveR.has(r.id)); const pairs = BASE_PAIRINGS.map(pairRow).filter((r) => !haveP.has(r.id));
   if (prods.length) await dbPut('products', prods);
   if (pairs.length) await dbPut('pairings', pairs);
-  const st = Object.keys(skuMap).map((sku) => ({ sku, qty: stockOf(sku) })); if (st.length) await dbPut('stock', st);
+  // built-in counts for any SKU the database has no count for yet (or when every saved count is zero, as an empty first copy leaves them)
+  const have = DATA.stock || {}, base = defaults().stock, blank = !Object.values(have).some((q) => q > 0);
+  const st = Object.keys(skuMap).map((sku) => ({ sku, qty: !blank && have[sku] != null ? have[sku] : (base[sku] ?? 0) })); if (st.length) await dbPut('stock', st);
   return prods.length + ' products, ' + pairs.length + ' rituals and ' + st.length + ' stock counts';
 }
 function downloadCSV(name, rows) {
