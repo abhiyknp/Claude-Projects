@@ -40,8 +40,9 @@ const PATH = [
   ...[[0, [0, 1.7, -9.5], [0, 2.7, 0]], [.05, [0, 1.65, -7.6], [0, 2.4, 0]], [.15, [0, 1.6, -3.4], [0, 2.1, 4]],
     [.21, [0, 1.6, 1.2], [0, 1.85, 9]], [.27, [0, 1.55, 5.4], [0, 1.45, 9.2]], [.3, [0, 1.5, 6.85], [0, 1.36, 9.25]], [.395, [0, 1.5, 6.95], [0, 1.38, 9.25]]
   ].map(([t, a, b]) => [t * FS, a, b]),
-  // from the niche, turn left and straight through the arch into the bedroom (the walk skips CUT, see below):
+  // from the niche, a slow turn to the right and on through the arch into the bedroom (the walk skips CUT, see below):
   // the bed and its candle ledge, the left shelves, the gifting table, the window
+  [.395, [0, 1.5, 6.95], [0, 1.38, 9.25]], [.435, [-.4, 1.55, 6.8], [-2.4, 1.45, 9.1]],
   [.47, [-1.5, 1.7, 6.6], [-4.5, 1.6, 7.4]], [.505, [-3.6, 1.65, 7.4], [-10.5, 1.4, 7.0]], [.54, [-6.5, 1.55, 6.8], [-10.5, 1.3, 6.6]],
   [.6, [-7.3, 1.5, 6.6], [-10.5, 1.35, 6.6]], [.645, [-7.31, 1.5, 6.65], [-10.5, 1.35, 6.62]],
   [.69, [-5.6, 1.55, 7.7], [-5.6, 1.5, 9.6]], [.735, [-5.65, 1.55, 7.75], [-5.65, 1.5, 9.6]],
@@ -58,8 +59,8 @@ const labelAt = (o) => (o.place ? placeAt(o) : litAt(o) + .01);
 const roomAt = (p) => (p < .48 ? 'F' : 'B');
 // The walk used to turn to the left and right foyer shelves between the niche and the arch. That stretch is cut so
 // the intro stays short: the times above keep their old values, and the scroll position p (0..1) maps onto them
-// with CUT skipped. The shelf pieces are already in place when the camera turns; tapping or the room list reaches them.
-const CUT = [.395 * FS, .435], KEEP = 1 - (CUT[1] - CUT[0]);
+// with CUT skipped. CUT starts and ends on the same niche view, so nothing jumps. The shelf pieces are already in place when the camera turns; tapping or the room list reaches them.
+const CUT = [.395 * FS, .395], KEEP = 1 - (CUT[1] - CUT[0]);
 const walkOf = (p) => { const q = p * KEEP; return q < CUT[0] ? q : q + CUT[1] - CUT[0]; };
 const scrollOf = (q) => (q < CUT[0] ? q : Math.max(CUT[0], q - (CUT[1] - CUT[0]))) / KEEP;
 

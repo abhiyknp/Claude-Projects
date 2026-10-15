@@ -177,7 +177,7 @@ body.app .site-foot { display: none; }
   .lc-spots a .num { display: none; }
 }
 .lc.tour { height: 1000vh; }
-.lc.tour.house { height: 1045vh; }
+.lc.tour.house { height: 1090vh; }
 .lc-stage.focused .lc-cap, .lc-stage.focused .lc-rail, .lc-stage.focused .lc-hero, .lc-stage.focused .house-mood { opacity: 0 !important; visibility: hidden !important; transition: opacity .4s; }
 .house-ui { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
 .house-ui > * { pointer-events: auto; }
@@ -209,7 +209,7 @@ body.app .site-foot { display: none; }
 .house-panel .hp-nav { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(61,40,30,.15); margin-top: 10px; padding-top: 8px; }
 .house-panel .hp-close { position: absolute; right: 8px; top: 8px; }
 .house-panel .hp-hint { font-size: 12px; margin: 6px 0 0; }
-@media (max-width: 760px) { .lc.tour.house { height: 850vh; } .house-panel { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; transform: none; padding: 18px 16px 12px; animation: none; } .house-panel h3 { font-size: 24px; } .house-panel .hp-line { font-size: 14px; } .house-list-btn { left: 12px; bottom: 14px; } }
+@media (max-width: 760px) { .lc.tour.house { height: 885vh; } .house-panel { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; transform: none; padding: 18px 16px 12px; animation: none; } .house-panel h3 { font-size: 24px; } .house-panel .hp-line { font-size: 14px; } .house-list-btn { left: 12px; bottom: 14px; } }
 .lc.tour .lc-cap { top: auto; bottom: 8%; }
 @media (max-width: 760px) { .lc.tour { height: 820vh; } }
 .world { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
@@ -1006,9 +1006,9 @@ const OPENINGS = {
   pour: { name: 'B · The Pour', rail: ['Sketch', 'Pour', 'Cast', 'Light'], cuts: [.14, .62, .78], hero: [.05, .11], staticP: .76,
     caps: [['Every candle begins<br><em>as a slow pour.</em>', [.12, .16, .24, .28]], ['Masala chai, saffron,<br><em>wet earth after rain.</em>', [.3, .34, .5, .54]], ['Cast, set,<br><em>lifted from the mould.</em>', [.62, .65, .72, .75]], ['Then, one by one,<br><em>they are lit.</em>', [.77, .8, .85, .87]]],
     spots: [.72, .75, .84, .87], final: [.88, .94], light: .79 },
-  house: { name: 'D · The House', rail: ['Front door', 'The niche', 'The bedroom', 'Gifting corner'], cuts: [.153, .339, .695], hero: [.015, .038], staticP: .517,
-    caps: [['The door is open.<br><em>Come in.</em>', [.057, .07, .108, .127]], ['One by one,<br><em>the candles are lit.</em>', [.219, .229, .263, .273]], ['Through the arch,<br><em>the bedroom waits in the dark.</em>', [.332, .345, .402, .421]], ['Then the bedside candles<br><em>take over from the dusk.</em>', [.44, .453, .504, .523]], ['A corner kept<br><em>for giving.</em>', [.701, .714, .758, .771]], ['Made with thought.<br><em>Given with feeling.</em>', [.873, .886, .924, .936]]],
-    spots: null, final: [.943, .994], light: 0 },
+  house: { name: 'D · The House', rail: ['Front door', 'The niche', 'The bedroom', 'Gifting corner'], cuts: [.145, .371, .71], hero: [.015, .036], staticP: .54,
+    caps: [['The door is open.<br><em>Come in.</em>', [.054, .067, .103, .121]], ['One by one,<br><em>the candles are lit.</em>', [.208, .218, .251, .26]], ['Through the arch,<br><em>the bedroom waits in the dark.</em>', [.365, .377, .431, .449]], ['Then the bedside candles<br><em>take over from the dusk.</em>', [.467, .48, .528, .546]], ['A corner kept<br><em>for giving.</em>', [.716, .728, .77, .782]], ['Made with thought.<br><em>Given with feeling.</em>', [.879, .891, .927, .939]]],
+    spots: null, final: [.946, .994], light: 0 },
   tour: { name: 'C · Home Tour', rail: ['Front door', 'Foyer', 'Living room', 'Bedroom'], cuts: [.16, .48, .79], hero: [.02, .05], staticP: .33,
     caps: [['The door is open.<br><em>Come in.</em>', [.07, .09, .13, .15]], ['One by one,<br><em>the candles are lit.</em>', [.19, .21, .25, .27]], ['Trays and plates to the left,<br><em>little forms to the right.</em>', [.29, .31, .4, .42]], ['The next room<br><em>waits in the dark.</em>', [.48, .5, .54, .56]], ['Pieces for the living room,<br><em>made to be used.</em>', [.6, .62, .71, .73]], ['A corner kept<br><em>for giving.</em>', [.86, .875, .945, .96]]],
     spots: null, final: [.965, .995], light: 0 }
@@ -1384,8 +1384,8 @@ function sceneHouse(ctx, L, p, t) {
   LC.spots = Hs.render(p, t); LC.houseIn = Math.min(1, (LC.houseIn || 0) + .04);
   const rm = Hs.roomAt(p); if (rm !== LC.houseRoom) { LC.houseRoom = rm; if (UI.house.focus < 0) renderHouseUI(); }
   if (LC.houseIn < 1) { ctx.fillStyle = `rgba(14,9,7,${1 - LC.houseIn})`; ctx.fillRect(0, 0, L.W, L.H); }
-  const fin = seg(p, .943, .994); if (fin > 0) { ctx.fillStyle = `rgba(18,11,8,${.55 * fin})`; ctx.fillRect(0, 0, L.W, L.H); }
-  const hs = 1 - seg(p, .025, .076); if (hs > 0) { const g = ctx.createLinearGradient(0, 0, L.mobile ? 0 : L.W * .6, L.mobile ? L.H : 0); g.addColorStop(0, `rgba(30,18,12,${.55 * hs})`); g.addColorStop(1, 'rgba(30,18,12,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); } // keeps the hero readable over the sunny porch
+  const fin = seg(p, .946, .994); if (fin > 0) { ctx.fillStyle = `rgba(18,11,8,${.55 * fin})`; ctx.fillRect(0, 0, L.W, L.H); }
+  const hs = 1 - seg(p, .024, .073); if (hs > 0) { const g = ctx.createLinearGradient(0, 0, L.mobile ? 0 : L.W * .6, L.mobile ? L.H : 0); g.addColorStop(0, `rgba(30,18,12,${.55 * hs})`); g.addColorStop(1, 'rgba(30,18,12,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); } // keeps the hero readable over the sunny porch
   const vg = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * .45, L.W / 2, L.H / 2, Math.max(L.W, L.H) * .8); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.22)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, L.W, L.H);
 }
 const HOUSE_ROOM = () => (window.HOUSE && window.HOUSE.ready ? window.HOUSE.roomAt(LC.p) : 'F');
