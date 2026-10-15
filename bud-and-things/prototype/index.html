@@ -537,6 +537,16 @@ input[type="file"] { padding: 10px 12px; }
   .toolbar .group:last-child select { grid-row: 2; min-height: 44px; font-size: 15px; padding: 0 6px; width: 100%; min-width: 0; }
   .toolbar { margin-bottom: 18px; }
 }
+/* Coming soon: one quiet page for visitors until launch */
+body.cs .proto, body.cs .site-head, body.cs .site-foot, body.cs .tabbar, body.cs #overlay { display: none !important; }
+body.cs main { padding-bottom: 0; }
+.soon { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 56px 20px; text-align: center; background: radial-gradient(ellipse at 50% 28%, var(--card), var(--ivory) 72%); }
+.soon .lockup { color: var(--choc); margin-bottom: 8px; }
+.soon h1 { font-size: clamp(38px, 6vw, 64px); }
+.soon h1 em { color: var(--terra-ink); }
+.soon p { max-width: 520px; margin: 0; }
+.soon form { width: 100%; max-width: 480px; display: flex; flex-wrap: wrap; gap: 10px; text-align: left; margin-top: 8px; }
+.soon .reach { font-size: 14px; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 
@@ -595,8 +605,6 @@ input[type="file"] { padding: 10px 12px; }
 <script src="config.js"></script>
 <script src="db.js"></script>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
-<script type="module" src="tour3d.js"></script>
-<script type="module" src="house3d.js"></script>
 <script>
 (function () {
 'use strict';
@@ -750,9 +758,13 @@ const TEXT = {
   'help.where': ['[Stores, pop-ups and stockists]. Also on Amazon, Flipkart and Meesho.', 'Help: where to find us'],
   'help.privacy': ['We use your details only to deliver your order and, if you ask, to send updates. We never sell them.', 'Help: privacy'],
   'foot.tagline': ['Made with thought. Given with feeling.', 'Footer: tagline'],
-  'foot.also': ['Also on Amazon, Flipkart and Meesho. Pay by UPI, card or cash on delivery.', 'Footer: small print']
+  'foot.also': ['Also on Amazon, Flipkart and Meesho. Pay by UPI, card or cash on delivery.', 'Footer: small print'],
+  'soon.eyebrow': ['Coming soon', 'Coming soon: small line above the heading'],
+  'soon.title': ['Something small\n*is beginning to grow.*', 'Coming soon: heading'],
+  'soon.text': ['Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving. Leave your email or WhatsApp number and we’ll tell you the day we open.', 'Coming soon: text'],
+  'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button']
 };
-const TEXT_GROUPS = [['home.', 'Home page'], ['walk.', 'The house walk'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['foot.', 'Footer']];
+const TEXT_GROUPS = [['soon.', 'Coming soon page'],['home.', 'Home page'], ['walk.', 'The house walk'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['foot.', 'Footer']];
 // settings: money in ₹, lists of product ids separated by commas
 const SET_META = [
   ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'],
@@ -760,16 +772,28 @@ const SET_META = [
   ['wrapFee', 'Gift wrap price (₹)', 'num'], ['ritualOff', 'Ritual saving: % off a candle and object bought together (0 for none)', 'num'],
   ['welcomeCode', 'Welcome code for newsletter sign-ups', 'text'], ['welcomeOff', 'Welcome code saving (%)', 'num'], ['repourPrice', 'Jar re-pour price (₹, 0 to hide)', 'num'],
   ['featured', 'Home: featured product ids', 'text'], ['giftPicks', 'Gifting: popular product ids', 'text'], ['homeRitual', 'Home: ritual pairing id', 'text'],
-  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text']
+  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'],
+  ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
+const CS_KEYS = ['comingSoon', 'previewCode'];
 const SET_DEFAULTS = { shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: true, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599,
-  featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings' };
+  featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings',
+  comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
 const fill = (s) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k in SET ? (/Fee|Price|Over/.test(k) ? inr(SET[k]) : String(SET[k])) : m));
 const Tx = (k) => fill(k in TXT ? TXT[k] : (TEXT[k] ? TEXT[k][0] : ''));
 const T = (k) => esc(Tx(k)).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
 const idList = (k) => String(SET[k] || '').split(',').map((x) => x.trim()).filter((id) => byId[id]);
+
+// ---------- coming soon: until launch, visitors to the live site see one page (database mode only) ----------
+// #admin always opens; the signed-in owner and testers who opened ?preview=<code> see the shop. ?preview=off ends it.
+const PREVIEW = (() => { let v = null; try { v = localStorage.getItem('bt-preview'); } catch (e) { /* storage unavailable */ }
+  const q = new URLSearchParams(location.search).get('preview'); if (!q) return v; v = q === 'off' ? null : q;
+  try { if (v) localStorage.setItem('bt-preview', v); else localStorage.removeItem('bt-preview'); } catch (e) { /* this visit only */ }
+  return v; })();
+const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !BTDB.owner() && !(SET.previewCode && PREVIEW === String(SET.previewCode));
+const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(SET.previewCode || '');
 
 // ---------- the data: built in, from this browser (demo), or from the database ----------
 // DATA holds what the owner can change. Empty products or pairings fall back to the built-in draft range.
@@ -1085,6 +1109,14 @@ function viewHome() {
 
   <section class="section wrap" aria-labelledby="news-h"><div class="intro" style="gap:14px"><h2 id="news-h" style="font-size:40px">${T('home.news')}</h2><p class="muted" style="font-family:var(--body);font-size:16px">${T('home.newsText')}</p>
     <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email or WhatsApp number</label><input id="news-email" type="text" inputmode="email" autocomplete="email" style="flex:1 1 240px"><button class="btn" type="submit">Join the list</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`;
+}
+
+function viewComingSoon() {
+  const ig = String(SET.instagram || '').trim().replace(/^@/, ''), wa = waLink('Hello BUD & THINGS');
+  const reach = [ig && /^[\w.]+$/.test(ig) && `<a href="https://instagram.com/${ig}" target="_blank" rel="noopener">Instagram @${esc(ig)}</a>`, wa && `<a href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>`].filter(Boolean).join(' · ');
+  return `<section class="soon" aria-labelledby="soon-h"><span class="mark lockup" role="img" aria-label="BUD &amp; THINGS by Ashi"></span><span class="eyebrow">${T('soon.eyebrow')}</span><h1 id="soon-h" tabindex="-1">${T('soon.title')}</h1><p class="muted">${T('soon.text')}</p>
+    <form data-form="news" data-src="coming-soon" novalidate><label for="news-email" style="flex:1 1 100%">Email or WhatsApp number</label><input id="news-email" type="text" inputmode="email" autocomplete="email" style="flex:1 1 220px;min-width:0"><button class="btn" type="submit">${T('soon.cta')}</button><span id="news-msg" style="flex:1 1 100%"></span></form>
+    ${reach ? `<p class="reach muted">${reach}</p>` : ''}</section>`;
 }
 
 function viewShop(cat) {
@@ -1531,8 +1563,12 @@ function admStock() {
     <div class="table-wrap"><table><thead><tr><th>Product</th><th>Option</th><th>SKU</th><th>In stock</th><th>Website</th></tr></thead><tbody>${Object.entries(skuMap).map(([sku, { p, v }]) => { const n = stockOf(sku); return `<tr><td>${esc(p.name)}</td><td>${esc(v.label)}</td><td class="num">${esc(sku)}</td><td><label class="sr" for="st-${esc(sku)}">Stock for ${esc(p.name)} ${esc(v.label)}</label><input type="number" min="0" max="9999" id="st-${esc(sku)}" data-act="stock" data-sku="${esc(sku)}" value="${n}"></td><td>${n === 0 ? '<span class="pill out">Sold out</span>' : n <= 2 ? '<span class="pill low">Low</span>' : '<span class="pill">Listed</span>'}${waiting[sku] ? ` <span class="pill">${waiting[sku]} waiting</span>` : ''}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 function admSettings() {
-  return `<p class="muted">Each change saves when you leave the box and shows on the site at once.</p><div class="form adm-card">${SET_META.map(([k, l, t]) => t === 'bool' ? `<label class="check full"><input type="checkbox" data-act="adm-set" data-k="${k}" ${SET[k] ? 'checked' : ''}> ${esc(l)}</label>`
-    : `<span class="field${t === 'text' && /featured|giftPicks/.test(k) ? ' full' : ''}"><label for="set-${k}">${esc(l)}</label><input id="set-${k}" data-act="adm-set" data-k="${k}" ${t === 'num' ? 'type="number" min="0"' : ''} value="${esc(SET[k])}"></span>`).join('')}</div>
+  const field = ([k, l, t]) => t === 'bool' ? `<label class="check full"><input type="checkbox" data-act="adm-set" data-k="${k}" ${SET[k] ? 'checked' : ''}> ${esc(l)}</label>`
+    : `<span class="field${t === 'text' && /featured|giftPicks/.test(k) ? ' full' : ''}"><label for="set-${k}">${esc(l)}</label><input id="set-${k}" data-act="adm-set" data-k="${k}" ${t === 'num' ? 'type="number" min="0"' : ''} value="${esc(SET[k])}"></span>`;
+  return `<p class="muted">Each change saves when you leave the box and shows on the site at once.</p>
+    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon page</h2><p class="muted full">While it is on, visitors see only the Coming soon page and its sign-up form${BTDB.on ? '' : ' (once the database is connected)'}. You see the whole site while signed in, and so does anyone who opens the preview link. To launch, switch it off.</p>
+      ${SET_META.filter((m) => CS_KEYS.includes(m[0])).map(field).join('')}<span class="field full"><label for="cs-link">Preview link for testers</label><span style="display:flex;flex-wrap:wrap;gap:8px"><input id="cs-link" readonly value="${esc(previewLink())}" style="flex:1 1 260px;min-width:0"><button class="btn small ghost" type="button" data-act="cs-copy">Copy link</button></span></span></div>
+    <div class="form adm-card">${SET_META.filter((m) => !CS_KEYS.includes(m[0])).map(field).join('')}</div>
     <details class="adm-group"><summary>Product and ritual names to use above</summary><p class="muted num" style="padding:12px 0">${P.map((p) => esc(p.id)).join(', ')}</p><p class="muted num">Rituals: ${PAIRINGS.map((x) => esc(x.id)).join(', ')}</p></details>`;
 }
 function admReviews() {
@@ -1556,7 +1592,8 @@ function admSetup() {
   const n = (x) => (x ? x.length : 0);
   const facts = [['Database', BTDB.on ? `Connected to ${esc(BTDB.url)}` : 'Not connected: demo mode, changes stay in this browser'], ['State', BTDB.on ? esc(DB.state === 'ok' ? 'Up to date' : DB.state === 'loading' ? 'Loading' : 'Not answering: ' + (DB.error || '')) : 'Local'],
     ['Products in the database', DATA.products && DATA.products.length ? n(DATA.products) : 'none yet, showing the built-in range'], ['Rituals in the database', DATA.pairings && DATA.pairings.length ? n(DATA.pairings) : 'none yet, showing the built-in ones'],
-    ['Photos and videos', n(DATA.media)], ['Site text changed', Object.keys(TXT).length + ' of ' + Object.keys(TEXT).length + ' lines'], ['Settings changed', Object.keys(DATA.settings || {}).length]];
+    ['Photos and videos', n(DATA.media)], ['Site text changed', Object.keys(TXT).length + ' of ' + Object.keys(TEXT).length + ' lines'], ['Settings changed', Object.keys(DATA.settings || {}).length],
+    ['Coming soon page', SET.comingSoon ? 'On: visitors see only the Coming soon page. To launch, switch it off under Settings.' : 'Off: the shop is open to everyone']];
   return `<div class="facts" style="border-top:0">${facts.map(([k, v]) => `<div><strong>${k}</strong><span class="muted">${v}</span></div>`).join('')}</div>
     <div class="adm-card"><h2 style="font-size:24px">Copy the built-in range into the database</h2><p class="muted">Do this once, after connecting. It saves every built-in product, ritual and the current stock counts, so you can edit them here. Products and rituals already in the database are not overwritten.</p><button class="btn" type="button" data-act="adm-seed">Copy into the database</button></div>
     ${BTDB.on ? `<div class="adm-card"><h2 style="font-size:24px">Signed in</h2><button class="btn ghost" type="button" data-act="adm-signout">Sign out</button></div>` : `<div class="adm-card"><h2 style="font-size:24px">Connect the database</h2><ol class="muted adm-steps"><li>Create a free project at supabase.com.</li><li>Open SQL Editor, paste <span class="num">supabase/schema.sql</span> from the code and run it. Put Ashi’s email in its last line first.</li><li>In Authentication → Users, add that email with a password, and turn off new sign-ups.</li><li>From Project Settings → API, paste the Project URL and the anon public key into <span class="num">prototype/config.js</span>.</li><li>Come back here, sign in, and press “Copy into the database”.</li></ol><p class="muted">The full steps are in <span class="num">bud-and-things/supabase/README.md</span>.</p><button class="btn ghost" type="button" data-act="adm-local-clear">Clear this browser’s demo edits</button></div>`}`;
@@ -1582,9 +1619,10 @@ function viewNotFound() { return `<div class="wrap" style="padding-block:60px 10
 
 // ---------- render ----------
 function render(nav) {
-  const r = route(); let html;
-  if (r.startsWith('house-')) S.opening = 'house';
-  if (r === 'home' || r.startsWith('house-')) html = viewHome();
+  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs);
+  if (!cs && r.startsWith('house-')) S.opening = 'house';
+  if (cs) html = viewComingSoon();
+  else if (r === 'home' || r.startsWith('house-')) html = viewHome();
   else if (r === 'shop') html = viewShop('all');
   else if (r === 'candles') html = viewShop('candles');
   else if (r === 'jesmonite') html = viewShop('jesmonite');
@@ -1603,9 +1641,10 @@ function render(nav) {
   else html = viewNotFound();
   const app = $('#app'); app.innerHTML = html;
   renderChrome(); renderOverlay();
+  if (cs) { lcSetup(false); if (nav) window.scrollTo(0, 0); return; }
   if (r === 'checkout' && UI.co.step === 'pay' && UI.co.method === 'qr') drawQR();
   if (nav) { window.scrollTo(0, 0); const h = app.querySelector('h1[tabindex]'); if (h && r !== 'home') h.focus({ preventScroll: true }); }
-  lcSetup(r === 'home' || r.startsWith('house-'));
+  load3d(); lcSetup(r === 'home' || r.startsWith('house-'));
   const first = !UI.rendered; UI.rendered = true;
   if (first && r === 'home' && RETURNING && S.opening === 'house' && !reduce.matches) requestAnimationFrame(() => { const lc = $('#lc'), st = $('#lc-stage'); if (!lc) return; const total = lc.offsetHeight - st.offsetHeight; const p = .975; window.scrollTo(0, lc.getBoundingClientRect().top + scrollY - 65 + p * total); LC.p = p; });
   if (S.opening === 'house' && $('#house-ui')) { UI.house.focus = -1; UI.house.list = false; renderHouseUI(); }
@@ -2014,7 +2053,12 @@ function sceneTour(ctx, L, p, t) {
 }
 // D · The House: baked rooms from Blender (house3d.js). Tap a piece and the camera glides to it.
 const POSTER = { d: new Image(), m: new Image() };
-if (S.opening === 'house') { POSTER.d.src = 'assets/house/poster.jpg'; POSTER.m.src = 'assets/house/poster-m.jpg'; }
+// the 3D openings load with the shop, never behind the Coming soon page
+function load3d() {
+  if (load3d.done) return; load3d.done = true;
+  if (S.opening === 'house') { POSTER.d.src = 'assets/house/poster.jpg'; POSTER.m.src = 'assets/house/poster-m.jpg'; }
+  ['tour3d.js', 'house3d.js'].forEach((src) => { const s = document.createElement('script'); s.type = 'module'; s.src = src; document.body.appendChild(s); });
+}
 function sceneHouse(ctx, L, p, t) {
   const Hs = window.HOUSE;
   if (!Hs || Hs.failed) { ctx.fillStyle = '#120B08'; ctx.fillRect(0, 0, L.W, L.H); if (Hs && Hs.failed) { ctx.fillStyle = '#F3E6D6'; ctx.font = '16px Lato, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('The 3D house could not load here. Try opening A or B.', L.W / 2, L.H / 2); if (Hs.error) { ctx.font = '12px Lato, sans-serif'; ctx.fillStyle = 'rgba(243,230,214,.6)'; ctx.fillText(Hs.error.slice(0, 120), L.W / 2, L.H / 2 + 24); } } LC.spots = []; return; }
@@ -2229,7 +2273,8 @@ document.addEventListener('click', (e) => {
     case 'adm-review': admDo(async () => { const v = d.v === '1'; if (BTDB.on) await BTDB.update('reviews', 'id=eq.' + encodeURIComponent(d.id), { published: v }); const list = admData('reviews') || []; const r = list.find((x) => String(x.id) === d.id); if (r) r.published = v; save(); DATA.reviews = list.filter((x) => x.published); render(); }, d.v === '1' ? 'Published.' : 'Unpublished.'); break;
     case 'adm-review-del': if (confirm('Delete this review?')) admDo(async () => { if (BTDB.on) await BTDB.remove('reviews', 'id=eq.' + encodeURIComponent(d.id)); const list = admData('reviews') || []; const i = list.findIndex((x) => String(x.id) === d.id); if (i >= 0) list.splice(i, 1); save(); DATA.reviews = list.filter((x) => x.published); render(); }, 'Review deleted.'); break;
     case 'adm-csv': downloadCSV(d.v === 'subscribers' ? 'bud-and-things-sign-ups' : 'bud-and-things-restock-requests', (admData('people') || []).filter((r) => r.table === d.v)); break;
-    case 'adm-seed': admDo(async () => { const msg = await admSeed(); say('Copied ' + msg + '.'); render(); }); break;
+    case 'cs-copy': { const l = $('#cs-link'); l.select(); (navigator.clipboard ? navigator.clipboard.writeText(l.value) : Promise.reject()).then(() => say('Preview link copied.'), () => say('Select the link and copy it.')); break; }
+    case 'adm-seed':admDo(async () => { const msg = await admSeed(); say('Copied ' + msg + '.'); render(); }); break;
     case 'adm-signout': BTDB.signOut(); UI.adm.rows = {}; loadData(); render(); say('Signed out.'); break;
     case 'adm-local-clear': if (confirm('Remove every change made in this browser’s demo control panel?')) { delete S.db; save(); Object.assign(DATA, { products: null, pairings: null, text: {}, settings: {}, media: [], reviews: [] }); loadData(); render(); say('Demo edits cleared.'); } break;
     case 'qty': { const l = S.cart.find((x) => x.sku === d.sku); if (l) { l.qty = Math.max(0, Math.min(stockOf(d.sku), l.qty + +d.d)); if (!l.qty) S.cart = S.cart.filter((x) => x.sku !== d.sku); save(); UI.drawerMsg = null; renderChrome(); renderOverlay(); if (['cart', 'checkout'].includes(route())) render(); } break; }
@@ -2266,7 +2311,7 @@ document.addEventListener('change', (e) => {
   if (d.act === 'ritual-pick') { UI.ritual.pick[UI.ritual.preset][d.i] = t.checked; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'ritual-custom') { UI.ritual.custom[d.k] = t.value; UI.ritual.pick.custom = { 0: true, 1: true }; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
-  if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); }, 'Saved.'); }
+  if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
   if (d.act === 'adm-text') { const k = d.k; admDo(async () => { if (t.value === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-up-prod') { UI.adm.upProd = t.value; UI.adm.upMsg = null; render(); $('#up-prod')?.focus(); }
   if (d.act === 'gift-toggle') { readCo(t.form); render(); $('#co-g-on')?.focus(); }
@@ -2281,7 +2326,7 @@ document.addEventListener('submit', (e) => {
   if (kind === 'news') { const v = $('#news-email').value.trim(); const c = contactOf(v); const msg = $('#news-msg');
     if (!c) { msg.innerHTML = '<span class="err" role="alert" style="color:var(--terra-ink);font-weight:500">Enter an email like name@example.com, or a 10-digit mobile number.</span>'; return; }
     f.querySelector('button').disabled = true;
-    visitorSend('subscribers', { contact: c, source: 'home' }).then(() => { msg.innerHTML = `<span class="status ok" role="status" style="display:block">${T('home.newsDone')}</span>`; track('signup', { via: isEmail(c) ? 'email' : 'whatsapp' }); }, (err) => { f.querySelector('button').disabled = false; msg.innerHTML = `<span class="err" role="alert">That didn’t go through (${esc(err.message)}). Please try again.</span>`; });
+    visitorSend('subscribers', { contact: c, source: f.dataset.src || 'home' }).then(() => { msg.innerHTML = `<span class="status ok" role="status" style="display:block">${T('home.newsDone')}</span>`; track('signup', { via: isEmail(c) ? 'email' : 'whatsapp' }); }, (err) => { f.querySelector('button').disabled = false; msg.innerHTML = `<span class="err" role="alert">That didn’t go through (${esc(err.message)}). Please try again.</span>`; });
     return; }
   if (kind === 'restock') { const c = contactOf(f.querySelector('input').value.trim()); const sku = f.dataset.sku;
     if (!c) { say('Enter an email or a 10-digit mobile number.'); f.querySelector('input').setAttribute('aria-invalid', 'true'); f.querySelector('input').focus(); return; }

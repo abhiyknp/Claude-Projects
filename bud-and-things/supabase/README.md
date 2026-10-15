@@ -25,6 +25,16 @@ Ashi edits all of it from the website's **Owner view** (`#admin`). The site read
    The anon key is meant to be public. The rules in `schema.sql` decide what it can do. Never put the `service_role` key in the site.
 7. **Fill it.** Open the site at `#admin`, sign in, go to **Setup** and press **Copy into the database**. This saves the built-in products, rituals and current stock counts. From then on, edit everything in the Owner view.
 
+## Coming soon page (until launch)
+
+While the site is connected to the database, visitors see only a Coming soon page: the logo, a short line and a sign-up form (email or WhatsApp number, saved to the sign-ups list with the source `coming-soon`). The heading and text are under Site text → Coming soon page. It is on by default, so a fresh deploy never shows the unfinished shop. Demo mode (no database) is not affected.
+
+- **Ashi** opens `#admin` (it always works), signs in, and then sees the whole site.
+- **Testers** open the preview link from Owner view → Settings → Coming soon page (`…/?preview=budpreview` by default). That browser remembers it; `?preview=off` forgets it. Changing the preview code turns off every old link.
+- **Launch:** Owner view → Settings → untick "Show visitors the Coming soon page". Everyone sees the shop at once.
+
+The preview code only keeps casual visitors out. It is not security: settings are public, so anyone who looks can find the code, and the products and prices can still be read from the database. Nothing private is behind it.
+
 ## Who can do what
 
 | | Visitors | Ashi (signed in) |
