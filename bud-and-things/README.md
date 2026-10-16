@@ -54,3 +54,15 @@ product listings.
 ## Public preview
 
 Every push to `main` that touches `prototype/` publishes it to GitHub Pages (`.github/workflows/pages.yml`): https://abhiyknp.github.io/Claude-Projects/ . One-time setup in the repository: Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+
+## Pinterest
+
+- Domain verification: the `p:domain_verify` tag in the page head written by `.github/workflows/pages.yml`.
+- `tools/build-pinterest.js` runs in that workflow (on each push and once a day) and adds, from the live database:
+  `p/<id>/` (one address per product with its own title, picture, price and Product data, which forwards people
+  to `/#p-<id>`), `pinterest/products.xml` (RSS feed for auto-publishing Pins) and `pinterest/catalog.csv`
+  (data source for Pinterest Catalogs, one row per size or finish).
+- The feeds list only live products with a published photo, and stay empty while the Coming soon page is on.
+- To connect: Pinterest business account → Settings → Bulk create Pins → add `https://budandthings.com/pinterest/products.xml`;
+  Ads → Catalogs → Data source → `https://budandthings.com/pinterest/catalog.csv` (INR, India).
+- Pinterest Tag (conversion measurement) is not installed: it is an advertising script and needs a consent notice first.

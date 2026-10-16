@@ -1,4 +1,4 @@
-# Publishes the BUD & THINGS prototype (bud-and-things/prototype) to GitHub Pages on every push to main.
+# Publishes the BUD & THINGS prototype (bud-and-things/prototype) to GitHub Pages on every push to main, and daily.
 # One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions".
 name: Prototype preview (GitHub Pages)
 
@@ -8,6 +8,10 @@ on:
     paths:
       - 'bud-and-things/prototype/**'
       - '.github/workflows/pages.yml'
+      - 'bud-and-things/tools/build-pinterest.js'
+  # once a day, so product, price, stock and photo changes made in the Owner view reach the Pinterest feeds
+  schedule:
+    - cron: '17 1 * * *'
   workflow_dispatch:
 
 permissions:
@@ -42,12 +46,15 @@ jobs:
               '<meta property="og:image:width" content="1200">' '<meta property="og:image:height" content="630">' \
               '<meta property="og:image:alt" content="BUD & THINGS by Ashi logo: Made with thought. Given with feeling.">' \
               '<meta name="twitter:card" content="summary_large_image">' \
+              '<meta name="p:domain_verify" content="c2fef068eb883efd7abb4d6cdb0c7bc4"/>' \
               '<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">' '<link rel="icon" href="assets/favicon.ico" sizes="any">' '<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">' \
               '<style>[hidden]{display:none!important}body{margin:0}</style>' '</head>' '<body>'
             cat bud-and-things/prototype/index.html
             printf '%s\n' '</body>' '</html>'
           } > _site/index.html
           touch _site/.nojekyll
+      - name: Add product pages and Pinterest feeds
+        run: node bud-and-things/tools/build-pinterest.js _site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
