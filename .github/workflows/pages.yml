@@ -1,4 +1,4 @@
-# Publishes the BUD & THINGS prototype (bud-and-things/prototype) to GitHub Pages on every push to main.
+# Publishes the BUD & THINGS prototype (bud-and-things/prototype) to GitHub Pages on every push to main, and daily.
 # One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions".
 name: Prototype preview (GitHub Pages)
 
@@ -8,6 +8,10 @@ on:
     paths:
       - 'bud-and-things/prototype/**'
       - '.github/workflows/pages.yml'
+      - 'bud-and-things/tools/build-pinterest.js'
+  # once a day, so product, price, stock and photo changes made in the Owner view reach the Pinterest feeds
+  schedule:
+    - cron: '17 1 * * *'
   workflow_dispatch:
 
 permissions:
@@ -49,6 +53,8 @@ jobs:
             printf '%s\n' '</body>' '</html>'
           } > _site/index.html
           touch _site/.nojekyll
+      - name: Add product pages and Pinterest feeds
+        run: node bud-and-things/tools/build-pinterest.js _site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
