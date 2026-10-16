@@ -1,15 +1,16 @@
 <title>BUD &amp; THINGS by Ashi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lato:wght@400;700&display=swap">
 <style>
 /* Layout: Atelier of Light. One plaster room; warm light carries the colour; square, quiet UI around a single scroll moment. Single light theme by brand choice. */
 :root {
-  --ivory: #F8F0E4; --plaster: #EFE3D3; --linen: #F1E6D6; --sand: #E6D5C1; --sand2: #EADCCB; --card: #FDF8F1;
-  --caramel: #C08A5B; --terra: #A55B3F; --terra-ink: #94503A; --olive: #56634A;
-  --choc: #3D281E; --choc2: #5F4535; --line: #E2D1BC; --line2: #CDB79C; --dusk: #6E5444; --glow: #F3D9B8;
-  --cta: #A55B3F; --on-cta: #F8F0E4;
-  --ok: #4F5E3E; --warn: #94503A; --ok-bg: #E4E8D9; --err-bg: #F4DDD2; --head-bg: rgba(248,240,228,.96);
-  --sk-ink: #3D281E; --sk-ink2: #5F4535; --sk-accent: #94503A; --sk-light: #FFF6EC; --sk-dark: #3D281E; --sk-glow: #F3D9B8; --sk-cta: #F8F0E4; --sk-on-cta: #3D281E; --sk-chip: rgba(248,240,228,.94);
+  --ivory: #FFF8ED; --plaster: #F6EADA; --linen: #F8EDDD; --sand: #EFDCC3; --sand2: #F3E4CF; --card: #FFFCF6;
+  --caramel: #C9A227; --terra: #C45A3A; --terra-ink: #A3472B; --olive: #5B6B46;
+  --choc: #4B2E1E; --choc2: #6A4A38; --line: #E2D1BC; --line2: #CDB79C; --dusk: #6E5444; --glow: #F3D9B8;
+  --cta: #A3472B; --on-cta: #FFF8ED;
+  --ok: #4F5E3E; --warn: #A3472B; --ok-bg: #E4E8D9; --err-bg: #F4DDD2; --head-bg: rgba(255,248,237,.96);
+  --sk-ink: #4B2E1E; --sk-ink2: #6A4A38; --sk-accent: #A3472B; --sk-light: #FFF8ED; --sk-dark: #4B2E1E; --sk-glow: #F3D9B8; --sk-cta: #FFF8ED; --sk-on-cta: #4B2E1E; --sk-chip: rgba(255,248,237,.94);
   --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --body: 'Lato', 'Segoe UI', system-ui, sans-serif;
   --wrap: 1280px;
@@ -24,11 +25,13 @@
 * { box-sizing: border-box; }
 /* Brand marks from the identity system, used as masks so they take each theme's colour */
 .mark { display: inline-block; background-color: currentColor; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain; flex-shrink: 0; }
-.mark.wordmark { -webkit-mask-image: url(assets/logo-wordmark.png); mask-image: url(assets/logo-wordmark.png); width: 200px; aspect-ratio: 1111 / 113; }
-.mark.lockup { -webkit-mask-image: url(assets/logo-lockup.png); mask-image: url(assets/logo-lockup.png); width: min(430px, 36vw); aspect-ratio: 1111 / 487; }
-.mark.monogram { -webkit-mask-image: url(assets/monogram.png); mask-image: url(assets/monogram.png); width: 40px; aspect-ratio: 270 / 415; }
-.mark.seal { -webkit-mask-image: url(assets/monogram-seal.png); mask-image: url(assets/monogram-seal.png); width: 64px; aspect-ratio: 1; }
-.mark.leafmark { -webkit-mask-image: url(assets/leaf.png); mask-image: url(assets/leaf.png); width: 40px; aspect-ratio: 200 / 250; color: var(--caramel); }
+.mark.wordmark { -webkit-mask-image: url(assets/logo-wordmark.png); mask-image: url(assets/logo-wordmark.png); width: 200px; aspect-ratio: 1400 / 146; }
+/* the primary logo and sprig are full-colour artwork (olive leaf included), so they are images, not masks */
+.mark.lockup { background: url(assets/logo-primary.webp) center / contain no-repeat; width: min(430px, 36vw); aspect-ratio: 1800 / 1029; }
+.ink-light .mark.lockup, .dark-band .mark.lockup, :root[data-skin="evening"] .mark.lockup { background-image: url(assets/logo-primary-reverse.webp); }
+.mark.monogram { background: url(assets/logo-icon.webp) center / contain no-repeat; width: 40px; aspect-ratio: 160 / 167; }
+.mark.seal { -webkit-mask-image: url(assets/monogram-seal.png); mask-image: url(assets/monogram-seal.png); width: 64px; aspect-ratio: 500 / 489; }
+.mark.leafmark { -webkit-mask-image: url(assets/leaf.png); mask-image: url(assets/leaf.png); width: 40px; aspect-ratio: 400 / 418; color: var(--terra); }
 .photo { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .photo img { width: 100%; max-width: 100%; height: auto; display: block; aspect-ratio: 464 / 544; object-fit: cover; }
 .photo figcaption, .pack-grid figcaption { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--choc2); }
@@ -49,7 +52,7 @@ figure.gal img { aspect-ratio: auto; height: min(620px, 80vw); object-fit: cover
 .sel { user-select: all; font-weight: 700; }
 .hero-logo { margin: 4px 0; line-height: 0; }
 .hero-logo .lockup { color: var(--sk-ink); }
-.ink-light .hero-logo .lockup { color: var(--sk-light); filter: drop-shadow(0 2px 14px rgba(20,12,8,.45)); }
+.ink-light .hero-logo .lockup { color: var(--sk-light); filter: drop-shadow(0 1px 6px rgba(20,12,8,.4)); }
 .logo .mark.monogram { display: none; width: 30px; }
 @media (max-width: 560px) { .logo .mark.wordmark { display: none; } .logo .mark.monogram { display: inline-block; } }
 .band .opts button { display: inline-flex; align-items: center; gap: 10px; }
@@ -159,7 +162,7 @@ body.app .site-foot { display: none; }
 .ink-light .lc-hero .btn.ghost { background: transparent; color: var(--sk-light); border-color: var(--sk-light); }
 .ink-light .lc-hero .btn.ghost:hover { background: rgba(245,239,228,.12); }
 .ink-light .lc-hero .btn:not(.ghost) { background: var(--sk-cta); color: var(--sk-on-cta); border-color: var(--sk-cta); }
-.ink-light .lc-cap p, .ink-light .lc-hero h1, .ink-light .lc-hero .tag, .ink-light .lc-hero .sub { text-shadow: 0 2px 22px rgba(20,12,8,.75); }
+.ink-light .lc-cap p, .ink-light .lc-hero h1, .ink-light .lc-hero .tag, .ink-light .lc-hero .sub { text-shadow: 0 1px 10px rgba(20,12,8,.55); }
 .ink-light .lc-rail li { color: #D9CBB5; }
 .ink-light .lc-rail li.on { color: var(--sk-light); }
 .ink-light .lc-progress { background: var(--sk-glow); }
@@ -182,36 +185,38 @@ body.app .site-foot { display: none; }
 .house-ui { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
 .house-ui > * { pointer-events: auto; }
 .house-mood { position: absolute; right: 20px; top: 18px; text-align: right; }
-.hm-btn { background: rgba(248,240,228,.92); color: #3D281E; border: 0; padding: 9px 13px; font: 13px Lato, sans-serif; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); min-height: 40px; }
-.hm-pop { margin-top: 8px; background: rgba(248,240,228,.97); color: #3D281E; padding: 14px 16px; width: min(330px, calc(100vw - 40px)); text-align: left; box-shadow: 0 12px 40px rgba(30,18,10,.25); }
-.hm-k { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #94503A; margin: 0 0 8px; }
+.hm-btn { background: rgba(255,248,237,.92); color: #4B2E1E; border: 0; padding: 9px 13px; font: 13px Lato, sans-serif; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); min-height: 40px; }
+.hm-pop { margin-top: 8px; background: rgba(255,248,237,.97); color: #4B2E1E; padding: 14px 16px; width: min(330px, calc(100vw - 40px)); text-align: left; box-shadow: 0 12px 40px rgba(30,18,10,.25); }
+.hm-k { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #A3472B; margin: 0 0 8px; }
 .hm-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .hm-row button { border: 1px solid rgba(61,40,30,.3); background: transparent; color: inherit; padding: 8px 12px; font: 14px Lato, sans-serif; cursor: pointer; min-height: 40px; }
-.hm-row button[aria-pressed="true"] { background: #A55B3F; border-color: #A55B3F; color: #fff; }
-.hm-pop .linkish { background: none; border: 0; padding: 0; color: #94503A; text-decoration: underline; font: 13px Lato, sans-serif; cursor: pointer; }
-.house-list-btn { position: absolute; left: 20px; bottom: 22px; background: rgba(248,240,228,.92); color: #3D281E; border: 0; padding: 10px 14px; font: 600 13px Lato, sans-serif; letter-spacing: .02em; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); }
-.house-list { position: absolute; left: 20px; bottom: 70px; width: min(340px, calc(100% - 40px)); max-height: 60%; overflow: auto; background: rgba(248,240,228,.97); color: #3D281E; box-shadow: 0 12px 40px rgba(30,18,10,.25); }
+.hm-row button[aria-pressed="true"] { background: #A3472B; border-color: #A3472B; color: #fff; }
+.hm-pop .linkish { background: none; border: 0; padding: 0; color: #A3472B; text-decoration: underline; font: 13px Lato, sans-serif; cursor: pointer; }
+.house-list-btn { position: absolute; left: 20px; bottom: 22px; background: rgba(255,248,237,.92); color: #4B2E1E; border: 0; padding: 10px 14px; font: 600 13px Lato, sans-serif; letter-spacing: .02em; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); }
+.house-list { position: absolute; left: 20px; bottom: 70px; width: min(340px, calc(100% - 40px)); max-height: 60%; overflow: auto; background: rgba(255,248,237,.97); color: #4B2E1E; box-shadow: 0 12px 40px rgba(30,18,10,.25); }
 .house-list .hl-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 10px 6px 16px; }
 .house-list ol { list-style: none; margin: 0; padding: 0 0 8px; }
 .house-list li button { width: 100%; display: flex; justify-content: space-between; gap: 12px; background: none; border: 0; padding: 10px 16px; font: 14px Lato, sans-serif; color: inherit; cursor: pointer; text-align: left; min-height: 44px; }
 .house-list li button:hover { background: rgba(165,91,63,.08); }
-.house-panel { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); width: min(360px, calc(100% - 48px)); background: rgba(248,240,228,.97); color: #3D281E; padding: 26px 24px 18px; box-shadow: 0 18px 50px rgba(30,18,10,.28); animation: hp-in .5s ease both; }
+.house-panel { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); width: min(360px, calc(100% - 48px)); background: rgba(255,248,237,.97); color: #4B2E1E; padding: 26px 24px 18px; box-shadow: 0 18px 50px rgba(30,18,10,.28); animation: hp-in .5s ease both; }
 @keyframes hp-in { from { opacity: 0; transform: translate(16px, -50%); } }
 .house-panel h3 { font-family: var(--display); font-size: 30px; font-weight: 500; margin: 6px 0 6px; line-height: 1.1; }
-.house-panel .eyebrow { color: #94503A; }
+.house-panel .eyebrow { color: #A3472B; }
 .house-panel .hp-line { font-size: 15px; margin: 0 0 8px; }
 .house-panel .hp-meta { font-size: 13px; color: #6B5546; margin: 0 0 12px; }
 .house-panel .hp-price { font-size: 18px; font-weight: 700; margin: 0 0 14px; }
 .house-panel .hp-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .house-panel .hp-links { display: flex; gap: 18px; font-size: 14px; margin: 14px 0 6px; }
-.house-panel .linkish { background: none; border: 0; padding: 0; font: inherit; color: #94503A; text-decoration: underline; cursor: pointer; }
-.house-panel .hp-links a { color: #94503A; }
+.house-panel .linkish { background: none; border: 0; padding: 0; font: inherit; color: #A3472B; text-decoration: underline; cursor: pointer; }
+.house-panel .hp-links a { color: #A3472B; }
 .house-panel .hp-nav { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(61,40,30,.15); margin-top: 10px; padding-top: 8px; }
 .house-panel .hp-close { position: absolute; right: 8px; top: 8px; }
 .house-panel .hp-hint { font-size: 12px; margin: 6px 0 0; }
 @media (max-width: 760px) { .lc.tour.house { height: 885vh; } .house-panel { left: 12px; right: 12px; width: auto; top: auto; bottom: 12px; transform: none; padding: 18px 16px 12px; animation: none; } .house-panel h3 { font-size: 24px; } .house-panel .hp-line { font-size: 14px; } .house-list-btn { left: 12px; bottom: 14px; } }
 .lc.tour .lc-cap { top: auto; bottom: 8%; }
 @media (max-width: 760px) { .lc.tour { height: 820vh; } }
+/* phones: walk captions sit above the shop and room buttons, never under them */
+@media (max-width: 760px) { .lc.tour .lc-cap { bottom: 132px; } .lc.tour .lc-cap p { font-size: clamp(26px, 7.4vw, 32px); } }
 .world { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .world-cell { padding: 22px; border: 1px dashed var(--line2); display: flex; flex-direction: column; gap: 6px; min-height: 170px; text-decoration: none; }
 .world-cell strong { font-family: var(--display); font-weight: 500; font-size: 28px; }
@@ -540,13 +545,20 @@ input[type="file"] { padding: 10px 12px; }
 /* Coming soon: one quiet page for visitors until launch */
 body.cs .proto, body.cs .site-head, body.cs .site-foot, body.cs .tabbar, body.cs #overlay { display: none !important; }
 body.cs main { padding-bottom: 0; }
-.soon { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 56px 20px; text-align: center; background: radial-gradient(ellipse at 50% 28%, var(--card), var(--ivory) 72%); }
+.soon { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 56px 20px; text-align: center; background: var(--ivory); }
 .soon .lockup { color: var(--choc); margin-bottom: 8px; }
 .soon h1 { font-size: clamp(38px, 6vw, 64px); }
 .soon h1 em { color: var(--terra-ink); }
 .soon p { max-width: 520px; margin: 0; }
 .soon form { width: 100%; max-width: 480px; display: flex; flex-wrap: wrap; gap: 10px; text-align: left; margin-top: 8px; }
 .soon .reach { font-size: 14px; }
+/* phones first: every link and control is at least 44px tall to tap */
+@media (max-width: 760px) {
+  .site-foot nav { gap: 0; }
+  .site-foot nav a { display: flex; align-items: center; min-height: 44px; }
+  .crumbs a { display: inline-flex; align-items: center; min-height: 44px; }
+  input[type="checkbox"], input[type="radio"] { width: 22px; height: 22px; }
+}
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 
@@ -616,15 +628,15 @@ const CANDLE_CARE = ['Let the first burn melt to the edges (about 2 hours).', 'T
 const JAR_MAT = 'Scented candle in a speckled stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.';
 const JAR_SIZE = '120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm';
 const twoSizes = (code) => [{ sku: 'BT-CN-' + code + '-120', label: '120 g', price: 899 }, { sku: 'BT-CN-' + code + '-220', label: '220 g', price: 1399 }];
-const PILLAR_COL = { 'Ivory': '#F1E8DA', 'Terracotta': '#A55B3F', 'Olive': '#6B7B5B' };
+const PILLAR_COL = { 'Ivory': '#F6EDDF', 'Terracotta': '#C45A3A', 'Olive': '#5B6B46' };
 const FIN = { 'Ivory': '#F1E8DA', 'Ivory Terrazzo': '#EFE7DA', 'Sand': '#DCC9AE', 'Terracotta': '#B0644A', 'Caramel Swirl': '#C99A6C', 'Caramel': '#C99A6C', 'Olive': '#6B6B43', 'Mixed Earth · set of 4': '#6B6B43', 'All Ivory · set of 4': '#F1E8DA' };
 const JES_CARE = ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Keep away from long contact with water.'];
 const JES_MAT = 'Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.';
 let P = [
   { id: 'first-light', name: 'First Light', cat: 'candles', type: 'Scented candle', line: 'The first quiet hour, poured.', notes: ['Mogra', 'Neroli', 'White tea'], variants: twoSizes('FL'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'fresh'], space: ['bedroom', 'workspace'], occ: ['just-because', 'thank-you'], gift: true, pyramid: { top: ['Neroli', 'Bergamot'], heart: ['Mogra (Arabian jasmine)'], base: ['White tea', 'Soft musk'] }, smellsLike: 'Jasmine on the windowsill at six in the morning, before anyone else is up.', art: 'jar', c: '#F4ECE0' },
   { id: 'monsoon-letters', name: 'Monsoon Letters', cat: 'candles', type: 'Scented candle', line: 'Wet earth, old paper, a window left open.', notes: ['Petrichor', 'Vetiver', 'Green cardamom'], variants: twoSizes('ML'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'creative'], space: ['living', 'workspace'], occ: ['just-because', 'milestone'], gift: true, pyramid: { top: ['Green cardamom', 'Rain'], heart: ['Petrichor', 'Old paper'], base: ['Vetiver', 'Cedar'] }, smellsLike: 'The first rain on hot earth, a stack of letters, a window left open.', art: 'jar', c: '#A9B39A' },
-  { id: 'chai-at-four', name: 'Chai at Four', cat: 'candles', type: 'Scented candle', line: 'The hour everyone comes home to.', notes: ['Masala chai', 'Tonka', 'Warm milk'], variants: twoSizes('CF'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['cosy'], space: ['living', 'kitchen'], occ: ['housewarming', 'thank-you'], gift: true, pyramid: { top: ['Ginger', 'Clove'], heart: ['Cardamom', 'Warm milk'], base: ['Tonka', 'Jaggery'] }, smellsLike: 'A steel pot on the stove at four, and everyone drifting into the kitchen.', art: 'jar', c: '#C08A5B' },
-  { id: 'brass-and-saffron', name: 'Brass & Saffron', cat: 'candles', type: 'Scented candle', line: 'For lamps, doorways and celebrations.', notes: ['Saffron', 'Amber', 'Sandalwood'], variants: [{ sku: 'BT-CN-BS-220', label: '220 g', price: 1499 }], material: 'Scented candle in a terracotta stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.', size: '8.5 × 9 cm', care: CANDLE_CARE, mood: ['cosy', 'gift-ready'], space: ['living', 'entrance'], occ: ['festive', 'housewarming', 'milestone'], gift: true, pyramid: { top: ['Saffron', 'Pink pepper'], heart: ['Amber', 'Marigold'], base: ['Sandalwood', 'Benzoin'] }, smellsLike: 'Polished brass lamps and marigolds at the door, the evening before a celebration.', art: 'jar', c: '#A55B3F' },
+  { id: 'chai-at-four', name: 'Chai at Four', cat: 'candles', type: 'Scented candle', line: 'The hour everyone comes home to.', notes: ['Masala chai', 'Tonka', 'Warm milk'], variants: twoSizes('CF'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['cosy'], space: ['living', 'kitchen'], occ: ['housewarming', 'thank-you'], gift: true, pyramid: { top: ['Ginger', 'Clove'], heart: ['Cardamom', 'Warm milk'], base: ['Tonka', 'Jaggery'] }, smellsLike: 'A steel pot on the stove at four, and everyone drifting into the kitchen.', art: 'jar', c: '#C9A227' },
+  { id: 'brass-and-saffron', name: 'Brass & Saffron', cat: 'candles', type: 'Scented candle', line: 'For lamps, doorways and celebrations.', notes: ['Saffron', 'Amber', 'Sandalwood'], variants: [{ sku: 'BT-CN-BS-220', label: '220 g', price: 1499 }], material: 'Scented candle in a terracotta stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.', size: '8.5 × 9 cm', care: CANDLE_CARE, mood: ['cosy', 'gift-ready'], space: ['living', 'entrance'], occ: ['festive', 'housewarming', 'milestone'], gift: true, pyramid: { top: ['Saffron', 'Pink pepper'], heart: ['Amber', 'Marigold'], base: ['Sandalwood', 'Benzoin'] }, smellsLike: 'Polished brass lamps and marigolds at the door, the evening before a celebration.', art: 'jar', c: '#C45A3A' },
   { id: 'terrace-garden', name: 'Terrace Garden', cat: 'candles', type: 'Scented candle', line: 'Tulsi, lemongrass and a little sunlight.', notes: ['Tulsi', 'Lemongrass', 'Fig leaf'], variants: twoSizes('TG'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['fresh'], space: ['kitchen', 'workspace', 'bathroom'], occ: ['just-because', 'birthday'], gift: true, pyramid: { top: ['Lemongrass', 'Lime peel'], heart: ['Tulsi', 'Fig leaf'], base: ['Vetiver', 'Green musk'] }, smellsLike: 'Watering the terrace pots at sunrise, tulsi on your fingers.', art: 'jar', c: '#C9D0B8' },
   { id: 'pillar-studies', name: 'Pillar Studies', cat: 'candles', type: 'Pillar candle', line: 'Sculpted candles that look good even unlit.', notes: ['Unscented'], variants: [{ sku: 'BT-CN-PS-IV', label: 'Ivory', price: 549 }, { sku: 'BT-CN-PS-TC', label: 'Terracotta', price: 549 }, { sku: 'BT-CN-PS-OL', label: 'Olive', price: 549 }, { sku: 'BT-CN-PS-SET3', label: 'Set of 3', price: 1499 }], material: 'Unscented ribbed pillar candle. Wax type to be confirmed after testing.', size: '5 × 12 cm', care: ['Burn on a heat-safe plate.', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'], mood: ['creative', 'calm'], space: ['living', 'dining'], occ: ['festive', 'birthday', 'just-because'], gift: true, art: 'pillar', c: '#F1E8DA' },
   { id: 'ghat-tray', name: 'Ghat Tray', cat: 'jesmonite', type: 'Tray', line: 'Steps for your small everyday things.', variants: [{ sku: 'BT-JS-GT-IT', label: 'Ivory Terrazzo', price: 1490 }, { sku: 'BT-JS-GT-SD', label: 'Sand', price: 1490 }, { sku: 'BT-JS-GT-TC', label: 'Terracotta', price: 1490 }], material: JES_MAT, size: '30 × 15 × 2 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['living', 'bedroom', 'entrance'], occ: ['housewarming', 'milestone'], gift: true, art: 'tray' },
@@ -890,7 +902,7 @@ function track(name, data) { S.events.unshift({ t: new Date().toISOString(), nam
 function shade(hex, f) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; if (f < 1) { r *= f; g *= f; b *= f; } else { const k = f - 1; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; } return '#' + [r, g, b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join(''); }
 function colorFor(p, vi) { const v = p.variants[vi || 0]; if (p.art === 'jar') return p.c; if (p.art === 'pillar') return PILLAR_COL[v.label] || p.c; return FIN[v.label] || '#DCC9AE'; }
 function art(p, vi, sc) { sc = sc || 1; const z = Math.round(170 * sc); return `<img class="obj" src="${prodImg(p, vi || 0)}" alt="" width="${z}" height="${z}" style="width:${z}px;height:${z}px">`; }
-const HEART = (on) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="${on ? '#94503A' : 'none'}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
+const HEART = (on) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="${on ? '#A3472B' : 'none'}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
 const CLOSE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 function cartLines() { return S.cart.filter((l) => skuMap[l.sku]).map((l) => ({ ...l, p: skuMap[l.sku].p, v: skuMap[l.sku].v, vi: skuMap[l.sku].i })).filter((l) => l.p); }
 function cartCount() { return S.cart.reduce((a, l) => a + l.qty, 0); }
@@ -1043,7 +1055,7 @@ function viewHome() {
   const nC = P.filter((p) => p.cat === 'candles').length, nJ = P.filter((p) => p.cat === 'jesmonite').length;
   const caps = OPENINGS[S.opening].caps.map((c, i) => (S.opening === 'house' && TEXT['walk.cap' + (i + 1)] ? T('walk.cap' + (i + 1)) : c[0]));
   const last = S.orders[0];
-  const pack = brandImgs('packaging', [[IMG.box, 'Kraft packaging box with the BUD & THINGS label and tagline.', 'Packaging box'], [IMG.tag, 'Textured hang tag with the logo and tagline.', 'Hang tag'], [IMG.card, 'Thank-you card with a leaf mark.', 'Thank-you note'], [IMG.seal, 'Terracotta wax seal stamped with the B&T monogram.', 'B&T seal']]);
+  const pack = brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set: candles in a ribbon-tied box.', 'Gift set box'], [IMG.tag, 'Rustic hang tag with the logo and olive leaf.', 'Hang tag'], [IMG.card, 'Candle care tag with burn instructions.', 'Care tag'], [IMG.seal, 'BUD & THINGS wax seals in brand colours.', 'Wax seals']]);
   const candleCover = P.filter((p) => p.cat === 'candles').map((p) => mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0]).find(Boolean);
   const jesCover = P.filter((p) => p.cat !== 'candles').map((p) => mediaFor(p.id, { kind: 'photo', role: 'lifestyle' })[0]).find(Boolean);
   return `
@@ -1080,7 +1092,7 @@ function viewHome() {
 
   <section class="wrap" aria-labelledby="cats-h" style="padding-bottom:80px"><div class="section-head"><h2 id="cats-h">${T('home.cats')}</h2></div>
     <div class="cats">
-      <a class="cat" href="#candles"><span class="tile photo-tile"><img src="${esc(candleCover ? mUrl(candleCover) : IMG.jar)}" alt="${esc(candleCover ? candleCover.alt : 'A speckled stone candle jar with a wooden lid and the BUD & THINGS label.')}" loading="lazy"></span><span class="row"><strong>Candles</strong><span style="font-weight:600">${nC} scents and studies →</span></span></a>
+      <a class="cat" href="#candles"><span class="tile photo-tile"><img src="${esc(candleCover ? mUrl(candleCover) : IMG.jar)}" alt="${esc(candleCover ? candleCover.alt : 'A BUD & THINGS candle with its label among dried botanicals.')}" loading="lazy"></span><span class="row"><strong>Candles</strong><span style="font-weight:600">${nC} scents and studies →</span></span></a>
       <a class="cat" href="#jesmonite"><span class="tile alt${jesCover ? ' photo-tile' : ''}">${jesCover ? `<img src="${esc(mUrl(jesCover))}" alt="${esc(jesCover.alt)}" loading="lazy">` : (byId['ghat-tray'] ? art(byId['ghat-tray'], 0, 1.3) : '') + (byId['still-form-no-1'] ? art(byId['still-form-no-1'], 0, 1) : '')}</span><span class="row"><strong>Jesmonite Objects</strong><span style="font-weight:600">${nJ} pieces →</span></span></a>
     </div></section>
 
@@ -1104,7 +1116,7 @@ function viewHome() {
   <section class="section wrap" id="gifting-sec" aria-labelledby="gift-h" style="padding-top:0"><div class="section-head"><h2 id="gift-h">${T('home.moment')}</h2></div>
     <div style="display:flex;flex-wrap:wrap;gap:10px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
 
-  <section class="dark-band" aria-labelledby="story-h"><div class="wrap section"><div class="split"><figure class="photo dark" style="margin:0">${(() => { const m = mediaFor('brand', { role: ['story', 'process'] })[0]; return m ? mediaEl(m) : `<img src="${IMG.leather}" alt="Leather brand detail embossed with the leaf mark." loading="lazy">`; })()}</figure>
+  <section class="dark-band" aria-labelledby="story-h"><div class="wrap section"><div class="split"><figure class="photo dark" style="margin:0">${(() => { const m = mediaFor('brand', { role: ['story', 'process'] })[0]; return m ? mediaEl(m) : `<img src="${IMG.leather}" alt="Made with thought, given with feeling." loading="lazy">`; })()}</figure>
     <div style="display:flex;flex-direction:column;gap:16px"><span class="mark monogram" aria-hidden="true"></span><span class="eyebrow" style="color:var(--glow)">${T('home.storyEyebrow')}</span><h2 id="story-h" style="font-size:clamp(30px,3.4vw,44px)">${T('home.storyTitle')}</h2><p style="opacity:.86;max-width:520px">${T('home.storyText')}</p><a href="#story" style="font-weight:600">Read our story →</a></div></div></div></section>
 
   <section class="section wrap" aria-labelledby="news-h"><div class="intro" style="gap:14px"><h2 id="news-h" style="font-size:40px">${T('home.news')}</h2><p class="muted" style="font-family:var(--body);font-size:16px">${T('home.newsText')}</p>
@@ -1164,7 +1176,7 @@ function viewProduct(id) {
   const related = P.filter((x) => x.cat === p.cat && x.id !== id).slice(0, 3);
   const stockNote = left === 0 ? '<span class="pill out">Sold out</span>' : left <= 3 ? `<span class="pill low">Only ${left} left in this batch</span>` : '<span class="pill">In stock</span>';
   const own = mediaFor(id, { variant: v.label }).filter((m) => m.role !== 'packshot' || !m.variant || m.variant === v.label);
-  const packs = brandImgs('packaging', [[IMG.box, 'Packaging box', 'Packaging box'], [IMG.tag, 'Hang tag', 'Hang tag'], [IMG.seal, 'B&T seal', 'B&T seal']]);
+  const packs = brandImgs('packaging', [[IMG.box, 'Gift set box', 'Gift set box'], [IMG.tag, 'Hang tag', 'Hang tag'], [IMG.seal, 'Wax seals', 'Wax seals']]);
   const gal = own.length ? own.map((m) => ({ m, label: m.alt || m.role })) : [{ render: true, label: p.name + ', ' + v.label }].concat((p.cat === 'candles' ? [[IMG.jar, 'Label and lid direction']] : []).concat(packs.map((x) => [x[0], x[2]])).slice(0, 3).map(([src, label]) => ({ src, label })));
   const gi = Math.min(st.img || 0, gal.length - 1); const g = gal[gi];
   const main = g.render ? `<div class="tile" style="background:var(--linen)">${art(p, st.vi, 2.1)}<span class="hint" style="position:absolute;right:14px;bottom:10px;letter-spacing:.12em;text-transform:uppercase;font-size:11px">Render · product photo to come</span></div>`
@@ -1204,7 +1216,7 @@ function viewProduct(id) {
       <fieldset class="field rating"><legend>Your rating</legend><span>${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="rv-rating" value="${n}" ${+R.rating === n ? 'checked' : ''}> ${n}★</label>`).join('')}</span></fieldset>
       <span class="field full"><label for="rv-body">Your review</label><textarea id="rv-body" rows="4" maxlength="1500">${esc(R.body || '')}</textarea></span>${R.err ? `<span class="err full" role="alert">${esc(R.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Send review</button></span></form>` : `<button class="btn ghost" type="button" data-act="review-open" data-id="${id}">Write a review</button>`}</section>
   <section class="section" aria-labelledby="box-h" style="padding-top:56px;padding-bottom:0"><div class="section-head"><h2 id="box-h">In the box</h2><span class="muted" style="font-size:14px">Approved packaging direction; final pieces may differ.</span></div>
-    <div class="pack-grid">${brandImgs('packaging', [[IMG.box, 'Kraft packaging box with the BUD & THINGS label.', 'Box with care card'], [IMG.tag, 'Hang tag with the tagline.', 'Hang tag'], [IMG.card, 'Thank-you card.', 'Thank-you note'], [IMG.seal, 'B&T wax seal.', 'B&T seal']]).slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>
+    <div class="pack-grid">${brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set box.', 'Gift set box'], [IMG.tag, 'Hang tag with the tagline.', 'Hang tag'], [IMG.card, 'Candle care tag.', 'Care tag'], [IMG.seal, 'BUD & THINGS wax seals in brand colours.', 'Wax seals']]).slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>
   <section class="section" aria-labelledby="rel-h" style="padding-top:56px"><div class="section-head"><h2 id="rel-h">More ${p.cat === 'candles' ? 'candles' : 'objects'}</h2></div><div class="grid">${related.map(card).join('')}</div></section></div>`;
 }
 
@@ -1359,13 +1371,13 @@ function viewOrder(id) {
     <aside class="checkout-side"><strong>${o.id}</strong>${o.items.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.name)} · ${esc(l.label)} × ${l.qty}</span><span class="num">${inr(l.price * l.qty)}</span></div>`).join('')}
       <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${row(cod ? 'To pay on delivery' : 'Paid', inr(o.total), 'grand')}</div>
       ${giftSummary(o.gift)}
-      <figure class="photo" style="margin:0"><img src="${esc((brandImgs('gift', [[IMG.card]])[0] || [IMG.card])[0])}" alt="Thank-you card with a leaf mark." loading="lazy"><figcaption>${o.gift && o.gift.on ? 'Your note goes on this card' : 'A thank-you note goes in with orders where we can include one'}</figcaption></figure><span class="muted" style="font-size:14px">To ${o.gift && o.gift.on ? esc(o.gift.name) + ', ' : ''}${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
+      <figure class="photo" style="margin:0"><img src="${esc((brandImgs('gift', [[IMG.tag]])[0] || [IMG.tag])[0])}" alt="Rustic gift tag with the logo and olive leaf." loading="lazy"><figcaption>${o.gift && o.gift.on ? 'Your note goes on this tag' : 'A thank-you note goes in with orders where we can include one'}</figcaption></figure><span class="muted" style="font-size:14px">To ${o.gift && o.gift.on ? esc(o.gift.name) + ', ' : ''}${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
 }
 
 function viewStory() {
   const pillars = [['leaf', 'Thoughtful Design', 'Thought goes into the things we make.'], ['sun', 'Everyday Moments', 'The everyday deserves beautiful things too.'], ['arch', 'Gifting With Feeling', 'Give something that feels chosen, not simply bought.'], ['flow', 'Contemporary Indian Soul', 'Rooted in India. Designed for contemporary living.'], ['spark', 'Made to Be Kept', 'Some things become special because we keep them.']];
-  const founder = mediaFor('brand', { role: 'founder' })[0]; const side = brandImgs('process', [[IMG.seal, 'Terracotta wax seal with the B&T monogram.'], [IMG.leather, 'Leather brand detail with the leaf mark.']]);
-  return `<div class="story-hero">${founder ? mediaEl(founder) : `<img src="${IMG.logoPhoto}" alt="The BUD &amp; THINGS by Ashi logo on a warm wall with leaf shadows.">`}</div>
+  const founder = mediaFor('brand', { role: 'founder' })[0]; const side = brandImgs('process', [[IMG.seal, 'BUD & THINGS wax seals in brand colours.'], [IMG.leather, 'Made with thought, given with feeling.']]);
+  return `<div class="story-hero">${founder ? mediaEl(founder) : `<img src="${IMG.logoPhoto}" alt="The BUD &amp; THINGS by Ashi logo with its olive leaf.">`}</div>
   <div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Our Story</span><h1 tabindex="-1">${T('story.title')}</h1></div>
     <div class="split" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:18px;max-width:640px">
       <p style="font-family:var(--display);font-weight:500;font-size:28px;line-height:1.3">${T('story.lead')}</p>
@@ -1394,13 +1406,13 @@ function viewHelp() {
 }
 function viewGifting() {
   const picks = idList('giftPicks').map((id) => byId[id]);
-  const gimg = brandImgs('gift', [[IMG.card, 'Thank-you card with a leaf mark.', 'Your note, hand-written on our card']]);
+  const gimg = brandImgs('gift', [[IMG.tag, 'Rustic gift tag with the logo and olive leaf.', 'Your note, hand-written on our tag']]);
   return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">${T('gift.title')}</h1><p class="muted" style="max-width:620px">${T('gift.sub')}</p></div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div>
     <div class="split" style="margin-bottom:48px"><figure class="photo" style="margin:0"><img src="${esc(gimg[0][0])}" alt="${esc(gimg[0][1] || '')}" loading="lazy"><figcaption>${esc(gimg[0][2] || '')}</figcaption></figure>
       <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">${T('gift.h2')}</h2><p class="muted">${T('gift.text')}</p>
       <ul class="trust">${[`Hand-written note on our card`, `Gift wrap${+SET.wrapFee ? ' for ' + inr(SET.wrapFee) : ''}`, 'Send it straight to them, with no prices in the parcel', 'Choose the day it should arrive by'].map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
-      <figure class="photo" style="margin:0;max-width:260px"><img src="${IMG.pouch}" alt="Cotton gift pouch with the BUD &amp; THINGS logo." loading="lazy"><figcaption>Gift pouch · coming with gift sets</figcaption></figure></div></div>
+      <figure class="photo" style="margin:0;max-width:260px"><img src="${IMG.pouch}" alt="BUD &amp; THINGS gift bag with tissue and botanicals." loading="lazy"><figcaption>Gift bag · coming with gift sets</figcaption></figure></div></div>
     <div class="section-head"><h2>${T('gift.popular')}</h2></div><div class="grid">${picks.map((p, i) => card(p, i)).join('')}</div></div>`;
 }
 
@@ -1671,14 +1683,14 @@ function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >
 
 // The arrangement openings A and B resolve into: candles and Jesmonite objects, with a botanical sprig (a prop, not for sale).
 const ARR = [
-  { k: 'sprig', dx: -318, w: 70, h: 64, c: '#6B7B5B', prop: true },
+  { k: 'sprig', dx: -318, w: 70, h: 64, c: '#5B6B46', prop: true },
   { id: 'ghat-tray', k: 'tray', dx: -205, w: 180, h: 16, c: '#DCC9AE', lift: -38 },
-  { id: 'chai-at-four', k: 'jar', dx: -205, dy: -12, c: '#C08A5B', h: 88, w: 66, lift: 65 },
+  { id: 'chai-at-four', k: 'jar', dx: -205, dy: -12, c: '#C9A227', h: 88, w: 66, lift: 65 },
   { id: 'first-light', k: 'jar', dx: -80, c: '#F4ECE0', h: 66, w: 56, lift: 29 },
   { id: 'moonlet-ring-dish', k: 'dish', dx: 15, c: '#C99A6C', h: 24, w: 80, rings: true, lift: 141 },
   { id: 'still-form-no-1', k: 'arch', dx: 115, c: '#F1E8DA', h: 124, w: 84, lift: 76 },
-  { id: 'pillar-studies', k: 'pillar', dx: 205, c: '#A55B3F', h: 110, w: 32, lift: 55 },
-  { id: 'pebble-coasters', k: 'pebbles', dx: 282, c: '#6B7B5B', h: 30, w: 72, lift: 65 }
+  { id: 'pillar-studies', k: 'pillar', dx: 205, c: '#C45A3A', h: 110, w: 32, lift: 55 },
+  { id: 'pebble-coasters', k: 'pebbles', dx: 282, c: '#5B6B46', h: 30, w: 72, lift: 65 }
 ];
 const OPENINGS = {
   arches: { name: 'A · Through the Arches', rail: ['Doorway', 'Arches', 'The room', 'Dusk'], cuts: [.3, .6, .8], hero: [.05, .11], staticP: .66,
@@ -1695,7 +1707,7 @@ const OPENINGS = {
     spots: null, final: [.965, .995], light: 0 }
 };
 const SKINS = {
-  signature: { name: 'Signature · Approved palette', use: 'The approved palette: ivory, sand, caramel, terracotta, olive and chocolate.', eyebrow: 'Collection 01 · Everyday Rituals', dark: true, wall: ['#A55B3F', '#8F4C33', '#7A3F2A'], floor: ['#4A3125', '#3D281E', '#33211A'], arch: ['#8F4C33', '#A55B3F', '#B36C49', '#C08A5B'], plinth: '#F8F0E4', duskWall: '#2A1B14', duskFloor: '#1F140F', night: '#120B08', light: '255,236,210', type: '#F8F0E4', ink2: '#F3E6D6', fx: null },
+  signature: { name: 'Signature · Approved palette', use: 'The approved palette: ivory, sand, caramel, terracotta, olive and chocolate.', eyebrow: 'Collection 01 · Everyday Rituals', dark: true, wall: ['#C45A3A', '#8F4C33', '#7A3F2A'], floor: ['#4A3125', '#4B2E1E', '#33211A'], arch: ['#8F4C33', '#C45A3A', '#B36C49', '#C9A227'], plinth: '#FFF8ED', duskWall: '#2A1B14', duskFloor: '#1F140F', night: '#120B08', light: '255,236,210', type: '#FFF8ED', ink2: '#F3E6D6', fx: null },
   atelier: { name: 'Everyday · Clay & Cocoa', use: 'The year-round look: a terracotta room, cocoa floor and a peach glow.', eyebrow: 'Objects & little rituals', dark: true, wall: ['#9C4322', '#8F3B1D', '#823318'], floor: ['#5A2E1C', '#4E2717', '#422013'], arch: ['#A84B27', '#B5562F', '#C06238', '#CA6E42'], plinth: '#F4E4D2', duskWall: '#2A140C', duskFloor: '#1E0E08', night: '#140805', light: '255,200,150', type: '#FFB37A', ink2: '#F5E3D3', fx: null },
   festive: { name: 'Festive · Saffron & Rani', use: 'For Diwali and the festive rush: a rani-pink room, saffron light, marigolds and diyas at dusk.', eyebrow: 'The festive edit', dark: true, wall: ['#7A1230', '#6A0F2A', '#5A0C24'], floor: ['#3E0A18', '#350815', '#2C0612'], arch: ['#6E0F2B', '#801434', '#92193D', '#A31F46'], plinth: '#FBE3C6', duskWall: '#2A0610', duskFloor: '#1E040B', night: '#120207', light: '255,186,80', type: '#FFB020', ink2: '#FFD9A8', fx: 'festive' },
   monsoon: { name: 'Monsoon · Peacock & Moss', use: 'For June to September: a deep peacock room, moss light and soft rain, made for earthy scents like Monsoon Letters.', eyebrow: 'The monsoon edit', dark: true, wall: ['#0F4C4A', '#0D4341', '#0B3A38'], floor: ['#082B29', '#072624', '#06201F'], arch: ['#0C3F3D', '#11504D', '#16605C', '#1B706B'], plinth: '#DDE9E4', duskWall: '#06201F', duskFloor: '#041716', night: '#020C0B', light: '214,236,190', type: '#C9E265', ink2: '#CFE7DE', fx: 'rain' },
@@ -1719,10 +1731,6 @@ function bigType(ctx, L, p, by, sP) {
     ctx.globalAlpha = .14 + .06 * i; ctx.fillStyle = K.type; ctx.fillText(txt, x, y);
   });
   ctx.restore();
-}
-function grain(ctx, L, t) {
-  if (!LC.grain) { const g = document.createElement('canvas'); g.width = g.height = 160; const x = g.getContext('2d'); const d = x.createImageData(160, 160); for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } x.putImageData(d, 0, 0); LC.grain = ctx.createPattern(g, 'repeat'); }
-  ctx.save(); ctx.globalAlpha = .07; ctx.globalCompositeOperation = 'overlay'; ctx.translate((t * 37) % 160, (t * 23) % 160); ctx.fillStyle = LC.grain; ctx.fillRect(-160, -160, L.W + 320, L.H + 320); ctx.restore();
 }
 function fxPre(ctx, L, p, t, bx, by, s) {
   const K = SK();
@@ -1792,8 +1800,8 @@ function drawObj(ctx, o, x, y, s, sun) {
     ctx.save(); ctx.clip(sil(o, x, y, s)); speckle(ctx, x - w / 2, y - h, w, h, s, o.dx || 1); ctx.restore();
     const lw = w * .66, lh = h * .4, lx = x - lw / 2, ly = y - h * .66;
     ctx.fillStyle = '#F5ECDD'; ctx.fillRect(lx, ly, lw, lh); ctx.strokeStyle = 'rgba(61,40,30,.18)'; ctx.lineWidth = Math.max(.6, .6 * s); ctx.strokeRect(lx, ly, lw, lh);
-    const lf = tintLeaf('#3D281E'); if (lf) { const lfh = lh * .38; ctx.drawImage(lf, x - lfh * .45, ly + lh * .1, lfh * .9, lfh); }
-    if (s >= 1.4) { ctx.fillStyle = '#3D281E'; ctx.textAlign = 'center'; ctx.font = `600 ${Math.max(5, lw * .118).toFixed(1)}px "Cormorant Garamond", Georgia, serif`; ctx.fillText('BUD & THINGS', x, ly + lh * .7); ctx.font = `${Math.max(4, lw * .08).toFixed(1)}px Lato, sans-serif`; ctx.fillText('by Ashi', x, ly + lh * .88); }
+    const lf = tintLeaf('#4B2E1E'); if (lf) { const lfh = lh * .38; ctx.drawImage(lf, x - lfh * .45, ly + lh * .1, lfh * .9, lfh); }
+    if (s >= 1.4) { ctx.fillStyle = '#4B2E1E'; ctx.textAlign = 'center'; ctx.font = `600 ${Math.max(5, lw * .118).toFixed(1)}px "Cormorant Garamond", Georgia, serif`; ctx.fillText('BUD & THINGS', x, ly + lh * .7); ctx.font = `${Math.max(4, lw * .08).toFixed(1)}px Lato, sans-serif`; ctx.fillText('by Ashi', x, ly + lh * .88); }
     if (o.lid) {
       const lh2 = 14 * s; const g = ctx.createLinearGradient(x - w / 2, 0, x + w / 2, 0); g.addColorStop(0, '#C9965F'); g.addColorStop(.5, '#A8743F'); g.addColorStop(1, '#7E5230');
       ctx.fillStyle = g; ctx.fillRect(x - w / 2 - 1 * s, y - h - lh2, w + 2 * s, lh2 + 2 * s);
@@ -1824,7 +1832,7 @@ function drawObj(ctx, o, x, y, s, sun) {
     const ir = r - 12 * s; const ip = new Path2D(); ip.moveTo(x - ir, y - 10 * s); ip.lineTo(x - ir, y - h + r); ip.arc(x, y - h + r, ir, Math.PI, 0); ip.lineTo(x + ir, y - 10 * s); ip.closePath();
     ctx.fillStyle = shade(c, .86); ctx.fill(ip);
   } else if (o.k === 'pebbles') {
-    const cols = c === '#F1E8DA' ? ['#F1E8DA', '#E6DAC6', '#F6EFE3', '#DDD0BA'] : ['#6B7B5B', '#C08A5B', '#F1E8DA', '#A55B3F'];
+    const cols = c === '#F1E8DA' ? ['#F1E8DA', '#E6DAC6', '#F6EFE3', '#DDD0BA'] : ['#5B6B46', '#C9A227', '#F1E8DA', '#C45A3A'];
     for (let i = 0; i < 4; i++) { const yy = y - i * 7 * s, rx = (w / 2) * (1 - i * .06), cc = cols[i]; ctx.fillStyle = shade(cc, .8); ctx.beginPath(); ctx.ellipse(x + (i % 2 ? 4 : -3) * s, yy, rx, 10 * s, 0, 0, TAU); ctx.fill(); ctx.fillStyle = cc; ctx.beginPath(); ctx.ellipse(x + (i % 2 ? 4 : -3) * s, yy - 3 * s, rx, 9 * s, 0, 0, TAU); ctx.fill(); }
   } else if (o.k === 'arch') {
     ctx.save(); ctx.translate((sun < 0 ? 7 : -7) * s, 0); ctx.fillStyle = shade(c, .74); ctx.fill(sil(o, x, y, s), 'evenodd'); ctx.restore();
@@ -1847,7 +1855,7 @@ function drawObj(ctx, o, x, y, s, sun) {
 }
 const PIMG = {};
 function prodImg(p, vi) {
-  const key = p.id + ':' + vi + ':' + (tintLeaf('#3D281E') ? 1 : 0); if (PIMG[key]) return PIMG[key];
+  const key = p.id + ':' + vi + ':' + (tintLeaf('#4B2E1E') ? 1 : 0); if (PIMG[key]) return PIMG[key];
   const c = document.createElement('canvas'); c.width = c.height = 360; const x = c.getContext('2d'); const v = p.variants[vi];
   let objs;
   if (p.art === 'pillar') {
@@ -2004,34 +2012,34 @@ const T3I = (room, k, id, c, pos, at, x = {}) => ({ room, k, id, c, pos, at, ry:
 const LW = -Math.PI / 2, RW = Math.PI / 2;
 const TOUR_ITEMS = [
   // foyer: the arched niche, then the left and right shelves
-  T3I('F', 'jar', 'chai-at-four', '#C08A5B', [-.5, .93, 9.2], .2), T3I('F', 'jar', 'brass-and-saffron', '#A55B3F', [0, .93, 9.2], .215), T3I('F', 'jar', 'first-light', '#F4ECE0', [.5, .93, 9.2], .23),
-  T3I('F', 'pillar', 'pillar-studies', '#F1E8DA', [-.36, 1.643, 9.25], .238, { h: .24 }), T3I('F', 'pillar', null, '#A55B3F', [0, 1.643, 9.25], .246, { h: .19 }), T3I('F', 'pillar', null, '#6B7B5B', [.36, 1.643, 9.25], .254, { h: .21 }),
+  T3I('F', 'jar', 'chai-at-four', '#C9A227', [-.5, .93, 9.2], .2), T3I('F', 'jar', 'brass-and-saffron', '#C45A3A', [0, .93, 9.2], .215), T3I('F', 'jar', 'first-light', '#F4ECE0', [.5, .93, 9.2], .23),
+  T3I('F', 'pillar', 'pillar-studies', '#F1E8DA', [-.36, 1.643, 9.25], .238, { h: .24 }), T3I('F', 'pillar', null, '#C45A3A', [0, 1.643, 9.25], .246, { h: .19 }), T3I('F', 'pillar', null, '#5B6B46', [.36, 1.643, 9.25], .254, { h: .21 }),
   T3I('F', 'tray', 'ghat-tray', '#DCC9AE', [3.06, 1.1725, 3.7], .3, { ry: LW, place: true }), T3I('F', 'plate', 'halo-candle-plate', '#C99A6C', [3.06, 1.1725, 5], .315, { ry: LW, place: true, withPillar: true }),
   T3I('F', 'dish', 'moonlet-ring-dish', '#F1E8DA', [3.06, 1.7725, 4], .325, { ry: LW, place: true }), T3I('F', 'jar', 'terrace-garden', '#C9D0B8', [3.06, 1.7725, 5], .333, { ry: LW, place: true }),
   T3I('F', 'arch', 'still-form-no-1', '#F1E8DA', [-3.06, 1.7725, 3.4], .375, { ry: RW, place: true }), T3I('F', 'archtray', 'jharokha-catch-all', '#DCC9AE', [-3.06, 1.7725, 4.6], .385, { ry: RW, place: true }),
   T3I('F', 'pebbles', 'pebble-coasters', '#6B6B43', [-3.06, 1.1725, 3.6], .393, { ry: RW, place: true }), T3I('F', 'plate', null, '#B0644A', [-3.06, 1.1725, 4.6], .4, { ry: RW, place: true, withPillar: true }),
   // living room: the credenza, the coffee table, then the left and right shelves
-  T3I('L', 'pillar', null, '#F1E8DA', [-.75, .72, 7.62], .52, { h: .26 }), T3I('L', 'pillar', null, '#A55B3F', [-.55, .72, 7.6], .528), T3I('L', 'jar', 'monsoon-letters', '#A9B39A', [-.1, .72, 7.6], .536), T3I('L', 'jar', null, '#C9D0B8', [.3, .72, 7.6], .546), T3I('L', 'plate', 'halo-candle-plate', '#6B6B43', [.8, .72, 7.6], .555, { withPillar: true }),
-  T3I('L', 'tray', 'ghat-tray', '#B0644A', [-.85, .43, 4.25], .57, { ry: RW }), T3I('L', 'jar', null, '#C08A5B', [-.85, .43, 4.75], .575, { ry: RW }),
+  T3I('L', 'pillar', null, '#F1E8DA', [-.75, .72, 7.62], .52, { h: .26 }), T3I('L', 'pillar', null, '#C45A3A', [-.55, .72, 7.6], .528), T3I('L', 'jar', 'monsoon-letters', '#A9B39A', [-.1, .72, 7.6], .536), T3I('L', 'jar', null, '#C9D0B8', [.3, .72, 7.6], .546), T3I('L', 'plate', 'halo-candle-plate', '#6B6B43', [.8, .72, 7.6], .555, { withPillar: true }),
+  T3I('L', 'tray', 'ghat-tray', '#B0644A', [-.85, .43, 4.25], .57, { ry: RW }), T3I('L', 'jar', null, '#C9A227', [-.85, .43, 4.75], .575, { ry: RW }),
   T3I('L', 'dish', 'moonlet-ring-dish', '#C99A6C', [3.37, 1.7725, 3.3], .605, { ry: LW, place: true }), T3I('L', 'pebbles', 'pebble-coasters', '#B0644A', [3.37, 1.1725, 3.6], .615, { ry: LW, place: true }),
   T3I('L', 'arch', 'still-form-no-1', '#B0644A', [3.37, 1.7725, 4.5], .625, { ry: LW, place: true }), T3I('L', 'archtray', null, '#F1E8DA', [3.37, 1.1725, 4.7], .635, { ry: LW, place: true }),
   T3I('L', 'plate', 'halo-candle-plate', '#F1E8DA', [-3.37, 1.7725, 2.9], .675, { ry: RW, place: true }), T3I('L', 'tray', 'ghat-tray', '#6B6B43', [-3.37, 1.1725, 3.4], .685, { ry: RW, place: true }),
-  T3I('L', 'pillar', null, '#6B7B5B', [-3.37, 1.7725, 4.2], .695, { ry: RW, place: true, h: .22 }), T3I('L', 'arch', null, '#DCC9AE', [-3.37, 1.1725, 4.4], .705, { ry: RW, place: true }),
+  T3I('L', 'pillar', null, '#5B6B46', [-3.37, 1.7725, 4.2], .695, { ry: RW, place: true, h: .22 }), T3I('L', 'arch', null, '#DCC9AE', [-3.37, 1.1725, 4.4], .705, { ry: RW, place: true }),
   // bedroom: the ledge above the bed, the bedside tables, the gifting table and the shelves
-  T3I('B', 'pillar', null, '#F1E8DA', [-.9, 1.775, 6.86], .81), T3I('B', 'pillar', 'pillar-studies', '#A55B3F', [-.6, 1.775, 6.86], .818, { h: .26 }), T3I('B', 'jar', 'first-light', '#F4ECE0', [.55, 1.775, 6.86], .826), T3I('B', 'jar', 'brass-and-saffron', '#A55B3F', [.9, 1.775, 6.86], .834),
-  T3I('B', 'jar', null, '#C08A5B', [-1.4, .55, 6.6], .845), T3I('B', 'plate', null, '#DCC9AE', [1.4, .55, 6.6], .852, { withPillar: true }),
+  T3I('B', 'pillar', null, '#F1E8DA', [-.9, 1.775, 6.86], .81), T3I('B', 'pillar', 'pillar-studies', '#C45A3A', [-.6, 1.775, 6.86], .818, { h: .26 }), T3I('B', 'jar', 'first-light', '#F4ECE0', [.55, 1.775, 6.86], .826), T3I('B', 'jar', 'brass-and-saffron', '#C45A3A', [.9, 1.775, 6.86], .834),
+  T3I('B', 'jar', null, '#C9A227', [-1.4, .55, 6.6], .845), T3I('B', 'plate', null, '#DCC9AE', [1.4, .55, 6.6], .852, { withPillar: true }),
   T3I('B', 'box', null, '#C9A27A', [2.95, .765, 2.9], .885, { ry: LW, place: true, w: .3, h: .18, d: .24 }), T3I('B', 'box', null, '#E6D5C1', [2.85, .765, 3.35], .89, { ry: LW, place: true, w: .22, h: .14, d: .2 }),
   T3I('B', 'jar', 'terrace-garden', '#C9D0B8', [3.05, .765, 3.65], .895, { ry: LW, place: true }), T3I('B', 'dish', 'moonlet-ring-dish', '#F1E8DA', [2.9, .765, 2.55], .9, { ry: LW, place: true }),
   T3I('B', 'pebbles', 'pebble-coasters', '#F1E8DA', [-3.16, 1.2725, 2.8], .93, { ry: RW, place: true }), T3I('B', 'arch', 'still-form-no-1', '#6B6B43', [-3.16, 1.8225, 3.2], .935, { ry: RW, place: true }),
-  T3I('B', 'archtray', 'jharokha-catch-all', '#C99A6C', [-3.16, 1.2725, 3.8], .94, { ry: RW, place: true }), T3I('B', 'pillar', null, '#A55B3F', [-3.16, 1.8225, 3.9], .945, { ry: RW, place: true }),
+  T3I('B', 'archtray', 'jharokha-catch-all', '#C99A6C', [-3.16, 1.2725, 3.8], .94, { ry: RW, place: true }), T3I('B', 'pillar', null, '#C45A3A', [-3.16, 1.8225, 3.9], .945, { ry: RW, place: true }),
   // opening D's bedroom (page coordinates; 'at' is the walk position directly)
   ...[
-    ['pillar', null, '#F1E8DA', [-10.4, 1.55, 5.6], .55, { h: .2 }], ['pillar', 'pillar-studies', '#A55B3F', [-10.4, 1.55, 5.9], .56, { h: .26 }],
-    ['jar', 'first-light', '#F4ECE0', [-10.4, 1.55, 7.0], .57], ['jar', 'brass-and-saffron', '#A55B3F', [-10.4, 1.55, 7.45], .58],
-    ['jar', 'chai-at-four', '#C08A5B', [-10.2, .55, 5.0], .59], ['plate', 'halo-candle-plate', '#DCC9AE', [-10.2, .55, 8.2], .6, { withPillar: true }]
+    ['pillar', null, '#F1E8DA', [-10.4, 1.55, 5.6], .55, { h: .2 }], ['pillar', 'pillar-studies', '#C45A3A', [-10.4, 1.55, 5.9], .56, { h: .26 }],
+    ['jar', 'first-light', '#F4ECE0', [-10.4, 1.55, 7.0], .57], ['jar', 'brass-and-saffron', '#C45A3A', [-10.4, 1.55, 7.45], .58],
+    ['jar', 'chai-at-four', '#C9A227', [-10.2, .55, 5.0], .59], ['plate', 'halo-candle-plate', '#DCC9AE', [-10.2, .55, 8.2], .6, { withPillar: true }]
   ].map(([k, id, c, pos, at, x]) => T3I('BR', k, id, c, pos, at, { ry: RW, hp: true, where: 'By the bed', ...(x || {}) })),
   ...[
-    ['arch', 'still-form-no-1', '#6B6B43', [-4.9, 1.845, 9.47], .695], ['dish', 'moonlet-ring-dish', '#C99A6C', [-5.8, 1.845, 9.47], .705], ['pillar', null, '#A55B3F', [-6.3, 1.845, 9.47], .712, { h: .22 }],
+    ['arch', 'still-form-no-1', '#6B6B43', [-4.9, 1.845, 9.47], .695], ['dish', 'moonlet-ring-dish', '#C99A6C', [-5.8, 1.845, 9.47], .705], ['pillar', null, '#C45A3A', [-6.3, 1.845, 9.47], .712, { h: .22 }],
     ['archtray', 'jharokha-catch-all', '#F1E8DA', [-4.9, 1.245, 9.47], .72], ['pebbles', 'pebble-coasters', '#B0644A', [-5.9, 1.245, 9.47], .728]
   ].map(([k, id, c, pos, at, x]) => T3I('BR', k, id, c, pos, at, { ry: Math.PI, hp: true, place: true, where: 'Left shelves', ...(x || {}) })),
   ...[
@@ -2130,7 +2138,7 @@ function tintMark(name, col) {
 function lcTarget() { const lc = $('#lc'), st = $('#lc-stage'); if (!lc) return 0; const total = lc.offsetHeight - st.offsetHeight; return total > 0 ? clamp((65 - lc.getBoundingClientRect().top) / total) : 0; }
 function lcResize() {
   if (!LC.cv) return; const r = LC.cv.getBoundingClientRect(); LC.W = r.width; LC.H = r.height;
-  LC.dpr = Math.min(window.devicePixelRatio || 1, LC.W < 760 ? 1.5 : 2);
+  LC.dpr = Math.min(window.devicePixelRatio || 1, 2);
   LC.cv.width = Math.round(LC.W * LC.dpr); LC.cv.height = Math.round(LC.H * LC.dpr);
   if (!LC.mask) { LC.mask = document.createElement('canvas'); LC.mctx = LC.mask.getContext('2d'); } LC.mask.width = LC.cv.width; LC.mask.height = LC.cv.height;
 }
@@ -2138,7 +2146,7 @@ function lcDraw(p, t) {
   const ctx = LC.ctx; if (!ctx || !LC.W) return; ctx.setTransform(LC.dpr, 0, 0, LC.dpr, 0, 0); ctx.clearRect(0, 0, LC.W, LC.H);
   const L = layout(); LC.spots = [];
   if (S.opening === 'pour') scenePour(ctx, L, p, t); else if (S.opening === 'tour') sceneTour(ctx, L, p, t); else if (S.opening === 'house') sceneHouse(ctx, L, p, t); else sceneArches(ctx, L, p, t);
-  grain(ctx, L, t);
+  // no film grain over the walk: on phones it read as a blurry screen
 }
 function lcCopy(p, still) {
   const cfg = OPENINGS[S.opening]; const set = (el, a, tf) => { if (!el) return; el.style.opacity = String(a); el.style.visibility = a < .02 ? 'hidden' : 'visible'; if (tf !== undefined) el.style.transform = tf; };

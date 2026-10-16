@@ -88,8 +88,10 @@ function glb({ gltf, bin }) {
 function load(onProgress) {
   const mgr = new THREE.LoadingManager(); mgr.onProgress = (u, a, b) => onProgress(a / b);
   const tl = new THREE.TextureLoader(mgr);
-  const SM = window.innerWidth < 760 ? 'sm/' : ''; // phones load half-size light maps
-  const lm = (state, n) => { const t = tl.load(`${BASE}${SM}lm-${state}-${n}.jpg`); t.flipY = false; t.colorSpace = THREE.NoColorSpace; return t; };
+  // phones load half-size light maps, except the big surfaces that fill the screen, which stay sharp
+  const SHARP = ['walls', 'bwalls', 'front', 'niche'];
+  const SM = (n) => (window.innerWidth < 760 && !SHARP.includes(n) ? 'sm/' : '');
+  const lm = (state, n) => { const t = tl.load(`${BASE}${SM(n)}lm-${state}-${n}.jpg`); t.flipY = false; t.colorSpace = THREE.NoColorSpace; return t; };
   const env = (f) => new Promise((res, rej) => tl.load(BASE + f, (t) => { t.colorSpace = THREE.SRGBColorSpace; t.mapping = THREE.EquirectangularReflectionMapping; res(t); }, undefined, rej));
   const maps = {}; Object.values(ROOMS).forEach((R) => R.pieces.forEach((n) => { maps[n] = { day: lm('day', n), lit: lm('lit', n) }; }));
   const oak = tl.load('assets/tex-oak.jpg'); oak.colorSpace = THREE.SRGBColorSpace; oak.wrapS = oak.wrapT = THREE.RepeatWrapping; oak.anisotropy = 8;
@@ -192,14 +194,14 @@ H.mount = function (stage) {
     H.renderer = r; H.canvas = cv; H.camera = new THREE.PerspectiveCamera(46, 1, .05, 120);
     load((f) => { H.progress = f; }).then((res) => {
       H.S = build(res); const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
-      const comp = new EffectComposer(r, rt); comp.addPass(new RenderPass(H.S.scene, H.camera)); comp.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), .4, .5, 1.05)); comp.addPass(new OutputPass());
+      const comp = new EffectComposer(r, rt); comp.addPass(new RenderPass(H.S.scene, H.camera)); comp.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), .2, .3, 1.15)); comp.addPass(new OutputPass());
       H.composer = comp; H.resize(H.W || 800, H.Hh || 600, window.devicePixelRatio || 1); H.setMood(H.mood); H.ready = true; onLeaf(() => {}); window.dispatchEvent(new Event('house-ready'));
     }).catch((e) => { console.error(e); H.error = String((e && e.message) || e); H.failed = true; });
     return true;
   } catch (e) { H.error = String((e && e.message) || e); H.failed = true; return false; }
 };
 H.resize = function (W, Hh, dpr) {
-  if (!H.renderer) return; H.W = W; H.Hh = Hh; H.renderer.setPixelRatio(Math.min(dpr, W < 760 ? 1.5 : 1.75)); H.renderer.setSize(W, Hh, false);
+  if (!H.renderer) return; H.W = W; H.Hh = Hh; H.renderer.setPixelRatio(Math.min(dpr, 2)); H.renderer.setSize(W, Hh, false);
   H.camera.aspect = W / Hh; H.camera.fov = W < 760 ? 60 : 46; H.camera.updateProjectionMatrix();
   if (H.composer) { H.composer.setPixelRatio(H.renderer.getPixelRatio()); H.composer.setSize(W, Hh); }
 };
