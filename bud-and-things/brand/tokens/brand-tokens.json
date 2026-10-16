@@ -1,0 +1,137 @@
+{
+  "colour": {
+    "ivory": {
+      "hex": "#F8F0E4",
+      "rgb": [
+        248,
+        240,
+        228
+      ],
+      "cmyk_approx": [
+        0,
+        3,
+        8,
+        3
+      ],
+      "role": "Base",
+      "use": "Backgrounds, paper, packaging ground"
+    },
+    "sand": {
+      "hex": "#EAD8C6",
+      "rgb": [
+        234,
+        216,
+        198
+      ],
+      "cmyk_approx": [
+        0,
+        8,
+        15,
+        8
+      ],
+      "role": "Base",
+      "use": "Secondary backgrounds, tissue, cards"
+    },
+    "terracotta": {
+      "hex": "#A55B3F",
+      "rgb": [
+        165,
+        91,
+        63
+      ],
+      "cmyk_approx": [
+        0,
+        45,
+        62,
+        35
+      ],
+      "role": "Primary accent",
+      "use": "Monograms, seals, links, key buttons"
+    },
+    "olive": {
+      "hex": "#6B705C",
+      "rgb": [
+        107,
+        112,
+        92
+      ],
+      "cmyk_approx": [
+        4,
+        0,
+        18,
+        56
+      ],
+      "role": "Supporting",
+      "use": "Leaves, dark panels, labels"
+    },
+    "sage": {
+      "hex": "#9A9F85",
+      "rgb": [
+        154,
+        159,
+        133
+      ],
+      "cmyk_approx": [
+        3,
+        0,
+        16,
+        38
+      ],
+      "role": "Supporting",
+      "use": "Leaves, soft fills, dividers"
+    },
+    "chocolate": {
+      "hex": "#3D281E",
+      "rgb": [
+        61,
+        40,
+        30
+      ],
+      "cmyk_approx": [
+        0,
+        34,
+        51,
+        76
+      ],
+      "role": "Text / dark",
+      "use": "Wordmark, body text, dark grounds"
+    },
+    "gold": {
+      "hex": "#C9A96A",
+      "rgb": [
+        201,
+        169,
+        106
+      ],
+      "cmyk_approx": [
+        0,
+        16,
+        47,
+        21
+      ],
+      "role": "Accent (sparingly)",
+      "use": "Foil, wax, highlights on dark"
+    }
+  },
+  "font": {
+    "display": {
+      "family": "Playfair Display",
+      "weights": [
+        400,
+        500,
+        600
+      ],
+      "use": "Headings, logo, quotes"
+    },
+    "body": {
+      "family": "Montserrat",
+      "weights": [
+        300,
+        400,
+        500,
+        600
+      ],
+      "use": "Body, UI, labels, supporting text"
+    }
+  }
+}

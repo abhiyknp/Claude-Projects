@@ -1,0 +1,24 @@
+{
+  "name": "BUD & THINGS by Ashi",
+  "short_name": "BUD & THINGS",
+  "theme_color": "#F8F0E4",
+  "background_color": "#F8F0E4",
+  "icons": [
+    {
+      "src": "png/icon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "png/icon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "png/icon-maskable-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

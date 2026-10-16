@@ -206,7 +206,7 @@ T.mount = function (stage) {
   } catch (e) { T.failed = true; return false; }
 };
 T.resize = function (W, H, dpr) {
-  if (!T.renderer) return; T.W = W; T.H = H; T.renderer.setPixelRatio(Math.min(dpr, W < 760 ? 1.25 : 1.5)); T.renderer.setSize(W, H, false);
+  if (!T.renderer) return; T.W = W; T.H = H; T.renderer.setPixelRatio(Math.min(dpr, 2)); T.renderer.setSize(W, H, false);
   T.camera.aspect = W / H; T.camera.fov = W < 760 ? 60 : 46; T.camera.updateProjectionMatrix();
   if (T.composer) { T.composer.setSize(W, H); T.composer.setPixelRatio(T.renderer.getPixelRatio()); }
 };
@@ -216,7 +216,7 @@ function ensure(skin, key) {
   if (S3) S3.scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); });
   S3 = build(skin); T.skinKey = key;
   const comp = new EffectComposer(T.renderer); comp.addPass(new RenderPass(S3.scene, T.camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(T.W || 800, T.H || 600), .4, .45, .96); comp.addPass(bloom); comp.addPass(new OutputPass());
+  const bloom = new UnrealBloomPass(new THREE.Vector2(T.W || 800, T.H || 600), .2, .3, 1.1); comp.addPass(bloom); comp.addPass(new OutputPass());
   T.composer = comp; T.composer.setSize(T.W || 800, T.H || 600); T.composer.setPixelRatio(T.renderer.getPixelRatio()); return S3;
 }
 
