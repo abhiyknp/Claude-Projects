@@ -1,0 +1,46 @@
+/* BUD & THINGS components v2.0
+   Load after bud-and-things.tokens.css. Every value comes from a token, so light and dark themes work without overrides.
+   Classes: bt-btn (+ bt-btn-2, bt-btn-ghost, bt-btn-s), bt-fld, bt-toast, bt-chip (.is-on), bt-stepper,
+   bt-pcard product card (bt-pc-img, bt-pc-arch, bt-badge, bt-pc-save, bt-pc-meta, bt-pc-row, bt-price), bt-ui-nav header. */
+
+:where(.bt-btn, .bt-chip, .bt-stepper button, .bt-pc-save, a, input, textarea):focus-visible {
+  outline: 2px solid var(--bt-focus-ring); outline-offset: 2px }
+.bt-ui-demo { border: 1px solid var(--bt-border-default); border-radius: 2px; overflow: hidden; background: var(--bt-bg-canvas) }
+.bt-ui-nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 22px; border-bottom: 1px solid var(--bt-border-subtle); flex-wrap: wrap; background: var(--bt-bg-canvas) }
+.bt-ui-logo svg { height: 18px; width: auto; display: block }
+.bt-ui-nav nav { display: flex; gap: 22px; flex-wrap: wrap } .bt-ui-nav nav a { color: var(--bt-text-primary); text-decoration: none; font-size: 14px; font-weight: 500 }
+.bt-ui-ic { display: flex; gap: 14px; color: var(--bt-text-primary) }
+.bt-ui-body { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 40px; padding: 28px }
+.bt-pcard { min-width: 0 }
+.bt-pc-img { position: relative; aspect-ratio: 4/5; border-radius: 2px; display: flex; align-items: flex-end; justify-content: center; overflow: hidden }
+.bt-pc-arch { width: 62%; aspect-ratio: 3/4; background: var(--bt-bg-raised); border-radius: 999px 999px 0 0; display: flex; align-items: center; justify-content: center }
+.bt-pc-arch svg { width: 58%; height: auto }
+.bt-badge { position: absolute; left: 12px; top: 12px; font: 600 10.5px var(--bt-font-text); letter-spacing: .14em; text-transform: uppercase; background: var(--bt-bg-raised); color: var(--bt-text-primary); padding: 5px 9px; border-radius: 2px }
+.bt-pc-save { position: absolute; right: 8px; top: 8px; width: 44px; height: 44px; border: 0; background: transparent; color: var(--bt-text-primary); display: grid; place-items: center; cursor: pointer; border-radius: 50% }
+.bt-pc-meta { padding-top: 14px } .bt-pc-meta h4 { font-size: 24px; margin: 6px 0 4px } .bt-pc-meta p { color: var(--bt-text-secondary); font-size: 14.5px }
+.bt-pc-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap }
+.bt-price { font-weight: 600; font-variant-numeric: tabular-nums }
+.bt-btns { display: flex; flex-wrap: wrap; gap: 10px }
+.bt-btn { font: 600 14px var(--bt-font-text); letter-spacing: .02em; min-height: 48px; padding: 0 22px; border-radius: 2px; border: 1px solid var(--bt-action-primary); background: var(--bt-action-primary); color: var(--bt-action-on-primary); cursor: pointer; transition: background var(--bt-duration-quick) var(--bt-ease-settle) }
+.bt-btn:hover { background: var(--bt-action-primary-hover); border-color: var(--bt-action-primary-hover) }
+.bt-btn:active { background: var(--bt-action-primary-pressed) }
+.bt-btn-s { min-height: 40px; padding: 0 16px; font-size: 13px }
+.bt-btn-2 { background: transparent; color: var(--bt-text-primary); border-color: var(--bt-action-secondary) } .bt-btn-2:hover { background: var(--bt-action-secondary); color: var(--bt-bg-canvas); border-color: var(--bt-action-secondary) }
+.bt-btn-ghost { background: transparent; border-color: transparent; color: var(--bt-text-link); text-decoration: underline; text-underline-offset: 4px } .bt-btn-ghost:hover { background: var(--bt-bg-surface); border-color: transparent }
+.bt-btn:disabled { background: var(--bt-clay-300); border-color: var(--bt-clay-300); color: var(--bt-clay-700); cursor: not-allowed }
+.bt-fld { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500; margin-bottom: 14px; max-width: 420px }
+.bt-fld input, .bt-fld textarea { font: 400 15px var(--bt-font-text); color: var(--bt-text-primary); background: var(--bt-bg-raised); border: 1px solid var(--bt-border-strong); border-radius: 2px; padding: 12px 14px; min-height: 48px; resize: vertical }
+.bt-fld input[aria-invalid="true"] { border-color: var(--bt-status-error); box-shadow: inset 0 0 0 1px var(--bt-status-error) }
+.bt-fld-e { display: flex; gap: 6px; align-items: center; color: var(--bt-status-error); font-weight: 400 }
+.bt-toast { display: inline-flex; gap: 10px; align-items: center; background: var(--bt-bg-inverse); color: var(--bt-text-inverse); padding: 12px 16px; border-radius: 2px; font-size: 14px; flex-wrap: wrap }
+.bt-toast a { color: var(--bt-gold-300) }
+.bt-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 }
+.bt-chip { font-size: 13px; padding: 8px 14px; border: 1px solid var(--bt-border-default); border-radius: 999px } .bt-chip.is-on { background: var(--bt-bg-leaf-subtle); border-color: var(--bt-olive-600); color: var(--bt-text-primary) }
+.bt-stepper { display: inline-flex; align-items: center; border: 1px solid var(--bt-border-strong); border-radius: 2px }
+.bt-stepper button { width: 44px; height: 44px; border: 0; background: transparent; color: var(--bt-text-primary); display: grid; place-items: center; cursor: pointer }
+.bt-stepper span { min-width: 28px; text-align: center; font-variant-numeric: tabular-nums }
+
+.bt-chip { background: transparent; color: var(--bt-text-secondary); cursor: pointer; font-family: var(--bt-font-text) }
+.bt-arch { border-radius: 999px 999px 0 0; overflow: hidden }
+@media (prefers-reduced-motion: reduce) { .bt-btn { transition: none } }
+
