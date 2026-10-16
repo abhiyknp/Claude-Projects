@@ -1,0 +1,25 @@
+:root {
+  /* BUD & THINGS brand palette (locked 2026-10-16 from the brand identity board) */
+  --bt-ivory: #F8F0E4;
+  --bt-sand: #EAD8C6;
+  --bt-terracotta: #A55B3F;
+  --bt-olive: #6B705C;
+  --bt-sage: #9A9F85;
+  --bt-chocolate: #3D281E;
+  --bt-gold: #C9A96A;
+
+  /* type */
+  --bt-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --bt-font-body: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+
+  /* roles */
+  --bt-bg: var(--bt-ivory);
+  --bt-surface: var(--bt-sand);
+  --bt-text: var(--bt-chocolate);
+  --bt-accent: var(--bt-terracotta);
+  --bt-muted: var(--bt-olive);
+  --bt-highlight: var(--bt-gold);
+}
+
+/* Google Fonts: */
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap'); */
