@@ -624,7 +624,8 @@ body.cs main { padding-bottom: 0; }
 <div class="sr" aria-live="polite" id="live"></div>
 
 <script src="config.js"></script>
-<script src="db.js?v=4"></script>
+<script src="vendor/qrcode/qrcode.js"></script>
+<script src="db.js?v=5"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -1480,7 +1481,8 @@ function viewAdmin() {
     const m = A.mfa;
     return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}<form data-form="owner-code" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">${m.step === 'enrol' ? 'Set up your second step' : 'Enter your code'}</h2>
       ${m.step === 'enrol' ? `<p class="full muted">Once, on this sign-in: open an authenticator app on your phone (Google Authenticator, Microsoft Authenticator or 1Password), add an account and scan this code. From then on, signing in needs your password and the 6-digit code the app shows, so a stolen password alone can’t change the shop.</p>
-      ${m.qr ? `<img class="full" src="${esc(m.qr)}" alt="Set-up code for the authenticator app" width="180" height="180" style="background:#fff;padding:8px;border-radius:8px">` : ''}${m.secret ? `<p class="full muted" style="font-size:14px">Can’t scan it? Type this key into the app: <strong class="num" style="word-break:break-all">${esc(m.secret)}</strong></p>` : ''}`
+      ${m.uri && window.qrcode ? '<canvas id="mfa-qr" class="full" role="img" aria-label="Set-up code for the authenticator app" style="width:200px;height:200px;border-radius:8px"></canvas>'
+        : m.qr ? `<img class="full" src="${esc(m.qr)}" alt="Set-up code for the authenticator app" width="180" height="180" style="background:#fff;padding:8px;border-radius:8px">` : ''}${m.secret ? `<p class="full muted" style="font-size:14px">Can’t scan it? Type this key into the app: <strong class="num" style="word-break:break-all">${esc(m.secret)}</strong></p>` : ''}`
         : '<p class="full muted">Open your authenticator app and type the 6-digit code it shows for BUD &amp; THINGS.</p>'}
       <span class="field full"><label for="own-code">6-digit code</label><input id="own-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></span>
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue</button><button class="btn ghost" type="button" data-act="adm-signout">Start again</button></span></form></div>`;
@@ -1687,6 +1689,7 @@ function render(nav) {
   renderChrome(); renderOverlay();
   if (cs) { lcSetup(false); if (nav) window.scrollTo(0, 0); return; }
   if (r === 'checkout' && UI.co.step === 'pay' && UI.co.method === 'qr') drawQR();
+  drawMfaQR();
   if (nav) { window.scrollTo(0, 0); const h = app.querySelector('h1[tabindex]'); if (h && r !== 'home') h.focus({ preventScroll: true }); }
   load3d(); lcSetup(r === 'home' || r.startsWith('house-'));
   const first = !UI.rendered; UI.rendered = true;
@@ -2232,6 +2235,15 @@ function drawQR() {
   const inF = (x, y) => (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9);
   for (let y = 1; y < n - 1; y++) for (let x = 1; x < n - 1; x++) if (!inF(x, y) && rnd() > .52) ctx.fillRect(x, y, 1, 1);
   finder(1, 1); finder(n - 8, 1); finder(1, n - 8);
+}
+
+// the authenticator set-up code, drawn here from the otpauth:// address (vendor/qrcode) rather than Supabase's picture
+function drawMfaQR() {
+  const cv = $('#mfa-qr'), m = UI.adm && UI.adm.mfa; if (!cv || !m || !m.uri || !window.qrcode) return;
+  const q = window.qrcode(0, 'M'); q.addData(m.uri); q.make();
+  const n = q.getModuleCount(), pad = 4, s = 8; cv.width = cv.height = (n + pad * 2) * s;
+  const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height); ctx.fillStyle = '#000';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) ctx.fillRect((x + pad) * s, (y + pad) * s, s, s);
 }
 
 // ---------- placing orders ----------
