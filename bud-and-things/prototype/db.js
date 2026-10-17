@@ -74,7 +74,7 @@
         try { svg = /;base64,$/i.test(head) ? atob(svg) : svg.trim().startsWith('<') ? svg : decodeURIComponent(svg); } catch (e) { svg = ''; }
         qr = svg.trim().startsWith('<') ? URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' })) : '';
       }
-      return { step: 'enrol', qr, secret: f.totp && f.totp.secret };
+      return { step: 'enrol', qr, uri: f.totp && f.totp.uri, secret: f.totp && f.totp.secret };
     },
     verifyCode: async (code) => {
       if (!pending || !pending.factor) throw new Error('Sign in again.');

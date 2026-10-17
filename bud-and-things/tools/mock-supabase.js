@@ -81,7 +81,7 @@ http.createServer((req, res) => {
       if (u.pathname.startsWith('/auth/v1/')) { // the second step: one TOTP factor, code 123456
         if (!signedIn) return send(res, 401, { msg: 'not signed in' });
         if (u.pathname === '/auth/v1/user') return send(res, 200, { email: OWNER.email, factors: [{ id: 'f1', factor_type: 'totp', status: OWNER.enrolled ? 'verified' : 'unverified' }] });
-        if (u.pathname === '/auth/v1/factors' && req.method === 'POST') return send(res, 200, { id: 'f1', type: 'totp', totp: { qr_code: 'data:img/svg+xml;utf-8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#3A2920"/></svg>', secret: 'MOCKSECRET', uri: 'otpauth://totp/mock' } });
+        if (u.pathname === '/auth/v1/factors' && req.method === 'POST') return send(res, 200, { id: 'f1', type: 'totp', totp: { qr_code: 'data:img/svg+xml;utf-8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="#3A2920"/></svg>', secret: 'MOCKSECRET', uri: 'otpauth://totp/budandthings.com:hello%40budandthings.com?secret=MOCKSECRET&issuer=budandthings.com' } });
         if (u.pathname === '/auth/v1/factors/f1' && req.method === 'DELETE') return send(res, 200, { id: 'f1' });
         if (u.pathname === '/auth/v1/factors/f1/challenge') return send(res, 200, { id: 'c1' });
         if (u.pathname === '/auth/v1/factors/f1/verify') { const b = json(); if (b.code !== OWNER.code) return send(res, 422, { msg: 'Invalid TOTP code entered' }); OWNER.enrolled = true; return send(res, 200, { access_token: TOKENS.aal2, token_type: 'bearer' }); }
