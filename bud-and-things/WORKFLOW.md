@@ -59,8 +59,9 @@ bud-and-things/
     assets/house/          baked rooms: geometry modules, lightmaps, reflection panoramas
     assets/house/sm/       half-size lightmaps for phones
     assets/house/poster*.jpg  the porch, shown while the house loads
+    vendor/three/          three.js 0.160.0 and the addons the page imports (MIT, see its LICENSE)
   supabase/
-    schema.sql             tables, access rules, place_order and get_order
+    schema.sql             tables, access rules, limits, place_order, get_order and cancel_order
     README.md              how to set up the database and what the Owner view edits
   tools/
     preview.sh             local preview server
@@ -224,11 +225,11 @@ Always do a `--fast` run first. The foyer is about 2 MB of assets and the bedroo
 
 ## 6. Testing
 
-The page uses three.js from the jsDelivr CDN. Where that is blocked (as in the cloud workspace this was built
-in), the preview uses a local copy from npm.
+The page serves its own copy of three.js 0.160.0 from `prototype/vendor/three/` (only the files it imports), so
+no third-party script runs on the site.
 
 ```sh
-LOCAL_THREE=1 sh bud-and-things/tools/preview.sh &          # http://localhost:8765/page.html
+sh bud-and-things/tools/preview.sh &                        # http://localhost:8765/page.html
 node bud-and-things/tools/mock-supabase.js &                 # optional: a test database on :54321 (see supabase/README.md)
 node bud-and-things/tools/test-flow.js                       # cart → checkout → UPI → order → owner view → finder
 node bud-and-things/tools/test-house.js '[{"p":0.2,"w":1280},{"p":0.6,"w":390,"mood":"festive","focus":"chai-at-four"}]' /tmp
@@ -250,8 +251,8 @@ node bud-and-things/tools/test-house.js '[{"p":0.2,"w":1280},{"p":0.6,"w":390,"m
    `bud-and-things/prototype/`, wraps `index.html` in a full document and deploys
    https://abhiyknp.github.io/Claude-Projects/. One-time setting: Settings → Pages → Source: **GitHub Actions**
    (done). To re-run it: Actions → *Prototype preview (GitHub Pages)* → Run workflow.
-3. **Claude artifact (private).** The same `index.html` is published with its supporting files (the JS modules
-   and `assets/house/*`) as https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr. Only the person who owns it and
+3. **Claude artifact (private).** The same `index.html` is published with its supporting files (the JS modules,
+   `vendor/three/*` and `assets/house/*`) as https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr. Only the person who owns it and
    people it's shared with can open it.
 
 ---

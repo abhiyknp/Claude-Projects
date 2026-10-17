@@ -616,7 +616,7 @@ body.cs main { padding-bottom: 0; }
 
 <script src="config.js"></script>
 <script src="db.js"></script>
-<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
+<script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
 'use strict';
@@ -869,7 +869,8 @@ async function dbDel(table, col, val) {
 }
 // what visitors send (reviews, sign-ups, restock requests): the database when connected, else this browser
 async function visitorSend(table, row) {
-  if (BTDB.on) return BTDB.insert(table, row);
+  if (BTDB.on) return BTDB.insert(table, row).catch((err) => { const m = String(err.message || '');
+    throw new Error(/too_many/.test(m) ? 'we’ve had a lot from this connection, so please try again in an hour' : /bad_contact/.test(m) ? 'check the email or mobile number' : /unknown_item/.test(m) ? 'that piece isn’t on the shop any more' : m); });
   S.db = S.db || {}; const k = table === 'reviews' ? 'reviews' : 'people'; S.db[k] = S.db[k] || [];
   S.db[k].unshift(Object.assign({ id: 'L' + Date.now(), created_at: new Date().toISOString(), table }, row)); save();
 }
@@ -1357,12 +1358,12 @@ const waLink = (text) => SET.whatsapp ? `https://wa.me/${String(SET.whatsapp).re
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound();
   if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && d.status !== o.status) { o.status = d.status; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
-  const idx = STATUSES.indexOf(o.status); const cod = o.method === 'Cash on delivery';
+  const idx = STATUSES.indexOf(o.status); const cod = o.method === 'Cash on delivery'; const unpaid = o.status === 'Awaiting payment', gone = o.status === 'Cancelled';
   const fresh = UI.justPlaced === id; const wa = waLink('Hello, a question about my order ' + id);
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + o.id}</h1><p class="muted">${fresh ? `Order <strong>${o.id}</strong> is confirmed. We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
-    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2><ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : 'Paid by ' + esc(o.method)) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
+  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
+    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? '<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>' : ''}${gone ? '<div class="status err">This order was cancelled and nothing will be sent. If you paid, the money comes back to you.</div>' : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method)) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
       <p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>
@@ -1394,7 +1395,7 @@ function viewStory() {
 function viewHelp() {
   const wa = waLink('Hello BUD & THINGS'); const tr = UI.track || {};
   return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><h1 tabindex="-1">Help &amp; contact</h1></div>
-    <form data-form="track" class="track-form" novalidate><strong>Find your order</strong><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label><input id="tr-phone" type="tel" inputmode="tel" maxlength="16" value="${esc(tr.phone || '')}" autocomplete="tel-national"></span><button class="btn ghost" type="submit">Find it</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
+    <form data-form="track" class="track-form" novalidate><strong>Find your order</strong><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001-7F3A9C" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label><input id="tr-phone" type="tel" inputmode="tel" maxlength="16" value="${esc(tr.phone || '')}" autocomplete="tel-national"></span><button class="btn ghost" type="submit">Find it</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
     <div class="facts" style="border-top:0"><div><strong>Contact</strong><span class="muted">Email: <span class="sel">${esc(SET.email)}</span><br>WhatsApp: ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener">+${esc(SET.whatsapp)}</a>` : '[your business number]'}<br>Instagram: <span class="sel">${esc(SET.instagram)}</span></span></div>
     <div><strong>Shipping &amp; delivery</strong><span class="muted">${T('help.shipping')}</span></div>
     ${SET.codOn ? `<div><strong>Cash on delivery</strong><span class="muted">${T('co.cod')}</span></div>` : ''}
@@ -1453,6 +1454,15 @@ function viewAdmin() {
   const head = `<div class="page-head"><span class="eyebrow">Owner view</span><h1 tabindex="-1">Control panel</h1><p class="muted" style="max-width:700px">Change products, prices, stock, photos and videos, every line of site text, and settings here. Nothing needs a code change.</p></div>`;
   const banner = !BTDB.on ? `<div class="status adm-banner">Demo mode: changes are kept in this browser only. Connect the database (see <button class="linkbtn" type="button" data-act="adm-tab" data-v="setup">Setup</button>) so every visitor sees them.</div>`
     : DB.state === 'error' ? `<div class="status err adm-banner">The database didn’t answer: ${esc(DB.error || '')}. The site is showing its last saved copy.</div>` : '';
+  if (BTDB.on && !BTDB.owner() && A.mfa && BTDB.awaitingCode()) {
+    const m = A.mfa;
+    return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}<form data-form="owner-code" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">${m.step === 'enrol' ? 'Set up your second step' : 'Enter your code'}</h2>
+      ${m.step === 'enrol' ? `<p class="full muted">Once, on this sign-in: open an authenticator app on your phone (Google Authenticator, Microsoft Authenticator or 1Password), add an account and scan this code. From then on, signing in needs your password and the 6-digit code the app shows, so a stolen password alone can’t change the shop.</p>
+      ${m.qr ? `<img class="full" src="${esc(m.qr)}" alt="Set-up code for the authenticator app" width="180" height="180" style="background:#fff;padding:8px;border-radius:8px">` : ''}${m.secret ? `<p class="full muted" style="font-size:14px">Can’t scan it? Type this key into the app: <strong class="num" style="word-break:break-all">${esc(m.secret)}</strong></p>` : ''}`
+        : '<p class="full muted">Open your authenticator app and type the 6-digit code it shows for BUD &amp; THINGS.</p>'}
+      <span class="field full"><label for="own-code">6-digit code</label><input id="own-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required></span>
+      ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue</button><button class="btn ghost" type="button" data-act="adm-signout">Start again</button></span></form></div>`;
+  }
   if (BTDB.on && !BTDB.owner()) {
     return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}<form data-form="owner-signin" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">Sign in</h2>
       <span class="field full"><label for="own-email">Email</label><input id="own-email" type="email" autocomplete="username" value="${esc(A.email || '')}" required></span>
@@ -1466,10 +1476,10 @@ function viewAdmin() {
 
 function admOrders() {
   const list = admData('orders'); if (!list) return loadingRow;
-  const rev = list.reduce((a, o) => a + (o.total || 0), 0); const open = list.filter((o) => o.status !== 'Delivered').length;
-  const low = Object.keys(skuMap).filter((s) => stockOf(s) <= 2).length; const gifts = list.filter((o) => o.gift && o.gift.on && o.status !== 'Delivered').length;
+  const live = list.filter((o) => o.status !== 'Cancelled'); const rev = live.filter((o) => o.status !== 'Awaiting payment').reduce((a, o) => a + (o.total || 0), 0); const open = live.filter((o) => o.status !== 'Delivered').length;
+  const low = Object.keys(skuMap).filter((s) => stockOf(s) <= 2).length; const gifts = live.filter((o) => o.gift && o.gift.on && o.status !== 'Delivered').length;
   return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
-    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td>${i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : '<span class="muted">Done</span>'}</td></tr>`; }).join('')}</tbody></table></div>`
+    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
@@ -2214,10 +2224,12 @@ async function placeOrder(via) {
     co.placing = true; co.payErr = null; render();
     try { id = await BTDB.rpc('place_order', { o }); } catch (err) {
       co.placing = false; const m = String(err.message || '');
-      co.payErr = /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
+      co.payErr = /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
+        : /too_many/.test(m) ? 'We’ve had a lot of orders from this connection or number. Please message us on WhatsApp and we’ll place it for you.' : /bad_quantity/.test(m) ? 'That’s more than we can send in one order. Please lower the quantities, or message us for a bulk order.'
+        : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
       if (/sold_out|price_changed|unknown_item/.test(m)) loadData(); render(); return;
     }
-    co.placing = false;
+    co.placing = false; if (via !== 'Cash on delivery') o.status = 'Awaiting payment'; // until the payment gateway confirms it
   } else id = 'BT-' + (1001 + S.orders.length);
   o.id = id;
   lines.forEach((l) => { S.stock[l.sku] = Math.max(0, stockOf(l.sku) - l.qty); });
@@ -2283,7 +2295,7 @@ document.addEventListener('click', (e) => {
     case 'adm-csv': downloadCSV(d.v === 'subscribers' ? 'bud-and-things-sign-ups' : 'bud-and-things-restock-requests', (admData('people') || []).filter((r) => r.table === d.v)); break;
     case 'cs-copy': { const l = $('#cs-link'); l.select(); (navigator.clipboard ? navigator.clipboard.writeText(l.value) : Promise.reject()).then(() => say('Preview link copied.'), () => say('Select the link and copy it.')); break; }
     case 'adm-seed':admDo(async () => { const msg = await admSeed(); say('Copied ' + msg + '.'); render(); }); break;
-    case 'adm-signout': BTDB.signOut(); UI.adm.rows = {}; loadData(); render(); say('Signed out.'); break;
+    case 'adm-signout': BTDB.signOut(); UI.adm.mfa = null; UI.adm.err = null; UI.adm.rows = {}; loadData(); render(); say('Signed out.'); break;
     case 'adm-local-clear': if (confirm('Remove every change made in this browser’s demo control panel?')) { delete S.db; save(); Object.assign(DATA, { products: null, pairings: null, text: {}, settings: {}, media: [], reviews: [] }); loadData(); render(); say('Demo edits cleared.'); } break;
     case 'qty': { const l = S.cart.find((x) => x.sku === d.sku); if (l) { l.qty = Math.max(0, Math.min(stockOf(d.sku), l.qty + +d.d)); if (!l.qty) S.cart = S.cart.filter((x) => x.sku !== d.sku); save(); UI.drawerMsg = null; renderChrome(); renderOverlay(); if (['cart', 'checkout'].includes(route())) render(); } break; }
     case 'remove': S.cart = S.cart.filter((x) => x.sku !== d.sku); save(); UI.drawerMsg = 'Removed from your cart.'; renderChrome(); renderOverlay(); if (['cart', 'checkout'].includes(route())) render(); break;
@@ -2305,7 +2317,10 @@ document.addEventListener('click', (e) => {
     case 'pay-app': UI.co.appSheet = true; render(); break;
     case 'pay-fail': UI.co.appSheet = false; UI.co.payErr = 'The payment was declined in your UPI app. Nothing was charged. Try again or choose another method.'; track('payment_failed', { method: 'UPI app' }); render(); break;
     case 'pay-success': placeOrder(d.via); break;
-    case 'advance': admDo(async () => { const list = admData('orders') || []; const o = list.find((x) => x.id === d.id); if (!o) return; const i = STATUSES.indexOf(o.status); if (i < 0 || i >= 3) return; const st = STATUSES[i + 1];
+    case 'adm-cancel': if (!confirm('Cancel order ' + d.id + '? Its pieces go back into stock.')) break; admDo(async () => { const list = admData('orders') || []; const o = list.find((x) => x.id === d.id); if (!o) return;
+      if (BTDB.on) { await BTDB.rpc('cancel_order', { order_id: o.id }); loadData(); } else o.items.forEach((l) => { S.stock[l.sku] = stockOf(l.sku) + l.qty; });
+      o.status = 'Cancelled'; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = 'Cancelled'; save(); track('order_status', { order: o.id, status: 'Cancelled' }); render(); say(`${o.id} cancelled. Its pieces are back in stock.`); }); break;
+    case 'advance': admDo(async () => { const list = admData('orders') || []; const o = list.find((x) => x.id === d.id); if (!o) return; const i = STATUSES.indexOf(o.status); if (o.status !== 'Awaiting payment' && (i < 0 || i >= 3)) return; const st = o.status === 'Awaiting payment' ? 'Placed' : STATUSES[i + 1];
       if (BTDB.on) await BTDB.update('orders', 'id=eq.' + encodeURIComponent(o.id), { status: st });
       o.status = st; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = st; save(); track('order_status', { order: o.id, status: st }); render(); say(`${o.id} marked ${st.toLowerCase()}. The customer would get an update.`); }); break;
   }
@@ -2354,7 +2369,12 @@ document.addEventListener('submit', (e) => {
     BTDB.rpc('get_order', { order_id: id, phone_no: ph }).then((o) => { if (!o) { UI.track.msg = 'We couldn’t find an order with that number and mobile.'; render(); return; } S.orders.unshift(Object.assign({ contact: {}, address: {}, items: [] }, o, { id })); save(); location.hash = 'order-' + id; }, (err) => { UI.track.msg = 'We couldn’t check right now (' + err.message + ').'; render(); });
     return; }
   if (kind === 'owner-signin') { const em = $('#own-email').value.trim(), pw = $('#own-pass').value; UI.adm.email = em; if (!em || !pw) { UI.adm.err = 'Enter your email and password.'; render(); return; }
-    BTDB.signIn(em, pw).then(() => { UI.adm.err = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid/i.test(err.message) ? 'That email and password don’t match.' : err.message; render(); $('#own-pass')?.focus(); });
+    BTDB.signIn(em, pw).then((r) => { UI.adm.err = null;
+      if (r.step !== 'done') { UI.adm.mfa = r; render(); $('#own-code')?.focus(); return; }
+      UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid/i.test(err.message) ? 'That email and password don’t match.' : err.message; render(); $('#own-pass')?.focus(); });
+    return; }
+  if (kind === 'owner-code') { const code = $('#own-code').value.replace(/\D/g, ''); if (code.length !== 6) { UI.adm.err = 'Enter the 6 digits from your authenticator app.'; render(); $('#own-code')?.focus(); return; }
+    BTDB.verifyCode(code).then(() => { UI.adm.err = null; UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid|expired|code/i.test(err.message) ? 'That code didn’t work. Type the newest code the app shows.' : err.message; render(); $('#own-code')?.focus(); });
     return; }
   if (kind === 'adm-product') { const r = readProductForm(f); const d = r.data; const A = UI.adm; const others = prodRows().filter((x) => x.id !== r.id); const skus = new Set(); others.forEach((x) => ((x.data || {}).variants || []).forEach((v) => skus.add(v.sku)));
     A.formErr = !d.name ? 'Give the product a name.' : r.isNew && !/^[a-z0-9][a-z0-9-]{1,59}$/.test(r.id) ? 'Choose a web address name with lowercase letters, numbers and dashes.' : r.isNew && prodRows().some((x) => x.id === r.id) ? 'That web address name is already used.'

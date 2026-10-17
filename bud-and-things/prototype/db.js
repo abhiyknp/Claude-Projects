@@ -7,18 +7,21 @@
   const C = (window.BT_CONFIG && window.BT_CONFIG.supabase) || {};
   const url = String(C.url || '').replace(/\/+$/, ''), key = String(C.anonKey || '');
   const on = !!(url && key);
-  let token = null;
-  try { token = sessionStorage.getItem('bt-owner-token'); } catch (e) { /* storage unavailable */ }
+  // the owner's sign-in: `token` once both steps are done (password, then the authenticator app code), `pending` in between
+  let token = null, pending = null;
+  const aal = (t) => { try { return JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).aal; } catch (e) { return null; } };
+  try { token = sessionStorage.getItem('bt-owner-token'); if (token && aal(token) !== 'aal2') { token = null; sessionStorage.removeItem('bt-owner-token'); } } catch (e) { /* storage unavailable */ }
+  const keep = (t) => { token = t; pending = null; try { sessionStorage.setItem('bt-owner-token', t); } catch (e) { /* ignore */ } };
   const enc = (path) => path.split('/').map(encodeURIComponent).join('/');
 
-  async function req(method, path, body, headers) {
+  async function req(method, path, body, headers, bearer) {
     const isFile = typeof Blob !== 'undefined' && body instanceof Blob;
-    const h = Object.assign({ apikey: key, Authorization: 'Bearer ' + (token || key) }, body !== undefined && !isFile ? { 'Content-Type': 'application/json' } : {}, headers || {});
+    const h = Object.assign({ apikey: key, Authorization: 'Bearer ' + (bearer || token || key) }, body !== undefined && !isFile ? { 'Content-Type': 'application/json' } : {}, headers || {});
     const r = await fetch(url + path, { method, headers: h, body: body === undefined ? undefined : isFile ? body : JSON.stringify(body) });
     const text = await r.text(); let data = null;
     try { data = text ? JSON.parse(text) : null; } catch (e) { data = text; }
     if (!r.ok) {
-      if (r.status === 401 && token) { token = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ } }
+      if (r.status === 401 && token && !bearer) { token = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ } }
       const err = new Error((data && (data.message || data.error_description || data.msg || data.error)) || ('Request failed (' + r.status + ')'));
       err.status = r.status; throw err;
     }
@@ -47,13 +50,33 @@
     fileUrl: (path) => (/^(https?:|data:|blob:|assets\/)/.test(path) ? path : url + '/storage/v1/object/public/media/' + enc(path)),
     upload: (path, file) => req('POST', '/storage/v1/object/media/' + enc(path), file, { 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'true' }),
     removeFile: (path) => req('DELETE', '/storage/v1/object/media/' + enc(path)),
-    // the owner signs in with the email and password set up in Supabase → Authentication
+    // the owner signs in with the email and password set up in Supabase → Authentication, then with a 6-digit code
+    // from an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…). The database only lets a
+    // sign-in that has passed both steps change anything. Returns { step: 'code' } or { step: 'enrol', qr, secret }.
     signIn: async (email, password) => {
-      const d = await req('POST', '/auth/v1/token?grant_type=password', { email, password });
-      token = d.access_token;
-      try { sessionStorage.setItem('bt-owner-token', token); } catch (e) { /* ignore */ }
-      return d;
+      token = null; pending = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ }
+      const d = await req('POST', '/auth/v1/token?grant_type=password', { email, password }, null, key);
+      if (aal(d.access_token) === 'aal2') { keep(d.access_token); return { step: 'done' }; }
+      pending = { token: d.access_token };
+      const u = await req('GET', '/auth/v1/user', undefined, null, pending.token);
+      const totp = (u.factors || []).filter((f) => f.factor_type === 'totp');
+      const ready = totp.find((f) => f.status === 'verified');
+      if (ready) { pending.factor = ready.id; return { step: 'code' }; }
+      // first time: clear any half-finished set-up, then start a new one
+      for (const f of totp) await req('DELETE', '/auth/v1/factors/' + encodeURIComponent(f.id), undefined, null, pending.token);
+      const f = await req('POST', '/auth/v1/factors', { factor_type: 'totp', friendly_name: 'Owner view ' + new Date().toISOString().slice(0, 10) }, null, pending.token);
+      pending.factor = f.id;
+      return { step: 'enrol', qr: f.totp && f.totp.qr_code, secret: f.totp && f.totp.secret };
     },
-    signOut: () => { token = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ } }
+    verifyCode: async (code) => {
+      if (!pending || !pending.factor) throw new Error('Sign in again.');
+      const p = pending.token, id = encodeURIComponent(pending.factor);
+      const c = await req('POST', '/auth/v1/factors/' + id + '/challenge', {}, null, p);
+      const d = await req('POST', '/auth/v1/factors/' + id + '/verify', { challenge_id: c.id, code: String(code) }, null, p);
+      if (aal(d.access_token) !== 'aal2') throw new Error('That code didn’t work. Try the newest one.');
+      keep(d.access_token);
+    },
+    awaitingCode: () => !!pending,
+    signOut: () => { token = null; pending = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ } }
   };
 })();
