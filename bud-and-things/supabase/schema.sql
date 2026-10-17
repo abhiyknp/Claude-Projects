@@ -4,9 +4,13 @@
 -- website's Owner view (#admin) after signing in. See README.md in this folder for the setup steps.
 
 -- ---------- who may edit ----------
+-- The owner is the signed-in account whose confirmed email is in this table, and only once that sign-in has passed
+-- the second step (the authenticator app code, "aal2"). A stolen password alone can change nothing.
 create table if not exists owners (email text primary key);
 create or replace function is_owner() returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from owners where lower(email) = lower(coalesce(auth.jwt() ->> 'email', '')));
+  select coalesce(auth.jwt() ->> 'aal', '') = 'aal2' and exists (
+    select 1 from auth.users u join owners o on lower(o.email) = lower(u.email)
+    where u.id = auth.uid() and u.email_confirmed_at is not null);
 $$;
 
 -- ---------- content ----------
@@ -37,6 +41,41 @@ create table if not exists reviews (
 create table if not exists subscribers (id uuid primary key default gen_random_uuid(), contact text not null, source text, created_at timestamptz not null default now());
 create table if not exists restock_requests (id uuid primary key default gen_random_uuid(), sku text not null, contact text not null, created_at timestamptz not null default now());
 
+-- ---------- limits ----------
+-- Every visitor action is counted per connection (a one-way hash of the IP address, never the address itself), per
+-- phone number where there is one, and for the whole site, so a script can't flood the lists or buy up the stock.
+create table if not exists hits (bucket text not null, who text not null, at timestamptz not null default now());
+create index if not exists hits_lookup on hits (bucket, who, at);
+
+-- the visitor's address as Supabase's gateway reports it (Cloudflare's header can't be set by the visitor)
+create or replace function client_key() returns text language sql stable as $$
+  select md5(coalesce(nullif(h ->> 'cf-connecting-ip', ''), nullif(h ->> 'x-real-ip', ''),
+    nullif(trim(split_part(h ->> 'x-forwarded-for', ',', 1)), ''), 'unknown'))
+  from (select coalesce(nullif(current_setting('request.headers', true), ''), '{}')::json h) x;
+$$;
+
+-- count one action; refuse it once there have been max_n in the window
+create or replace function hit(b text, w text, max_n int, per interval) returns void language plpgsql security definer set search_path = public as $$
+begin
+  if random() < 0.02 then delete from hits where at < now() - interval '2 days'; end if;
+  if (select count(*) from hits where bucket = b and who = w and at > now() - per) >= max_n then
+    raise exception 'too_many_requests';
+  end if;
+  insert into hits (bucket, who) values (b, w);
+end $$;
+
+-- a number or switch from settings, read the way the site reads it (missing: the site's default; not a number: 0)
+create or replace function cfg_num(k text, d numeric) returns numeric language sql stable security definer set search_path = public as $$
+  select case when not exists (select 1 from settings where key = k) then d
+    else coalesce((select case when value #>> '{}' ~ '^\s*-?[0-9]+(\.[0-9]+)?\s*$' then (value #>> '{}')::numeric end from settings where key = k), 0) end;
+$$;
+create or replace function cfg_on(k text, d boolean) returns boolean language sql stable security definer set search_path = public as $$
+  select coalesce((select value not in ('false'::jsonb, '0'::jsonb, '""'::jsonb, 'null'::jsonb) from settings where key = k), d);
+$$;
+create or replace function cfg_text(k text, d text) returns text language sql stable security definer set search_path = public as $$
+  select coalesce((select value #>> '{}' from settings where key = k), d);
+$$;
+
 -- ---------- rules ----------
 alter table owners enable row level security;
 alter table products enable row level security;
@@ -49,6 +88,8 @@ alter table orders enable row level security;
 alter table reviews enable row level security;
 alter table subscribers enable row level security;
 alter table restock_requests enable row level security;
+alter table hits enable row level security; -- no rules on purpose: only the functions here read or write it
+revoke all on hits from anon, authenticated;
 
 do $$
 declare t text;
@@ -80,40 +121,190 @@ create policy "owner" on reviews for all using (is_owner()) with check (is_owner
 create policy "owner" on subscribers for all using (is_owner()) with check (is_owner());
 create policy "owner" on restock_requests for all using (is_owner()) with check (is_owner());
 -- visitors may send a review (held until the owner publishes it), sign up, or ask to hear about a restock
-create policy "visitor" on reviews for insert with check (not published and length(name) between 1 and 60 and length(body) between 1 and 1500);
-create policy "visitor" on subscribers for insert with check (length(contact) between 5 and 120);
+create policy "visitor" on reviews for insert with check (not published and length(name) between 1 and 60 and length(body) between 1 and 1500 and length(product_id) < 60);
+create policy "visitor" on subscribers for insert with check (length(contact) between 5 and 120 and length(coalesce(source, '')) <= 40);
 create policy "visitor" on restock_requests for insert with check (length(contact) between 5 and 120 and length(sku) < 60);
 
--- ---------- placing an order ----------
--- Prices are checked against the products table and stock is taken off in the same step, so two people can never
--- buy the last piece. Payments stay simulated until the payment gateway is connected.
-create or replace function place_order(o jsonb) returns text language plpgsql security definer set search_path = public as $$
-declare it jsonb; n int; price int; sub int := 0; new_id text;
+-- what a visitor sends is checked, tidied and counted before it is saved
+create or replace function guard_visitor() returns trigger language plpgsql security definer set search_path = public as $$
+declare me text := client_key();
 begin
+  if is_owner() then return new; end if;
+  new.created_at := now();
+  if tg_table_name = 'reviews' then
+    new.id := gen_random_uuid(); new.published := false; new.name := trim(new.name); new.body := trim(new.body);
+    if not exists (select 1 from products where id = new.product_id and live) then raise exception 'unknown_item'; end if;
+    perform hit('review', me, 3, '1 hour'); perform hit('review', 'site', 60, '1 hour');
+  elsif tg_table_name = 'subscribers' then
+    new.id := gen_random_uuid(); new.contact := lower(trim(new.contact));
+    if new.contact !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
+    if new.source is not null and new.source !~ '^[a-z0-9-]{1,40}$' then raise exception 'bad_source'; end if;
+    perform hit('signup', me, 5, '1 hour'); perform hit('signup', 'site', 300, '1 hour');
+    if exists (select 1 from subscribers where contact = new.contact) then return null; end if; -- already signed up
+  elsif tg_table_name = 'restock_requests' then
+    new.id := gen_random_uuid(); new.contact := lower(trim(new.contact));
+    if new.contact !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
+    if not exists (select 1 from products p, jsonb_array_elements(p.data -> 'variants') v where p.live and v ->> 'sku' = new.sku) then raise exception 'unknown_item'; end if;
+    perform hit('restock', me, 10, '1 hour'); perform hit('restock', 'site', 300, '1 hour');
+    if exists (select 1 from restock_requests where sku = new.sku and contact = new.contact) then return null; end if;
+  end if;
+  return new;
+end $$;
+drop trigger if exists guard_visitor on reviews;
+drop trigger if exists guard_visitor on subscribers;
+drop trigger if exists guard_visitor on restock_requests;
+create trigger guard_visitor before insert on reviews for each row execute function guard_visitor();
+create trigger guard_visitor before insert on subscribers for each row execute function guard_visitor();
+create trigger guard_visitor before insert on restock_requests for each row execute function guard_visitor();
+
+-- ---------- placing an order ----------
+-- The database rebuilds the order from what it knows: each price from the products table, the ritual saving, the
+-- welcome code, shipping, gift wrap and the cash on delivery fee from settings, so the total can't be changed from the
+-- browser. It checks every field, limits how much one order and one visitor can take, and takes the stock off in the
+-- same step, so two people can never buy the last piece.
+-- Until a payment gateway confirms payment, an order paid online waits as "Awaiting payment" and its stock is held for
+-- payHoldMins minutes (120 unless set), then released. Cash on delivery orders start as "Placed".
+-- The order number has a random part (BT-1042-7F3A9C), so nobody can look up other people's orders by counting.
+alter table orders add column if not exists method text;
+
+create or replace function release_unpaid() returns void language plpgsql security definer set search_path = public as $$
+declare r record; it jsonb;
+begin
+  for r in select id, data from orders where status = 'Awaiting payment'
+      and created_at < now() - make_interval(mins => greatest(cfg_num('payHoldMins', 120), 5)::int) for update skip locked loop
+    for it in select * from jsonb_array_elements(r.data -> 'items') loop
+      update stock set qty = qty + (it ->> 'qty')::int, updated_at = now() where sku = it ->> 'sku';
+    end loop;
+    update orders set status = 'Cancelled' where id = r.id;
+  end loop;
+end $$;
+
+create or replace function place_order(o jsonb) returns text language plpgsql security definer set search_path = public as $$
+declare
+  c jsonb := coalesce(o -> 'contact', '{}'); a jsonb := coalesce(o -> 'address', '{}'); g jsonb := o -> 'gift';
+  method text := o ->> 'method'; phone text := c ->> 'phone';
+  it jsonb; n int; pieces int := 0; price int; cat text; pname text; plabel text;
+  items jsonb := '[]'; skus text[] := '{}'; candles int[] := '{}'; objects int[] := '{}';
+  sub int := 0; ritual int := 0; code_off int := 0; ship int := 0; wrap int := 0; cod int := 0; total int; code text := '';
+  gift_on boolean := false; gift jsonb := null; new_id text; st text;
+begin
+  perform release_unpaid();
+  -- how often: per connection, per phone, and for the whole shop
+  perform hit('order', client_key(), 5, '1 hour');
+  perform hit('order-site', 'site', greatest(cfg_num('maxOrdersHour', 40), 1)::int, '1 hour');
+
+  -- who and where
+  if jsonb_typeof(o) <> 'object' or jsonb_typeof(o -> 'items') <> 'array' then raise exception 'bad_order'; end if;
+  if length(coalesce(c ->> 'name', '')) not between 1 and 80 then raise exception 'bad_order:name'; end if;
+  if coalesce(phone, '') !~ '^[6-9][0-9]{9}$' then raise exception 'bad_order:phone'; end if;
+  if coalesce(c ->> 'email', '') <> '' and (length(c ->> 'email') > 120 or (c ->> 'email') !~ '^[^\s@]+@[^\s@]+\.[^\s@]+$') then raise exception 'bad_order:email'; end if;
+  if length(coalesce(a ->> 'line1', '')) not between 1 and 200 or length(coalesce(a ->> 'line2', '')) > 200 then raise exception 'bad_order:address'; end if;
+  if coalesce(a ->> 'pin', '') !~ '^[1-9][0-9]{5}$' then raise exception 'bad_order:pin'; end if;
+  if length(coalesce(a ->> 'city', '')) not between 1 and 80 or length(coalesce(a ->> 'state', '')) not between 1 and 60 then raise exception 'bad_order:address'; end if;
+  if method is null or method not in ('Cash on delivery', 'UPI ID', 'UPI QR', 'UPI app', 'Card') then raise exception 'bad_order:method'; end if;
+  if method = 'Cash on delivery' and not cfg_on('codOn', true) then raise exception 'bad_order:cod_off'; end if;
+  perform hit('order-phone', phone, 3, '1 day');
+  if jsonb_typeof(g) = 'object' and coalesce(g ->> 'on', 'false') = 'true' then
+    gift_on := true;
+    if length(coalesce(g ->> 'name', '')) not between 1 and 80 or length(coalesce(g ->> 'note', '')) > 200
+      or (coalesce(g ->> 'phone', '') <> '' and (g ->> 'phone') !~ '^[6-9][0-9]{9}$')
+      or (coalesce(g ->> 'date', '') <> '' and (g ->> 'date') !~ '^\d{4}-\d{2}-\d{2}$') then raise exception 'bad_order:gift'; end if;
+    gift := jsonb_build_object('on', true, 'wrap', coalesce(g ->> 'wrap', 'false') = 'true', 'name', g ->> 'name',
+      'phone', coalesce(g ->> 'phone', ''), 'note', coalesce(g ->> 'note', ''), 'date', coalesce(g ->> 'date', ''));
+  end if;
+
+  -- what: every price from the products table, a sensible amount of each
+  if jsonb_array_length(o -> 'items') not between 1 and 20 then raise exception 'bad_order:items'; end if;
   for it in select * from jsonb_array_elements(o -> 'items') loop
+    if coalesce(it ->> 'qty', '') !~ '^[0-9]{1,3}$' then raise exception 'bad_quantity'; end if;
     n := (it ->> 'qty')::int;
-    if n is null or n < 1 then raise exception 'bad_quantity'; end if;
-    select (v ->> 'price')::int into price from products p, jsonb_array_elements(p.data -> 'variants') v where p.live and v ->> 'sku' = it ->> 'sku' limit 1;
+    if n < 1 or n > greatest(cfg_num('maxQty', 5), 1) then raise exception 'bad_quantity'; end if;
+    if (it ->> 'sku') = any (skus) then raise exception 'bad_order:items'; end if;
+    skus := skus || (it ->> 'sku');
+    select (v ->> 'price')::int, p.data ->> 'cat', p.data ->> 'name', v ->> 'label' into price, cat, pname, plabel
+      from products p, jsonb_array_elements(p.data -> 'variants') v where p.live and v ->> 'sku' = it ->> 'sku' limit 1;
     if price is null then raise exception 'unknown_item:%', it ->> 'sku'; end if;
+    pieces := pieces + n;
     sub := sub + price * n;
+    for i in 1 .. n loop if cat = 'candles' then candles := candles || price; else objects := objects || price; end if; end loop;
+    items := items || jsonb_build_object('sku', it ->> 'sku', 'name', pname, 'label', plabel, 'price', price, 'qty', n);
     update stock set qty = qty - n, updated_at = now() where sku = it ->> 'sku' and qty >= n;
     if not found then raise exception 'sold_out:%', it ->> 'sku'; end if;
   end loop;
-  if sub <> (o ->> 'sub')::int then raise exception 'price_changed'; end if;
-  new_id := 'BT-' || nextval('order_no');
-  insert into orders (id, data, status, phone, total) values (new_id, o || jsonb_build_object('id', new_id), 'Placed', o -> 'contact' ->> 'phone', (o ->> 'total')::int);
+  if pieces > greatest(cfg_num('maxPieces', 10), 1) then raise exception 'bad_quantity'; end if;
+
+  -- the money, worked out the same way as the checkout page
+  if cfg_num('ritualOff', 10) > 0 then
+    select coalesce(sum(x.cp + x.op), 0)::int into ritual from (
+      select cp, op from (select cp, row_number() over (order by cp desc) i from unnest(candles) cp) cc
+      join (select op, row_number() over (order by op desc) i from unnest(objects) op) oo using (i)) x;
+    ritual := round(ritual * cfg_num('ritualOff', 10) / 100);
+  end if;
+  if coalesce(o ->> 'code', '') <> '' then
+    if cfg_text('welcomeCode', 'HELLO10') = '' or upper(trim(o ->> 'code')) <> upper(trim(cfg_text('welcomeCode', 'HELLO10'))) then raise exception 'price_changed'; end if;
+    code := upper(trim(o ->> 'code'));
+    code_off := round((sub - ritual) * cfg_num('welcomeOff', 10) / 100);
+  end if;
+  ship := case when sub = 0 then 0 when cfg_num('freeOver', 1999) > 0 and sub >= cfg_num('freeOver', 1999) then 0 else round(cfg_num('shipFee', 99)) end;
+  if gift_on and (gift ->> 'wrap')::boolean then wrap := round(cfg_num('wrapFee', 99)); end if;
+  if method = 'Cash on delivery' then cod := round(cfg_num('codFee', 49)); end if;
+  total := sub - ritual - code_off + ship + wrap + cod;
+  -- the browser showed the customer a total; if it isn't this one, something changed and they should look again
+  if coalesce(o ->> 'sub', '') <> sub::text or coalesce(o ->> 'total', '') <> total::text then raise exception 'price_changed'; end if;
+
+  st := case when method = 'Cash on delivery' then 'Placed' else 'Awaiting payment' end;
+  new_id := 'BT-' || nextval('order_no') || '-' || upper(substr(md5(gen_random_uuid()::text), 1, 6));
+  insert into orders (id, data, status, phone, total, method) values (new_id, jsonb_build_object(
+    'id', new_id, 'placedAt', now(), 'method', method, 'items', items,
+    'contact', jsonb_build_object('name', trim(c ->> 'name'), 'phone', phone, 'email', coalesce(c ->> 'email', '')),
+    'address', jsonb_build_object('line1', trim(a ->> 'line1'), 'line2', coalesce(a ->> 'line2', ''), 'pin', a ->> 'pin', 'city', trim(a ->> 'city'), 'state', a ->> 'state'),
+    'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'ship', ship, 'wrap', wrap, 'cod', cod, 'total', total,
+    'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true'), st, phone, total, method);
   return new_id;
 end $$;
 
--- a customer can look up their own order with its number and their phone number
-create or replace function get_order(order_id text, phone_no text) returns jsonb language sql stable security definer set search_path = public as $$
-  select data || jsonb_build_object('status', status) from orders where id = order_id and phone = phone_no;
-$$;
+-- a customer can look up their own order with its number and their phone number (20 tries an hour per connection)
+drop function if exists get_order(text, text);
+create function get_order(order_id text, phone_no text) returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  perform hit('lookup', client_key(), 20, '1 hour');
+  return (select data || jsonb_build_object('status', status) from orders where id = upper(trim(order_id)) and phone = phone_no);
+end $$;
+
+-- the owner cancels an order that hasn't shipped; its pieces go back into stock
+create or replace function cancel_order(order_id text) returns void language plpgsql security definer set search_path = public as $$
+declare r record; it jsonb;
+begin
+  if not is_owner() then raise exception 'not_allowed'; end if;
+  select id, data, status into r from orders where id = order_id for update;
+  if r.id is null or r.status not in ('Awaiting payment', 'Placed', 'Packed') then raise exception 'cannot_cancel'; end if;
+  for it in select * from jsonb_array_elements(r.data -> 'items') loop
+    update stock set qty = qty + (it ->> 'qty')::int, updated_at = now() where sku = it ->> 'sku';
+  end loop;
+  update orders set status = 'Cancelled' where id = r.id;
+end $$;
+
+-- who may call what: Supabase lets everyone call every function unless told otherwise
+revoke execute on function hit(text, text, int, interval) from public, anon, authenticated;
+revoke execute on function release_unpaid() from public, anon, authenticated;
+revoke execute on function cfg_num(text, numeric) from public, anon, authenticated;
+revoke execute on function cfg_on(text, boolean) from public, anon, authenticated;
+revoke execute on function cfg_text(text, text) from public, anon, authenticated;
+revoke execute on function client_key() from public, anon, authenticated;
+revoke execute on function guard_visitor() from public, anon, authenticated;
+revoke execute on function place_order(jsonb) from public;
+revoke execute on function get_order(text, text) from public;
+revoke execute on function cancel_order(text) from public, anon;
 grant execute on function place_order(jsonb) to anon, authenticated;
 grant execute on function get_order(text, text) to anon, authenticated;
+grant execute on function cancel_order(text) to authenticated;
+grant execute on function is_owner() to anon, authenticated;
 
 -- ---------- photos and videos ----------
-insert into storage.buckets (id, name, public) values ('media', 'media', true) on conflict (id) do update set public = true;
+-- only photos and videos, up to 50 MB each (so nothing that runs in a browser, such as HTML or SVG, can be stored)
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+  values ('media', 'media', true, 52428800, array['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm'])
+  on conflict (id) do update set public = true, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
 drop policy if exists "bt media owner write" on storage.objects;
 drop policy if exists "bt media owner update" on storage.objects;
 drop policy if exists "bt media owner delete" on storage.objects;

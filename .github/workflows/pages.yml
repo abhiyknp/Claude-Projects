@@ -9,6 +9,7 @@ on:
       - 'bud-and-things/prototype/**'
       - '.github/workflows/pages.yml'
       - 'bud-and-things/tools/build-pinterest.js'
+      - 'bud-and-things/tools/add-csp.js'
   # once a day, so product, price, stock and photo changes made in the Owner view reach the Pinterest feeds
   schedule:
     - cron: '17 1 * * *'
@@ -27,7 +28,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # actions are pinned to exact commits (Dependabot proposes updates), so a moved tag can't change the build
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
       - name: Assemble the site
         run: |
           mkdir -p _site
@@ -55,7 +59,9 @@ jobs:
           touch _site/.nojekyll
       - name: Add product pages and Pinterest feeds
         run: node bud-and-things/tools/build-pinterest.js _site
-      - uses: actions/upload-pages-artifact@v3
+      - name: Add the security policy to every page
+        run: node bud-and-things/tools/add-csp.js _site
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: _site
 
@@ -67,4 +73,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

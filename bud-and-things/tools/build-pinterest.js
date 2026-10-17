@@ -88,7 +88,7 @@ function productPage(p, qty) {
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="/assets/monogram-seal.png">
 <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>
-<script>location.replace('/' + location.search + ${JSON.stringify('#p-' + p.id)});</script>
+<script>location.replace('/' + location.search + ${JSON.stringify('#p-' + encodeURIComponent(p.id))});</script>
 </head>
 <body>
 <p><a href="${esc(go)}">${esc(p.name)} at ${esc(BRAND)}</a></p>
