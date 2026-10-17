@@ -66,10 +66,14 @@
       for (const f of totp) await req('DELETE', '/auth/v1/factors/' + encodeURIComponent(f.id), undefined, null, pending.token);
       const f = await req('POST', '/auth/v1/factors', { factor_type: 'totp', friendly_name: 'Owner view ' + new Date().toISOString().slice(0, 10) }, null, pending.token);
       pending.factor = f.id;
-      // Supabase sends the QR code as raw SVG after "data:image/svg+xml;utf-8,"; a "#" in it would cut the address short
+      // Supabase sends the QR code as a data address with raw SVG in it ("data:img/svg+xml;utf-8,<svg..."), which browsers
+      // won't show as is (a "#" cuts it short, and "img/" isn't a picture type). Take the SVG out and show it as a file instead.
       let qr = (f.totp && f.totp.qr_code) || '';
-      const raw = /^data:image\/svg\+xml;(?:charset=)?utf-8,([\s\S]*)$/i.exec(qr);
-      if (raw && raw[1].trim().startsWith('<')) qr = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(raw[1]);
+      if (/^data:/i.test(qr)) {
+        const head = qr.slice(0, qr.indexOf(',') + 1); let svg = qr.slice(head.length);
+        try { svg = /;base64,$/i.test(head) ? atob(svg) : svg.trim().startsWith('<') ? svg : decodeURIComponent(svg); } catch (e) { svg = ''; }
+        qr = svg.trim().startsWith('<') ? URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' })) : '';
+      }
       return { step: 'enrol', qr, secret: f.totp && f.totp.secret };
     },
     verifyCode: async (code) => {
