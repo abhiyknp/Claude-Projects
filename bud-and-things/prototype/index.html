@@ -301,6 +301,7 @@ label { font-size: 14px; font-weight: 600; }
 @media (max-width: 760px) { .buy { position: sticky; bottom: calc(env(safe-area-inset-bottom, 0px) + 0px); background: var(--ivory); padding-block: 10px; border-top: 1px solid var(--line); z-index: 5; } body.app .buy { bottom: 72px; } }
 .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px 28px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 15px; }
 .facts strong { display: block; margin-bottom: 2px; }
+.facts .social { margin-top: 10px; }
 .pair { background: var(--linen); padding: 26px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
 .status { padding: 12px 14px; background: var(--sand2); font-size: 15px; }
 .status.ok { background: var(--ok-bg); }
@@ -551,7 +552,14 @@ body.cs main { padding-bottom: 0; }
 .soon h1 em { color: var(--terra-ink); }
 .soon p { max-width: 520px; margin: 0; }
 .soon form { width: 100%; max-width: 480px; display: flex; flex-wrap: wrap; gap: 10px; text-align: left; margin-top: 8px; }
-.soon .reach { font-size: 14px; }
+.soon .social { margin-top: 4px; }
+/* Instagram, WhatsApp and email as round icon links */
+.social { display: flex; flex-wrap: wrap; gap: 12px; list-style: none; margin: 0; padding: 0; }
+.social a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; color: var(--choc); transition: background .2s, color .2s, border-color .2s; }
+.social a:hover { background: var(--terra-ink); border-color: var(--terra-ink); color: var(--ivory); }
+.social a:focus-visible { outline: 2px solid var(--terra-ink); outline-offset: 3px; }
+.social svg { width: 20px; height: 20px; }
+.site-foot .social { margin-top: 6px; }
 /* phones first: every link and control is at least 44px tall to tap */
 @media (max-width: 760px) {
   .site-foot nav { gap: 0; }
@@ -602,9 +610,10 @@ body.cs main { padding-bottom: 0; }
       <span class="mark lockup" style="width:220px" role="img" aria-label="BUD &amp; THINGS by Ashi"></span>
       <span class="muted" id="foot-tag">Made with thought. Given with feeling.</span>
       <span class="muted">BUD &amp; THINGS by Ashi</span>
+      <div id="foot-social"></div>
     </div>
     <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a></nav>
-    <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact · WhatsApp</a><a href="#help">Shipping &amp; delivery</a><a href="#help">Exchanges</a><a href="#help">Product care</a></nav>
+    <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact us</a><a href="#help">Shipping &amp; delivery</a><a href="#help">Exchanges</a><a href="#help">Product care</a></nav>
     <nav aria-label="About"><strong>About</strong><a href="#story">Our Story</a><a href="#help">Where to find us</a><a href="#help">Privacy</a><a href="#help">Terms</a></nav>
   </div>
   <div class="wrap muted" style="padding-block:0 28px;font-size:13px" id="foot-also">Also on Amazon, Flipkart and Meesho. Pay by UPI or card.</div>
@@ -939,7 +948,7 @@ function renderChrome() {
   const sb = $('#saved-btn'); sb.querySelector('.count')?.remove(); if (S.saved.length) sb.insertAdjacentHTML('beforeend', `<span class="count num">${S.saved.length}</span>`);
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
-  $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also');
+  $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also'); $('#foot-social').innerHTML = socialLinks();
   $('#opening-sel').value = S.opening; $('#skin-sel').value = S.skin; document.documentElement.dataset.skin = S.skin; $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite', 'collection'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
   $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
@@ -1125,11 +1134,9 @@ function viewHome() {
 }
 
 function viewComingSoon() {
-  const ig = String(SET.instagram || '').trim().replace(/^@/, ''), wa = waLink('Hello BUD & THINGS');
-  const reach = [ig && /^[\w.]+$/.test(ig) && `<a href="https://instagram.com/${ig}" target="_blank" rel="noopener">Instagram @${esc(ig)}</a>`, wa && `<a href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a>`].filter(Boolean).join(' · ');
   return `<section class="soon" aria-labelledby="soon-h"><span class="mark lockup" role="img" aria-label="BUD &amp; THINGS by Ashi"></span><span class="eyebrow">${T('soon.eyebrow')}</span><h1 id="soon-h" tabindex="-1">${T('soon.title')}</h1><p class="muted">${T('soon.text')}</p>
     <form data-form="news" data-src="coming-soon" novalidate><label for="news-email" style="flex:1 1 100%">Email or WhatsApp number</label><input id="news-email" type="text" inputmode="email" autocomplete="email" style="flex:1 1 220px;min-width:0"><button class="btn" type="submit">${T('soon.cta')}</button><span id="news-msg" style="flex:1 1 100%"></span></form>
-    ${reach ? `<p class="reach muted">${reach}</p>` : ''}</section>`;
+    ${socialLinks()}</section>`;
 }
 
 function viewShop(cat) {
@@ -1355,6 +1362,19 @@ function viewCheckout() {
 }
 
 const waLink = (text) => SET.whatsapp ? `https://wa.me/${String(SET.whatsapp).replace(/\D/g, '')}?text=${encodeURIComponent(text)}` : '';
+// Instagram, WhatsApp and email as icons; each shows only once its setting is filled in
+const SOCIAL_ICONS = {
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  whatsapp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 20.4l1.3-4.2a8.6 8.6 0 1 1 3.1 3l-4.4 1.2z"/><path d="M9 8.2c.2-.5.5-.5.8-.5h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.6 1.1 1.6 2 2.7 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.4.5 0 .9-.6 1.6-1.4 1.8-.8.2-1.8 0-3.4-.8a8.6 8.6 0 0 1-3.3-3.3c-.7-1.3-.8-2.3-.4-3z" fill="currentColor" stroke="none"/></svg>',
+  email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.8 6.8l8.2 6.2 8.2-6.2"/></svg>'
+};
+function socialLinks(waText) {
+  const ig = String(SET.instagram || '').trim().replace(/^@/, ''), wa = waLink(waText || 'Hello BUD & THINGS'), em = String(SET.email || '').trim();
+  const link = (href, label, icon, out) => `<li><a href="${esc(href)}" aria-label="${esc(label)}" title="${esc(label)}"${out ? ' target="_blank" rel="noopener"' : ''}>${SOCIAL_ICONS[icon]}</a></li>`;
+  const items = [ig && /^[\w.]{1,30}$/.test(ig) && link('https://instagram.com/' + ig, 'Instagram @' + ig, 'instagram', true),
+    wa && link(wa, 'WhatsApp us', 'whatsapp', true), /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) && link('mailto:' + em, 'Email ' + em, 'email')].filter(Boolean);
+  return items.length ? `<ul class="social" aria-label="Find BUD &amp; THINGS">${items.join('')}</ul>` : '';
+}
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound();
   if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && d.status !== o.status) { o.status = d.status; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
@@ -1393,10 +1413,10 @@ function viewStory() {
       <div class="facts" style="border-top:0"><div><strong>Now · Candles &amp; Jesmonite objects</strong><span class="muted">Our first range, made in small batches.</span></div>${FUTURE.map(([f, s]) => `<div><strong>${s} · Later</strong><span class="muted">${esc(f)}. Not yet available.</span></div>`).join('')}</div></section></div>`;
 }
 function viewHelp() {
-  const wa = waLink('Hello BUD & THINGS'); const tr = UI.track || {};
+  const tr = UI.track || {};
   return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><h1 tabindex="-1">Help &amp; contact</h1></div>
     <form data-form="track" class="track-form" novalidate><strong>Find your order</strong><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001-7F3A9C" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label><input id="tr-phone" type="tel" inputmode="tel" maxlength="16" value="${esc(tr.phone || '')}" autocomplete="tel-national"></span><button class="btn ghost" type="submit">Find it</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
-    <div class="facts" style="border-top:0"><div><strong>Contact</strong><span class="muted">Email: <span class="sel">${esc(SET.email)}</span><br>WhatsApp: ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener">+${esc(SET.whatsapp)}</a>` : '[your business number]'}<br>Instagram: <span class="sel">${esc(SET.instagram)}</span></span></div>
+    <div class="facts" style="border-top:0"><div><strong>Contact</strong>${SET.email ? `<span class="muted sel">${esc(SET.email)}</span>` : ''}${socialLinks()}</div>
     <div><strong>Shipping &amp; delivery</strong><span class="muted">${T('help.shipping')}</span></div>
     ${SET.codOn ? `<div><strong>Cash on delivery</strong><span class="muted">${T('co.cod')}</span></div>` : ''}
     <div><strong>Exchanges</strong><span class="muted">${T('help.exchanges')}</span></div>

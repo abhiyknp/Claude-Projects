@@ -66,7 +66,11 @@
       for (const f of totp) await req('DELETE', '/auth/v1/factors/' + encodeURIComponent(f.id), undefined, null, pending.token);
       const f = await req('POST', '/auth/v1/factors', { factor_type: 'totp', friendly_name: 'Owner view ' + new Date().toISOString().slice(0, 10) }, null, pending.token);
       pending.factor = f.id;
-      return { step: 'enrol', qr: f.totp && f.totp.qr_code, secret: f.totp && f.totp.secret };
+      // Supabase sends the QR code as raw SVG after "data:image/svg+xml;utf-8,"; a "#" in it would cut the address short
+      let qr = (f.totp && f.totp.qr_code) || '';
+      const raw = /^data:image\/svg\+xml;(?:charset=)?utf-8,([\s\S]*)$/i.exec(qr);
+      if (raw && raw[1].trim().startsWith('<')) qr = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(raw[1]);
+      return { step: 'enrol', qr, secret: f.totp && f.totp.secret };
     },
     verifyCode: async (code) => {
       if (!pending || !pending.factor) throw new Error('Sign in again.');
