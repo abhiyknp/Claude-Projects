@@ -553,7 +553,7 @@ body.cs main { padding-bottom: 0; }
 .soon p { max-width: 520px; margin: 0; }
 .soon form { width: 100%; max-width: 480px; display: flex; flex-wrap: wrap; gap: 10px; text-align: left; margin-top: 8px; }
 .soon .social { margin-top: 4px; }
-/* Instagram, WhatsApp and email as round icon links */
+/* Instagram, Pinterest, WhatsApp and email as round icon links */
 .social { display: flex; flex-wrap: wrap; gap: 12px; list-style: none; margin: 0; padding: 0; }
 .social a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; color: var(--choc); transition: background .2s, color .2s, border-color .2s; }
 .social a:hover { background: var(--terra-ink); border-color: var(--terra-ink); color: var(--ivory); }
@@ -624,7 +624,7 @@ body.cs main { padding-bottom: 0; }
 <div class="sr" aria-live="polite" id="live"></div>
 
 <script src="config.js"></script>
-<script src="db.js"></script>
+<script src="db.js?v=4"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -793,12 +793,12 @@ const SET_META = [
   ['wrapFee', 'Gift wrap price (₹)', 'num'], ['ritualOff', 'Ritual saving: % off a candle and object bought together (0 for none)', 'num'],
   ['welcomeCode', 'Welcome code for newsletter sign-ups', 'text'], ['welcomeOff', 'Welcome code saving (%)', 'num'], ['repourPrice', 'Jar re-pour price (₹, 0 to hide)', 'num'],
   ['featured', 'Home: featured product ids', 'text'], ['giftPicks', 'Gifting: popular product ids', 'text'], ['homeRitual', 'Home: ritual pairing id', 'text'],
-  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'],
+  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
   ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
 const SET_DEFAULTS = { shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: true, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599,
-  featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings',
+  featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
@@ -1362,16 +1362,18 @@ function viewCheckout() {
 }
 
 const waLink = (text) => SET.whatsapp ? `https://wa.me/${String(SET.whatsapp).replace(/\D/g, '')}?text=${encodeURIComponent(text)}` : '';
-// Instagram, WhatsApp and email as icons; each shows only once its setting is filled in
+// Instagram, Pinterest, WhatsApp and email as icons; each shows only once its setting is filled in
 const SOCIAL_ICONS = {
   instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  pinterest: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M11.2 9.6l-2.4 10.2"/><path d="M9.7 14.1c.6.9 1.6 1.4 2.8 1.4 2.4 0 4-2 4-4.6 0-2.7-2.1-4.6-4.7-4.6-2.9 0-4.8 2-4.8 4.4 0 1 .4 2 1 2.4"/></svg>',
   whatsapp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 20.4l1.3-4.2a8.6 8.6 0 1 1 3.1 3l-4.4 1.2z"/><path d="M9 8.2c.2-.5.5-.5.8-.5h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.6 1.1 1.6 2 2.7 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.4.5 0 .9-.6 1.6-1.4 1.8-.8.2-1.8 0-3.4-.8a8.6 8.6 0 0 1-3.3-3.3c-.7-1.3-.8-2.3-.4-3z" fill="currentColor" stroke="none"/></svg>',
   email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.8 6.8l8.2 6.2 8.2-6.2"/></svg>'
 };
 function socialLinks(waText) {
-  const ig = String(SET.instagram || '').trim().replace(/^@/, ''), wa = waLink(waText || 'Hello BUD & THINGS'), em = String(SET.email || '').trim();
+  const ig = String(SET.instagram || '').trim().replace(/^@/, ''), pin = String(SET.pinterest || '').trim().replace(/^@/, ''), wa = waLink(waText || 'Hello BUD & THINGS'), em = String(SET.email || '').trim();
   const link = (href, label, icon, out) => `<li><a href="${esc(href)}" aria-label="${esc(label)}" title="${esc(label)}"${out ? ' target="_blank" rel="noopener"' : ''}>${SOCIAL_ICONS[icon]}</a></li>`;
   const items = [ig && /^[\w.]{1,30}$/.test(ig) && link('https://instagram.com/' + ig, 'Instagram @' + ig, 'instagram', true),
+    pin && /^[\w.-]{1,30}$/.test(pin) && link('https://www.pinterest.com/' + pin + '/', 'Pinterest ' + pin, 'pinterest', true),
     wa && link(wa, 'WhatsApp us', 'whatsapp', true), /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) && link('mailto:' + em, 'Email ' + em, 'email')].filter(Boolean);
   return items.length ? `<ul class="social" aria-label="Find BUD &amp; THINGS">${items.join('')}</ul>` : '';
 }
