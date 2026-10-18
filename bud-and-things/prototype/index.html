@@ -567,6 +567,41 @@ body.cs main { padding-bottom: 0; }
   .crumbs a { display: inline-flex; align-items: center; min-height: 44px; }
   input[type="checkbox"], input[type="radio"] { width: 22px; height: 22px; }
 }
+/* see it in your room: the piece on the visitor's own photo */
+.room-try { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; border: 1.5px dashed var(--terra-ink); background: var(--plaster); color: var(--choc); font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; justify-content: center; }
+.room-try svg { flex: none; }
+.room { position: fixed; inset: 0; z-index: 80; background: #1E130D; color: #FFF8ED; display: flex; flex-direction: column; animation: gh-rise .35s cubic-bezier(.2,.8,.2,1) both; }
+.room-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 18px; }
+.room-top h2 { font-size: 24px; color: inherit; margin: 0; }
+.room-top button { width: 44px; height: 44px; border: 0; background: rgba(255,248,237,.12); color: inherit; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.room-stage { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 0 12px; position: relative; }
+.room-frame { position: relative; max-width: 100%; max-height: 100%; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; }
+.room-frame .room-bg { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.room-obj { position: absolute; left: 0; top: 0; transform-origin: 50% 86.7%; cursor: grab; filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)); touch-action: none; outline-offset: 4px; animation: room-drop .55s cubic-bezier(.2,1.5,.4,1) both; }
+.room-obj:active { cursor: grabbing; }
+.room-hint { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); background: rgba(30,19,13,.78); padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap; pointer-events: none; animation: room-hint 4s 1s ease both; }
+.room-pick { max-width: 420px; display: flex; flex-direction: column; gap: 12px; text-align: center; padding: 20px; }
+.room-pick .room-demo { width: 180px; height: 180px; margin: 0 auto; border-radius: 50%; background: rgba(255,248,237,.08); display: flex; align-items: center; justify-content: center; }
+.room-pick .room-demo img { width: 150px; height: 150px; animation: room-float 3s ease-in-out infinite; }
+.room-pick p { margin: 0; font-size: 17px; line-height: 1.45; }
+.room-pick .btn.ghost { color: #FFF8ED; border-color: #FFF8ED; background: transparent; }
+.room-pick small { opacity: .75; font-size: 13px; }
+.room-pick .linkbtn { color: #FFF8ED; align-self: center; text-align: center; }
+.room-bar { padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12px; background: #2A1B13; }
+.room-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.room-row label { font-size: 13px; font-weight: 700; }
+.room-row input[type="range"] { flex: 1; min-width: 140px; accent-color: #C9A227; height: 44px; }
+.room-sw { display: flex; gap: 8px; flex-wrap: wrap; }
+.room-sw button { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(255,248,237,.35); background: transparent; color: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.room-sw button[aria-pressed="true"] { border-color: #C9A227; background: rgba(201,162,39,.18); }
+.room-sw i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.room-acts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.room-acts .btn { min-height: 48px; padding: 0 10px; font-size: 14px; }
+.room-acts .btn.ghost { background: transparent; color: #FFF8ED; border-color: rgba(255,248,237,.6); }
+@media (min-width: 900px) { .room { inset: 24px; border-radius: 4px; box-shadow: 0 30px 80px rgba(0,0,0,.5); } .room-acts { grid-template-columns: repeat(4, auto); justify-content: end; } .room-bar { flex-direction: row; align-items: center; justify-content: space-between; } }
+@keyframes room-drop { from { opacity: 0; translate: 0 -40px; } to { opacity: 1; translate: 0 0; } }
+@keyframes room-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes room-hint { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
 /* the gift-first home page (Owner view → Settings → Home page, or the Preview bar) */
 .gh-strip { background: var(--choc); color: var(--ivory); font-size: 12px; font-weight: 700; letter-spacing: .06em; overflow: hidden; white-space: nowrap; }
 .gh-strip .gh-marq { display: inline-flex; gap: 48px; padding: 9px 0; animation: gh-marq 26s linear infinite; }
@@ -602,6 +637,11 @@ body.cs main { padding-bottom: 0; }
 .gh-trust strong { color: var(--choc); font-size: 15px; }
 .gh-trust svg { color: var(--terra-ink); }
 .gh-boxes { background: var(--plaster); }
+.gh-tour { position: relative; display: block; overflow: hidden; color: #FFF8ED; text-decoration: none; min-height: 300px; background: #1E130D; }
+.gh-tour img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .72; transition: transform 1.2s ease; }
+.gh-tour:hover img { transform: scale(1.05); }
+.gh-tour-copy { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 28px; max-width: 520px; background: linear-gradient(90deg, rgba(30,19,13,.85), rgba(30,19,13,0)); min-height: 300px; justify-content: flex-end; }
+.gh-tour-copy strong { font-family: var(--display); font-size: clamp(30px, 4vw, 44px); line-height: 1.05; font-weight: 600; }
 .gh-box-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); align-items: stretch; }
 .gh-boxcard { position: relative; background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column; transition: transform .25s ease, box-shadow .25s ease; }
 .gh-boxcard:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(75,46,30,.14); }
@@ -767,6 +807,10 @@ const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat
 // in the database (or in this browser in demo mode) and the default here shows until then.
 // In a text, a new line breaks the line and *words between stars* are set in italics. {braces} are filled in from settings.
 const TEXT = {
+  'pdp.room': ['See it in your room', 'Product: see it in your room button'],
+  'room.pick': ['Take a photo of the shelf, table or wall where it would go, and we’ll put it there for you.', 'See it in your room: first screen text'],
+  'ghome.tour': ['Walk through our home in 3D', 'Gift home: 3D house card heading'],
+  'ghome.tourSub': ['Wander the foyer and bedroom and tap any piece to see it up close.', 'Gift home: 3D house card text'],
   'ghome.strip': ['UPI in two taps, done before your chai cools|Poured by hand, wrapped by hand, sent with love|Arrives broken? We send a new one, no questions asked|Your words, hand-written on our card|Order by 25 Oct, it lands before Diwali', 'Gift home: top strip (separate lines with |)'],
   'box.eyebrow': ['Diwali gift boxes', 'Gift boxes: small heading'],
   'box.title': ['Gifting, sorted in one tap', 'Gift boxes: heading'],
@@ -1292,6 +1336,7 @@ function viewProduct(id) {
     <div class="buy">${left > 0 ? `<span class="qty"><button type="button" data-act="pdp-qty" data-id="${id}" data-d="-1" aria-label="Decrease quantity">−</button><span class="num" aria-live="polite">${st.qty}</span><button type="button" data-act="pdp-qty" data-id="${id}" data-d="1" aria-label="Increase quantity">+</button></span><button class="btn add" type="button" data-act="add" data-id="${id}">Add to cart · <span class="num">${inr(v.price * st.qty)}</span></button>` : `<button class="btn add ${S.notify[v.sku] ? 'ghost' : ''}" type="button" data-act="notify" data-sku="${v.sku}">${S.notify[v.sku] ? 'We’ll tell you when it’s back' : 'Notify me when it’s back'}</button>`}
       <button class="icon-btn" style="border:1px solid var(--line2);width:52px;height:52px" type="button" data-act="save" data-id="${id}" aria-pressed="${saved}" aria-label="${saved ? 'Remove from saved' : 'Save ' + esc(p.name)}">${HEART(saved)}</button></div>
     ${left === 0 && UI.restock === v.sku && !S.notify[v.sku] ? `<form data-form="restock" data-sku="${v.sku}" class="restock" novalidate><label for="rs-${id}">${T('pdp.restock')}</label><span style="display:flex;gap:10px;flex-wrap:wrap"><input id="rs-${id}" type="text" inputmode="email" autocomplete="email" placeholder="Email or WhatsApp number" style="flex:1 1 220px"><button class="btn ghost" type="submit">Tell me</button></span></form>` : ''}
+    <button class="room-try" type="button" data-act="room-open" data-id="${id}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/><path d="M9 20v-6h6v6"/></svg>${T('pdp.room')}</button>
     <ul class="trust">${trust}</ul>
     <form data-form="pin" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap" novalidate><span class="field" style="flex:1 1 200px"><label for="pin-${id}">Check delivery to your PIN code</label><input id="pin-${id}" inputmode="numeric" maxlength="6" autocomplete="postal-code" value="${esc(st.pin)}"></span><button class="btn ghost" type="submit">Check</button></form>
     ${st.pinMsg ? `<div class="status ${st.pinMsg.ok ? 'ok' : 'err'}" role="status">${esc(st.pinMsg.text)}</div>` : ''}
@@ -1755,6 +1800,74 @@ function downloadCSV(name, rows) {
 function viewNotFound() { return `<div class="wrap" style="padding-block:60px 100px"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
 
 // ---------- render ----------
+// ---------- see it in your room: the piece on the visitor's own photo. The photo stays in the browser; nothing is uploaded ----------
+const ROOM = { el: null, pid: null, vi: 0, bg: null, ratio: 4 / 3, x: .5, y: .72, s: .32, ptrs: new Map(), g: null, back: null };
+const roomPiece = () => byId[ROOM.pid];
+const rc = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+function roomOpen(pid, vi) {
+  Object.assign(ROOM, { pid, vi: vi || 0, x: .5, y: .72, s: .32 }); ROOM.back = document.activeElement;
+  if (!ROOM.el) { ROOM.el = document.createElement('div'); ROOM.el.className = 'room'; ROOM.el.setAttribute('role', 'dialog'); ROOM.el.setAttribute('aria-modal', 'true'); ROOM.el.setAttribute('aria-labelledby', 'room-h'); document.body.appendChild(ROOM.el); }
+  ROOM.el.hidden = false; document.body.style.overflow = 'hidden'; roomDraw(); track('room_open', { id: pid });
+  setTimeout(() => ROOM.el.querySelector(ROOM.bg ? '.room-obj' : '#room-cam-btn')?.focus(), 50);
+}
+function roomClose() { if (!ROOM.el) return; ROOM.el.hidden = true; ROOM.el.innerHTML = ''; document.body.style.overflow = ''; ROOM.back?.focus?.(); }
+function roomDraw() {
+  const p = roomPiece(); if (!p) return roomClose(); const v = p.variants[ROOM.vi] || p.variants[0]; const img = prodImg(p, ROOM.vi);
+  const sw = p.variants.length > 1 ? `<div class="room-sw" role="group" aria-label="Option">${p.variants.map((x, i) => `<button type="button" data-act="room-vi" data-i="${i}" aria-pressed="${i === ROOM.vi}"><i style="background:${colorFor(p, i)}"></i>${esc(x.label)}</button>`).join('')}</div>` : '';
+  const left = stockOf(v.sku);
+  ROOM.el.innerHTML = `<div class="room-top"><h2 id="room-h">${esc(p.name)} in your room</h2><button type="button" data-act="room-close" aria-label="Close">${CLOSE}</button></div>
+    <div class="room-stage" id="room-stage">${ROOM.bg ? `<div class="room-frame" id="room-frame"><img class="room-bg" src="${ROOM.bg}" alt="Your photo"><img class="room-obj" id="room-obj" src="${esc(img)}" alt="${esc(p.name)}. Drag to move it, use the arrow keys to nudge it, plus and minus to resize." tabindex="0" draggable="false"></div><span class="room-hint" aria-hidden="true">Drag to move · pinch to resize</span>`
+      : `<div class="room-pick"><span class="room-demo"><img src="${esc(img)}" alt=""></span><p>${T('room.pick')}</p>
+        <button class="btn" type="button" id="room-cam-btn" data-act="room-photo" data-cam="1">Take a photo</button><button class="btn ghost" type="button" data-act="room-photo">Choose from your gallery</button>
+        <button class="linkbtn" type="button" data-act="room-sample">Or try it in our sample room</button><small>Your photo stays on your phone. Nothing is uploaded.</small></div>`}
+      <input type="file" id="room-file" accept="image/*" hidden><input type="file" id="room-cam" accept="image/*" capture="environment" hidden></div>
+    ${ROOM.bg ? `<div class="room-bar"><div class="room-row"><label for="room-size">Size</label><input type="range" id="room-size" min="8" max="90" value="${Math.round(ROOM.s * 100)}">${sw}</div>
+      <div class="room-acts"><button class="btn ghost" type="button" data-act="room-photo">New photo</button><button class="btn ghost" type="button" data-act="room-share">${navigator.share ? 'Share' : 'Save photo'}</button>${left > 0 ? `<button class="btn" type="button" data-act="room-add">Add · ${inr(v.price)}</button>` : `<a class="btn" href="#p-${p.id}" data-act="room-close">See options</a>`}</div></div>` : ''}`;
+  if (ROOM.bg) { roomFit(); const o = $('#room-obj'); o.onload = roomPlace; roomPlace(); }
+}
+// the frame keeps the photo's shape and fills as much of the stage as it can
+function roomFit() { const st = $('#room-stage'), f = $('#room-frame'); if (!st || !f) return; const W = st.clientWidth - 24, H = st.clientHeight; const w = Math.min(W, H * ROOM.ratio); f.style.width = w + 'px'; f.style.height = w / ROOM.ratio + 'px'; }
+function roomPlace() {
+  const f = $('#room-frame'), o = $('#room-obj'); if (!f || !o) return; const W = f.clientWidth, H = f.clientHeight; const w = ROOM.s * W; const h = w * ((o.naturalHeight || 1) / (o.naturalWidth || 1));
+  o.style.width = w + 'px'; o.style.left = (ROOM.x * W - w / 2) + 'px'; o.style.top = (ROOM.y * H - h * .867) + 'px'; const r = $('#room-size'); if (r) r.value = Math.round(ROOM.s * 100);
+}
+function roomLoad(src, revoke) {
+  const im = new Image(); im.onload = () => { const k = Math.min(1, 1600 / Math.max(im.naturalWidth, im.naturalHeight)); const c = document.createElement('canvas'); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); if (revoke) URL.revokeObjectURL(src);
+    ROOM.bg = c.toDataURL('image/jpeg', .9); ROOM.ratio = c.width / c.height; Object.assign(ROOM, { x: .5, y: .72, s: .32 }); roomDraw(); $('#room-obj')?.focus(); track('room_photo', { id: ROOM.pid }); };
+  im.onerror = () => say('That photo couldn’t be opened. Try another one.'); im.src = src;
+}
+function roomCompose() {
+  return new Promise((res) => { const bg = new Image(); bg.onload = () => { const c = document.createElement('canvas'); c.width = bg.naturalWidth; c.height = bg.naturalHeight; const x = c.getContext('2d'); x.drawImage(bg, 0, 0); const o = $('#room-obj');
+    const w = ROOM.s * c.width, h = w * (o.naturalHeight / o.naturalWidth); x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = w * .06; x.shadowOffsetY = w * .04; x.drawImage(o, ROOM.x * c.width - w / 2, ROOM.y * c.height - h * .867, w, h);
+    x.shadowColor = 'transparent'; const fs = Math.max(14, Math.round(c.width * .022)); x.font = `600 ${fs}px Lato, sans-serif`; x.fillStyle = 'rgba(255,248,237,.92)'; x.textAlign = 'right'; x.fillText('BUD & THINGS · ' + roomPiece().name, c.width - fs, c.height - fs);
+    c.toBlob(res, 'image/jpeg', .9); }; bg.src = ROOM.bg; });
+}
+async function roomShare() {
+  const p = roomPiece(); const blob = await roomCompose(); if (!blob) return; const file = new File([blob], p.id + '-in-my-room.jpg', { type: 'image/jpeg' }); const url = location.origin + location.pathname + '#p-' + p.id;
+  track('room_share', { id: p.id });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], text: `Should I get this? ${p.name} from BUD & THINGS ${url}` }); } catch (e) { /* closed the share sheet */ } return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); say('Saved to your downloads. Send it to a friend and ask what they think.');
+}
+document.addEventListener('pointerdown', (e) => { if (!e.target.closest('#room-obj')) return; e.preventDefault(); e.target.setPointerCapture(e.pointerId); ROOM.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); ROOM.g = { x: ROOM.x, y: ROOM.y, s: ROOM.s, pts: new Map(ROOM.ptrs) }; });
+document.addEventListener('pointermove', (e) => {
+  if (!ROOM.ptrs.has(e.pointerId) || !ROOM.g) return; ROOM.ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); const f = $('#room-frame'); if (!f) return; const W = f.clientWidth, H = f.clientHeight;
+  const now = [...ROOM.ptrs.values()], was = [...ROOM.g.pts.values()]; const mid = (a) => ({ x: a.reduce((t, q) => t + q.x, 0) / a.length, y: a.reduce((t, q) => t + q.y, 0) / a.length });
+  if (now.length !== was.length) { ROOM.g = { x: ROOM.x, y: ROOM.y, s: ROOM.s, pts: new Map(ROOM.ptrs) }; return; }
+  const m0 = mid(was), m1 = mid(now); ROOM.x = rc(ROOM.g.x + (m1.x - m0.x) / W); ROOM.y = rc(ROOM.g.y + (m1.y - m0.y) / H, .05, 1);
+  if (now.length > 1) { const d = (a) => Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); ROOM.s = Math.min(.9, Math.max(.08, ROOM.g.s * d(now) / Math.max(1, d(was)))); }
+  roomPlace();
+});
+['pointerup', 'pointercancel'].forEach((t) => document.addEventListener(t, (e) => { if (ROOM.ptrs.delete(e.pointerId)) ROOM.g = ROOM.ptrs.size ? { x: ROOM.x, y: ROOM.y, s: ROOM.s, pts: new Map(ROOM.ptrs) } : null; }));
+document.addEventListener('wheel', (e) => { if (!e.target.closest('#room-frame')) return; e.preventDefault(); ROOM.s = Math.min(.9, Math.max(.08, ROOM.s * (e.deltaY < 0 ? 1.06 : 1 / 1.06))); roomPlace(); }, { passive: false });
+document.addEventListener('keydown', (e) => {
+  if (!ROOM.el || ROOM.el.hidden) return; if (e.key === 'Escape') { roomClose(); return; }
+  if (e.target.id !== 'room-obj') return; const k = { ArrowLeft: [-.02, 0], ArrowRight: [.02, 0], ArrowUp: [0, -.02], ArrowDown: [0, .02] }[e.key];
+  if (k) { e.preventDefault(); ROOM.x = rc(ROOM.x + k[0]); ROOM.y = rc(ROOM.y + k[1], .05, 1); roomPlace(); } else if (e.key === '+' || e.key === '=' || e.key === '-') { e.preventDefault(); ROOM.s = Math.min(.9, Math.max(.08, ROOM.s * (e.key === '-' ? 1 / 1.08 : 1.08))); roomPlace(); }
+});
+document.addEventListener('input', (e) => { if (e.target.id === 'room-size') { ROOM.s = +e.target.value / 100; roomPlace(); } });
+document.addEventListener('change', (e) => { if ((e.target.id === 'room-file' || e.target.id === 'room-cam') && e.target.files[0]) { roomLoad(URL.createObjectURL(e.target.files[0]), true); e.target.value = ''; } });
+window.addEventListener('resize', () => { if (ROOM.el && !ROOM.el.hidden && ROOM.bg) { roomFit(); roomPlace(); } });
+
 // Diwali gift boxes, shown on both home pages; the middle-priced box is marked most popular
 function giftBoxesHTML(id) {
   const boxes = P.filter((p) => p.cat === 'gifts').sort((a, b) => minPrice(a) - minPrice(b)); if (!boxes.length) return '';
@@ -1823,6 +1936,8 @@ function viewGiftHome() {
       <span style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0"><strong style="font-family:var(--display);font-size:22px;line-height:1.05">${esc(fo.name)}</strong><span class="muted" style="font-size:13px">${fo.items.map(([pid]) => esc(byId[pid].name)).join(' + ')}</span>
       <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="num" style="font-weight:600">${rp.save ? `<s class="muted">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span><button class="btn small" type="button" data-act="gh-pair" data-v="${fo.id}">Add the pair</button></span></span></div>`; }).join('')}</div></div></section>` : ''}
 
+  <section class="wrap" style="padding-top:64px" aria-labelledby="gh-tour"><a class="gh-tour" href="#tour"><img src="assets/house/poster-m.jpg" alt="" loading="lazy"><span class="gh-tour-copy"><span class="eyebrow" style="color:var(--glow)">3D</span><strong id="gh-tour">${T('ghome.tour')}</strong><span>${T('ghome.tourSub')}</span><span class="btn small" style="align-self:flex-start">Step inside →</span></span></a></section>
+
   <section class="section wrap" aria-labelledby="gh-why"><div class="section-head"><h2 id="gh-why">${T('ghome.why')}</h2></div>
     <div class="gh-trust">${why.map(([i, h, d, href]) => `<a href="${href}"${/^https/.test(href) ? ' target="_blank" rel="noopener"' : ''}>${i}<strong>${h}</strong><span>${d}</span></a>`).join('')}</div></section>
 
@@ -1840,7 +1955,7 @@ function render(nav) {
   const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs);
   if (cs) html = viewComingSoon();
   else if (r === 'home' && homeStyle() === 'gift') html = viewGiftHome();
-  else if (r === 'home' || r.startsWith('house-')) html = viewHome();
+  else if (r === 'home' || r === 'tour' || r.startsWith('house-')) html = viewHome();
   else if (r === 'shop') html = viewShop('all');
   else if (r === 'candles') html = viewShop('candles');
   else if (r === 'jesmonite') html = viewShop('jesmonite');
@@ -1863,7 +1978,7 @@ function render(nav) {
   if (r === 'checkout' && UI.co.step === 'pay' && UI.co.method === 'qr') drawQR();
   drawMfaQR();
   if (nav) { window.scrollTo(0, 0); const h = app.querySelector('h1[tabindex]'); if (h && r !== 'home') h.focus({ preventScroll: true }); }
-  const foyer = (r === 'home' && homeStyle() === 'foyer') || r.startsWith('house-');
+  const foyer = (r === 'home' && homeStyle() === 'foyer') || r === 'tour' || r.startsWith('house-');
   if (foyer || load3d.done) load3d(); lcSetup(foyer);
   const first = !UI.rendered; UI.rendered = true;
   if (first && foyer && r === 'home' && RETURNING && S.opening === 'house' && !reduce.matches) requestAnimationFrame(() => { const lc = $('#lc'), st = $('#lc-stage'); if (!lc) return; const total = lc.offsetHeight - st.offsetHeight; const p = .975; window.scrollTo(0, lc.getBoundingClientRect().top + scrollY - 65 + p * total); LC.p = p; });
@@ -2264,6 +2379,13 @@ document.addEventListener('click', (e) => {
   const sp = e.target.closest('[data-spot]'); if (sp && S.opening === 'house') { e.preventDefault(); houseFocus(+sp.dataset.spot); return; }
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act; const d = t.dataset;
   switch (a) {
+    case 'room-open': roomOpen(d.id, UI.pdp[d.id] ? UI.pdp[d.id].vi || 0 : 0); break;
+    case 'room-close': roomClose(); break;
+    case 'room-photo': $(d.cam ? '#room-cam' : '#room-file')?.click(); break;
+    case 'room-sample': roomLoad('assets/house/poster.jpg'); break;
+    case 'room-vi': ROOM.vi = +d.i; { const keep = { x: ROOM.x, y: ROOM.y, s: ROOM.s }; roomDraw(); Object.assign(ROOM, keep); roomPlace(); } break;
+    case 'room-share': roomShare(); break;
+    case 'room-add': { const p = roomPiece(); if (addToCart(p.variants[ROOM.vi].sku, 1, { source: 'room' })) { roomClose(); } break; }
     case 'home-style': S.homePick = d.v; save(); if (route() === 'home') render(true); else renderChrome(); say(d.v === 'gift' ? 'Showing the gift shop home page.' : 'Showing the Foyer home page.'); break;
     case 'gh-cat': UI.gh.cat = d.v; render(); break;
     case 'gh-unwrap': UI.gh.open = true; track('gift_unwrap', {}); render(); $('#gh-won')?.focus(); break;
