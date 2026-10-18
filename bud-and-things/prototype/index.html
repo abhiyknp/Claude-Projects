@@ -601,6 +601,21 @@ body.cs main { padding-bottom: 0; }
 .gh-trust > * { background: var(--card); border: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--choc2); text-decoration: none; }
 .gh-trust strong { color: var(--choc); font-size: 15px; }
 .gh-trust svg { color: var(--terra-ink); }
+.gh-boxes { background: var(--plaster); }
+.gh-box-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); align-items: stretch; }
+.gh-boxcard { position: relative; background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column; transition: transform .25s ease, box-shadow .25s ease; }
+.gh-boxcard:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(75,46,30,.14); }
+.gh-boxcard.pop { border: 2px solid var(--cta); box-shadow: 0 14px 30px rgba(163,71,43,.16); }
+@media (min-width: 900px) { .gh-boxcard.pop { transform: scale(1.04); } .gh-boxcard.pop:hover { transform: scale(1.04) translateY(-4px); } }
+.gh-flag { position: absolute; z-index: 2; top: 12px; left: 12px; background: var(--cta); color: var(--on-cta); font-size: 12px; font-weight: 700; letter-spacing: .06em; padding: 6px 12px; text-transform: uppercase; animation: gh-wob 3.2s ease-in-out infinite; }
+.gh-boxph { display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--sand); }
+.gh-boxph img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
+.gh-boxcard:hover .gh-boxph img { transform: scale(1.05); }
+.gh-boxbody { padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.gh-boxbody .name { font-family: var(--display); font-size: 26px; line-height: 1.05; color: var(--choc); text-decoration: none; }
+.gh-boxbody .row { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.gh-perks { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; font-weight: 600; color: var(--choc2); }
+.gh-perks li::before { content: "✓ "; color: var(--olive); }
 @keyframes gh-marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes gh-kb { from { transform: scale(1); } to { transform: scale(1.07) translateY(-6px); } }
 @keyframes gh-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
@@ -657,7 +672,7 @@ body.cs main { padding-bottom: 0; }
     <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact us</a><a href="#help">Shipping &amp; delivery</a><a href="#help">Exchanges</a><a href="#help">Product care</a></nav>
     <nav aria-label="About"><strong>About</strong><a href="#story">Our Story</a><a href="#help">Where to find us</a><a href="#help">Privacy</a><a href="#help">Terms</a></nav>
   </div>
-  <div class="wrap muted" style="padding-block:0 28px;font-size:13px" id="foot-also">Also on Amazon, Flipkart and Meesho. Pay by UPI or card.</div>
+  <div class="wrap muted" style="padding-block:0 28px;font-size:13px" id="foot-also">Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.</div>
 </footer>
 
 <nav class="tabbar" aria-label="App" id="tabbar"></nav>
@@ -695,7 +710,11 @@ let P = [
   { id: 'jharokha-catch-all', name: 'Jharokha Catch-all', cat: 'jesmonite', type: 'Catch-all', line: 'A little window for keys, coins and notes.', variants: [{ sku: 'BT-JS-JC-IV', label: 'Ivory', price: 1090 }, { sku: 'BT-JS-JC-SD', label: 'Sand', price: 1090 }], material: JES_MAT, size: '14 × 17 × 2.5 cm', care: JES_CARE, mood: ['creative'], space: ['entrance', 'workspace'], occ: ['housewarming', 'thank-you'], gift: true, art: 'archtray' },
   { id: 'pebble-coasters', name: 'Pebble Coasters', cat: 'jesmonite', type: 'Coasters', line: 'River stones for your morning cup.', variants: [{ sku: 'BT-JS-PC-ME4', label: 'Mixed Earth · set of 4', price: 1190 }, { sku: 'BT-JS-PC-IV4', label: 'All Ivory · set of 4', price: 1190 }], material: JES_MAT, size: 'Each about 10 × 9 × 1 cm', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe.', 'Use with hot mugs; keep away from flames.'], mood: ['cosy', 'fresh'], space: ['living', 'workspace', 'dining'], occ: ['housewarming', 'birthday'], gift: true, art: 'pebbles' },
   { id: 'still-form-no-1', name: 'Still Form No. 1', cat: 'jesmonite', type: 'Sculptural', line: 'An arch to lean books, or thoughts, against.', variants: [{ sku: 'BT-JS-SF-IV', label: 'Ivory', price: 1690 }, { sku: 'BT-JS-SF-TC', label: 'Terracotta', price: 1690 }], material: JES_MAT, size: '12 × 18 × 4 cm', care: ['Dust with a dry, soft cloth.', 'Keep indoors.'], mood: ['creative', 'calm'], space: ['living', 'workspace'], occ: ['milestone', 'housewarming'], gift: true, art: 'arch' },
-  { id: 'halo-candle-plate', name: 'Halo Candle Plate', cat: 'jesmonite', type: 'Candle plate', line: 'Give your candle somewhere to stand.', variants: [{ sku: 'BT-JS-HP-IV', label: 'Ivory', price: 690 }, { sku: 'BT-JS-HP-OL', label: 'Olive', price: 690 }, { sku: 'BT-JS-HP-CR', label: 'Caramel', price: 690 }], material: JES_MAT, size: '14 cm across, 1.5 cm rim', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Let wax cool before removing.'], mood: ['calm', 'cosy'], space: ['living', 'dining', 'bedroom'], occ: ['festive', 'just-because'], gift: false, art: 'plate' }
+  { id: 'halo-candle-plate', name: 'Halo Candle Plate', cat: 'jesmonite', type: 'Candle plate', line: 'Give your candle somewhere to stand.', variants: [{ sku: 'BT-JS-HP-IV', label: 'Ivory', price: 690 }, { sku: 'BT-JS-HP-OL', label: 'Olive', price: 690 }, { sku: 'BT-JS-HP-CR', label: 'Caramel', price: 690 }], material: JES_MAT, size: '14 cm across, 1.5 cm rim', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Let wax cool before removing.'], mood: ['calm', 'cosy'], space: ['living', 'dining', 'bedroom'], occ: ['festive', 'just-because'], gift: false, art: 'plate' },
+  // Diwali gift boxes: free wrap and a hand-written note, and they can ship straight to the person. Contents and prices are edited in Owner view, Products.
+  { id: 'little-diya-box', name: 'Little Diya Box', cat: 'gifts', type: 'Gift box', line: 'A small glow to say you thought of them.', variants: [{ sku: 'BT-GB-LD', label: 'One box', price: 499 }], material: 'Inside: a mini scented candle, a tea-light holder and your hand-written note. Gift wrapped free.', size: 'About 12 × 12 × 8 cm', care: CANDLE_CARE, mood: ['gift-ready'], space: [], occ: ['festive', 'thank-you', 'just-because'], gift: true, art: 'box', img: IMG.box, c: '#C9A227' },
+  { id: 'diwali-glow-box', name: 'Diwali Glow Box', cat: 'gifts', type: 'Gift box', line: 'A candle, a tray to set it on, and a note in your words.', variants: [{ sku: 'BT-GB-DG', label: 'One box', price: 999 }], material: 'Inside: a 120 g scented candle, a small Jesmonite tray and your hand-written note. Gift wrapped free.', size: 'About 18 × 18 × 10 cm', care: CANDLE_CARE, mood: ['gift-ready', 'cosy'], space: [], occ: ['festive', 'housewarming', 'birthday', 'thank-you'], gift: true, popular: true, art: 'box', img: IMG.box, c: '#C45A3A' },
+  { id: 'grand-diwali-box', name: 'Grand Diwali Box', cat: 'gifts', type: 'Gift box', line: 'The one they will keep on the shelf long after Diwali.', variants: [{ sku: 'BT-GB-GD', label: 'One box', price: 1999 }], material: 'Inside: two 220 g scented candles, a Jesmonite tray, a set of coasters and your hand-written note. Gift wrapped free.', size: 'About 26 × 22 × 12 cm', care: CANDLE_CARE, mood: ['gift-ready'], space: [], occ: ['festive', 'housewarming', 'milestone'], gift: true, art: 'box', img: IMG.box, c: '#4B2E1E' }
 ];
 let PAIRINGS = [
   { id: 'morning-ritual', name: 'The Morning Ritual', items: [['first-light', 0], ['halo-candle-plate', 0]], why: 'A fresh candle and a plate to stand it on.' },
@@ -748,7 +767,14 @@ const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat
 // in the database (or in this browser in demo mode) and the default here shows until then.
 // In a text, a new line breaks the line and *words between stars* are set in italics. {braces} are filled in from settings.
 const TEXT = {
-  'ghome.strip': ['Pay by UPI or card|Packed by hand and shipped fast|Free replacement if it arrives damaged', 'Gift home: top strip (separate lines with |)'],
+  'ghome.strip': ['UPI in two taps, done before your chai cools|Poured by hand, wrapped by hand, sent with love|Arrives broken? We send a new one, no questions asked|Your words, hand-written on our card|Order by 25 Oct, it lands before Diwali', 'Gift home: top strip (separate lines with |)'],
+  'box.eyebrow': ['Diwali gift boxes', 'Gift boxes: small heading'],
+  'box.title': ['Gifting, sorted in one tap', 'Gift boxes: heading'],
+  'box.sub': ['Every box comes wrapped, with your note hand-written inside. Send it to yourself or straight to them.', 'Gift boxes: text'],
+  'box.popular': ['Most loved', 'Gift boxes: badge on the popular box'],
+  'box.perk1': ['Free gift wrap', 'Gift boxes: perk 1'],
+  'box.perk2': ['Your note, hand-written', 'Gift boxes: perk 2'],
+  'box.perk3': ['Ships straight to them, no prices inside', 'Gift boxes: perk 3'],
   'ghome.badge': ['Diwali gifting is open', 'Gift home: photo badge'],
   'ghome.title': ['Made with thought.\n*Given with feeling.*', 'Gift home: heading'],
   'ghome.sub': ['Hand-poured candles and Jesmonite objects, wrapped and ready to give. Made in small batches by Ashi.', 'Gift home: text under the heading'],
@@ -830,10 +856,10 @@ const TEXT = {
   'story.note': ['[Ashi’s founder note goes here, in her own words.]', 'Our Story: note from Ashi'],
   'help.shipping': ['Shipping is {shipFee}, free over {freeOver}. Orders arrive in {deliveryDays}.', 'Help: shipping and delivery'],
   'help.exchanges': ['If something arrives damaged or isn’t right, message us within {exchangeDays} days of delivery and we’ll exchange it.', 'Help: exchanges'],
-  'help.where': ['[Stores, pop-ups and stockists]. Also on Amazon, Flipkart and Meesho.', 'Help: where to find us'],
+  'help.where': ['Online here, and at [stores, pop-ups and stockists].', 'Help: where to find us'],
   'help.privacy': ['We use your details only to deliver your order and, if you ask, to send updates. We never sell them.', 'Help: privacy'],
   'foot.tagline': ['Made with thought. Given with feeling.', 'Footer: tagline'],
-  'foot.also': ['Also on Amazon, Flipkart and Meesho. Pay by UPI, card or cash on delivery.', 'Footer: small print'],
+  'foot.also': ['Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.', 'Footer: small print'],
   'soon.eyebrow': ['Coming soon', 'Coming soon: small line above the heading'],
   'soon.title': ['Something small\n*is beginning to grow.*', 'Coming soon: heading'],
   'soon.text': ['Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving. Leave your email or WhatsApp number and we’ll tell you the day we open.', 'Coming soon: text'],
@@ -855,7 +881,7 @@ const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
-const SET_DEFAULTS = { shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: true, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599,
+const SET_DEFAULTS = { shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
@@ -892,7 +918,7 @@ function applyData() {
   TXT = DATA.text || {}; SET = Object.assign({}, SET_DEFAULTS, DATA.settings || {});
   if (DATA.stock) S.stock = BTDB.on ? Object.assign({}, DATA.stock) : Object.assign(S.stock, DATA.stock);
   Object.keys(PIMG).forEach((k) => delete PIMG[k]); // drawings follow edited colours
-  Object.keys(skuMap).forEach((sku) => { if (S.stock[sku] == null) S.stock[sku] = 0; });
+  const seed = BTDB.on ? {} : defaults().stock; Object.keys(skuMap).forEach((sku) => { if (S.stock[sku] == null) S.stock[sku] = seed[sku] || 0; });
   S.cart = S.cart.filter((l) => skuMap[l.sku]); S.saved = S.saved.filter((id) => byId[id]);
 }
 function useRows(d) {
@@ -969,7 +995,7 @@ const inStock = (p) => p.variants.some((v) => stockOf(v.sku) > 0);
 function track(name, data) { S.events.unshift({ t: new Date().toISOString(), name, data: data || {} }); S.events = S.events.slice(0, 60); save(); }
 function shade(hex, f) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; if (f < 1) { r *= f; g *= f; b *= f; } else { const k = f - 1; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; } return '#' + [r, g, b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join(''); }
 function colorFor(p, vi) { const v = p.variants[vi || 0]; if (p.art === 'jar') return p.c; if (p.art === 'pillar') return PILLAR_COL[v.label] || p.c; return FIN[v.label] || '#DCC9AE'; }
-function art(p, vi, sc) { sc = sc || 1; const z = Math.round(170 * sc); return `<img class="obj" src="${prodImg(p, vi || 0)}" alt="" width="${z}" height="${z}" style="width:${z}px;height:${z}px">`; }
+function art(p, vi, sc) { if (p.img) return `<img class="fill" src="${esc(p.img)}" alt="" loading="lazy">`; sc = sc || 1; const z = Math.round(170 * sc); return `<img class="obj" src="${prodImg(p, vi || 0)}" alt="" width="${z}" height="${z}" style="width:${z}px;height:${z}px">`; }
 const HEART = (on) => `<svg width="20" height="20" viewBox="0 0 24 24" fill="${on ? '#A3472B' : 'none'}" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
 const CLOSE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 function cartLines() { return S.cart.filter((l) => skuMap[l.sku]).map((l) => ({ ...l, p: skuMap[l.sku].p, v: skuMap[l.sku].v, vi: skuMap[l.sku].i })).filter((l) => l.p); }
@@ -1052,16 +1078,17 @@ function searchResults(q, res) {
 // Ritual saving: every candle bought with a Jesmonite object takes SET.ritualOff % off the pair (largest pairs first).
 function ritualSaving(lines) {
   const off = +SET.ritualOff || 0; if (!off) return 0; const c = [], o = [];
-  lines.forEach((l) => { for (let i = 0; i < l.qty; i++) (l.p.cat === 'candles' ? c : o).push(l.v.price); });
+  lines.forEach((l) => { for (let i = 0; i < l.qty; i++) if (l.p.cat !== 'gifts') (l.p.cat === 'candles' ? c : o).push(l.v.price); });
   c.sort((a, b) => b - a); o.sort((a, b) => b - a); let s = 0; for (let i = 0; i < Math.min(c.length, o.length); i++) s += c[i] + o[i];
   return Math.round(s * off / 100);
 }
+const hasBox = (lines) => lines.some((l) => l.p.cat === 'gifts'); // gift boxes come wrapped free
 const codeOk = (c) => !!(c && SET.welcomeCode && String(c).trim().toUpperCase() === String(SET.welcomeCode).toUpperCase());
 function totals() {
   const lines = cartLines(); const sub = lines.reduce((a, l) => a + l.v.price * l.qty, 0); const ritual = ritualSaving(lines);
   const code = codeOk(UI.co.code) ? Math.round((sub - ritual) * (+SET.welcomeOff || 0) / 100) : 0;
   const ship = sub === 0 ? 0 : (+SET.freeOver && sub >= +SET.freeOver ? 0 : +SET.shipFee || 0);
-  const wrap = sub && UI.co.gift.on && UI.co.gift.wrap ? +SET.wrapFee || 0 : 0;
+  const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
   const cod = sub && UI.co.step === 'pay' && UI.co.method === 'cod' ? +SET.codFee || 0 : 0;
   return { sub, ritual, code, ship, wrap, cod, total: sub - ritual - code + ship + wrap + cod };
 }
@@ -1154,6 +1181,7 @@ function viewHome() {
   </section>
 
   <section class="section wrap" id="after-intro" aria-label="About"><div class="intro"><span class="mark leafmark" aria-hidden="true"></span><p>${T('home.intro')}</p><a href="#story" style="font-weight:600">${T('home.introLink')}</a></div></section>
+  ${giftBoxesHTML('foyer-boxes-h')}
   ${last ? `<section class="wrap" aria-labelledby="back-h" style="padding-bottom:64px"><div class="welcome-back"><div><span class="eyebrow">${T('home.back')}</span><h2 id="back-h">Your last order, ${esc(last.id)}</h2><span class="muted">${last.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join(', ')}</span></div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="reorder" data-id="${last.id}">Buy again</button><a class="btn ghost" href="#order-${last.id}">Track it</a></span></div></section>` : ''}
 
   <section class="wrap" aria-labelledby="world-h" style="padding-bottom:80px"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.worldEyebrow')}</span><h2 id="world-h">${T('home.world')}</h2></div></div>
@@ -1252,7 +1280,7 @@ function viewProduct(id) {
   const hi = houseItemOf(id); const rv = reviewsOf(id); const R = UI.review[id] || {};
   const pz = p.pyramid;
   const trust = [['pdp.trust1', true], ['pdp.trust2', SET.codOn], ['pdp.trust3', +SET.exchangeDays], ['pdp.trust4', true]].filter((x) => x[1]).map(([k]) => `<li>${T(k)}</li>`).join('');
-  return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${p.cat}">${p.cat === 'candles' ? 'Candles' : 'Jesmonite Objects'}</a> / ${esc(p.name)}</nav>
+  return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${p.cat === 'gifts' ? 'gifting' : p.cat}">${p.cat === 'gifts' ? 'Gift boxes' : p.cat === 'candles' ? 'Candles' : 'Jesmonite Objects'}</a> / ${esc(p.name)}</nav>
   <div class="pdp"><div class="pdp-gallery">${main}
     <div class="thumbs" role="group" aria-label="Images">${gal.map((x, i) => `<button type="button" data-act="pdp-img" data-id="${id}" data-i="${i}" aria-pressed="${i === gi}" aria-label="${esc(x.label)}">${thumb(x)}</button>`).join('')}</div>
     ${hi >= 0 ? `<a class="btn ghost in-house" href="#house-${id}">See it in the house</a>` : ''}</div>
@@ -1394,7 +1422,7 @@ function viewCheckout() {
       <div class="gift-box full"><label class="check"><input type="checkbox" id="co-g-on" data-co="g-on" data-act="gift-toggle" ${g.on ? 'checked' : ''}> <strong>${T('co.giftTitle')}</strong></label>
         ${g.on ? `<p class="muted" style="font-size:14px">${T('co.giftNote')}</p><div class="form" style="padding:0">${field('g-name', 'Their name', g.name, { ac: 'off' })}${field('g-phone', 'Their mobile', g.phone, { type: 'tel', mode: 'tel', ac: 'off', max: 16, hint: 'optional, for the courier' })}
           <span class="field full"><label for="co-g-note">Note for the card <span class="hint">up to 200 characters</span></label><textarea id="co-g-note" data-co="g-note" rows="3" maxlength="200" ${co.errors['g-note'] ? 'aria-invalid="true"' : ''}>${esc(g.note || '')}</textarea></span>
-          ${+SET.wrapFee >= 0 ? `<label class="check"><input type="checkbox" data-co="g-wrap" ${g.wrap ? 'checked' : ''}> Gift wrap it${+SET.wrapFee ? ' · <span class="num">' + inr(SET.wrapFee) + '</span>' : ''}</label>` : ''}
+          ${+SET.wrapFee >= 0 ? `<label class="check"><input type="checkbox" data-co="g-wrap" ${g.wrap ? 'checked' : ''}> Gift wrap it${hasBox(lines) ? ' · free with your gift box' : +SET.wrapFee ? ' · <span class="num">' + inr(SET.wrapFee) + '</span>' : ''}</label>` : ''}
           ${field('g-date', 'Arrive by', g.date, { type: 'date', min: earliestDay(), hint: 'optional, earliest ' + niceDay(earliestDay()) })}</div>` : ''}</div>
       <h2 class="full" style="font-size:24px">${g.on ? 'Their address' : 'Your address'}</h2>
       ${field('line1', 'House, street, area', co.address.line1, { ac: g.on ? 'off' : 'address-line1', full: true })}${field('line2', 'Landmark', co.address.line2, { ac: g.on ? 'off' : 'address-line2', full: true, hint: 'optional' })}${field('pin', 'PIN code', co.address.pin, { mode: 'numeric', ac: g.on ? 'off' : 'postal-code', max: 6 })}${field('city', 'City', co.address.city, { ac: g.on ? 'off' : 'address-level2' })}
@@ -1580,7 +1608,7 @@ function admProductForm(r) {
     <div class="full adm-bar"><h2 style="font-size:28px">${r ? esc(d.name || r.id) : 'New product'}</h2><button class="btn small ghost" type="button" data-act="adm-edit-close">Back to the list</button></div>
     ${r ? '' : f('id', 'Web address name', '', { hint: 'lowercase words and dashes, for example rose-and-oud; it can’t change later', req: true })}
     ${f('name', 'Name', d.name, { req: true })}
-    <span class="field"><label for="ap-cat">Category</label><select id="ap-cat" name="cat"><option value="candles" ${d.cat === 'candles' ? 'selected' : ''}>Candles</option><option value="jesmonite" ${d.cat !== 'candles' ? 'selected' : ''}>Jesmonite objects</option></select></span>
+    <span class="field"><label for="ap-cat">Category</label><select id="ap-cat" name="cat"><option value="candles" ${d.cat === 'candles' ? 'selected' : ''}>Candles</option><option value="jesmonite" ${d.cat !== 'candles' && d.cat !== 'gifts' ? 'selected' : ''}>Jesmonite objects</option><option value="gifts" ${d.cat === 'gifts' ? 'selected' : ''}>Gift boxes</option></select></span>
     ${f('type', 'Type', d.type, { hint: 'for example Scented candle, Tray' })}${f('line', 'One-line description', d.line, { full: true })}
     <fieldset class="field full adm-vars"><legend>Options, prices and SKUs <span class="hint">clear an SKU to remove that option; fill the empty row to add one</span></legend>
       ${vs.map((v, i) => `<span class="adm-var"><label class="sr" for="ap-vs${i}">SKU ${i + 1}</label><input id="ap-vs${i}" name="v-sku-${i}" placeholder="SKU, for example BT-CN-RO-220" value="${esc(v.sku)}"><label class="sr" for="ap-vl${i}">Option name ${i + 1}</label><input id="ap-vl${i}" name="v-label-${i}" placeholder="Option, for example 220 g" value="${esc(v.label)}"><label class="sr" for="ap-vp${i}">Price ${i + 1}</label><input id="ap-vp${i}" name="v-price-${i}" type="number" min="0" placeholder="Price ₹" value="${esc(v.price)}"></span>`).join('')}</fieldset>
@@ -1602,6 +1630,7 @@ function readProductForm(form) {
   const all = (n) => [...form.querySelectorAll(`[name="${n}"]:checked`)].map((x) => x.value);
   const variants = []; for (let i = 0; form.elements['v-sku-' + i]; i++) { const sku = v('v-sku-' + i).toUpperCase(); if (sku) variants.push({ sku, label: v('v-label-' + i), price: Math.round(+v('v-price-' + i)) }); }
   const d = { name: v('name'), cat: v('cat'), type: v('type'), line: v('line'), variants, size: v('size'), material: v('material'), care: lineList(v('care')), mood: all('mood'), space: all('space'), occ: all('occ'), gift: form.elements.gift.checked, art: v('art'), c: v('c') };
+  if (d.cat === 'gifts') { const old = form.dataset.id && byId[form.dataset.id]; d.img = (old && old.img) || IMG.box; if (old && old.popular) d.popular = true; }
   if (v('notes')) d.notes = csvList(v('notes'));
   if (v('smellsLike')) d.smellsLike = v('smellsLike');
   if (v('pz-top') || v('pz-heart') || v('pz-base')) d.pyramid = { top: csvList(v('pz-top')), heart: csvList(v('pz-heart')), base: csvList(v('pz-base')) };
@@ -1726,6 +1755,19 @@ function downloadCSV(name, rows) {
 function viewNotFound() { return `<div class="wrap" style="padding-block:60px 100px"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
 
 // ---------- render ----------
+// Diwali gift boxes, shown on both home pages; the middle-priced box is marked most popular
+function giftBoxesHTML(id) {
+  const boxes = P.filter((p) => p.cat === 'gifts').sort((a, b) => minPrice(a) - minPrice(b)); if (!boxes.length) return '';
+  const flagged = boxes.some((p) => p.popular); const pop = (p, i) => (flagged ? !!p.popular : boxes.length > 2 && i === 1);
+  return `<section class="gh-boxes" aria-labelledby="${id}"><div class="wrap section">
+    <div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('box.eyebrow')}</span><h2 id="${id}">${T('box.title')}</h2><span class="muted">${T('box.sub')}</span></div></div>
+    <div class="gh-box-grid">${boxes.map((p, i) => { const out = !inStock(p); const hot = pop(p, i); return `<div class="gh-boxcard${hot ? ' pop' : ''}">${hot ? `<span class="gh-flag">${T('box.popular')}</span>` : ''}
+      <a class="gh-boxph" href="#p-${p.id}" aria-label="${esc(p.name)}">${tileArt(p, 0, 1)}</a>
+      <div class="gh-boxbody"><a class="name" href="#p-${p.id}">${esc(p.name)}</a><span class="muted" style="font-size:14px">${esc(p.material || p.line)}</span>
+        <span class="row"><span class="num" style="font-weight:700;font-size:20px">${inr(minPrice(p))}</span>${out ? '<span class="badge out" style="position:static">Sold out</span>' : `<button class="btn${hot ? '' : ' ghost'} small" type="button" data-act="quick-add" data-id="${p.id}">Add box</button>`}</span></div></div>`; }).join('')}</div>
+    <ul class="gh-perks">${['box.perk1', 'box.perk2', 'box.perk3'].map((k) => `<li>${T(k)}</li>`).join('')}</ul></div></section>`;
+}
+
 // the gift-first home page: products, gifts and reasons to buy first, and no scroll intro
 function viewGiftHome() {
   const G = UI.gh; const t = totals(); const sub = t.sub || 0; const free = +SET.freeOver || 0;
@@ -1762,7 +1804,9 @@ function viewGiftHome() {
     ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">You unwrapped</span><strong>${esc(SET.welcomeOff)}% off your first order</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
     : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}
 
-  <section class="wrap" aria-labelledby="gh-best" style="padding-bottom:64px">
+  ${giftBoxesHTML('gh-boxes-h')}
+
+  <section class="wrap" aria-labelledby="gh-best" style="padding-block:24px 64px">
     <div class="section-head"><h2 id="gh-best">${esc(cats.find((c) => c[0] === G.cat)[1])}</h2><a href="#shop" style="font-weight:600">See all ${P.length} →</a></div>
     <div class="gh-chips" role="group" aria-label="Show">${cats.map(([k, l]) => `<button type="button" class="chip" data-act="gh-cat" data-v="${k}" aria-pressed="${G.cat === k}">${l}</button>`).join('')}</div>
     <div class="grid" style="margin-top:16px">${list.length ? list.map(card).join('') : '<p class="muted">Nothing here yet.</p>'}</div>
@@ -1969,6 +2013,7 @@ function drawObj(ctx, o, x, y, s, sun) {
 }
 const PIMG = {};
 function prodImg(p, vi) {
+  if (p.img) return p.img;
   const key = p.id + ':' + vi + ':' + (tintLeaf('#4B2E1E') ? 1 : 0); if (PIMG[key]) return PIMG[key];
   const c = document.createElement('canvas'); c.width = c.height = 360; const x = c.getContext('2d'); const v = p.variants[vi];
   let objs;
