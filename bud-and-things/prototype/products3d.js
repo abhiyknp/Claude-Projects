@@ -1,5 +1,5 @@
 // BUD & THINGS · shared 3D pieces: generated textures, materials and the product models (candles and Jesmonite),
-// used by the Home Tour (tour3d.js) and the Gallery House (house3d.js).
+// used by the house (house3d.js); the earlier Home Tour in intro-prototypes/ uses it too.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
