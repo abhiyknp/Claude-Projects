@@ -7,10 +7,11 @@
   const C = (window.BT_CONFIG && window.BT_CONFIG.supabase) || {};
   const url = String(C.url || '').replace(/\/+$/, ''), key = String(C.anonKey || '');
   const on = !!(url && key);
+  const twoStep = !!(window.BT_CONFIG && window.BT_CONFIG.ownerTwoStep);
   // the owner's sign-in: `token` once both steps are done (password, then the authenticator app code), `pending` in between
   let token = null, pending = null;
   const aal = (t) => { try { return JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).aal; } catch (e) { return null; } };
-  try { token = sessionStorage.getItem('bt-owner-token'); if (token && aal(token) !== 'aal2') { token = null; sessionStorage.removeItem('bt-owner-token'); } } catch (e) { /* storage unavailable */ }
+  try { token = sessionStorage.getItem('bt-owner-token'); if (token && twoStep && aal(token) !== 'aal2') { token = null; sessionStorage.removeItem('bt-owner-token'); } } catch (e) { /* storage unavailable */ }
   const keep = (t) => { token = t; pending = null; try { sessionStorage.setItem('bt-owner-token', t); } catch (e) { /* ignore */ } };
   const enc = (path) => path.split('/').map(encodeURIComponent).join('/');
 
@@ -51,12 +52,12 @@
     upload: (path, file) => req('POST', '/storage/v1/object/media/' + enc(path), file, { 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'true' }),
     removeFile: (path) => req('DELETE', '/storage/v1/object/media/' + enc(path)),
     // the owner signs in with the email and password set up in Supabase → Authentication, then with a 6-digit code
-    // from an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…). The database only lets a
-    // sign-in that has passed both steps change anything. Returns { step: 'code' } or { step: 'enrol', qr, secret }.
+    // from an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…) when config.js turns the
+    // second step on. Returns { step: 'done' }, { step: 'code' } or { step: 'enrol', qr, secret }.
     signIn: async (email, password) => {
       token = null; pending = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ }
       const d = await req('POST', '/auth/v1/token?grant_type=password', { email, password }, null, key);
-      if (aal(d.access_token) === 'aal2') { keep(d.access_token); return { step: 'done' }; }
+      if (!twoStep || aal(d.access_token) === 'aal2') { keep(d.access_token); return { step: 'done' }; }
       pending = { token: d.access_token };
       const u = await req('GET', '/auth/v1/user', undefined, null, pending.token);
       const totp = (u.factors || []).filter((f) => f.factor_type === 'totp');

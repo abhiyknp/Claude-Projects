@@ -24,10 +24,10 @@ The work moved in stages, each reviewed before the next:
 | Commerce | Own site takes orders (no shop platform), payment gateway for dynamic UPI QR, UPI app or ID and cards; marketplaces run from their own panels; one codebase for web, PWA and store apps | Agreed |
 | Catalogue | A draft range of 6 candles and 6 Jesmonite objects (`data/catalogue.draft.json`), every name and price marked as a proposal | Agreed as a draft |
 | Prototype | The whole shop as a clickable prototype, with the full checkout and an owner view | Approved as the base |
-| Openings A and B | 2D canvas scroll scenes: *Through the Arches*, *The Pour* | Kept as alternatives |
-| Themes | Six themes, made bolder after "too pastel" | Kept |
+| Openings A and B | 2D canvas scroll scenes: *Through the Arches*, *The Pour* | Moved to the web-intros-and-themes repository (Oct 2026) |
+| Themes | Six themes, made bolder after "too pastel" | Kept; chosen by the owner in Owner view → Settings, and copied to the web-intros-and-themes repository |
 | Brand assets | Logo, monogram, leaf mark and packaging photos cut from the master PDF | In use; replace with originals before launch |
-| Opening C | A drawn first-person home tour, then a three.js 3D tour | Superseded: "looks like a cartoon" |
+| Opening C | A drawn first-person home tour, then a three.js 3D tour | Superseded: "looks like a cartoon"; kept in the web-intros-and-themes repository |
 | Photo tour | Built from reference images | Rejected: images too small and blurry, felt like a slideshow |
 | References | Oryzo (Lusion), Sleep Well Creatives, Sébastien Lempens' portfolio, Rijkscollection (with a screen recording) | One continuous camera, a product treated as the hero, calm realistic rooms, tap a piece to glide to it, a link per piece |
 | **Opening D: The House** | Blender-modelled rooms with **baked light**, glide-to-piece, details panel, room list, links per piece | Foyer "exceptionally good"; bedroom and moods added |
@@ -54,7 +54,6 @@ bud-and-things/
     db.js                  the database link (window.BTDB): tables, sign-in, file uploads
     house3d.js             opening D, the house (three.js)
     products3d.js          3D models of the products, shared by C and D
-    tour3d.js              opening C, the earlier 3D tour
     assets/                brand images, oak texture
     assets/house/          baked rooms: geometry modules, lightmaps, reflection panoramas
     assets/house/sm/       half-size lightmaps for phones
@@ -81,7 +80,7 @@ bud-and-things/
 - **Routing** uses the URL hash: `#home`, `#shop`, `#candles`, `#jesmonite`, `#p-<id>`, `#feeling`, `#ritual`,
   `#gifting`, `#saved`, `#cart`, `#checkout`, `#order-<id>`, `#admin`, `#story`, `#help`, and
   `#house-<product id>`, which opens the house at that piece.
-- **State** (cart, saved items, orders, stock, chosen opening, theme and mood) is kept in `localStorage` under
+- **State** (cart, saved items, orders, stock, chosen mood) is kept in `localStorage` under
   `bt-proto-v2`. Every access is wrapped so the page still works when storage is unavailable. **Reset demo** in
   the top bar restores it.
 - **The catalogue** starts as the `P` array in the script: variants, prices in ₹, materials, care, moods, spaces,
@@ -101,10 +100,10 @@ bud-and-things/
   candle bought with an object) and the cart's one suggestion all read from settings. With a database, orders
   go through `place_order`, which re-checks prices and takes stock off atomically; the order page re-reads its
   status with `get_order`. Help has an order lookup by number and mobile.
-- **The prototype bar** switches website or installed-app layout, the opening (D, C, A, B) and the theme
-  (six skins).
-- **The Living Canvas** is the sticky stage at the top of the home page. A 2D canvas draws openings A and B, plus
-  overlays (grain, vignette, theme effects) for C and D. Openings C and D draw on a WebGL canvas underneath it.
+- **The prototype bar** switches website or installed-app layout (the opening is now always D, and the theme is set
+  in Owner view → Settings).
+- **The Living Canvas** is the sticky stage at the top of the home page. A 2D canvas draws the loading poster and
+  overlays (vignette, fades) over the house, which draws on a WebGL canvas underneath it.
   Scroll progress `p` (0–1) is smoothed each frame.
 - **`TOUR_ITEMS`** is the list of 3D pieces shared with the 3D modules (exposed as `window.TOUR_ITEMS`). Each
   entry is a room, a kind (`jar`, `pillar`, `tray`, `plate`, `dish`, `arch`, `pebbles`, `archtray`, `box`), a
@@ -185,8 +184,7 @@ Always do a `--fast` run first. The foyer is about 2 MB of assets and the bedroo
 ## 5. The house at runtime (`prototype/house3d.js`)
 
 - **Loading:** both rooms' geometry modules, lightmaps and panoramas load behind a quiet "Opening the house…"
-  progress line, then fade in. If WebGL or loading fails, the stage says so, shows the error, and suggests
-  openings A or B.
+  progress line, then fade in. If WebGL or loading fails, the stage says so and shows the error.
 - **Baked surfaces** use a `MeshBasicMaterial` patched to read the second UV set and mix the two lightmaps:
   `light = day × kDay + lit × kLit`, with one pair of values per room.
 - **The walk:** `PATH` is a list of `[p, camera, look-at]` keyframes, joined smoothly with Catmull-Rom curves. The

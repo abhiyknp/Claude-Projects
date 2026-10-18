@@ -5,6 +5,9 @@
 // read and write is limited by the rules in supabase/schema.sql. Leave them empty to run the site on its built-in
 // draft content, with owner changes kept in this browser only.
 window.BT_CONFIG = {
+  // Owner sign-in asks for an authenticator app code after the password when this is true. Off until launch; turn it
+  // on together with owner_two_step() in supabase/schema.sql.
+  ownerTwoStep: false,
   supabase: {
     url: 'https://cgccziskvqyatrjqdtka.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNnY2N6aXNrdnF5YXRyanFkdGthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNjUxOTcsImV4cCI6MjEwNzY0MTE5N30.ghhwMTaqfhfqQkImPNSJFF5Nmiw6Od8WMrYGt5rvrEE'
