@@ -2,7 +2,7 @@
 // and answers the small part of the Supabase HTTP API that prototype/db.js uses (tables, two functions, sign-in and
 // file storage), with the same who-may-do-what rules as supabase/schema.sql.
 //   node tools/mock-supabase.js            serves on http://localhost:54321
-//   owner sign-in: hello@budandthings.com / demo, then the authenticator code 123456 (the first sign-in shows set-up)
+//   owner sign-in: hello@budandthings.com / demo, password only while TWO_STEP is off; with TWO_STEP=1, then the code 123456
 // Point the site at it with  window.BT_CONFIG = { supabase: { url: 'http://localhost:54321', anonKey: 'anon' } }  in config.js.
 const http = require('http');
 const PORT = +process.env.PORT || 54321;
@@ -10,6 +10,7 @@ const OWNER = { email: 'hello@budandthings.com', password: 'demo', code: '123456
 // tokens look like Supabase's (header.payload.signature); only the second step's token ("aal2") may edit
 const jwt = (aal) => ['x', Buffer.from(JSON.stringify({ email: OWNER.email, aal })).toString('base64url'), 'sig'].join('.');
 const TOKENS = { aal1: jwt('aal1'), aal2: jwt('aal2') };
+const TWO_STEP = process.env.TWO_STEP === '1'; // matches ownerTwoStep in config.js; off until launch
 const KEYS = { site_text: 'key', settings: 'key', stock: 'sku' };
 const T = { products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [] };
 const FILES = {};
@@ -74,7 +75,7 @@ http.createServer((req, res) => {
   if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE', 'Access-Control-Allow-Headers': 'apikey,authorization,content-type,prefer,x-upsert' }); return res.end(); }
   const chunks = []; req.on('data', (c) => chunks.push(c)); req.on('end', () => {
     const raw = Buffer.concat(chunks); const u = new URL(req.url, 'http://x'); const q = u.searchParams;
-    const auth = req.headers.authorization || ''; const own = auth === 'Bearer ' + TOKENS.aal2; const signedIn = own || auth === 'Bearer ' + TOKENS.aal1;
+    const auth = req.headers.authorization || ''; const own = auth === 'Bearer ' + TOKENS.aal2 || (!TWO_STEP && auth === 'Bearer ' + TOKENS.aal1); const signedIn = own || auth === 'Bearer ' + TOKENS.aal1;
     const json = () => (raw.length ? JSON.parse(raw.toString()) : null);
     try {
       if (u.pathname === '/auth/v1/token') { const b = json(); return b.email === OWNER.email && b.password === OWNER.password ? send(res, 200, { access_token: TOKENS.aal1, token_type: 'bearer' }) : send(res, 400, { error: 'invalid_grant', error_description: 'Invalid login credentials' }); }

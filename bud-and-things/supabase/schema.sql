@@ -4,11 +4,14 @@
 -- website's Owner view (#admin) after signing in. See README.md in this folder for the setup steps.
 
 -- ---------- who may edit ----------
--- The owner is the signed-in account whose confirmed email is in this table, and only once that sign-in has passed
--- the second step (the authenticator app code, "aal2"). A stolen password alone can change nothing.
+-- The owner is the signed-in account whose confirmed email is in this table. With the second step on, that sign-in
+-- must also have passed the authenticator app code ("aal2"), so a stolen password alone can change nothing.
+-- The second step is OFF until launch. To turn it on: change `false` to `true` in owner_two_step() below, run this
+-- file again, and set ownerTwoStep: true in prototype/config.js.
 create table if not exists owners (email text primary key);
+create or replace function owner_two_step() returns boolean language sql immutable as $$ select false $$;
 create or replace function is_owner() returns boolean language sql stable security definer set search_path = public as $$
-  select coalesce(auth.jwt() ->> 'aal', '') = 'aal2' and exists (
+  select (not owner_two_step() or coalesce(auth.jwt() ->> 'aal', '') = 'aal2') and exists (
     select 1 from auth.users u join owners o on lower(o.email) = lower(u.email)
     where u.id = auth.uid() and u.email_confirmed_at is not null);
 $$;
