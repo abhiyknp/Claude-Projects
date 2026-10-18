@@ -692,7 +692,7 @@ function defaults() {
 }
 let S = defaults();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
-S.opening = 'house'; // the other intros (A, B, C) are kept in intro-prototypes/ at the repository root
+S.opening = 'house'; // the other intros (A, B, C) are moved to the web-intros-and-themes repository
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
 const coFresh = (contact, address) => ({ step: 'contact', contact: contact || {}, address: address || {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, gift: { on: false, wrap: false, name: '', phone: '', note: '', date: '' }, code: '', codeErr: null, optin: false });
 const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: coFresh(), toast: null, review: {}, restock: null, orderSync: {}, track: null, adm: { tab: 'orders', rows: {}, edit: null, q: '' } };

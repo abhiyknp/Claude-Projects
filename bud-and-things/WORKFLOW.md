@@ -24,10 +24,10 @@ The work moved in stages, each reviewed before the next:
 | Commerce | Own site takes orders (no shop platform), payment gateway for dynamic UPI QR, UPI app or ID and cards; marketplaces run from their own panels; one codebase for web, PWA and store apps | Agreed |
 | Catalogue | A draft range of 6 candles and 6 Jesmonite objects (`data/catalogue.draft.json`), every name and price marked as a proposal | Agreed as a draft |
 | Prototype | The whole shop as a clickable prototype, with the full checkout and an owner view | Approved as the base |
-| Openings A and B | 2D canvas scroll scenes: *Through the Arches*, *The Pour* | Moved to `intro-prototypes/` (Oct 2026) for another project |
-| Themes | Six themes, made bolder after "too pastel" | Kept; chosen by the owner in Owner view → Settings, and copied to `theme-kit/` |
+| Openings A and B | 2D canvas scroll scenes: *Through the Arches*, *The Pour* | Moved to the web-intros-and-themes repository (Oct 2026) |
+| Themes | Six themes, made bolder after "too pastel" | Kept; chosen by the owner in Owner view → Settings, and copied to the web-intros-and-themes repository |
 | Brand assets | Logo, monogram, leaf mark and packaging photos cut from the master PDF | In use; replace with originals before launch |
-| Opening C | A drawn first-person home tour, then a three.js 3D tour | Superseded: "looks like a cartoon"; kept in `intro-prototypes/` |
+| Opening C | A drawn first-person home tour, then a three.js 3D tour | Superseded: "looks like a cartoon"; kept in the web-intros-and-themes repository |
 | Photo tour | Built from reference images | Rejected: images too small and blurry, felt like a slideshow |
 | References | Oryzo (Lusion), Sleep Well Creatives, Sébastien Lempens' portfolio, Rijkscollection (with a screen recording) | One continuous camera, a product treated as the hero, calm realistic rooms, tap a piece to glide to it, a link per piece |
 | **Opening D: The House** | Blender-modelled rooms with **baked light**, glide-to-piece, details panel, room list, links per piece | Foyer "exceptionally good"; bedroom and moods added |
