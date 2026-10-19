@@ -1094,7 +1094,7 @@ const TEXT = {
   'pdp.ship': ['Free shipping over {freeOver}. Otherwise {shipFee}. Prepaid orders are packed first.', 'Product: delivery card line'],
   'pdp.damage': ['Damaged on the way? Message us within {exchangeDays} days of delivery with a photo or your unboxing video and we send a replacement free.', 'Product: damage cover line'],
   'acct.title': ['Sign in to order', 'Account: sign-in heading'],
-  'acct.sub': ['We send a 6-digit code to your email. No password to remember. Signing in keeps your orders, tracking and Bud Points in one place.', 'Account: sign-in text'],
+  'acct.sub': ['We send a code to your email. No password to remember. Signing in keeps your orders, tracking and Bud Points in one place.', 'Account: sign-in text'],
   'track.title': ['Track your order', 'Track order: heading'],
   'track.sub': ['Enter the order number from your confirmation email and the mobile number you ordered with.', 'Track order: text'],
   'foot.copy': ['© {year} BUD & THINGS by Ashi. All rights reserved.', 'Footer: copyright line'],
@@ -1230,7 +1230,7 @@ const TEXT = {
   'faq.q10': ['Can you refill my jar?', 'FAQ: question 10 (empty to hide)'],
   'faq.a10': ['Yes. Burned to the end? Send the jar back and we re-pour it for {repourPrice}.', 'FAQ: answer 10'],
   'faq.q11': ['Do I need an account to order?', 'FAQ: question 11 (empty to hide)'],
-  'faq.a11': ['Yes, but there is no password. Enter your email and we send a 6-digit code to sign in. Your account keeps your orders, tracking and Bud Points together.', 'FAQ: answer 11'],
+  'faq.a11': ['Yes, but there is no password. Enter your email and we send a code to sign in. Your account keeps your orders, tracking and Bud Points together.', 'FAQ: answer 11'],
   'bulk.eyebrow': ['Corporate & bulk gifts', 'Bulk: small line above the heading'],
   'bulk.title': ['Gifts your team and clients *will keep.*', 'Bulk: heading'],
   'bulk.sub': ['Hand-poured candles, Jesmonite pieces and gift boxes for teams, clients, weddings and return gifts. Tell us how many and by when, and we’ll send options the same day.', 'Bulk: line under the heading'],
@@ -2479,7 +2479,7 @@ function signInBox(next) {
   return `<div class="signin"><span class="why-ic">${hl('user', 26)}</span><h2 style="font-size:32px">${T('acct.title')}</h2><p class="muted">${T('acct.sub')}</p>
     ${A.sent ? `<form data-form="acct-code" data-next="${esc(next || '')}" class="form" style="grid-template-columns:1fr" novalidate><p>We sent a code to <strong>${esc(A.email)}</strong>. <button class="linkbtn" type="button" data-act="acct-change">Change</button></p>
       ${A.demo ? `<div class="status" role="status">Preview: no email is sent. Your code is <strong class="num">${esc(A.demo)}</strong>.</div>` : ''}
-      <span class="field"><label for="acct-code">6-digit code</label><input id="acct-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" ${A.err ? 'aria-invalid="true" aria-describedby="acct-err"' : ''}></span>${A.err ? `<span class="err" id="acct-err" role="alert">${esc(A.err)}</span>` : ''}
+      <span class="field"><label for="acct-code">Code from the email</label><input id="acct-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" ${A.err ? 'aria-invalid="true" aria-describedby="acct-err"' : ''}></span>${A.err ? `<span class="err" id="acct-err" role="alert">${esc(A.err)}</span>` : ''}
       <span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">${A.busy ? 'Checking…' : 'Sign in'}</button><button class="btn ghost" type="button" data-act="acct-resend">Send a new code</button></span></form>`
     : `<form data-form="acct-email" data-next="${esc(next || '')}" class="form" style="grid-template-columns:1fr" novalidate><span class="field"><label for="acct-email">Email</label><input id="acct-email" type="email" autocomplete="email" value="${esc(A.email || '')}" ${A.err ? 'aria-invalid="true" aria-describedby="acct-err"' : ''}></span>${A.err ? `<span class="err" id="acct-err" role="alert">${esc(A.err)}</span>` : ''}
       <button class="btn" type="submit">${A.busy ? 'Sending…' : 'Email me a code'}</button><span class="hint">By signing in you agree to our <a href="#terms">terms</a> and <a href="#privacy">privacy policy</a>.</span></form>`}</div>`;
@@ -3139,7 +3139,7 @@ function drawMfaQR() {
 }
 
 // ---------- placing orders ----------
-// customer sign-in: a 6-digit code sent to their email (Supabase email OTP); in the preview without a database the code is shown on screen
+// customer sign-in: a code (6 to 10 digits, set in Supabase) sent to their email (Supabase email OTP); in the preview without a database the code is shown on screen
 function acctSend(email, next) {
   const A = UI.acct = { email, next, busy: true }; render();
   const done = (demo) => { Object.assign(A, { sent: true, busy: false, err: null, demo }); render(); $('#acct-code')?.focus(); track('signin_code', {}); };
@@ -3444,7 +3444,7 @@ document.addEventListener('submit', (e) => {
       render(); })();
     return; }
   if (kind === 'acct-email') { const em = $('#acct-email').value.trim().toLowerCase(); if (!isEmail(em)) { UI.acct = { email: em, next: f.dataset.next, err: 'Enter an email like name@example.com.' }; render(); $('#acct-email')?.focus(); return; } acctSend(em, f.dataset.next); return; }
-  if (kind === 'acct-code') { const A = UI.acct; const code = $('#acct-code').value.replace(/\D/g, ''); if (code.length !== 6) { A.err = 'Enter the 6 digits from the email.'; render(); $('#acct-code')?.focus(); return; }
+  if (kind === 'acct-code') { const A = UI.acct; const code = $('#acct-code').value.replace(/\D/g, ''); if (code.length < 6 || code.length > 10) { A.err = 'Enter the code from the email.'; render(); $('#acct-code')?.focus(); return; }
     if (!BTDB.on) { if (code === A.demo) acctIn(A.email, f.dataset.next); else { A.err = 'That code doesn’t match. Check it and try again.'; render(); $('#acct-code')?.focus(); } return; }
     A.busy = true; render(); BTDB.verifyEmailCode(A.email, code).then(() => acctIn(A.email, f.dataset.next), () => { A.busy = false; A.err = 'That code didn’t work or has expired. Check it, or send a new one.'; render(); $('#acct-code')?.focus(); });
     return; }
