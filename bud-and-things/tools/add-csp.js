@@ -11,7 +11,7 @@ const connect = ["'self'", db && new URL(db).origin, ...(process.env.BT_CSP_CONN
 // Meta Pixel and Google Analytics, used only when the owner adds an id in Settings
 const ads = { script: ['https://connect.facebook.net', 'https://www.googletagmanager.com'], connect: ['https://www.facebook.com', 'https://connect.facebook.net', 'https://*.google-analytics.com', 'https://*.analytics.google.com', 'https://www.googletagmanager.com'] };
 // Cashfree's checkout: its script, the payment window it opens over the page, and the calls it makes
-const pay = { script: ['https://sdk.cashfree.com'], frame: ['https://sdk.cashfree.com', 'https://*.cashfree.com'], connect: ['https://*.cashfree.com'] };
+const pay = { script: ['https://sdk.cashfree.com'], frame: ['https://sdk.cashfree.com', 'https://*.cashfree.com'], connect: ['https://*.cashfree.com'], form: ['https://*.cashfree.com'] };
 const media = ["'self'", 'data:', 'blob:', db && new URL(db).origin].filter(Boolean);
 
 function policy(html) {
@@ -20,7 +20,7 @@ function policy(html) {
   return [`default-src 'self'`, `script-src 'self' ${[...ads.script, ...pay.script].join(' ')} ${[...new Set(hashes)].join(' ')}`.trim(),
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, `font-src 'self' https://fonts.gstatic.com`,
     `img-src ${media.join(' ')} https:`, `media-src ${media.join(' ')} https:`, `connect-src ${[...connect, ...ads.connect, ...pay.connect].join(' ')}`, `frame-src ${pay.frame.join(' ')}`,
-    `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `upgrade-insecure-requests`].join('; ');
+    `object-src 'none'`, `base-uri 'self'`, `form-action 'self' ${pay.form.join(' ')}`, `upgrade-insecure-requests`].join('; ');
 }
 
 const pages = []; if (/\.html$/.test(dir)) pages.push(dir); else (function walk(d) { for (const f of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, f.name); if (f.isDirectory()) walk(p); else if (/\.html$/.test(f.name)) pages.push(p); } })(dir);
