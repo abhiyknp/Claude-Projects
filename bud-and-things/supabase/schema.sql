@@ -43,6 +43,12 @@ create table if not exists reviews (
   body text not null, published boolean not null default false, created_at timestamptz not null default now());
 create table if not exists subscribers (id uuid primary key default gen_random_uuid(), contact text not null, source text, created_at timestamptz not null default now());
 create table if not exists restock_requests (id uuid primary key default gen_random_uuid(), sku text not null, contact text not null, created_at timestamptz not null default now());
+-- "remind me before their birthday": the owner sees what is coming up and sends one message
+create table if not exists reminders (id uuid primary key default gen_random_uuid(), contact text not null, occasion text not null, for_name text, day date not null, created_at timestamptz not null default now());
+-- gift cards the owner issues after a card is paid for (or as a thank-you); spent at checkout until the balance is 0
+create table if not exists gift_cards (code text primary key, amount int not null check (amount > 0), balance int not null check (balance >= 0), note text, created_at timestamptz not null default now());
+-- a customer's share link (?ref=ABC123): orders placed through it are credited to them, and the owner sends the thank-you
+create table if not exists referrers (id text primary key, contact text not null unique, created_at timestamptz not null default now());
 
 -- ---------- limits ----------
 -- Every visitor action is counted per connection (a one-way hash of the IP address, never the address itself), per
@@ -91,6 +97,9 @@ alter table orders enable row level security;
 alter table reviews enable row level security;
 alter table subscribers enable row level security;
 alter table restock_requests enable row level security;
+alter table reminders enable row level security;
+alter table gift_cards enable row level security;
+alter table referrers enable row level security;
 alter table hits enable row level security; -- no rules on purpose: only the functions here read or write it
 revoke all on hits from anon, authenticated;
 
@@ -98,7 +107,7 @@ do $$
 declare t text;
 begin
   -- drop and recreate so the file can be run again
-  for t in select unnest(array['products','pairings','site_text','settings','stock','media','orders','reviews','subscribers','restock_requests','owners']) loop
+  for t in select unnest(array['products','pairings','site_text','settings','stock','media','orders','reviews','subscribers','restock_requests','reminders','gift_cards','referrers','owners']) loop
     execute format('drop policy if exists "read" on %I', t);
     execute format('drop policy if exists "owner" on %I', t);
     execute format('drop policy if exists "visitor" on %I', t);
@@ -123,10 +132,14 @@ create policy "owner" on orders for all using (is_owner()) with check (is_owner(
 create policy "owner" on reviews for all using (is_owner()) with check (is_owner());
 create policy "owner" on subscribers for all using (is_owner()) with check (is_owner());
 create policy "owner" on restock_requests for all using (is_owner()) with check (is_owner());
+create policy "owner" on reminders for all using (is_owner()) with check (is_owner());
+create policy "owner" on gift_cards for all using (is_owner()) with check (is_owner());
+create policy "owner" on referrers for all using (is_owner()) with check (is_owner());
 -- visitors may send a review (held until the owner publishes it), sign up, or ask to hear about a restock
 create policy "visitor" on reviews for insert with check (not published and length(name) between 1 and 60 and length(body) between 1 and 1500 and length(product_id) < 60);
 create policy "visitor" on subscribers for insert with check (length(contact) between 5 and 120 and length(coalesce(source, '')) <= 40);
 create policy "visitor" on restock_requests for insert with check (length(contact) between 5 and 120 and length(sku) < 60);
+create policy "visitor" on reminders for insert with check (length(contact) between 5 and 120 and length(occasion) <= 30 and length(coalesce(for_name, '')) <= 60);
 
 -- what a visitor sends is checked, tidied and counted before it is saved
 create or replace function guard_visitor() returns trigger language plpgsql security definer set search_path = public as $$
@@ -150,15 +163,23 @@ begin
     if not exists (select 1 from products p, jsonb_array_elements(p.data -> 'variants') v where p.live and v ->> 'sku' = new.sku) then raise exception 'unknown_item'; end if;
     perform hit('restock', me, 10, '1 hour'); perform hit('restock', 'site', 300, '1 hour');
     if exists (select 1 from restock_requests where sku = new.sku and contact = new.contact) then return null; end if;
+  elsif tg_table_name = 'reminders' then
+    new.id := gen_random_uuid(); new.contact := lower(trim(new.contact)); new.for_name := nullif(trim(coalesce(new.for_name, '')), '');
+    if new.contact !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
+    if new.occasion !~ '^[a-z-]{1,30}$' or new.day < current_date - 1 or new.day > current_date + 400 then raise exception 'bad_reminder'; end if;
+    perform hit('reminder', me, 10, '1 hour'); perform hit('reminder', 'site', 300, '1 hour');
+    if exists (select 1 from reminders where contact = new.contact and occasion = new.occasion and day = new.day) then return null; end if;
   end if;
   return new;
 end $$;
 drop trigger if exists guard_visitor on reviews;
 drop trigger if exists guard_visitor on subscribers;
 drop trigger if exists guard_visitor on restock_requests;
+drop trigger if exists guard_visitor on reminders;
 create trigger guard_visitor before insert on reviews for each row execute function guard_visitor();
 create trigger guard_visitor before insert on subscribers for each row execute function guard_visitor();
 create trigger guard_visitor before insert on restock_requests for each row execute function guard_visitor();
+create trigger guard_visitor before insert on reminders for each row execute function guard_visitor();
 
 -- ---------- placing an order ----------
 -- The database rebuilds the order from what it knows: each price from the products table, the ritual saving, the
@@ -178,6 +199,7 @@ begin
     for it in select * from jsonb_array_elements(r.data -> 'items') loop
       update stock set qty = qty + (it ->> 'qty')::int, updated_at = now() where sku = it ->> 'sku';
     end loop;
+    update gift_cards set balance = balance + coalesce((r.data ->> 'cardOff')::int, 0) where code = r.data ->> 'card';
     update orders set status = 'Cancelled' where id = r.id;
   end loop;
 end $$;
@@ -217,6 +239,7 @@ declare
   sub int := 0; ritual int := 0; code_off int := 0; ship int := 0; wrap int := 0; cod int := 0; total int; code text := '';
   gift_on boolean := false; gift jsonb := null; new_id text; st text;
   em text := customer_email(); use_pts int := 0; earned int := 0;
+  card text := upper(trim(coalesce(o ->> 'card', ''))); card_off int := 0; bal int; ref text := null;
 begin
   -- no guest orders: the customer signs in first
   if em is null then raise exception 'sign_in'; end if;
@@ -232,8 +255,10 @@ begin
   if length(coalesce(a ->> 'line1', '')) not between 1 and 200 or length(coalesce(a ->> 'line2', '')) > 200 then raise exception 'bad_order:address'; end if;
   if coalesce(a ->> 'pin', '') !~ '^[1-9][0-9]{5}$' then raise exception 'bad_order:pin'; end if;
   if length(coalesce(a ->> 'city', '')) not between 1 and 80 or length(coalesce(a ->> 'state', '')) not between 1 and 60 then raise exception 'bad_order:address'; end if;
-  if method is null or method not in ('Cash on delivery', 'UPI ID', 'UPI QR', 'UPI app', 'Card') then raise exception 'bad_order:method'; end if;
-  if method = 'Cash on delivery' and not cfg_on('codOn', true) then raise exception 'bad_order:cod_off'; end if;
+  -- Online: paid through Cashfree (functions/pay). Gift card or points: only when they cover the whole total.
+  if method is null or method not in ('Online', 'Gift card or points', 'Cash on delivery') then raise exception 'bad_order:method'; end if;
+  -- the shop is prepaid: cash on delivery stays off unless the owner turns it on in Settings
+  if method = 'Cash on delivery' and not cfg_on('codOn', false) then raise exception 'bad_order:cod_off'; end if;
   perform hit('order-phone', phone, 3, '1 day');
   if jsonb_typeof(g) = 'object' and coalesce(g ->> 'on', 'false') = 'true' then
     gift_on := true;
@@ -288,17 +313,30 @@ begin
   end if;
   total := sub - ritual - code_off - use_pts + ship + wrap + cod;
   earned := floor((total - ship - wrap - cod) * greatest(cfg_num('rewardPct', 5), 0) / 100);
+  -- a gift card pays for as much of the total as its balance covers, and the balance goes down in the same step
+  if card <> '' then
+    perform hit('card', client_key(), 20, '1 hour');
+    select gc.balance into bal from gift_cards gc where gc.code = card for update;
+    if coalesce(bal, 0) <= 0 then raise exception 'bad_card'; end if;
+    card_off := least(bal, total); total := total - card_off;
+    update gift_cards gc set balance = gc.balance - card_off where gc.code = card;
+  end if;
+  -- an order through a friend's share link is credited to that friend (never to yourself)
+  if coalesce(o ->> 'ref', '') ~ '^[A-Z0-9]{6}$' then
+    select id into ref from referrers where id = o ->> 'ref' and contact <> phone and contact <> em;
+  end if;
+  if (method = 'Gift card or points') <> (total = 0) then raise exception 'price_changed'; end if;
   -- the browser showed the customer a total; if it isn't this one, something changed and they should look again
   if coalesce(o ->> 'sub', '') <> sub::text or coalesce(o ->> 'total', '') <> total::text then raise exception 'price_changed'; end if;
 
-  st := case when method = 'Cash on delivery' then 'Placed' else 'Awaiting payment' end;
+  st := case when method in ('Cash on delivery', 'Gift card or points') then 'Placed' else 'Awaiting payment' end;
   new_id := 'BT-' || nextval('order_no') || '-' || upper(substr(md5(gen_random_uuid()::text), 1, 6));
   insert into orders (id, data, status, phone, total, method) values (new_id, jsonb_build_object(
     'id', new_id, 'placedAt', now(), 'method', method, 'items', items,
     'email', em, 'contact', jsonb_build_object('name', trim(c ->> 'name'), 'phone', phone, 'email', em),
     'address', jsonb_build_object('line1', trim(a ->> 'line1'), 'line2', coalesce(a ->> 'line2', ''), 'pin', a ->> 'pin', 'city', trim(a ->> 'city'), 'state', a ->> 'state'),
     'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'pointsUsed', use_pts, 'points', earned, 'ship', ship, 'wrap', wrap, 'cod', cod, 'total', total,
-    'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true'), st, phone, total, method);
+    'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true', 'card', nullif(card, ''), 'cardOff', card_off, 'ref', ref), st, phone, total, method);
   return new_id;
 end $$;
 
@@ -320,7 +358,78 @@ begin
   for it in select * from jsonb_array_elements(r.data -> 'items') loop
     update stock set qty = qty + (it ->> 'qty')::int, updated_at = now() where sku = it ->> 'sku';
   end loop;
+  update gift_cards set balance = balance + coalesce((r.data ->> 'cardOff')::int, 0) where code = r.data ->> 'card';
   update orders set status = 'Cancelled' where id = r.id;
+end $$;
+
+-- ---------- online payment (Cashfree) and delivery (Shiprocket) ----------
+-- Only the pay and delivery functions (supabase/functions) call these, with the service key; visitors and the owner can't.
+
+-- Cashfree confirmed the payment. Usually the order is still waiting, and moves on to Placed. If it was paid after its
+-- hold ran out (and was cancelled), the pieces and gift card balance are taken again when they're still there;
+-- otherwise it stays cancelled and is marked refundDue so the owner refunds it in the Cashfree dashboard.
+create or replace function mark_paid(order_id text, pay jsonb) returns text language plpgsql security definer set search_path = public as $$
+declare r record; it jsonb; ok boolean := true;
+begin
+  select id, data, status into r from orders where id = order_id for update;
+  if r.id is null then raise exception 'not_found'; end if;
+  if r.data ? 'payment' then return r.status; end if; -- already recorded (the browser and the webhook both report it)
+  if r.status = 'Cancelled' then
+    begin
+      for it in select * from jsonb_array_elements(r.data -> 'items') loop
+        update stock set qty = qty - (it ->> 'qty')::int, updated_at = now() where sku = it ->> 'sku' and qty >= (it ->> 'qty')::int;
+        if not found then raise exception 'gone'; end if;
+      end loop;
+      if coalesce((r.data ->> 'cardOff')::int, 0) > 0 then
+        update gift_cards set balance = balance - (r.data ->> 'cardOff')::int where code = r.data ->> 'card' and balance >= (r.data ->> 'cardOff')::int;
+        if not found then raise exception 'gone'; end if;
+      end if;
+    exception when others then ok := false; -- undoes the partial stock changes above
+    end;
+    update orders set status = case when ok then 'Placed' else 'Cancelled' end,
+      data = data || jsonb_build_object('payment', pay, 'refundDue', not ok) where id = r.id;
+    return case when ok then 'Placed' else 'Cancelled' end;
+  end if;
+  update orders set status = case when status = 'Awaiting payment' then 'Placed' else status end,
+    data = data || jsonb_build_object('payment', pay) where id = r.id;
+  return (select status from orders where id = r.id);
+end $$;
+
+-- Shiprocket booked a courier, or reported where the parcel is. The status only moves forward (Packed → Shipped →
+-- Delivered), never back, and never for a cancelled or unpaid order.
+create or replace function set_shipment(order_id text, ship jsonb, new_status text) returns text language plpgsql security definer set search_path = public as $$
+declare cur text; steps text[] := array['Placed', 'Packed', 'Shipped', 'Delivered'];
+begin
+  select status into cur from orders where id = order_id for update;
+  if cur is null then raise exception 'not_found'; end if;
+  update orders set data = data || jsonb_build_object('parcel', coalesce(data -> 'parcel', '{}') || ship),
+    status = case when new_status = any (steps) and cur = any (steps) and array_position(steps, new_status) > array_position(steps, cur)
+      then new_status else status end where id = order_id;
+  return (select status from orders where id = order_id);
+end $$;
+
+-- a shopper checks a gift card before using it (20 tries an hour per connection, so codes can't be guessed)
+create or replace function gift_card_balance(card_code text) returns int language plpgsql security definer set search_path = public as $$
+begin
+  perform hit('card', client_key(), 20, '1 hour');
+  return (select balance from gift_cards where code = upper(trim(card_code)));
+end $$;
+
+-- a customer asks for their share link; the same mobile or email always gets the same link
+create or replace function my_referral(contact_in text) returns text language plpgsql security definer set search_path = public as $$
+declare who text := lower(trim(contact_in)); rid text;
+begin
+  perform hit('referral', client_key(), 5, '1 hour');
+  if who !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
+  select id into rid from referrers where contact = who;
+  if rid is null then
+    loop
+      rid := upper(substr(md5(gen_random_uuid()::text), 1, 6));
+      exit when not exists (select 1 from referrers where id = rid);
+    end loop;
+    insert into referrers (id, contact) values (rid, who);
+  end if;
+  return rid;
 end $$;
 
 -- who may call what: Supabase lets everyone call every function unless told otherwise
@@ -342,6 +451,15 @@ grant execute on function my_orders() to authenticated;
 grant execute on function get_order(text, text) to anon, authenticated;
 grant execute on function cancel_order(text) to authenticated;
 grant execute on function is_owner() to anon, authenticated;
+revoke execute on function gift_card_balance(text) from public;
+revoke execute on function my_referral(text) from public;
+grant execute on function gift_card_balance(text) to anon, authenticated;
+grant execute on function my_referral(text) to anon, authenticated;
+revoke execute on function mark_paid(text, jsonb) from public, anon, authenticated;
+revoke execute on function set_shipment(text, jsonb, text) from public, anon, authenticated;
+grant execute on function mark_paid(text, jsonb) to service_role;
+grant execute on function hit(text, text, int, interval) to service_role; -- the delivery function limits PIN checks per visitor
+grant execute on function set_shipment(text, jsonb, text) to service_role;
 
 -- ---------- photos and videos ----------
 -- only photos and videos, up to 50 MB each (so nothing that runs in a browser, such as HTML or SVG, can be stored)

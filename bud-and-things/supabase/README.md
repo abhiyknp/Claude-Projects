@@ -44,6 +44,9 @@ The preview code only keeps casual visitors out. It is not security: settings ar
 | Orders | Signed-in customers place one and see their own orders and Bud Points; anyone can look one up with the order number and mobile | See all, mark paid, move them along, cancel |
 | Reviews | Send one; it waits until Ashi publishes it | Publish, unpublish, delete |
 | Sign-ups and restock requests | Send one | See, download as a spreadsheet |
+| Gift reminders | Save one (a date within the next year) | See what is coming up, message each customer |
+| Gift cards | Check a code's balance (20 tries an hour), spend it at checkout | Issue cards, see what is left on each |
+| Share links | Get their own link (5 an hour) | See which customers brought orders, send each a thank-you card |
 
 **Bud Points.** Each order earns the setting `rewardPct` (5% by default) of what was paid for the pieces as points; 1 point is ₹1 off a later order. Points count once the order is **Delivered**. Points spent are held from the moment an order is placed and come back if it is cancelled. The database works all of this out from the customer's own orders (`points_of` and `my_orders` in `schema.sql`), so the page can't add points.
 
@@ -60,14 +63,17 @@ So a script can't flood the shop, the database counts what each visitor sends, b
 | Order lookups | 20 an hour per connection |
 | Reviews | 3 an hour per connection, 60 an hour in all |
 | Sign-ups | 5 an hour per connection; the same email or number is only saved once |
+| Gift reminders | 10 an hour per connection; the same date for the same person is saved once |
+| Gift card checks | 20 an hour per connection, so codes can't be guessed |
 | Restock requests | 10 an hour per connection; once per piece per person |
 
 To change a limit, add a row with the name in brackets as its key and a number as its value in Supabase → Table Editor → settings. Names, phone numbers, addresses, PIN codes, emails and the payment method are checked as well.
 
 ### Paid online, cash on delivery, cancelled
 
-- **Cash on delivery** orders start as **Placed**.
-- Orders paid online start as **Awaiting payment** until a payment is confirmed. Their stock is held for 2 hours (setting `payHoldMins`), then released, and the order shows as **Cancelled**. Until the payment gateway is connected, press **Mark paid** in the Owner view once you've seen the money arrive.
+- The shop is prepaid. **Cash on delivery** stays off unless you turn on `codOn` in Settings; its orders start as **Placed**.
+- Orders paid online start as **Awaiting payment** until Cashfree confirms the payment, and then move to **Placed** on their own. Their stock is held for 2 hours (setting `payHoldMins`), then released, and the order shows as **Cancelled**. The Cashfree payment link lapses at the same time. If a payment still arrives after that, the order comes back when its pieces are still in stock. Otherwise it stays cancelled and Owner view marks it **Paid late: refund it in Cashfree**. **Mark paid** is still there for a payment you received another way.
+- An order fully covered by a gift card or Bud Points needs no payment and starts as **Placed**.
 - **Cancel** in the Owner view puts an order's pieces back in stock. It works until the order is shipped.
 - Order numbers have a random part, such as `BT-1042-7F3A9C`, so nobody can find other people's orders by counting.
 
@@ -98,7 +104,54 @@ Point a local preview's `config.js` at `http://localhost:54321` (any anon key wo
 
 ## Still to do before taking real money
 
-- Connect the payment gateway (Razorpay or similar). Create the gateway's order from the database's total (the `total` column on the order), never from the browser, and let only the gateway's signed webhook (checked in a Supabase Edge Function with the secret key) move an order from Awaiting payment to Placed. Keep the gateway's secret key in Supabase's Edge Function secrets, never in `config.js` or this repository. The card form on the checkout page is a placeholder: replace it with the gateway's own checkout, so card numbers never pass through the site. Today payments are simulated.
+- Set up Cashfree and Shiprocket (the two sections below). Until Cashfree is set up, the live checkout says online payment isn't switched on yet.
 - For cash on delivery, consider a one-time code by SMS or WhatsApp to the customer's mobile before the order is accepted (the delivery partner or an SMS service can send it); until then, the limits above keep a script from taking all the stock.
 - Send order updates on WhatsApp or by email when an order moves along (a Supabase Edge Function or the gateway's webhooks).
 - Back up: Supabase's free plan keeps daily backups for a short time only. Export orders regularly from the Table Editor, or move to a paid plan at launch.
+
+
+## Gift cards, reminders and share links (October 2026)
+
+Run `schema.sql` again in the SQL Editor to add them. It is safe to re-run. Then:
+
+- **Gift cards.** A shopper asks for a card on `#giftcard` (it opens WhatsApp or email). Once they have paid, open Owner view → Gift cards and make a card for that amount. The site generates the code (for example `BT-7KQM-3XRA`). Write it on the printed card, or send it on WhatsApp. At checkout, the code goes in the same box as the welcome code. It pays for as much of the order as its balance covers, and the balance goes down in the same step. If the order is cancelled, or never paid, the balance comes back.
+- **Gift reminders.** Shoppers save a date on the Gifting page. Owner view → Sign-ups lists them with the soonest first and a Message link for each. Send one about a week before the date.
+- **Share links.** On `#share`, a customer gets their own link (`?ref=ABC123`). An order placed through that link is credited to them, but never to their own number. Owner view → Gift cards lists the customers who brought orders, so you can send each one the thank-you card set in Settings → `refReward`.
+
+## Online payments (Cashfree)
+
+The checkout opens Cashfree's own payment window (UPI, cards, net banking and wallets), so card and bank details never pass through the site. The `pay` Edge Function (`supabase/functions/pay`) asks Cashfree for exactly the total the database worked out. It marks an order paid only when Cashfree itself reports it paid for the full amount, either straight after checkout or through Cashfree's webhook if the customer closes the page.
+
+1. **Account.** Sign up at cashfree.com → Payment Gateway, and complete the KYC (PAN, bank account, business details and website). Until it is approved, use the **Test** mode keys.
+2. **Keys.** Cashfree dashboard → Developers → API Keys: copy the **App ID** and the **Secret Key**. Keep the secret key out of this repository and out of `config.js`.
+3. **Install the Supabase command line** once (`npm i -g supabase`, then `supabase login` and `supabase link --project-ref cgccziskvqyatrjqdtka` in `bud-and-things`).
+4. **Secrets** (from `bud-and-things`):
+   ```sh
+   supabase secrets set CASHFREE_APP_ID=... CASHFREE_SECRET_KEY=... CASHFREE_ENV=sandbox \
+     SITE_URL=https://budandthings.com SITE_ORIGINS="https://budandthings.com https://abhiyknp.github.io"
+   ```
+   Change `CASHFREE_ENV` to `production`, with the production keys, once you're ready to take real money.
+5. **Deploy:** `supabase functions deploy pay --no-verify-jwt`. The function checks Cashfree's signature itself, because Cashfree can't send a Supabase sign-in.
+6. **Webhook.** In the Cashfree dashboard → Developers → Webhooks, add `https://cgccziskvqyatrjqdtka.supabase.co/functions/v1/pay` for **Payment success**. In the same place, whitelist the site's domain.
+7. **Try it** in test mode with Cashfree's test UPI ID or card. The order should move to **Placed** by itself.
+
+## Delivery (Shiprocket)
+
+The `delivery` Edge Function (`supabase/functions/delivery`) does three things:
+- It checks the PIN code on product pages with real couriers.
+- It books the courier from Owner view → Orders → **Book courier**. That makes the Shiprocket order, gets the AWB number, asks for a pickup and fetches the label, all in one step.
+- It moves orders to **Shipped** and **Delivered** as Shiprocket tracks them. The customer's order page shows the courier, the tracking number and a tracking link.
+
+1. **Account.** Sign up at shiprocket.in, finish the KYC, and add money to the Shiprocket wallet (couriers are paid from it).
+2. **Pickup address.** Shiprocket → Settings → Pickup addresses: add the studio and note its name (often `Primary`).
+3. **API user.** Shiprocket → Settings → API → Configure → **Create an API user**, with a separate email and password. This is not your own login.
+4. **Settings in Owner view:** `pickupPin` (the studio's PIN code, which also turns on the live PIN check), `shiprocketPickup` (the pickup name from step 2), and your usual box: `parcelKg`, `parcelL`, `parcelB` and `parcelH`.
+5. **Secrets and deploy:**
+   ```sh
+   supabase secrets set SHIPROCKET_EMAIL=... SHIPROCKET_PASSWORD=... SHIPROCKET_WEBHOOK_TOKEN=<any long random text>
+   supabase functions deploy delivery --no-verify-jwt
+   ```
+6. **Tracking webhook.** Shiprocket → Settings → API → Webhooks: URL `https://cgccziskvqyatrjqdtka.supabase.co/functions/v1/delivery`, with the token from step 5.
+7. **Each day:** in Owner view → Orders, press **Book courier** on each paid order, print the label, and hand the parcels over at pickup.
+
+Testing without accounts: `tools/mock-supabase.js` stands in for both functions. A payment goes through at once, every PIN is reachable, and booking gives a made-up AWB.

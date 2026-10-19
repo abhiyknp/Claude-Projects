@@ -956,7 +956,7 @@ body.app .why-band { padding-bottom: 96px; }
       <span class="muted" id="foot-tag">Made with thought. Given with feeling.</span>
       <div id="foot-social"></div>
     </div>
-    <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#gifts">Gift boxes</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a><a href="#bulk">Corporate &amp; bulk gifts</a></nav>
+    <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#gifts">Gift boxes</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a><a href="#bulk">Corporate &amp; bulk gifts</a><a href="#giftcard">Gift cards</a><a href="#share">Share with a friend</a></nav>
     <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact us</a><a href="#track">Track your order</a><a href="#shipping">Shipping &amp; delivery</a><a href="#refunds">Cancellations &amp; replacements</a><a href="#faq">FAQ</a><a href="#journal-first-burn">Product care</a></nav>
     <nav aria-label="About"><strong>About</strong><a href="#story">Our Story</a><a href="#why">Why buy from us</a><a href="#journal">Journal</a><a href="#tour">3D walk-through</a><a href="#account">Your account</a></nav>
     <nav aria-label="Policies"><strong>Policies</strong><a href="#privacy">Privacy policy</a><a href="#terms">Terms &amp; conditions</a><a href="#shipping">Shipping policy</a><a href="#refunds">Replacement policy</a></nav>
@@ -971,7 +971,7 @@ body.app .why-band { padding-bottom: 96px; }
 
 <script src="config.js"></script>
 <script src="vendor/qrcode/qrcode.js"></script>
-<script src="db.js?v=7"></script>
+<script src="db.js?v=8"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -989,22 +989,22 @@ const FIN = { 'Ivory': '#F1E8DA', 'Ivory Terrazzo': '#EFE7DA', 'Sand': '#DCC9AE'
 const JES_CARE = ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Keep away from long contact with water.'];
 const JES_MAT = 'Cast in Jesmonite, a water-based composite, with a sealed matte finish. Each piece varies slightly in colour and texture.';
 let P = [
-  { id: 'first-light', desc: 'A soft, clean scent for slow mornings: neroli and bergamot up top, mogra at the heart, and white tea to settle it. Light it while the house is still quiet.', name: 'First Light', cat: 'candles', type: 'Scented candle', line: 'The first quiet hour, poured.', notes: ['Mogra', 'Neroli', 'White tea'], variants: twoSizes('FL'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'fresh'], space: ['bedroom', 'workspace'], occ: ['just-because', 'thank-you'], gift: true, pyramid: { top: ['Neroli', 'Bergamot'], heart: ['Mogra (Arabian jasmine)'], base: ['White tea', 'Soft musk'] }, smellsLike: 'Jasmine on the windowsill at six in the morning, before anyone else is up.', art: 'jar', c: '#F4ECE0' },
-  { id: 'monsoon-letters', desc: 'Smells like the first rain on hot earth: petrichor and old paper over vetiver and cedar, with a green lift of cardamom. Made for reading corners and long desk afternoons.', name: 'Monsoon Letters', cat: 'candles', type: 'Scented candle', line: 'Wet earth, old paper, a window left open.', notes: ['Petrichor', 'Vetiver', 'Green cardamom'], variants: twoSizes('ML'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'creative'], space: ['living', 'workspace'], occ: ['just-because', 'milestone'], gift: true, pyramid: { top: ['Green cardamom', 'Rain'], heart: ['Petrichor', 'Old paper'], base: ['Vetiver', 'Cedar'] }, smellsLike: 'The first rain on hot earth, a stack of letters, a window left open.', art: 'jar', c: '#A9B39A' },
+  { id: 'first-light', desc: 'A soft, clean scent for slow mornings: neroli and bergamot up top, mogra at the heart, and white tea to settle it. Light it while the house is still quiet.', name: 'First Light', cat: 'candles', type: 'Scented candle', line: 'The first quiet hour, poured.', notes: ['Mogra', 'Neroli', 'White tea'], variants: twoSizes('FL'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'fresh'], space: ['bedroom', 'workspace'], occ: ['just-because', 'thank-you', 'anniversary', 'self-care'], gift: true, pyramid: { top: ['Neroli', 'Bergamot'], heart: ['Mogra (Arabian jasmine)'], base: ['White tea', 'Soft musk'] }, smellsLike: 'Jasmine on the windowsill at six in the morning, before anyone else is up.', art: 'jar', c: '#F4ECE0' },
+  { id: 'monsoon-letters', desc: 'Smells like the first rain on hot earth: petrichor and old paper over vetiver and cedar, with a green lift of cardamom. Made for reading corners and long desk afternoons.', name: 'Monsoon Letters', cat: 'candles', type: 'Scented candle', line: 'Wet earth, old paper, a window left open.', notes: ['Petrichor', 'Vetiver', 'Green cardamom'], variants: twoSizes('ML'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['calm', 'creative'], space: ['living', 'workspace'], occ: ['just-because', 'milestone', 'self-care'], gift: true, pyramid: { top: ['Green cardamom', 'Rain'], heart: ['Petrichor', 'Old paper'], base: ['Vetiver', 'Cedar'] }, smellsLike: 'The first rain on hot earth, a stack of letters, a window left open.', art: 'jar', c: '#A9B39A' },
   { id: 'chai-at-four', desc: 'Ginger, clove and cardamom warmed with milk, then tonka and jaggery underneath. The cosiest scent in the range, for the living room or the kitchen at tea time.', name: 'Chai at Four', cat: 'candles', type: 'Scented candle', line: 'The hour everyone comes home to.', notes: ['Masala chai', 'Tonka', 'Warm milk'], variants: twoSizes('CF'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['cosy'], space: ['living', 'kitchen'], occ: ['housewarming', 'thank-you'], gift: true, pyramid: { top: ['Ginger', 'Clove'], heart: ['Cardamom', 'Warm milk'], base: ['Tonka', 'Jaggery'] }, smellsLike: 'A steel pot on the stove at four, and everyone drifting into the kitchen.', art: 'jar', c: '#C9A227' },
-  { id: 'brass-and-saffron', desc: 'Saffron and pink pepper over amber, marigold and sandalwood. A festive, golden scent for doorways, pujas and evenings with guests, poured in a terracotta jar.', name: 'Brass & Saffron', cat: 'candles', type: 'Scented candle', line: 'For lamps, doorways and celebrations.', notes: ['Saffron', 'Amber', 'Sandalwood'], variants: [{ sku: 'BT-CN-BS-220', label: '220 g', price: 1499 }], material: 'Scented candle in a terracotta stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.', size: '8.5 × 9 cm', care: CANDLE_CARE, mood: ['cosy', 'gift-ready'], space: ['living', 'entrance'], occ: ['festive', 'housewarming', 'milestone'], gift: true, pyramid: { top: ['Saffron', 'Pink pepper'], heart: ['Amber', 'Marigold'], base: ['Sandalwood', 'Benzoin'] }, smellsLike: 'Polished brass lamps and marigolds at the door, the evening before a celebration.', art: 'jar', c: '#C45A3A' },
-  { id: 'terrace-garden', desc: 'Lemongrass and lime peel, tulsi and fig leaf, then a soft green base. Fresh and bright, for kitchens, bathrooms and work desks that need a little sunlight.', name: 'Terrace Garden', cat: 'candles', type: 'Scented candle', line: 'Tulsi, lemongrass and a little sunlight.', notes: ['Tulsi', 'Lemongrass', 'Fig leaf'], variants: twoSizes('TG'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['fresh'], space: ['kitchen', 'workspace', 'bathroom'], occ: ['just-because', 'birthday'], gift: true, pyramid: { top: ['Lemongrass', 'Lime peel'], heart: ['Tulsi', 'Fig leaf'], base: ['Vetiver', 'Green musk'] }, smellsLike: 'Watering the terrace pots at sunrise, tulsi on your fingers.', art: 'jar', c: '#C9D0B8' },
+  { id: 'brass-and-saffron', desc: 'Saffron and pink pepper over amber, marigold and sandalwood. A festive, golden scent for doorways, pujas and evenings with guests, poured in a terracotta jar.', name: 'Brass & Saffron', cat: 'candles', type: 'Scented candle', line: 'For lamps, doorways and celebrations.', notes: ['Saffron', 'Amber', 'Sandalwood'], variants: [{ sku: 'BT-CN-BS-220', label: '220 g', price: 1499 }], material: 'Scented candle in a terracotta stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.', size: '8.5 × 9 cm', care: CANDLE_CARE, mood: ['cosy', 'gift-ready'], space: ['living', 'entrance'], occ: ['festive', 'housewarming', 'milestone', 'wedding', 'anniversary'], gift: true, pyramid: { top: ['Saffron', 'Pink pepper'], heart: ['Amber', 'Marigold'], base: ['Sandalwood', 'Benzoin'] }, smellsLike: 'Polished brass lamps and marigolds at the door, the evening before a celebration.', art: 'jar', c: '#C45A3A' },
+  { id: 'terrace-garden', desc: 'Lemongrass and lime peel, tulsi and fig leaf, then a soft green base. Fresh and bright, for kitchens, bathrooms and work desks that need a little sunlight.', name: 'Terrace Garden', cat: 'candles', type: 'Scented candle', line: 'Tulsi, lemongrass and a little sunlight.', notes: ['Tulsi', 'Lemongrass', 'Fig leaf'], variants: twoSizes('TG'), material: JAR_MAT, size: JAR_SIZE, care: CANDLE_CARE, mood: ['fresh'], space: ['kitchen', 'workspace', 'bathroom'], occ: ['just-because', 'birthday', 'self-care', 'new-baby'], gift: true, pyramid: { top: ['Lemongrass', 'Lime peel'], heart: ['Tulsi', 'Fig leaf'], base: ['Vetiver', 'Green musk'] }, smellsLike: 'Watering the terrace pots at sunrise, tulsi on your fingers.', art: 'jar', c: '#C9D0B8' },
   { id: 'pillar-studies', desc: 'Ribbed, unscented pillar candles that hold their shape on a shelf even when they are not lit. Group them in three colours, or set one on a plate as a centrepiece.', name: 'Pillar Studies', cat: 'candles', type: 'Pillar candle', line: 'Sculpted candles that look good even unlit.', notes: ['Unscented'], variants: [{ sku: 'BT-CN-PS-IV', label: 'Ivory', price: 549 }, { sku: 'BT-CN-PS-TC', label: 'Terracotta', price: 549 }, { sku: 'BT-CN-PS-OL', label: 'Olive', price: 549 }, { sku: 'BT-CN-PS-SET3', label: 'Set of 3', price: 1499 }], material: 'Unscented ribbed pillar candle. Wax type to be confirmed after testing.', size: '5 × 12 cm', care: ['Burn on a heat-safe plate.', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'], mood: ['creative', 'calm'], space: ['living', 'dining'], occ: ['festive', 'birthday', 'just-because'], gift: true, art: 'pillar', c: '#F1E8DA' },
-  { id: 'ghat-tray', desc: 'A stepped tray inspired by river ghats, cast in Jesmonite by hand. Keeps rings, keys, a candle and a little plant together on a console, dresser or bedside.', name: 'Ghat Tray', cat: 'jesmonite', type: 'Tray', line: 'Steps for your small everyday things.', variants: [{ sku: 'BT-JS-GT-IT', label: 'Ivory Terrazzo', price: 1490 }, { sku: 'BT-JS-GT-SD', label: 'Sand', price: 1490 }, { sku: 'BT-JS-GT-TC', label: 'Terracotta', price: 1490 }], material: JES_MAT, size: '30 × 15 × 2 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['living', 'bedroom', 'entrance'], occ: ['housewarming', 'milestone'], gift: true, art: 'tray' },
-  { id: 'moonlet-ring-dish', desc: 'A small half-moon dish for the rings and studs you take off at night. Each one is cast by hand, so the swirl and tone are a little different every time.', name: 'Moonlet Ring Dish', cat: 'jesmonite', type: 'Ring dish', line: 'A half-moon for the rings you take off at night.', variants: [{ sku: 'BT-JS-MR-IV', label: 'Ivory', price: 590 }, { sku: 'BT-JS-MR-CS', label: 'Caramel Swirl', price: 590 }, { sku: 'BT-JS-MR-OL', label: 'Olive', price: 590 }], material: JES_MAT, size: '10 × 5 × 2.5 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['bedroom', 'bathroom'], occ: ['birthday', 'thank-you', 'just-because'], gift: true, art: 'dish' },
-  { id: 'jharokha-catch-all', desc: 'Shaped like a jharokha window, this catch-all sits by the door for keys, coins and notes, or on a desk for clips and pens. Cast in Jesmonite with a sealed matte finish.', name: 'Jharokha Catch-all', cat: 'jesmonite', type: 'Catch-all', line: 'A little window for keys, coins and notes.', variants: [{ sku: 'BT-JS-JC-IV', label: 'Ivory', price: 1090 }, { sku: 'BT-JS-JC-SD', label: 'Sand', price: 1090 }], material: JES_MAT, size: '14 × 17 × 2.5 cm', care: JES_CARE, mood: ['creative'], space: ['entrance', 'workspace'], occ: ['housewarming', 'thank-you'], gift: true, art: 'archtray' },
-  { id: 'pebble-coasters', desc: 'A set of four river-stone coasters for your morning cup. Hand-cast and sealed, with soft edges and earthy tones that look good stacked on the coffee table.', name: 'Pebble Coasters', cat: 'jesmonite', type: 'Coasters', line: 'River stones for your morning cup.', variants: [{ sku: 'BT-JS-PC-ME4', label: 'Mixed Earth · set of 4', price: 1190 }, { sku: 'BT-JS-PC-IV4', label: 'All Ivory · set of 4', price: 1190 }], material: JES_MAT, size: 'Each about 10 × 9 × 1 cm', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe.', 'Use with hot mugs; keep away from flames.'], mood: ['cosy', 'fresh'], space: ['living', 'workspace', 'dining'], occ: ['housewarming', 'birthday'], gift: true, art: 'pebbles' },
+  { id: 'ghat-tray', desc: 'A stepped tray inspired by river ghats, cast in Jesmonite by hand. Keeps rings, keys, a candle and a little plant together on a console, dresser or bedside.', name: 'Ghat Tray', cat: 'jesmonite', type: 'Tray', line: 'Steps for your small everyday things.', variants: [{ sku: 'BT-JS-GT-IT', label: 'Ivory Terrazzo', price: 1490 }, { sku: 'BT-JS-GT-SD', label: 'Sand', price: 1490 }, { sku: 'BT-JS-GT-TC', label: 'Terracotta', price: 1490 }], material: JES_MAT, size: '30 × 15 × 2 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['living', 'bedroom', 'entrance'], occ: ['housewarming', 'milestone', 'wedding'], gift: true, art: 'tray' },
+  { id: 'moonlet-ring-dish', desc: 'A small half-moon dish for the rings and studs you take off at night. Each one is cast by hand, so the swirl and tone are a little different every time.', name: 'Moonlet Ring Dish', cat: 'jesmonite', type: 'Ring dish', line: 'A half-moon for the rings you take off at night.', variants: [{ sku: 'BT-JS-MR-IV', label: 'Ivory', price: 590 }, { sku: 'BT-JS-MR-CS', label: 'Caramel Swirl', price: 590 }, { sku: 'BT-JS-MR-OL', label: 'Olive', price: 590 }], material: JES_MAT, size: '10 × 5 × 2.5 cm', care: JES_CARE, mood: ['calm', 'gift-ready'], space: ['bedroom', 'bathroom'], occ: ['birthday', 'thank-you', 'just-because', 'anniversary', 'wedding'], gift: true, art: 'dish' },
+  { id: 'jharokha-catch-all', desc: 'Shaped like a jharokha window, this catch-all sits by the door for keys, coins and notes, or on a desk for clips and pens. Cast in Jesmonite with a sealed matte finish.', name: 'Jharokha Catch-all', cat: 'jesmonite', type: 'Catch-all', line: 'A little window for keys, coins and notes.', variants: [{ sku: 'BT-JS-JC-IV', label: 'Ivory', price: 1090 }, { sku: 'BT-JS-JC-SD', label: 'Sand', price: 1090 }], material: JES_MAT, size: '14 × 17 × 2.5 cm', care: JES_CARE, mood: ['creative'], space: ['entrance', 'workspace'], occ: ['housewarming', 'thank-you', 'new-baby'], gift: true, art: 'archtray' },
+  { id: 'pebble-coasters', desc: 'A set of four river-stone coasters for your morning cup. Hand-cast and sealed, with soft edges and earthy tones that look good stacked on the coffee table.', name: 'Pebble Coasters', cat: 'jesmonite', type: 'Coasters', line: 'River stones for your morning cup.', variants: [{ sku: 'BT-JS-PC-ME4', label: 'Mixed Earth · set of 4', price: 1190 }, { sku: 'BT-JS-PC-IV4', label: 'All Ivory · set of 4', price: 1190 }], material: JES_MAT, size: 'Each about 10 × 9 × 1 cm', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe.', 'Use with hot mugs; keep away from flames.'], mood: ['cosy', 'fresh'], space: ['living', 'workspace', 'dining'], occ: ['housewarming', 'birthday', 'new-baby'], gift: true, art: 'pebbles' },
   { id: 'still-form-no-1', desc: 'A sculptural arch to lean books, postcards or a small frame against. Quiet on its own, and lovely with a candle beside it.', name: 'Still Form No. 1', cat: 'jesmonite', type: 'Sculptural', line: 'An arch to lean books, or thoughts, against.', variants: [{ sku: 'BT-JS-SF-IV', label: 'Ivory', price: 1690 }, { sku: 'BT-JS-SF-TC', label: 'Terracotta', price: 1690 }], material: JES_MAT, size: '12 × 18 × 4 cm', care: ['Dust with a dry, soft cloth.', 'Keep indoors.'], mood: ['creative', 'calm'], space: ['living', 'workspace'], occ: ['milestone', 'housewarming'], gift: true, art: 'arch' },
-  { id: 'halo-candle-plate', desc: 'A round plate with a raised rim that gives any pillar or jar candle a place to stand and catches drips. Pairs with every candle in the range.', name: 'Halo Candle Plate', cat: 'jesmonite', type: 'Candle plate', line: 'Give your candle somewhere to stand.', variants: [{ sku: 'BT-JS-HP-IV', label: 'Ivory', price: 690 }, { sku: 'BT-JS-HP-OL', label: 'Olive', price: 690 }, { sku: 'BT-JS-HP-CR', label: 'Caramel', price: 690 }], material: JES_MAT, size: '14 cm across, 1.5 cm rim', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Let wax cool before removing.'], mood: ['calm', 'cosy'], space: ['living', 'dining', 'bedroom'], occ: ['festive', 'just-because'], gift: false, art: 'plate' },
+  { id: 'halo-candle-plate', desc: 'A round plate with a raised rim that gives any pillar or jar candle a place to stand and catches drips. Pairs with every candle in the range.', name: 'Halo Candle Plate', cat: 'jesmonite', type: 'Candle plate', line: 'Give your candle somewhere to stand.', variants: [{ sku: 'BT-JS-HP-IV', label: 'Ivory', price: 690 }, { sku: 'BT-JS-HP-OL', label: 'Olive', price: 690 }, { sku: 'BT-JS-HP-CR', label: 'Caramel', price: 690 }], material: JES_MAT, size: '14 cm across, 1.5 cm rim', care: ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Let wax cool before removing.'], mood: ['calm', 'cosy'], space: ['living', 'dining', 'bedroom'], occ: ['festive', 'just-because', 'anniversary', 'self-care'], gift: false, art: 'plate' },
   // Diwali gift boxes: free wrap and a hand-written note, and they can ship straight to the person. Contents and prices are edited in Owner view, Products.
-  { id: 'little-diya-box', desc: 'A small, thoughtful gift: a mini scented candle, a tea-light holder and your note, hand-written on our card. Wrapped free and ready to send.', name: 'Little Diya Box', cat: 'gifts', type: 'Gift box', line: 'A small glow to say you thought of them.', variants: [{ sku: 'BT-GB-LD', label: 'One box', price: 499 }], material: 'Inside: a mini scented candle, a tea-light holder and your hand-written note. Gift wrapped free.', size: 'About 12 × 12 × 8 cm', care: CANDLE_CARE, mood: ['gift-ready'], space: [], occ: ['festive', 'thank-you', 'just-because'], gift: true, art: 'box', img: IMG.box, c: '#C9A227' },
+  { id: 'little-diya-box', desc: 'A small, thoughtful gift: a mini scented candle, a tea-light holder and your note, hand-written on our card. Wrapped free and ready to send.', name: 'Little Diya Box', cat: 'gifts', type: 'Gift box', line: 'A small glow to say you thought of them.', variants: [{ sku: 'BT-GB-LD', label: 'One box', price: 499 }], material: 'Inside: a mini scented candle, a tea-light holder and your hand-written note. Gift wrapped free.', size: 'About 12 × 12 × 8 cm', care: CANDLE_CARE, mood: ['gift-ready'], space: [], occ: ['festive', 'thank-you', 'just-because', 'wedding'], gift: true, art: 'box', img: IMG.box, c: '#C9A227' },
   { id: 'diwali-glow-box', desc: 'Our most loved gift box: a 120 g scented candle, a small Jesmonite tray to set it on, and your hand-written note. Wrapped free, and it can ship straight to them.', name: 'Diwali Glow Box', cat: 'gifts', type: 'Gift box', line: 'A candle, a tray to set it on, and a note in your words.', variants: [{ sku: 'BT-GB-DG', label: 'One box', price: 999 }], material: 'Inside: a 120 g scented candle, a small Jesmonite tray and your hand-written note. Gift wrapped free.', size: 'About 18 × 18 × 10 cm', care: CANDLE_CARE, mood: ['gift-ready', 'cosy'], space: [], occ: ['festive', 'housewarming', 'birthday', 'thank-you'], gift: true, popular: true, art: 'box', img: IMG.box, c: '#C45A3A' },
-  { id: 'grand-diwali-box', desc: 'The big one: two 220 g scented candles, a Jesmonite tray, a set of coasters and your note, wrapped by hand. A gift they will keep on the shelf long after Diwali.', name: 'Grand Diwali Box', cat: 'gifts', type: 'Gift box', line: 'The one they will keep on the shelf long after Diwali.', variants: [{ sku: 'BT-GB-GD', label: 'One box', price: 1999 }], material: 'Inside: two 220 g scented candles, a Jesmonite tray, a set of coasters and your hand-written note. Gift wrapped free.', size: 'About 26 × 22 × 12 cm', care: CANDLE_CARE, mood: ['gift-ready'], space: [], occ: ['festive', 'housewarming', 'milestone'], gift: true, art: 'box', img: IMG.box, c: '#4B2E1E' }
+  { id: 'grand-diwali-box', desc: 'The big one: two 220 g scented candles, a Jesmonite tray, a set of coasters and your note, wrapped by hand. A gift they will keep on the shelf long after Diwali.', name: 'Grand Diwali Box', cat: 'gifts', type: 'Gift box', line: 'The one they will keep on the shelf long after Diwali.', variants: [{ sku: 'BT-GB-GD', label: 'One box', price: 1999 }], material: 'Inside: two 220 g scented candles, a Jesmonite tray, a set of coasters and your hand-written note. Gift wrapped free.', size: 'About 26 × 22 × 12 cm', care: CANDLE_CARE, mood: ['gift-ready'], space: [], occ: ['festive', 'housewarming', 'milestone', 'wedding'], gift: true, art: 'box', img: IMG.box, c: '#4B2E1E' }
 ];
 let PAIRINGS = [
   { id: 'morning-ritual', name: 'The Morning Ritual', items: [['first-light', 0], ['halo-candle-plate', 0]], why: 'A fresh candle and a plate to stand it on.' },
@@ -1016,7 +1016,9 @@ let PAIRINGS = [
 const FUTURE = [['Gift sets & curated gifting', 'Next'], ['Home décor & lifestyle objects', 'Later'], ['Celebration & corporate gifting', 'Later']];
 const MOODS = [['calm', 'Calm and grounded'], ['cosy', 'Warm and cosy'], ['fresh', 'Fresh and uplifting'], ['creative', 'Creative and expressive'], ['gift-ready', 'Thoughtful and gift-ready']];
 const SPACES = [['bedroom', 'Bedroom'], ['living', 'Living room'], ['workspace', 'Desk or workspace'], ['kitchen', 'Kitchen'], ['entrance', 'Entrance'], ['bathroom', 'Bathroom'], ['dining', 'Dining table']];
-const OCCASIONS = [['birthday', 'Birthday'], ['housewarming', 'Housewarming'], ['thank-you', 'Thank you'], ['festive', 'Festive'], ['milestone', 'A milestone'], ['just-because', 'Just because']];
+const OCCASIONS = [['birthday', 'Birthday'], ['anniversary', 'Anniversary'], ['housewarming', 'Housewarming'], ['wedding', 'Wedding'], ['new-baby', 'New baby'], ['thank-you', 'Thank you'], ['festive', 'Festive'], ['milestone', 'A milestone'], ['self-care', 'Self-care'], ['just-because', 'Just because']];
+// occasions with at least one piece to show, so a chip never leads to an empty shop
+const occLive = () => OCCASIONS.filter(([k]) => P.some((p) => (p.occ || []).includes(k)));
 const STATES = ['Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'];
 const STATUSES = ['Placed', 'Packed', 'Shipped', 'Delivered'];
 // Brand elements from the identity system: leaf, sun, arch, flow, spark.
@@ -1174,6 +1176,7 @@ const TEXT = {
   'cart.gift': ['Sending it as a gift? Add a note, wrapping and a delivery date at checkout.', 'Cart: gift hint'],
   'co.giftTitle': ['Send it as a gift', 'Checkout: gift option'],
   'co.giftNote': ['We hand-write your note on our thank-you card. Prices are left out of the parcel.', 'Checkout: gift explanation'],
+  'co.payOnline': ['UPI, cards, net banking and wallets, through Cashfree’s secure checkout. We never see your card or bank details.', 'Checkout: paying online'],
   'co.cod': ['Pay in cash or by UPI when it arrives. A {codFee} fee covers the courier’s cash handling.', 'Checkout: cash on delivery'],
   'co.optin': ['Send my order updates and candle care tips on WhatsApp', 'Checkout: WhatsApp opt-in'],
   'gift.title': ['Small gift. Real feeling.', 'Gifting: heading'],
@@ -1191,6 +1194,19 @@ const TEXT = {
   'help.privacy': ['We use your details only to deliver your order and, if you ask, to send updates. We never sell them.', 'Help: privacy'],
   'foot.tagline': ['Made with thought. Given with feeling.', 'Footer: tagline'],
   'foot.also': ['Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.', 'Footer: small print'],
+  'share.eyebrow': ['Share the joy', 'Share page: small line above the heading'],
+  'share.title': ['Give a friend *{welcomeOff}% off*', 'Share page: heading'],
+  'share.sub': ['Know someone who would love a hand-poured candle? Send them our shop. They get {welcomeOff}% off their first order with {welcomeCode}.', 'Share page: line under the heading'],
+  'share.msg': ['I found these hand-poured candles and Jesmonite pieces from BUD & THINGS. Use {welcomeCode} for {welcomeOff}% off your first order:', 'Share page: the message friends receive'],
+  'gc.title': ['Give a *gift card*', 'Gift cards: heading'],
+  'gc.sub': ['When you can’t choose, let them. A printed card with a code, posted in our envelope or sent on WhatsApp. It works on anything in the shop and never runs out until it’s spent.', 'Gift cards: line under the heading'],
+  'gc.how': ['Pick an amount and tell us who it’s for|We send you a UPI link to pay|We post the card, or WhatsApp it to them on the day', 'Gift cards: how it works (separate lines with |)'],
+  'rem.title': ['Never miss a moment', 'Gifting: reminder heading'],
+  'rem.sub': ['Tell us a birthday or anniversary and we’ll message you a week before, with gift ideas. Just one message, no spam.', 'Gifting: reminder text'],
+  'rem.done': ['Saved. We’ll remind you a week before.', 'Gifting: after a reminder is saved'],
+  'share.own': ['Get your own link, and when a friend orders through it we’ll send you a ₹{refReward} gift card as a thank-you.', 'Share page: your own link offer'],
+  'faq.q11': ['Do you sell gift cards?', 'FAQ: question 11 (empty to hide)'],
+  'faq.a11': ['Yes. Choose an amount on our gift card page. We post a printed card or send it on WhatsApp, and it works on anything in the shop until it’s spent.', 'FAQ: answer 11'],
   'faq.title': ['Questions, answered', 'FAQ: heading'],
   'faq.sub': ['Can’t find yours? Message us and Ashi will reply.', 'FAQ: line under the heading'],
   'faq.q1': ['How do I pay?', 'FAQ: question 1 (empty to hide)'],
@@ -1227,7 +1243,7 @@ const TEXT = {
   'soon.text': ['Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving. Leave your email and we’ll tell you the day we open.', 'Coming soon: text'],
   'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button']
 };
-const TEXT_GROUPS = [['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['walk.', 'The house walk'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
+const TEXT_GROUPS = [['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['walk.', 'The house walk'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['share.', 'Share with a friend'], ['gc.', 'Gift cards'], ['rem.', 'Gift reminders'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
 // settings: money in ₹, lists of product ids separated by commas
 const SET_META = [
   ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Delivery promise on product pages, e.g. Ships within 24 hours (empty to hide; only while it is true)', 'text'],
@@ -1237,7 +1253,8 @@ const SET_META = [
   ['featured', 'Home: featured product ids', 'text'], ['giftPicks', 'Gifting: popular product ids', 'text'], ['homeRitual', 'Home: ritual pairing id', 'text'], ['newIn', 'Home: new arrival product ids', 'text'], ['spotlight', 'Home: spotlight product id', 'text'],
   ['bizName', 'Policies: registered business name', 'text'], ['bizAddress', 'Policies: registered address (without "India")', 'text'], ['gstin', 'Policies: GSTIN', 'text'],
   ['grievanceName', 'Policies: grievance officer name', 'text'], ['grievancePhone', 'Policies: grievance officer phone', 'text'], ['courtCity', 'Policies: city whose courts have jurisdiction', 'text'], ['policyDate', 'Policies: last updated, e.g. 19 October 2026', 'text'],
-  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
+  ['pickupPin', 'Pickup PIN code, where the courier collects parcels (turns on the live PIN check)', 'text'], ['shiprocketPickup', 'Shiprocket pickup location name, as in Shiprocket → Settings → Pickup addresses', 'text'], ['parcelKg', 'Usual parcel weight (kg)', 'num'], ['parcelL', 'Usual box length (cm)', 'num'], ['parcelB', 'Usual box width (cm)', 'num'], ['parcelH', 'Usual box height (cm)', 'num'],
+  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
@@ -1245,7 +1262,7 @@ const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
-const SET_DEFAULTS = { shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
+const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
@@ -1263,6 +1280,8 @@ const PREVIEW = (() => { let v = null; try { v = localStorage.getItem('bt-previe
   const q = new URLSearchParams(location.search).get('preview'); if (!q) return v; v = q === 'off' ? null : q;
   try { if (v) localStorage.setItem('bt-preview', v); else localStorage.removeItem('bt-preview'); } catch (e) { /* this visit only */ }
   return v; })();
+const PAID_BACK = (() => { const q = (new URLSearchParams(location.search).get('paid') || '').toUpperCase(); if (!/^BT-\d+-[0-9A-F]{6}$/.test(q)) return ''; try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* keep the address */ } return q; })();
+const REF = (() => { const q = (new URLSearchParams(location.search).get('ref') || '').toUpperCase(); try { if (/^[A-Z0-9]{6}$/.test(q)) { localStorage.setItem('bt-ref', q); return q; } return localStorage.getItem('bt-ref') || ''; } catch (e) { return /^[A-Z0-9]{6}$/.test(q) ? q : ''; } })();
 const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !BTDB.owner() && !(SET.previewCode && PREVIEW === String(SET.previewCode));
 const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(SET.previewCode || '');
 
@@ -1329,8 +1348,8 @@ async function dbDel(table, col, val) {
 // what visitors send (reviews, sign-ups, restock requests): the database when connected, else this browser
 async function visitorSend(table, row) {
   if (BTDB.on) return BTDB.insert(table, row).catch((err) => { const m = String(err.message || '');
-    throw new Error(/too_many/.test(m) ? 'we’ve had a lot from this connection, so please try again in an hour' : /bad_contact/.test(m) ? 'check the email or mobile number' : /unknown_item/.test(m) ? 'that piece isn’t on the shop any more' : m); });
-  S.db = S.db || {}; const k = table === 'reviews' ? 'reviews' : 'people'; S.db[k] = S.db[k] || [];
+    throw new Error(/too_many/.test(m) ? 'we’ve had a lot from this connection, so please try again in an hour' : /bad_contact/.test(m) ? 'check the email or mobile number' : /unknown_item/.test(m) ? 'that piece isn’t on the shop any more' : /bad_reminder/.test(m) ? 'choose a date within the next year' : m); });
+  S.db = S.db || {}; const k = table === 'reviews' ? 'reviews' : table === 'gift_cards' ? 'cards' : 'people'; S.db[k] = S.db[k] || [];
   S.db[k].unshift(Object.assign({ id: 'L' + Date.now(), created_at: new Date().toISOString(), table }, row)); save();
 }
 
@@ -1358,7 +1377,21 @@ const minPrice = (p) => Math.min(...p.variants.map((v) => v.price));
 const priceFrom = (p) => (new Set(p.variants.map((v) => v.price)).size > 1 ? 'from ' : '') + inr(minPrice(p));
 const stockOf = (sku) => (S.stock[sku] ?? 0);
 const inStock = (p) => p.variants.some((v) => stockOf(v.sku) > 0);
-function track(name, data) { S.events.unshift({ t: new Date().toISOString(), name, data: data || {} }); S.events = S.events.slice(0, 60); save(); }
+function track(name, data) { S.events.unshift({ t: new Date().toISOString(), name, data: data || {} }); S.events = S.events.slice(0, 60); save(); adsTrack(name, data || {}); }
+// ad and analytics tags: loaded only when the owner has added an id in Settings, and only for real visitors
+function adsLoad() {
+  const px = String(SET.metaPixel || '').replace(/\D/g, ''), ga = String(SET.gaId || '').trim();
+  if (adsLoad.done || (!px && !ga) || BTDB.owner?.() || route() === 'admin') return; adsLoad.done = true;
+  const add = (src) => { const el = document.createElement('script'); el.async = true; el.src = src; document.head.appendChild(el); };
+  if (px) { const f = window.fbq = function () { f.callMethod ? f.callMethod.apply(f, arguments) : f.queue.push(arguments); }; f.push = f; f.loaded = true; f.version = '2.0'; f.queue = []; window._fbq = f; add('https://connect.facebook.net/en_US/fbevents.js'); fbq('init', px); fbq('track', 'PageView'); }
+  if (/^G-[A-Z0-9]+$/i.test(ga)) { window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); }; gtag('js', new Date()); gtag('config', ga); add('https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(ga)); }
+}
+function adsTrack(name, d) {
+  const fb = { product_view: ['ViewContent', { content_ids: [d.id] }], add_to_cart: ['AddToCart', { content_ids: [d.sku] }], checkout_start: ['InitiateCheckout', {}], purchase: ['Purchase', { value: d.value, currency: 'INR' }], signup: ['Lead', {}], bulk_enquiry: ['Contact', {}] }[name];
+  if (fb && window.fbq) fbq('track', fb[0], fb[1]);
+  const gg = { product_view: 'view_item', add_to_cart: 'add_to_cart', checkout_start: 'begin_checkout', purchase: 'purchase', signup: 'sign_up', share: 'share' }[name];
+  if (gg && window.gtag) gtag('event', gg, name === 'purchase' ? { value: d.value, currency: 'INR', transaction_id: d.order } : {});
+}
 function shade(hex, f) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; if (f < 1) { r *= f; g *= f; b *= f; } else { const k = f - 1; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; } return '#' + [r, g, b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join(''); }
 function colorFor(p, vi) { const v = p.variants[vi || 0]; if (p.art === 'jar') return p.c; if (p.art === 'pillar') return PILLAR_COL[v.label] || p.c; return FIN[v.label] || '#DCC9AE'; }
 function art(p, vi, sc) { if (p.img) return `<img class="fill" src="${esc(p.img)}" alt="" loading="lazy">`; sc = sc || 1; const z = Math.round(170 * sc); return `<img class="obj" src="${prodImg(p, vi || 0)}" alt="" width="${z}" height="${z}" style="width:${z}px;height:${z}px">`; }
@@ -1460,12 +1493,13 @@ function totals() {
   const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
   const cod = sub && UI.co.step === 'pay' && UI.co.method === 'cod' ? +SET.codFee || 0 : 0;
   const points = UI.co.usePts && S.account ? Math.max(0, Math.min(ptsMine().available, sub - ritual - code)) : 0;
-  return { sub, ritual, code, points, ship, wrap, cod, total: sub - ritual - code - points + ship + wrap + cod };
+  const pre = sub - ritual - code - points + ship + wrap + cod; const card = UI.co.gcard ? Math.min(UI.co.gcard.bal, pre) : 0;
+  return { sub, ritual, code, points, ship, wrap, cod, card, total: pre - card };
 }
 function totalsHTML(t) {
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   return `<div class="totals num">${row('Subtotal', inr(t.sub))}${t.ritual ? row(`Ritual saving <span class="hint">(${SET.ritualOff}% off candle + object)</span>`, '−' + inr(t.ritual), 'save') : ''}${t.code ? row(`Code ${esc(String(UI.co.code).toUpperCase())}`, '−' + inr(t.code), 'save') : ''}${t.points ? row(`Bud Points <span class="hint">(${t.points} used)</span>`, '−' + inr(t.points), 'save') : ''}
-    ${row(`Shipping${+SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`, t.ship ? inr(t.ship) : 'Free')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${row('Total', inr(t.total), 'grand')}</div>`;
+    ${row(`Shipping${+SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`, t.ship ? inr(t.ship) : 'Free')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${t.card ? row(`Gift card ${esc(UI.co.gcard.code)}`, '−' + inr(t.card), 'save') : ''}${row('Total', inr(t.total), 'grand')}</div>`;
 }
 function shipBar(t) {
   if (!+SET.freeOver || !t.sub) return ''; const gap = +SET.freeOver - t.sub; const pct = Math.min(100, Math.round(t.sub / +SET.freeOver * 100));
@@ -1573,7 +1607,7 @@ function viewHome() {
     <div class="pack-grid">${pack.slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>
 
   <section class="section wrap" id="gifting-sec" aria-labelledby="gift-h" style="padding-top:0"><div class="section-head"><h2 id="gift-h">${T('home.moment')}</h2></div>
-    <div style="display:flex;flex-wrap:wrap;gap:10px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
+    <div style="display:flex;flex-wrap:wrap;gap:10px">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
 
   ${spotlight('spot-h')}
   ${storyBand('story-h')}
@@ -1612,7 +1646,7 @@ function viewShop(cat) {
     <div class="toolbar"><div class="group" role="group" aria-label="Category">
       ${[['all', 'All', 'shop'], ['candles', 'Candles', 'candles'], ['jesmonite', 'Jesmonite Objects', 'jesmonite'], ['gifts', 'Gift boxes', 'gifts'], ['under-999', 'Under ₹999', 'under-999']].filter((c) => c[0] !== 'gifts' || P.some((p) => p.cat === 'gifts')).map(([k, l, h]) => `<a class="chip" href="#${h}"${sh.cat === k ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</div>
       <div class="group"><label for="f-type">Type</label><select id="f-type" data-act="shop-filter" data-k="type"><option value="all">All types</option>${types.map((t) => `<option ${sh.type === t ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>
-      <label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${OCCASIONS.map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${occLive().map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
       <label for="f-sort">Sort</label><select id="f-sort" data-act="shop-filter" data-k="sort"><option value="featured" ${sh.sort === 'featured' ? 'selected' : ''}>Featured</option><option value="low" ${sh.sort === 'low' ? 'selected' : ''}>Price: low to high</option><option value="high" ${sh.sort === 'high' ? 'selected' : ''}>Price: high to low</option></select></div></div>
     ${promoBanners().replace('wrap promos', 'promos slim')}
     <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'piece' : 'pieces'}${+SET.ritualOff ? ` · <span class="save-note">Pair any candle with an object and save ${SET.ritualOff}%</span>` : ''}</p>
@@ -1775,8 +1809,9 @@ function viewCheckout() {
   loadMine(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
-  const codeBox = codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> applied</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>`
-    : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit">Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`;
+  const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> applied</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
+    + (co.gcard ? `<div class="code-on"><span>Gift card <strong>${esc(co.gcard.code)}</strong> applied</span><button class="linkbtn" type="button" data-act="card-remove">Remove</button></div>` : '')
+    + (codeOk(co.code) && co.gcard ? '' : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code or gift card?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit">Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`);
   const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
   let main = '';
   if (co.step === 'contact') {
@@ -1802,6 +1837,8 @@ function viewCheckout() {
     const m = co.method; const tab = (k, l) => `<button class="chip" type="button" role="radio" aria-checked="${m === k}" data-act="pay-method" data-v="${k}">${l}</button>`;
     let panel = '';
     if (co.placing) panel = '<div class="pay-panel"><span class="waiting" role="status">Placing your order</span></div>';
+    else if (BTDB.on && !t.total) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Nothing more to pay</strong><span class="muted">Your ${t.card ? 'gift card' : 'Bud Points'} cover${t.card ? 's' : ''} the whole order.</span><button class="btn" type="button" data-act="pay-success" data-via="Gift card or points">Place order</button></div></div>`;
+    else if (BTDB.on && m !== 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay securely with Cashfree</strong><span class="muted">${T('co.payOnline')}</span><button class="btn" type="button" data-act="pay-success" data-via="Online">Pay <span class="num">${inr(t.total)}</span></button><span class="hint">Your order is saved first, so if the payment doesn’t go through you can try again from the order page.</span></div></div>`;
     else if (m === 'qr') panel = `<div class="pay-panel"><canvas id="qr" width="29" height="29" aria-label="Demo UPI QR code for ${inr(t.total)}"></canvas><div class="info"><strong style="font-size:18px">Scan with any UPI app</strong><span class="muted">Open your UPI app, scan the code and approve <strong class="num">${inr(t.total)}</strong>. The amount is fixed in the code, and this page updates on its own once the payment arrives.</span><span class="waiting" role="status">Waiting for your payment</span><span class="hint">Demo QR made for this order. It is not a real payment code.</span><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI QR">Demo: simulate payment received</button></div></div>`;
     else if (m === 'app') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay with a UPI app on this phone</strong><span class="muted">Opens the UPI apps installed on this phone. You approve <strong class="num">${inr(t.total)}</strong> and come straight back here.</span>${co.appSheet ? `<div class="status" role="status">Demo: your UPI app would now ask you to approve ${inr(t.total)} to BUD &amp; THINGS.</div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI app">Simulate: approved</button><button class="btn small ghost" type="button" data-act="pay-fail">Simulate: declined</button></span>` : '<button class="btn" type="button" data-act="pay-app">Open UPI app</button>'}<span class="hint">If you are shopping on a computer, use the QR code instead.</span></div></div>`;
     else if (m === 'upi') panel = `<form data-form="upi" class="pay-panel" novalidate><div class="info"><span class="field"><label for="co-upi">UPI ID <span class="hint">for example name@bank</span></label><input id="co-upi" data-co="upi" autocomplete="off" value="${esc(co.upi)}" ${co.errors.upi ? 'aria-invalid="true" aria-describedby="co-upi-err"' : ''}>${co.errors.upi ? `<span class="err" id="co-upi-err">${esc(co.errors.upi)}</span>` : ''}</span>
@@ -1812,7 +1849,7 @@ function viewCheckout() {
       <span class="field"><label for="co-ccvv">CVV</label><input id="co-ccvv" data-co="ccvv" inputmode="numeric" autocomplete="cc-csc" maxlength="4" value="${esc(c.ccvv || '')}" ${e.ccvv ? 'aria-invalid="true" aria-describedby="co-ccvv-err"' : ''}>${e.ccvv ? `<span class="err" id="co-ccvv-err">${esc(e.ccvv)}</span>` : ''}</span></div>
       <button class="btn" type="submit">Pay ${inr(t.total)} by card</button><span class="hint">In the real site this form belongs to the payment gateway. BUD &amp; THINGS never sees card details.</span></div></form>`; }
     else if (m === 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay when it arrives</strong><span class="muted">${T('co.cod')}</span><button class="btn" type="button" data-act="pay-success" data-via="Cash on delivery">Place order · pay <span class="num">${inr(t.total)}</span> on delivery</button></div></div>`;
-    main = `<h1 tabindex="-1" style="font-size:40px">Pay <span class="num">${inr(t.total)}</span></h1>${co.payErr ? `<div class="status err" role="alert">${esc(co.payErr)}</div>` : ''}<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('qr', 'UPI QR')}${tab('app', 'UPI app')}${tab('upi', 'UPI ID')}${tab('card', 'Card')}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>${panel}<button class="linkbtn" type="button" data-act="co-step" data-v="address">Back to delivery</button>`;
+    main = `<h1 tabindex="-1" style="font-size:40px">Pay <span class="num">${inr(t.total)}</span></h1>${co.payErr ? `<div class="status err" role="alert">${esc(co.payErr)}</div>` : ''}${BTDB.on ? (SET.codOn && t.total ? `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('online', 'Pay online')}${tab('cod', 'Cash on delivery')}</div>` : '') : `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('qr', 'UPI QR')}${tab('app', 'UPI app')}${tab('upi', 'UPI ID')}${tab('card', 'Card')}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>`}${panel}<button class="linkbtn" type="button" data-act="co-step" data-v="address">Back to delivery</button>`;
   }
   return `<div class="wrap"><div class="checkout"><div class="checkout-main">${steps}${main}</div>${side}</div></div>`;
 }
@@ -1833,22 +1870,27 @@ function socialLinks(waText) {
     wa && link(wa, 'WhatsApp us', 'whatsapp', true), /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) && link('mailto:' + em, 'Email ' + em, 'email')].filter(Boolean);
   return items.length ? `<ul class="social" aria-label="Find BUD &amp; THINGS">${items.join('')}</ul>` : '';
 }
+// the Pay now box on an unpaid order
+function payBox(o) {
+  const P = UI.pay && UI.pay.id === o.id ? UI.pay : {};
+  return `<div class="pay-panel"><div class="info">${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}${P.busy ? '<span class="waiting" role="status">Checking with Cashfree</span>' : `<span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="pay-order" data-id="${esc(o.id)}">Pay <span class="num">${inr(o.total)}</span> now</button><button class="btn ghost" type="button" data-act="pay-check" data-id="${esc(o.id)}">I’ve paid, check again</button></span>`}<span class="hint">${T('co.payOnline')}</span></div></div>`;
+}
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound();
-  if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && d.status !== o.status) { o.status = d.status; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
+  if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel))) { o.status = d.status; o.parcel = d.parcel; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
   const idx = STATUSES.indexOf(o.status); const cod = o.method === 'Cash on delivery'; const unpaid = o.status === 'Awaiting payment', gone = o.status === 'Cancelled';
   const fresh = UI.justPlaced === id; const wa = waLink('Hello, a question about my order ' + id);
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
-    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? '<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>' : ''}${gone ? '<div class="status err">This order was cancelled and nothing will be sent. If you paid, the money comes back to you.</div>' : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method)) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
+  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
+    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
-      <p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>
+      ${BTDB.on ? '' : '<p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>'}
       <div class="status">Questions about this order? ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener">Message us on WhatsApp</a>` : 'Message us on WhatsApp'} or write to ${esc(SET.email)}.</div>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="reorder" data-id="${o.id}">Buy again</button><a class="btn ghost" href="#shop">Keep browsing</a></span></div>
     <aside class="checkout-side"><strong>${o.id}</strong>${o.items.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.name)} · ${esc(l.label)} × ${l.qty}</span><span class="num">${inr(l.price * l.qty)}</span></div>`).join('')}
-      <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${o.pointsUsed ? row('Bud Points', '−' + inr(o.pointsUsed), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${row(cod ? 'To pay on delivery' : 'Paid', inr(o.total), 'grand')}</div>
+      <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${o.pointsUsed ? row('Bud Points', '−' + inr(o.pointsUsed), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${o.cardOff ? row('Gift card ' + esc(o.card || ''), '−' + inr(o.cardOff), 'save') : ''}${row(cod ? 'To pay on delivery' : unpaid || gone ? 'Total' : 'Paid', inr(o.total), 'grand')}</div>
       ${giftSummary(o.gift)}
       <figure class="photo" style="margin:0"><img src="${esc((brandImgs('gift', [[IMG.tag]])[0] || [IMG.tag])[0])}" alt="Rustic gift tag with the logo and olive leaf." loading="lazy"><figcaption>${o.gift && o.gift.on ? 'Your note goes on this tag' : 'A thank-you note goes in with orders where we can include one'}</figcaption></figure><span class="muted" style="font-size:14px">To ${o.gift && o.gift.on ? esc(o.gift.name) + ', ' : ''}${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
 }
@@ -1886,6 +1928,38 @@ function viewHelp() {
     ${+SET.repourPrice ? `<div><strong>Refills</strong><span class="muted">${T('pdp.repour')}</span></div>` : ''}
     <div><strong>Privacy</strong><span class="muted">${T('help.privacy')} <a href="#privacy">Read the privacy policy</a>.</span></div></div></div>`;
 }
+function viewGiftCard() {
+  const amounts = csvList(SET.giftCards).map((x) => parseInt(x, 10)).filter((x) => x > 0); if (!amounts.length) return viewNotFound();
+  const g = UI.gc = UI.gc || { amt: amounts[Math.min(1, amounts.length - 1)] };
+  return `<div class="wrap" style="padding-bottom:80px;max-width:820px"><div class="page-head"><span class="eyebrow">Gift cards</span><h1 tabindex="-1">${T('gc.title')}</h1><p class="muted">${T('gc.sub')}</p></div>
+    <ol class="trust">${Tx('gc.how').split('|').map((x) => x.trim()).filter(Boolean).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+    <form data-form="giftcard" class="form adm-card" style="margin-top:24px" novalidate><strong class="full" style="font-size:20px">Choose an amount</strong>
+      <div class="full" role="radiogroup" aria-label="Amount" style="display:flex;flex-wrap:wrap;gap:10px">${amounts.map((a) => `<button class="chip" type="button" role="radio" aria-checked="${g.amt === a}" data-act="gc-amt" data-v="${a}">${inr(a)}</button>`).join('')}</div>
+      <span class="field"><label for="gc-to">Who it’s for</label><input id="gc-to" autocomplete="off" value="${esc(g.to || '')}"></span>
+      <span class="field"><label for="gc-from">Your name</label><input id="gc-from" autocomplete="name" value="${esc(g.from || '')}"></span>
+      <span class="field full"><label for="gc-msg">Message on the card <span class="hint">optional</span></label><textarea id="gc-msg" rows="2" maxlength="200">${esc(g.msg || '')}</textarea></span>
+      ${g.err ? `<span class="err full" role="alert">${esc(g.err)}</span>` : ''}${g.sent ? `<div class="status ok full" role="status">Your message is ready. We’ll reply with a payment link.</div>` : ''}
+      <span class="full"><button class="btn" type="submit">${SET.whatsapp ? 'Ask for it on WhatsApp' : 'Ask for it by email'}</button></span></form></div>`;
+}
+function reminderForm() {
+  const r = UI.rem = UI.rem || {}; const occ = OCCASIONS.filter(([k]) => ['birthday', 'anniversary', 'housewarming', 'wedding', 'new-baby', 'festive', 'milestone'].includes(k));
+  return `<section class="adm-card" aria-labelledby="rem-h" style="margin:48px 0 0"><h2 id="rem-h" style="font-size:clamp(26px,3vw,36px)">${T('rem.title')}</h2><p class="muted">${T('rem.sub')}</p>
+    ${r.done ? `<div class="status ok" role="status">${T('rem.done')}</div>` : `<form data-form="reminder" class="form" style="padding:0" novalidate>
+      <span class="field"><label for="rem-occ">Occasion</label><select id="rem-occ">${occ.map(([k, l]) => `<option value="${k}" ${r.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
+      <span class="field"><label for="rem-name">Whose? <span class="hint">optional</span></label><input id="rem-name" autocomplete="off" maxlength="60" value="${esc(r.name || '')}"></span>
+      <span class="field"><label for="rem-day">Date</label><input id="rem-day" type="date" value="${esc(r.day || '')}"></span>
+      <span class="field"><label for="rem-contact">Your WhatsApp number or email</label><input id="rem-contact" autocomplete="tel" value="${esc(r.contact || '')}"></span>
+      ${r.err ? `<span class="err full" role="alert">${esc(r.err)}</span>` : ''}<span class="full"><button class="btn ghost" type="submit">Remind me</button></span></form>`}</section>`;
+}
+function viewShare() {
+  const sh = UI.share = UI.share || {}; const link = location.origin + location.pathname + (sh.ref ? '?ref=' + sh.ref : ''); const msg = Tx('share.msg') + ' ' + link;
+  return `<div class="wrap" style="padding-bottom:80px;max-width:760px"><div class="page-head"><span class="eyebrow">${T('share.eyebrow')}</span><h1 tabindex="-1">${T('share.title')}</h1><p class="muted">${T('share.sub')}</p></div>
+    <div class="adm-card" style="display:flex;flex-direction:column;gap:14px"><strong>Your message</strong><p class="muted" style="margin:0">${esc(msg)}</p>
+      <span style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener" data-act="share-wa">Share on WhatsApp</a><button class="btn ghost" type="button" data-act="share-copy">Copy message</button></span></div>
+    ${+SET.refReward && !sh.ref ? `<form data-form="myref" class="form adm-card" style="margin-top:20px" novalidate><p class="full" style="margin:0">${T('share.own')}</p>
+      <span class="field full"><label for="ref-contact">Your mobile number or email</label><input id="ref-contact" autocomplete="tel" value="${esc(sh.contact || '')}"></span>
+      ${sh.err ? `<span class="err full" role="alert">${esc(sh.err)}</span>` : ''}<span class="full"><button class="btn ghost" type="submit">Get my link</button></span></form>` : ''}</div>`;
+}
 function viewFaq() {
   const qs = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) qs.push(i);
   return `<div class="wrap" style="padding-bottom:80px;max-width:820px"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">${T('faq.title')}</h1><p class="muted">${T('faq.sub')}</p></div>
@@ -1912,17 +1986,17 @@ function viewGifting() {
   const picks = idList('giftPicks').map((id) => byId[id]);
   const gimg = brandImgs('gift', [[IMG.tag, 'Rustic gift tag with the logo and olive leaf.', 'Your note, hand-written on our tag']]);
   return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">${T('gift.title')}</h1><p class="muted" style="max-width:620px">${T('gift.sub')}</p></div>
-    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div>
     <div class="split" style="margin-bottom:48px"><figure class="photo" style="margin:0"><img src="${esc(gimg[0][0])}" alt="${esc(gimg[0][1] || '')}" loading="lazy"><figcaption>${esc(gimg[0][2] || '')}</figcaption></figure>
       <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">${T('gift.h2')}</h2><p class="muted">${T('gift.text')}</p>
       <ul class="trust">${[`Hand-written note on our card`, `Gift wrap${+SET.wrapFee ? ' for ' + inr(SET.wrapFee) : ''}`, 'Send it straight to them, with no prices in the parcel', 'Choose the day it should arrive by'].map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
       <figure class="photo" style="margin:0;max-width:260px"><img src="${IMG.pouch}" alt="BUD &amp; THINGS gift bag with tissue and botanicals." loading="lazy"><figcaption>Gift bag · coming with gift sets</figcaption></figure></div></div>
     <div class="section-head"><h2>${T('gift.popular')}</h2></div><div class="grid">${picks.map((p, i) => card(p, i)).join('')}</div>
-    <p class="muted" style="margin-top:36px">Gifting 10 or more? <a href="#bulk">See corporate &amp; bulk gifts</a>.</p></div>`;
+    <p class="muted" style="margin-top:36px">Gifting 10 or more? <a href="#bulk">See corporate &amp; bulk gifts</a>.${csvList(SET.giftCards).length ? ' Can’t choose? <a href="#giftcard">Give a gift card</a>.' : ''}</p>${reminderForm()}</div>`;
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band']] };
@@ -1935,7 +2009,7 @@ const pairRows = () => (DATA.pairings && DATA.pairings.length ? DATA.pairings : 
 const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
-  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
+  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
   if (!UI.adm.rows[k]) { if (UI.adm.loading !== k) setTimeout(() => admLoad(k)); return null; }
   return UI.adm.rows[k];
 }
@@ -1944,7 +2018,8 @@ async function admLoad(k) {
   try {
     if (k === 'orders') A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status }));
     if (k === 'reviews') A.rows.reviews = await BTDB.list('reviews', 'order=created_at.desc&limit=300');
-    if (k === 'people') { const [a, b] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r))); }
+    if (k === 'people') { const [a, b, c] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500'), BTDB.list('reminders', 'order=day.asc&limit=1000')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r)), c.map((r) => Object.assign({ table: 'reminders' }, r))); }
+    if (k === 'cards') { const [a, b] = await Promise.all([BTDB.list('gift_cards', 'order=created_at.desc&limit=500'), BTDB.list('referrers', 'order=created_at.desc&limit=1000')]); A.rows.cards = { cards: a, refs: b }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     A.err = null;
   } catch (e) { A.rows[k] = A.rows[k] || []; A.err = e.message; }
   A.loading = null; if (route() === 'admin') render();
@@ -1975,16 +2050,18 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
+// what Shiprocket booked for an order, for the Owner view
+const parcelNote = (o) => { const p = o.parcel; if (!p || !p.awb) return ''; return `<span class="muted" style="display:block;font-size:13px;margin-top:6px">${esc(p.courier || 'Courier')} · AWB <span class="num sel">${esc(p.awb)}</span>${p.status ? ' · ' + esc(p.status) : ''}${p.label ? ` · <a href="${esc(p.label)}" target="_blank" rel="noopener">Print label</a>` : ''}${p.pickupErr ? ` · pickup not booked: ${esc(p.pickupErr)}` : ''}</span>`; };
 function admOrders() {
   const list = admData('orders'); if (!list) return loadingRow;
   const live = list.filter((o) => o.status !== 'Cancelled'); const rev = live.filter((o) => o.status !== 'Awaiting payment').reduce((a, o) => a + (o.total || 0), 0); const open = live.filter((o) => o.status !== 'Delivered').length;
   const low = Object.keys(skuMap).filter((s) => stockOf(s) <= 2).length; const gifts = live.filter((o) => o.gift && o.gift.on && o.status !== 'Delivered').length;
   return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
-    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`
+    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Cashfree</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
@@ -2114,7 +2191,28 @@ function admPeople() {
   const tbl = (rows, cols) => rows.length ? `<div class="table-wrap"><table><thead><tr>${cols.map((c) => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="num">${esc(c[1](r))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>';
   const when = (r) => new Date(r.created_at).toLocaleDateString('en-IN');
   return `<div class="adm-bar"><h2 style="font-size:24px">Newsletter and WhatsApp list · ${subs.length}</h2>${subs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="subscribers">Download as a spreadsheet</button>' : ''}</div>${tbl(subs, [['Email or WhatsApp', (r) => r.contact], ['From', (r) => r.source || ''], ['Joined', when]])}
-    <div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Waiting for a restock · ${rs.length}</h2>${rs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="restock_requests">Download as a spreadsheet</button>' : ''}</div>${tbl(rs, [['Email or WhatsApp', (r) => r.contact], ['Piece', (r) => skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku], ['Asked', when]])}`;
+    ${admReminders(list)}<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Waiting for a restock · ${rs.length}</h2>${rs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="restock_requests">Download as a spreadsheet</button>' : ''}</div>${tbl(rs, [['Email or WhatsApp', (r) => r.contact], ['Piece', (r) => skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku], ['Asked', when]])}`;
+}
+// the next time a yearly date comes round, counting from today
+const nextDay = (iso) => { const d = new Date(iso + 'T00:00:00'), t = new Date(); t.setHours(0, 0, 0, 0); const n = new Date(t.getFullYear(), d.getMonth(), d.getDate()); if (n < t) n.setFullYear(n.getFullYear() + 1); return n; };
+function admReminders(list) {
+  const rows = list.filter((r) => r.table === 'reminders').map((r) => Object.assign({ next: nextDay(r.day) }, r)).sort((a, b) => a.next - b.next);
+  const days = (r) => Math.round((r.next - new Date().setHours(0, 0, 0, 0)) / 864e5); const occ = (k) => (OCCASIONS.find((x) => x[0] === k) || [k, k])[1];
+  const wa = (r) => /^\d{10}$/.test(r.contact) ? `<a href="https://wa.me/91${r.contact}?text=${encodeURIComponent(`Hi! A gentle reminder from BUD & THINGS: ${r.for_name ? r.for_name + '’s ' : 'the '}${occ(r.occasion).toLowerCase()} is on ${r.next.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}. Here are a few gift ideas: ${location.origin + location.pathname}#gifting`)}" target="_blank" rel="noopener">Message</a>` : esc(r.contact);
+  return `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift reminders · ${rows.length}</h2></div><p class="muted">Send each one about a week before. The soonest are at the top.</p>
+    ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>In</th><th>Occasion</th><th>Whose</th><th>Date</th><th>Contact</th></tr></thead><tbody>${rows.slice(0, 200).map((r) => `<tr${days(r) <= 7 ? ' style="font-weight:600"' : ''}><td class="num">${days(r)} days</td><td>${esc(occ(r.occasion))}</td><td>${esc(r.for_name || '')}</td><td class="num">${r.next.toLocaleDateString('en-IN')}</td><td>${wa(r)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
+}
+function admCards() {
+  const d = admData('cards'); if (!d) return loadingRow; const orders = admData('orders') || []; const A = UI.adm;
+  const refCount = {}; orders.forEach((o) => { if (o.ref && o.status !== 'Cancelled' && o.status !== 'Awaiting payment') refCount[o.ref] = (refCount[o.ref] || 0) + 1; });
+  const refs = d.refs.filter((r) => refCount[r.id]).sort((a, b) => refCount[b.id] - refCount[a.id]);
+  return `<form data-form="adm-card-new" class="form adm-card" style="max-width:560px" novalidate><h2 class="full" style="font-size:24px">Issue a gift card</h2><p class="full muted" style="margin:0">After a gift card is paid for, or as a thank-you. The code is made for you.</p>
+      <span class="field"><label for="gcn-amt">Amount (₹)</label><input id="gcn-amt" type="number" min="1" inputmode="numeric"></span><span class="field"><label for="gcn-note">For <span class="hint">optional</span></label><input id="gcn-note" maxlength="80"></span>
+      ${A.cardMsg ? `<span class="full status ok" role="status">${esc(A.cardMsg)}</span>` : ''}<span class="full"><button class="btn small" type="submit">Make the card</button></span></form>
+    <div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift cards · ${d.cards.length}</h2></div>
+    ${d.cards.length ? `<div class="table-wrap"><table><thead><tr><th>Code</th><th>Amount</th><th>Left</th><th>For</th><th>Made</th></tr></thead><tbody>${d.cards.map((c) => `<tr><td class="num sel">${esc(c.code)}</td><td class="num">${inr(c.amount)}</td><td class="num">${inr(c.balance)}</td><td>${esc(c.note || '')}</td><td class="num">${new Date(c.created_at).toLocaleDateString('en-IN')}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}
+    <div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Friends who brought orders · ${refs.length}</h2></div><p class="muted">Orders placed through a customer’s share link. Send each a ${inr(SET.refReward)} gift card as a thank-you.</p>
+    ${refs.length ? `<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Link</th><th>Orders</th></tr></thead><tbody>${refs.map((r) => `<tr><td>${esc(r.contact)}</td><td class="num">${esc(r.id)}</td><td class="num">${refCount[r.id]}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
 }
 function admEvents() {
   return `<p class="muted">The events the live site will send to analytics, recorded in this browser so the tracking plan can be checked.</p>
@@ -2274,6 +2372,14 @@ function homeReviews(id) {
 
 // the journal: care guides, gifting ideas and studio notes. Draft articles for Ashi to read and adjust.
 const JOURNAL = [
+  { id: 'housewarming-gift-guide', eyebrow: 'Gifting', title: 'What to take to a housewarming', mins: 3, prod: 'jharokha-catch-all', lead: 'A new home needs light and a place for the keys. Here is what we would take.',
+    body: [['Something for the door', 'A Jharokha Catch-all by the door holds keys, coins and the small things that come home every day.'], ['Something for the first evening', 'Chai at Four smells like the hour everyone comes home to. It is the candle we take to every griha pravesh.'], ['Under ₹999', 'A set of Pebble Coasters for the new tea table, or a 120 g candle with your note.'], ['Send it straight there', 'Tick Send it as a gift at checkout and we ship to their new address with your note and no prices inside.']], links: ['jharokha-catch-all', 'chai-at-four', 'pebble-coasters'] },
+  { id: 'anniversary-gift-guide', eyebrow: 'Gifting', title: 'Anniversary gifts that feel like the two of you', mins: 3, prod: 'moonlet-ring-dish', lead: 'Small, beautiful and made by hand, for a day that is yours.',
+    body: [['For the bedside', 'A Moonlet Ring Dish for the rings you take off at night, with First Light for the morning after.'], ['For a slow evening', 'A Pillar Study on a Halo Candle Plate makes the table feel like a celebration.'], ['Make it yours', 'Write your note at checkout and we hand-write it on our card.'], ['Plan ahead', 'Choose an arrive-by date at checkout so it lands on the day.']], links: ['moonlet-ring-dish', 'first-light', 'halo-candle-plate'] },
+  { id: 'wedding-and-return-gifts', eyebrow: 'Gifting', title: 'Wedding favours and return gifts', mins: 3, img: IMG.box, lead: 'For haldi, mehendi, the wedding itself, or the pooja after: gifts guests keep.',
+    body: [['Favours for every guest', 'The Little Diya Box is our favourite return gift: small, warm and easy to carry home.'], ['For the couple', 'Brass & Saffron with a Ghat Tray, for the lamps and doorways of their new life together.'], ['Bridesmaids and family', 'A Moonlet Ring Dish for the rings and earrings of a long celebration.'], ['Ordering 10 or more', 'Tell us the count and the date on the corporate and bulk page and we will send options with your names on the tags.']], links: ['little-diya-box', 'brass-and-saffron', 'moonlet-ring-dish'] },
+  { id: 'self-care-gift-guide', eyebrow: 'Rituals', title: 'A little something for you', mins: 2, prod: 'first-light', lead: 'You do not need an occasion. A quiet hour is reason enough.',
+    body: [['Morning', 'First Light: mogra, neroli and white tea for the first quiet hour.'], ['Rainy afternoon', 'Monsoon Letters: wet earth and vetiver, for a book and a window.'], ['Evening', 'Terrace Garden with tulsi and lemongrass, set on a Halo Candle Plate.']], links: ['first-light', 'monsoon-letters', 'terrace-garden'] },
   { id: 'first-burn', eyebrow: 'Candle care', title: 'The first burn, and why it matters', mins: 3, img: IMG.card, lead: 'A candle remembers its first burn. Get it right and it burns evenly to the end.',
     body: [['Let it melt to the edges', 'The first time you light a jar candle, let it burn until the melted wax reaches the sides of the jar, usually about two hours. If you blow it out too early, it tunnels: a hole forms down the middle and the wax along the sides is wasted.'], ['Trim the wick', 'Before every light, trim the wick to about 5 mm. A short wick gives a calm flame, less soot and a cleaner jar.'], ['Know when to stop', 'Stop burning when about 1 cm of wax is left at the bottom. Then clean the jar with warm water and keep it for pens, brushes or a small plant, or send it back to us for a re-pour.'], ['Stay safe', 'Never leave a burning candle alone, keep it away from children, pets and curtains, and set it on a heat-safe surface such as our Halo Candle Plate.']], links: ['halo-candle-plate', 'chai-at-four'] },
   { id: 'what-is-jesmonite', eyebrow: 'Materials', title: 'What is Jesmonite, and why we cast with it', mins: 4, prod: 'ghat-tray', lead: 'Our trays, dishes and forms are cast in Jesmonite. Here is what that is, and how to look after it.',
@@ -2609,7 +2715,7 @@ function viewGiftHome() {
     <div class="opts" role="group" aria-label="Choose a feeling">${MOODS.map(([k, l]) => `<button type="button" data-act="home-mood" data-v="${k}">${ICON[MOOD_ICON[k]]}<span>${l}</span></button>`).join('')}</div></div></section>
 
   <section class="section wrap" aria-labelledby="gh-occ"><div class="section-head"><h2 id="gh-occ">${T('home.moment')}</h2></div>
-    <div class="gh-chips">${OCCASIONS.map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
+    <div class="gh-chips">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
 
   ${pairs.length ? `<section style="background:var(--linen)" aria-labelledby="gh-pairs"><div class="wrap section"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="gh-pairs">${T('ghome.pairs')}</h2><span class="muted">${T('ghome.pairsSub')}</span></div><a href="#ritual" style="font-weight:600">Make your own →</a></div>
     <div class="gh-pairs">${pairs.map((fo) => { const rp = ritualPrice(fo.items.map(([pid, vi]) => [byId[pid], vi])); return `<div class="gh-pair"><span class="tiles">${fo.items.map(([pid, vi]) => `<span class="tile">${tileArt(byId[pid], vi, .7)}</span>`).join('')}</span>
@@ -2653,6 +2759,8 @@ function render(nav) {
   else if (r === 'gifting') html = viewGifting();
   else if (r === 'faq') html = viewFaq();
   else if (r === 'bulk') html = viewBulk();
+  else if (r === 'share') html = viewShare();
+  else if (r === 'giftcard') html = viewGiftCard();
   else if (r === 'gifts') html = viewShop('gifts');
   else if (r === 'under-999') html = viewShop('under-999');
   else if (r === 'why') html = viewWhy();
@@ -2663,6 +2771,7 @@ function render(nav) {
   else html = viewNotFound();
   const app = $('#app'); app.innerHTML = html;
   renderChrome(); renderOverlay();
+  if (!cs) adsLoad();
   if (cs) { lcSetup(false); if (nav) window.scrollTo(0, 0); return; }
   if (r === 'checkout' && UI.co.step === 'pay' && UI.co.method === 'qr') drawQR();
   drawMfaQR();
@@ -3046,7 +3155,7 @@ async function placeOrder(via) {
   for (const l of lines) if (stockOf(l.sku) < l.qty) { UI.co.payErr = `${l.p.name} (${l.v.label}) sold out while you were checking out. Please update your cart.`; render(); return; }
   const t = totals();
   const o = { placedAt: new Date().toISOString(), contact: { ...co.contact }, address: { ...co.address }, method: via, status: 'Placed', items: lines.map((l) => ({ sku: l.sku, name: l.p.name, label: l.v.label, price: l.v.price, qty: l.qty })),
-    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total - t.ship - t.wrap - t.cod), email: S.account.email };
+    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, card: co.gcard ? co.gcard.code : '', cardOff: t.card, ref: REF, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total + t.card - t.ship - t.wrap - t.cod), email: S.account.email };
   let id;
   if (BTDB.on) { // the database checks prices and takes the stock off in one step
     co.placing = true; co.payErr = null; render();
@@ -3054,19 +3163,52 @@ async function placeOrder(via) {
       co.placing = false; const m = String(err.message || '');
       if (/sign_in/.test(m)) { S.account = null; save(); UI.acct = { next: 'checkout' }; render(); say('Please sign in again to place your order.'); return; }
       if (/points_changed/.test(m)) { co.usePts = false; co.payErr = 'Your Bud Points balance changed. We’ve taken them off this order; please check the total and pay again.'; loadMine(true); render(); return; }
-      co.payErr = /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
+      if (/bad_card/.test(m)) co.gcard = null;
+      co.payErr = /bad_card/.test(m) ? 'That gift card has no balance left, so we took it off. Please check the total and pay again.' : /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
         : /too_many/.test(m) ? 'We’ve had a lot of orders from this connection or number. Please message us on WhatsApp and we’ll place it for you.' : /bad_quantity/.test(m) ? 'That’s more than we can send in one order. Please lower the quantities, or message us for a bulk order.'
         : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
       if (/sold_out|price_changed|unknown_item/.test(m)) loadData(); render(); return;
     }
-    co.placing = false; if (via !== 'Cash on delivery') o.status = 'Awaiting payment'; // until the payment gateway confirms it
+    co.placing = false; if (via === 'Online') o.status = 'Awaiting payment'; // until Cashfree confirms it
     UI.mine = null; // read the orders and points again
   } else id = 'BT-' + (1001 + S.orders.length);
   o.id = id;
   lines.forEach((l) => { S.stock[l.sku] = Math.max(0, stockOf(l.sku) - l.qty); });
-  S.orders.unshift(o); S.cart = []; save(); track('purchase', { order: id, value: t.total, method: via, gift: !!o.gift });
+  S.orders.unshift(o); S.cart = []; save();
+  if (o.status === 'Awaiting payment') track('order_saved', { order: id, value: t.total }); else track('purchase', { order: id, value: t.total, method: via, gift: !!o.gift });
   UI.justPlaced = id; UI.co = coFresh(o.contact, o.gift ? {} : o.address);
   location.hash = 'order-' + id;
+  if (o.status === 'Awaiting payment') payOnline(id);
+}
+
+// ---------- paying online (Cashfree) ----------
+// The order is saved first; the pay function opens a Cashfree payment for the total the database worked out, and the
+// order only counts as paid once Cashfree says so (here, or through its webhook if this page is closed).
+const loadScript = (src) => loadScript[src] || (loadScript[src] = new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.async = true; el.onload = ok; el.onerror = () => { delete loadScript[src]; no(new Error('script')); }; document.head.appendChild(el); }));
+async function payOnline(id) {
+  const o = S.orders.find((x) => x.id === id); const P = UI.pay = { id, busy: true, err: null }; render();
+  try {
+    const [r] = await Promise.all([BTDB.fn('pay', { action: 'start', order_id: id, phone: o.contact.phone }), loadScript('https://sdk.cashfree.com/js/v3/cashfree.js')]);
+    if (r.status) { await payCheck(id); return; }
+    P.busy = false; render();
+    const res = await window.Cashfree({ mode: r.mode }).checkout({ paymentSessionId: r.session, redirectTarget: '_modal' });
+    if (res && res.error) P.err = res.error.message || 'The payment didn’t go through.';
+    await payCheck(id);
+  } catch (e) {
+    P.busy = false;
+    P.err = /not_awaiting|not_payable/.test(e.message) ? 'This order can’t be paid any more. If its pieces were released, please place it again.' : /not_set_up/.test(e.message) ? 'Online payment isn’t switched on yet. Please message us on WhatsApp to pay.' : 'We couldn’t open the payment just now. Please try again.';
+    render();
+  }
+}
+// ask the pay function whether Cashfree has the money; it records the payment if so
+async function payCheck(id) {
+  const o = S.orders.find((x) => x.id === id); const P = UI.pay = UI.pay && UI.pay.id === id ? UI.pay : { id }; P.busy = true; render();
+  try {
+    const r = await BTDB.fn('pay', { action: 'verify', order_id: id });
+    if (o && r.status) { if (r.paid && o.status === 'Awaiting payment') track('purchase', { order: id, value: o.total, method: 'Online', gift: !!o.gift }); o.status = r.status; save(); }
+    P.busy = false; if (r.paid) P.err = null; else if (!P.err) P.err = 'We haven’t received the payment yet. If money left your account, it will show here within a few minutes; otherwise, try again.';
+  } catch (e) { P.busy = false; P.err = 'We couldn’t check the payment just now. Refresh this page in a minute.'; }
+  if (route() === 'order-' + id) render();
 }
 
 // ---------- validation ----------
@@ -3128,14 +3270,18 @@ document.addEventListener('click', (e) => {
     case 'pdp-qty': { const st = UI.pdp[d.id]; const v = byId[d.id].variants[st.vi]; st.qty = Math.max(1, Math.min(stockOf(v.sku), st.qty + +d.d)); render(); break; }
     case 'add': { const st = UI.pdp[d.id]; addToCart(byId[d.id].variants[st.vi].sku, st.qty, { source: 'product' }); setTimeout(() => $('#drawer-close')?.focus(), 0); break; }
     case 'notify': if (S.notify[d.sku]) { say('You’re already on the list for this one.'); break; } UI.restock = d.sku; render(); setTimeout(() => $('.restock input')?.focus(), 0); break;
+    case 'share-copy': navigator.clipboard?.writeText(Tx('share.msg') + ' ' + location.origin + location.pathname + (UI.share && UI.share.ref ? '?ref=' + UI.share.ref : '')).then(() => say('Copied.'), () => say('Couldn’t copy. Select the message and copy it.')); track('share', { via: 'copy' }); break;
+    case 'share-wa': track('share', { via: 'whatsapp' }); break;
     case 'add-sku': addToCart(d.sku, 1, { source: 'suggest' }); break;
     case 'reorder': { const o = S.orders.find((x) => x.id === d.id); if (!o) break; let n = 0; o.items.forEach((l) => { if (skuMap[l.sku] && stockOf(l.sku) > 0 && addToCart(l.sku, l.qty, { quiet: true, source: 'reorder' })) n++; }); if (n) { UI.drawer = true; UI.drawerMsg = n === o.items.length ? 'Your last order is back in the cart.' : `Added ${n} of ${o.items.length} pieces; the rest are sold out.`; renderOverlay(); track('reorder', { order: o.id }); setTimeout(() => $('#drawer-close')?.focus(), 0); } else say('Sorry, those pieces are sold out right now.'); break; }
     case 'walk-again': e.preventDefault(); window.scrollTo({ top: 0, behavior: reduce.matches ? 'auto' : 'smooth' }); track('walk_again', {}); break;
     case 'walk-shop': track('walk_shop', { at: LC.p.toFixed(2) }); break;
     case 'review-open': UI.review[d.id] = { open: true }; render(); setTimeout(() => $('#rv-name')?.focus(), 0); break;
     case 'pts-use': UI.co.usePts = t.checked; render(); break;
+    case 'gc-amt': UI.gc.amt = +d.v; render(); break;
+    case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.codeErr = null; render(); break;
-    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -3171,6 +3317,10 @@ document.addEventListener('click', (e) => {
     case 'pay-app': UI.co.appSheet = true; render(); break;
     case 'pay-fail': UI.co.appSheet = false; UI.co.payErr = 'The payment was declined in your UPI app. Nothing was charged. Try again or choose another method.'; track('payment_failed', { method: 'UPI app' }); render(); break;
     case 'pay-success': placeOrder(d.via); break;
+    case 'pay-order': payOnline(d.id); break;
+    case 'adm-ship': { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o || A.shipping) break; A.shipping = o.id; render();
+      admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
+    case 'pay-check': payCheck(d.id); break;
     case 'adm-cancel': if (!confirm('Cancel order ' + d.id + '? Its pieces go back into stock.')) break; admDo(async () => { const list = admData('orders') || []; const o = list.find((x) => x.id === d.id); if (!o) return;
       if (BTDB.on) { await BTDB.rpc('cancel_order', { order_id: o.id }); loadData(); } else o.items.forEach((l) => { S.stock[l.sku] = stockOf(l.sku) + l.qty; });
       o.status = 'Cancelled'; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = 'Cancelled'; save(); track('order_status', { order: o.id, status: 'Cancelled' }); render(); say(`${o.id} cancelled. Its pieces are back in stock.`); }); break;
@@ -3203,6 +3353,21 @@ document.addEventListener('submit', (e) => {
     f.querySelector('button').disabled = true;
     visitorSend('subscribers', { contact: c, source: f.dataset.src || 'home' }).then(() => { msg.innerHTML = `<span class="status ok" role="status" style="display:block">${T('home.newsDone')}</span>`; track('signup', { via: 'email' }); }, (err) => { f.querySelector('button').disabled = false; msg.innerHTML = `<span class="err" role="alert">That didn’t go through (${esc(err.message)}). Please try again.</span>`; });
     return; }
+  if (kind === 'giftcard') { const g = UI.gc; g.to = $('#gc-to').value.trim(); g.from = $('#gc-from').value.trim(); g.msg = $('#gc-msg').value.trim();
+    g.err = !g.to ? 'Add who the card is for.' : !g.from ? 'Add your name.' : null; if (g.err) { g.sent = false; render(); return; }
+    const text = `Gift card request\nAmount: ₹${g.amt}\nFor: ${g.to}\nFrom: ${g.from}${g.msg ? '\nMessage: ' + g.msg : ''}`;
+    const url = waLink(text) || `mailto:${SET.email}?subject=${encodeURIComponent('Gift card request')}&body=${encodeURIComponent(text)}`;
+    track('gift_card_request', { value: g.amt }); g.sent = true; render(); if (SET.whatsapp) window.open(url, '_blank', 'noopener'); else location.href = url;
+    return; }
+  if (kind === 'reminder') { const r = UI.rem; r.occ = $('#rem-occ').value; r.name = $('#rem-name').value.trim(); r.day = $('#rem-day').value; r.contact = $('#rem-contact').value.trim(); const c = contactOf(r.contact);
+    r.err = !r.day ? 'Choose the date.' : !c ? 'Enter an email like name@example.com, or a 10-digit mobile number.' : null; if (r.err) { render(); return; }
+    visitorSend('reminders', { contact: c, occasion: r.occ, for_name: r.name.slice(0, 60) || null, day: r.day }).then(() => { r.done = true; r.err = null; track('reminder_set', { occasion: r.occ }); render(); }, (err) => { r.err = 'That didn’t go through: ' + err.message; render(); });
+    return; }
+  if (kind === 'myref') { const sh = UI.share; sh.contact = $('#ref-contact').value.trim(); const c = contactOf(sh.contact);
+    if (!c) { sh.err = 'Enter an email like name@example.com, or a 10-digit mobile number.'; render(); return; }
+    if (!BTDB.on) { sh.err = 'Share links work once the shop is connected to its database.'; render(); return; }
+    BTDB.rpc('my_referral', { contact_in: c }).then((id) => { sh.ref = id; sh.err = null; track('share_link', {}); render(); say('Your link is ready.'); }, (err) => { sh.err = /too_many/.test(err.message) ? 'Too many tries. Please wait an hour.' : 'We couldn’t make your link right now. Please try again.'; render(); });
+    return; }
   if (kind === 'bulk') { const b = UI.bulk = UI.bulk || {}; ['name', 'company', 'phone', 'qty', 'budget', 'date'].forEach((k) => { b[k] = $('#bk-' + k).value.trim(); }); b.msg = $('#bk-msg').value.trim();
     b.err = !b.name ? 'Add your name.' : !/\d{10}/.test(b.phone.replace(/\D/g, '')) ? 'Add a 10-digit phone or WhatsApp number.' : !(+b.qty > 0) ? 'Add roughly how many gifts you need.' : null;
     if (b.err) { b.sent = false; render(); return; }
@@ -3220,7 +3385,12 @@ document.addEventListener('submit', (e) => {
     if (R.err) { render(); return; }
     visitorSend('reviews', { product_id: id, name: R.name.slice(0, 60), rating: R.rating, body: R.body.slice(0, 1500), published: false }).then(() => { R.sent = true; R.open = false; track('review_sent', { id, rating: R.rating }); render(); }, (err) => { R.err = 'That didn’t go through (' + err.message + '). Please try again.'; render(); });
     return; }
-  if (kind === 'code') { const v = $('#co-code').value.trim(); co.code = v; co.codeErr = codeOk(v) ? null : v ? 'That code isn’t valid. Check the spelling, or leave it empty.' : 'Enter a code.'; if (!co.codeErr) { track('code_applied', { code: v.toUpperCase() }); say('Code applied.'); } else co.code = ''; render(); if (co.codeErr) $('#co-code')?.focus(); return; }
+  if (kind === 'code') { const v = $('#co-code').value.trim(); const bad = 'That code isn’t valid. Check the spelling, or leave it empty.'; const done = () => { render(); if (co.codeErr) $('#co-code')?.focus(); };
+    if (codeOk(v)) { co.code = v; co.codeErr = null; track('code_applied', { code: v.toUpperCase() }); say('Code applied.'); done(); return; }
+    if (!v || !BTDB.on) { co.codeErr = v ? bad : 'Enter a code.'; done(); return; }
+    BTDB.rpc('gift_card_balance', { card_code: v }).then((bal) => { if (+bal > 0) { co.gcard = { code: v.toUpperCase(), bal: +bal }; co.codeErr = null; track('gift_card_applied', {}); say('Gift card applied.'); } else co.codeErr = bal === 0 ? 'That gift card has been used up.' : bad; done(); },
+      (err) => { co.codeErr = /too_many/.test(err.message) ? 'Too many tries from this connection. Please wait an hour, or message us.' : 'We couldn’t check that code right now. Please try again.'; done(); });
+    return; }
   if (kind === 'track') { const id = $('#tr-id').value.trim().toUpperCase(); const ph = asPhone($('#tr-phone').value); UI.track = { id, phone: $('#tr-phone').value.trim() };
     const mine = S.orders.find((o) => o.id === id && o.contact.phone === ph); if (mine) { location.hash = 'order-' + id; return; }
     if (!id || !ph) { UI.track.msg = 'Enter your order number and the mobile number you ordered with.'; render(); return; }
@@ -3234,6 +3404,12 @@ document.addEventListener('submit', (e) => {
     return; }
   if (kind === 'owner-code') { const code = $('#own-code').value.replace(/\D/g, ''); if (code.length !== 6) { UI.adm.err = 'Enter the 6 digits from your authenticator app.'; render(); $('#own-code')?.focus(); return; }
     BTDB.verifyCode(code).then(() => { UI.adm.err = null; UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid|expired|code/i.test(err.message) ? 'That code didn’t work. Type the newest code the app shows.' : err.message; render(); $('#own-code')?.focus(); });
+    return; }
+  if (kind === 'adm-card-new') { const amt = parseInt($('#gcn-amt').value, 10); const note = $('#gcn-note').value.trim(); const A = UI.adm;
+    if (!(amt > 0)) { say('Enter the amount in rupees.'); return; }
+    const pick = (n) => Array.from(crypto.getRandomValues(new Uint32Array(n)), (x) => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[x % 31]).join('');
+    const row = { code: `BT-${pick(4)}-${pick(4)}`, amount: amt, balance: amt, note: note || null };
+    admDo(async () => { if (BTDB.on) { await BTDB.insert('gift_cards', row); A.rows = {}; } else { S.db = S.db || {}; S.db.cards = [Object.assign({ created_at: new Date().toISOString() }, row)].concat(S.db.cards || []); save(); } A.cardMsg = `Made ${row.code} for ${inr(amt)}. Copy the code and send it with the card.`; render(); });
     return; }
   if (kind === 'adm-product') { const r = readProductForm(f); const d = r.data; const A = UI.adm; const others = prodRows().filter((x) => x.id !== r.id); const skus = new Set(); others.forEach((x) => ((x.data || {}).variants || []).forEach((v) => skus.add(v.sku)));
     A.formErr = !d.name ? 'Give the product a name.' : r.isNew && !/^[a-z0-9][a-z0-9-]{1,59}$/.test(r.id) ? 'Choose a web address name with lowercase letters, numbers and dashes.' : r.isNew && prodRows().some((x) => x.id === r.id) ? 'That web address name is already used.'
@@ -3272,7 +3448,14 @@ document.addEventListener('submit', (e) => {
     if (!BTDB.on) { if (code === A.demo) acctIn(A.email, f.dataset.next); else { A.err = 'That code doesn’t match. Check it and try again.'; render(); $('#acct-code')?.focus(); } return; }
     A.busy = true; render(); BTDB.verifyEmailCode(A.email, code).then(() => acctIn(A.email, f.dataset.next), () => { A.busy = false; A.err = 'That code didn’t work or has expired. Check it, or send a new one.'; render(); $('#acct-code')?.focus(); });
     return; }
-  if (kind === 'pin') { const id = route().slice(2); const st = UI.pdp[id]; st.pin = f.querySelector('input').value.trim(); st.pinMsg = /^[1-9]\d{5}$/.test(st.pin) ? { ok: true, text: `Yes, we deliver to ${st.pin}. Order today and it usually arrives between ${arriveRange()}${SET.codOn ? '. Cash on delivery is available' : ''}.` } : { ok: false, text: 'Enter a 6-digit PIN code, for example 560001.' }; render(); return; }
+  if (kind === 'pin') { const id = route().slice(2); const st = UI.pdp[id]; st.pin = f.querySelector('input').value.trim();
+    const yes = (extra) => ({ ok: true, text: `Yes, we deliver to ${st.pin}. Order today and it usually arrives between ${arriveRange()}${extra || ''}${SET.codOn ? '. Cash on delivery is available' : ''}.` });
+    if (!/^[1-9]\d{5}$/.test(st.pin)) { st.pinMsg = { ok: false, text: 'Enter a 6-digit PIN code, for example 560001.' }; render(); return; }
+    if (!BTDB.on || !/^[1-9]\d{5}$/.test(String(SET.pickupPin || ''))) { st.pinMsg = yes(); render(); return; }
+    st.pinMsg = { ok: true, text: 'Checking couriers for ' + st.pin + '…' }; render(); const pin = st.pin;
+    BTDB.fn('delivery', { action: 'pin', pin }).then((r) => { if (st.pin !== pin) return; st.pinMsg = r.ok ? yes(r.days ? ` (couriers take about ${r.days} day${r.days > 1 ? 's' : ''} from dispatch)` : '') : { ok: false, text: `Couriers don’t reach ${pin} yet. Message us on WhatsApp and we’ll find a way.` }; track('pin_check', { ok: !!r.ok }); render(); },
+      () => { if (st.pin !== pin) return; st.pinMsg = yes(); render(); });
+    return; }
   readCo(f); co.errors = {};
   if (kind === 'contact') {
     const c = co.contact; if (!c.name) co.errors.name = 'Enter your name so we know who the parcel is for.';
@@ -3305,6 +3488,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && UI.house
 const origRender = render;
 render = function (nav) { if (route() === 'checkout' && nav && UI.co.step === 'contact' && cartCount()) track('checkout_start', { items: cartCount() }); origRender(nav); };
 loadData();
+if (PAID_BACK && BTDB.on) payCheck(PAID_BACK);
 render(false);
 })();
 </script>
