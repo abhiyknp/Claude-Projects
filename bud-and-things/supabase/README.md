@@ -106,7 +106,7 @@ Point a local preview's `config.js` at `http://localhost:54321` (any anon key wo
 
 - Set up Cashfree and Shiprocket (the two sections below). Until Cashfree is set up, the live checkout says online payment isn't switched on yet.
 - For cash on delivery, consider a one-time code by SMS or WhatsApp to the customer's mobile before the order is accepted (the delivery partner or an SMS service can send it); until then, the limits above keep a script from taking all the stock.
-- Send order updates on WhatsApp or by email when an order moves along (a Supabase Edge Function or the gateway's webhooks).
+- Set up the messages below (email first), so customers hear about their order without asking.
 - Back up: Supabase's free plan keeps daily backups for a short time only. Export orders regularly from the Table Editor, or move to a paid plan at launch.
 
 
@@ -155,3 +155,42 @@ The `delivery` Edge Function (`supabase/functions/delivery`) does three things:
 7. **Each day:** in Owner view → Orders, press **Book courier** on each paid order, print the label, and hand the parcels over at pickup.
 
 Testing without accounts: `tools/mock-supabase.js` stands in for both functions. A payment goes through at once, every PIN is reachable, and booking gives a made-up AWB.
+
+## Customer profiles (October 2026)
+
+Run `schema.sql` again. Signed-in customers get **Your details** on their account page: name, mobile, up to 5 saved addresses (one is the usual) and how they want to be reached. Checkout starts from these (name, mobile, and the usual address unless the order is a gift), and every order adds its address to the profile. "Clear my saved details" empties the profile and keeps past orders. A customer can only read and change their own profile (`my_profile`, `save_profile`, `forget_me`); Ashi can read all of them in the `profiles` table.
+
+## Messages to customers (October 2026)
+
+The database queues a message when something happens (the `notifications` table, readable in Supabase → Table Editor); the `notify` Edge Function sends what is queued, once each.
+
+| Happening | Customer | Ashi |
+|---|---|---|
+| First sign-in (welcome) | email | |
+| Order placed and paid, or cash on delivery | email, WhatsApp/SMS if chosen | email: new order |
+| Shipped, Delivered, Cancelled | email, WhatsApp/SMS if chosen | |
+| Payment arrived after the order was released | email: refund coming | email: refund needed |
+| A piece they asked about is back in stock | email or WhatsApp/SMS (whichever they left) | |
+| Gift date coming up (`reminderDays`, 7 by default) | email or WhatsApp/SMS | |
+
+Sign-in codes stay with Supabase's own email. Email always works. WhatsApp, SMS and phone notifications only go to customers who ticked them (account page, or the WhatsApp tick at checkout), and only once Ashi switches the channel on in Owner view → Settings (`whatsappOn`, `smsOn`, `pushOn`). New orders go to `orderAlerts` (the contact email when empty).
+
+**Email (Resend), about 10 minutes:**
+1. Resend → API Keys → create one. The domain budandthings.com is already set up there for sign-in codes.
+2. Secrets and deploy, from `bud-and-things`:
+   ```sh
+   supabase secrets set RESEND_API_KEY=... NOTIFY_TOKEN=<any long random text> SITE_URL=https://budandthings.com
+   supabase functions deploy notify --no-verify-jwt
+   ```
+   Optional: `NOTIFY_FROM="BUD & THINGS <hello@budandthings.com>"` (defaults to the contact email).
+3. **Schedule it.** In Supabase → Database → Extensions turn on `pg_cron` and `pg_net`, then run this in the SQL Editor with your own token (keep this query out of the repository):
+   ```sql
+   select cron.schedule('bt-notify', '* * * * *', $$select net.http_post('https://cgccziskvqyatrjqdtka.supabase.co/functions/v1/notify', '{"action":"run"}'::jsonb, headers := '{"Content-Type":"application/json","x-notify-token":"YOUR_TOKEN"}'::jsonb)$$);
+   select cron.schedule('bt-notify-daily', '30 3 * * *', $$select net.http_post('https://cgccziskvqyatrjqdtka.supabase.co/functions/v1/notify', '{"action":"daily"}'::jsonb, headers := '{"Content-Type":"application/json","x-notify-token":"YOUR_TOKEN"}'::jsonb)$$);
+   ```
+   The second one queues gift reminders at 9:00 am India time. A failed send is retried up to 5 times; what still fails shows as `failed`, with its error, in the `notifications` table.
+
+**WhatsApp, SMS and phone push (later).** Each needs a provider account that Ashi must open, and `notify` calls a small adapter URL for it (`WHATSAPP_URL`, `SMS_URL`, `PUSH_URL`, with `PROVIDER_TOKEN`; it receives `{channel, to, text, event, order_id, subject}`):
+- *WhatsApp:* a WhatsApp Business API account (through Gupshup, Interakt, Wati or Meta directly). Every business-started message needs a template approved by WhatsApp, which takes a day or two.
+- *SMS:* in India, SMS needs DLT registration (business entity, sender ID and each template) with the operator, then a sender such as MSG91 or Twilio. It takes about a week, so start early if wanted.
+- *Push:* there is no mobile app yet. Web push (browser notifications) needs a service worker and the site installed on the phone, and suits orders least; real app push can come with the app.
