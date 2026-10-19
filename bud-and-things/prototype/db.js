@@ -85,6 +85,11 @@
       if (aal(d.access_token) !== 'aal2') throw new Error('That code didn’t work. Try the newest one.');
       keep(d.access_token);
     },
+    // customers sign in with a 6-digit code emailed by Supabase (Authentication → Email: the "Magic Link" template must
+    // include {{ .Token }}). Their session is separate from the owner's and only proves they own the email; customers
+    // are never owners (is_owner() checks the owners table), so it opens nothing in the database.
+    sendCode: (email) => req('POST', '/auth/v1/otp', { email, create_user: true }, null, key),
+    verifyEmailCode: (email, code) => req('POST', '/auth/v1/verify', { type: 'email', email, token: String(code) }, null, key),
     awaitingCode: () => !!pending,
     signOut: () => { token = null; pending = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ } }
   };
