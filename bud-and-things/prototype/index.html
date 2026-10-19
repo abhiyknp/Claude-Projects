@@ -1,4 +1,3 @@
-<meta charset="utf-8">
 <title>BUD &amp; THINGS by Ashi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1196,8 +1195,8 @@ const TEXT = {
   'faq.a1': ['By UPI, card or net banking when you place the order. We don’t offer cash on delivery, so every order is paid before we pack it.', 'FAQ: answer 1'],
   'faq.q2': ['How long does delivery take?', 'FAQ: question 2 (empty to hide)'],
   'faq.a2': ['Orders arrive in {deliveryDays} across India. Shipping is {shipFee}, and free over {freeOver}.', 'FAQ: answer 2'],
-  'faq.q3': ['Is there a last date to order for a festival or occasion?', 'FAQ: question 3 (empty to hide)'],
-  'faq.a3': ['Yes. Before big occasions we show an order-by date at the top of the site and on each product. Order by then and it should arrive in time.', 'FAQ: answer 3'],
+  'faq.q3': ['Will it arrive in time for my occasion?', 'FAQ: question 3 (empty to hide)'],
+  'faq.a3': ['Most orders arrive in {deliveryDays}. Before big festivals we show on each product whether it will reach you in time, so you know before you pay.', 'FAQ: answer 3'],
   'faq.q4': ['What if something arrives damaged?', 'FAQ: question 4 (empty to hide)'],
   'faq.a4': ['Message us within {exchangeDays} days of delivery with a photo or your unboxing video and we’ll send a replacement free. We replace instead of refunding.', 'FAQ: answer 4'],
   'faq.q5': ['Can I send it as a gift?', 'FAQ: question 5 (empty to hide)'],
@@ -1229,7 +1228,7 @@ const TEXT = {
 const TEXT_GROUPS = [['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['walk.', 'The house walk'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
 // settings: money in ₹, lists of product ids separated by commas
 const SET_META = [
-  ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Order-by line on product pages, e.g. Order by 1 Nov for Diwali delivery (empty to hide)', 'text'],
+  ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Delivery promise on product pages, e.g. Ships within 24 hours (empty to hide; only while it is true)', 'text'],
   ['exchangeDays', 'Replacement window (days)', 'num'], ['codOn', 'Offer cash on delivery', 'bool'], ['codFee', 'Cash on delivery fee (₹)', 'num'],
   ['wrapFee', 'Gift wrap price (₹)', 'num'], ['ritualOff', 'Ritual saving: % off a candle and object bought together (0 for none)', 'num'],
   ['welcomeCode', 'Welcome code for newsletter sign-ups', 'text'], ['welcomeOff', 'Welcome code saving (%)', 'num'], ['repourPrice', 'Jar re-pour price (₹, 0 to hide)', 'num'], ['rewardPct', 'Bud Points: % of each paid order given back as points (1 point = ₹1; 0 to hide)', 'num'],
@@ -2378,7 +2377,7 @@ function offersCard(p, v) {
 function deliveryCard(id, st) {
   return `<div class="deliv"><div class="deliv-head">${hl('pin', 20)}<form data-form="pin" class="deliv-form" novalidate><label for="pin-${id}">Deliver to</label><input id="pin-${id}" inputmode="numeric" maxlength="6" autocomplete="postal-code" placeholder="PIN code" value="${esc(st.pin)}"><button class="linkbtn" type="submit">Check</button></form></div>
     ${st.pinMsg ? `<p class="${st.pinMsg.ok ? 'ok-text' : 'err'}" role="status">${esc(st.pinMsg.text)}</p>` : `<p class="muted">Order today, usually arrives between ${arriveRange()}.</p>`}
-    ${SET.orderBy ? `<p class="order-by">${hl('gift', 18)}<span>${esc(SET.orderBy)}</span></p>` : ''}<p class="muted">${T('pdp.ship')}</p></div>`;
+    ${SET.orderBy ? `<p class="order-by">${hl('truck', 18)}<span>${esc(SET.orderBy)}</span></p>` : ''}<p class="muted">${T('pdp.ship')}</p></div>`;
 }
 // combos: this piece with its ritual partner, and a set of three with a plate, coasters or a candle
 function combosFor(p) {
