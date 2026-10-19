@@ -1254,7 +1254,7 @@ const SET_META = [
   ['bizName', 'Policies: registered business name', 'text'], ['bizAddress', 'Policies: registered address (without "India")', 'text'], ['gstin', 'Policies: GSTIN', 'text'],
   ['grievanceName', 'Policies: grievance officer name', 'text'], ['grievancePhone', 'Policies: grievance officer phone', 'text'], ['courtCity', 'Policies: city whose courts have jurisdiction', 'text'], ['policyDate', 'Policies: last updated, e.g. 19 October 2026', 'text'],
   ['pickupPin', 'Pickup PIN code, where the courier collects parcels (turns on the live PIN check)', 'text'], ['shiprocketPickup', 'Shiprocket pickup location name, as in Shiprocket → Settings → Pickup addresses', 'text'], ['parcelKg', 'Usual parcel weight (kg)', 'num'], ['parcelL', 'Usual box length (cm)', 'num'], ['parcelB', 'Usual box width (cm)', 'num'], ['parcelH', 'Usual box height (cm)', 'num'],
-  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
+  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['orderAlerts', 'Email that gets a message for every new order (empty: the contact email)', 'text'], ['reminderDays', 'Gift reminders: send this many days before the date', 'num'], ['whatsappOn', 'Messages: send order updates on WhatsApp to customers who ask (turn on once the provider is set up)', 'bool'], ['smsOn', 'Messages: send order updates by SMS to customers who ask (turn on once the provider is set up)', 'bool'], ['pushOn', 'Messages: send notifications to customers who allowed them (turn on once push is set up)', 'bool'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
@@ -1263,7 +1263,7 @@ const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: produ
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
 const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
-  featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
+  featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
@@ -1806,7 +1806,7 @@ function viewCheckout() {
   const co = UI.co; const lines = cartLines(); const t = totals(); const g = co.gift;
   if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:40px 80px"><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
   if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:24px 80px"><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
-  loadMine(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
+  loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
   const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> applied</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
@@ -1829,6 +1829,7 @@ function viewCheckout() {
           ${+SET.wrapFee >= 0 ? `<label class="check"><input type="checkbox" data-co="g-wrap" ${g.wrap ? 'checked' : ''}> Gift wrap it${hasBox(lines) ? ' · free with your gift box' : +SET.wrapFee ? ' · <span class="num">' + inr(SET.wrapFee) + '</span>' : ''}</label>` : ''}
           ${field('g-date', 'Arrive by', g.date, { type: 'date', min: earliestDay(), hint: 'optional, earliest ' + niceDay(earliestDay()) })}</div>` : ''}</div>
       <h2 class="full" style="font-size:24px">${g.on ? 'Their address' : 'Your address'}</h2>
+      ${!g.on && UI.prof && UI.prof.addresses.length ? `<div class="full" style="display:flex;gap:8px;flex-wrap:wrap" role="group" aria-label="Saved addresses">${UI.prof.addresses.map((a, i) => `<button class="chip" type="button" data-act="use-addr" data-i="${i}" aria-pressed="${co.address.line1 === a.line1 && co.address.pin === a.pin}">${esc(a.label || (i ? 'Address ' + (i + 1) : 'Home'))} · ${esc(a.pin)}</button>`).join('')}</div>` : ''}
       ${field('line1', 'House, street, area', co.address.line1, { ac: g.on ? 'off' : 'address-line1', full: true })}${field('line2', 'Landmark', co.address.line2, { ac: g.on ? 'off' : 'address-line2', full: true, hint: 'optional' })}${field('pin', 'PIN code', co.address.pin, { mode: 'numeric', ac: g.on ? 'off' : 'postal-code', max: 6 })}${field('city', 'City', co.address.city, { ac: g.on ? 'off' : 'address-level2' })}
       <span class="field full"><label for="co-state">State</label><select id="co-state" data-co="state" ${err ? 'aria-invalid="true" aria-describedby="co-state-err"' : ''}><option value="">Choose a state</option>${STATES.map((s) => `<option ${co.address.state === s ? 'selected' : ''}>${s}</option>`).join('')}</select>${err ? `<span class="err" id="co-state-err">${esc(err)}</span>` : ''}</span>
       <p class="full muted" style="font-size:14px">Delivery in ${esc(SET.deliveryDays)}.</p>
@@ -2474,6 +2475,52 @@ function viewTrack() {
     ${S.account ? `<h2 style="font-size:28px;margin-bottom:14px">Your orders</h2>${orderRows(myOrders())}` : `<p class="muted"><a href="#account">Sign in</a> to see all your orders here.</p>`}
     <ol class="track-steps">${[['box', 'Placed', 'We have your order and payment.'], ['gift', 'Packed', 'Wrapped by hand, usually within 1 to 3 working days.'], ['truck', 'Shipped', 'We email the courier tracking link.'], ['home', 'Delivered', 'Usually ' + SET.deliveryDays + ' after it ships.']].map(([i, h, t]) => `<li>${hl(i, 26)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></div>`;
 }
+// ---------- the customer's profile ----------
+// Name, mobile, up to 5 saved addresses and which extra channels to use for order updates. From the database
+// (my_profile / save_profile) when connected, otherwise kept in this browser with the account.
+const emptyProf = () => ({ name: '', phone: '', addresses: [], prefs: {} });
+function loadProfile(force) {
+  if (!S.account || UI.profBusy || (UI.prof && !force)) return;
+  if (!BTDB.on) { UI.prof = Object.assign(emptyProf(), { name: S.account.name || '' }, S.account.profile || {}); return; }
+  UI.profBusy = true;
+  BTDB.custRpc('my_profile').then((d) => { UI.prof = Object.assign(emptyProf(), d); UI.profBusy = false; render(); }, (err) => { UI.profBusy = false; UI.prof = emptyProf(); if (/sign_in/.test(err.message)) { S.account = null; save(); } render(); });
+}
+async function saveProfile(p) {
+  if (BTDB.on) { UI.prof = Object.assign(emptyProf(), await BTDB.custRpc('save_profile', { p })); }
+  else { UI.prof = Object.assign(emptyProf(), p); S.account.profile = UI.prof; }
+  if (UI.prof.name) S.account.name = UI.prof.name; save();
+}
+// checkout starts from the saved details: name and mobile, and the usual address unless this is a gift
+function applyProfile() {
+  const co = UI.co, pf = UI.prof; if (!pf || co.profApplied) return; co.profApplied = true;
+  if (!co.contact.name && pf.name) co.contact.name = pf.name;
+  if (!co.contact.phone && pf.phone) co.contact.phone = pf.phone;
+  if (!co.address.line1 && pf.addresses[0]) co.address = Object.assign({}, pf.addresses[0]);
+}
+const addrLine = (a) => [a.line1, a.line2, a.city, a.pin].filter(Boolean).join(', ');
+const CHANNELS = [['whatsapp', 'WhatsApp', 'whatsappOn'], ['sms', 'Text message (SMS)', 'smsOn'], ['push', 'Notifications on this phone', 'pushOn']];
+function profileBox() {
+  loadProfile(); const pf = UI.prof; if (!pf) return loadingRow;
+  const P = UI.profForm || {}, chans = CHANNELS.filter((c) => SET[c[2]] === true || SET[c[2]] === 'true');
+  return `<h2 style="font-size:28px;margin:36px 0 14px">Your details</h2>
+    <form data-form="profile" class="form" novalidate>
+      <span class="field"><label for="pf-name">Full name</label><input id="pf-name" autocomplete="name" maxlength="80" value="${esc(P.name ?? pf.name)}"></span>
+      <span class="field"><label for="pf-phone">Mobile number <span class="hint">for delivery</span></label><input id="pf-phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" value="${esc(P.phone ?? pf.phone)}" ${P.err && P.err.phone ? 'aria-invalid="true"' : ''}></span>
+      <span class="field full"><label>Email</label><input value="${esc(S.account.email)}" disabled></span>
+      <div class="full"><strong>Saved addresses</strong>${pf.addresses.length ? `<ul class="order-list" style="margin-top:8px">${pf.addresses.map((a, i) => `<li><span style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:12px 0;border-bottom:1px solid var(--line)"><span style="flex:1 1 240px"><strong>${esc(a.label || (i ? 'Address ' + (i + 1) : 'Home'))}</strong>${i === 0 ? ' <span class="pill">Usual</span>' : ''}<br><span class="muted">${esc(addrLine(a))}, ${esc(a.state)}</span></span>${i ? `<button class="linkbtn" type="button" data-act="addr-first" data-i="${i}">Make usual</button>` : ''}<button class="linkbtn" type="button" data-act="addr-del" data-i="${i}">Remove</button></span></li>`).join('')}</ul>` : '<p class="muted">None yet. They are saved when you order, or add one below.</p>'}</div>
+      ${pf.addresses.length < 5 ? `<details class="full"${P.err && P.err.addr ? ' open' : ''}><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center">Add an address</summary><div class="form" style="padding:0">
+        <span class="field"><label for="pf-a-label">Label <span class="hint">Home, Work…</span></label><input id="pf-a-label" maxlength="30" value="${esc(P.a_label || '')}"></span>
+        <span class="field"><label for="pf-a-pin">PIN code</label><input id="pf-a-pin" inputmode="numeric" maxlength="6" value="${esc(P.a_pin || '')}"></span>
+        <span class="field full"><label for="pf-a-line1">House, street, area</label><input id="pf-a-line1" autocomplete="address-line1" value="${esc(P.a_line1 || '')}"></span>
+        <span class="field full"><label for="pf-a-line2">Landmark <span class="hint">optional</span></label><input id="pf-a-line2" value="${esc(P.a_line2 || '')}"></span>
+        <span class="field"><label for="pf-a-city">City</label><input id="pf-a-city" autocomplete="address-level2" value="${esc(P.a_city || '')}"></span>
+        <span class="field"><label for="pf-a-state">State</label><select id="pf-a-state"><option value="">Choose a state</option>${STATES.map((x) => `<option ${P.a_state === x ? 'selected' : ''}>${x}</option>`).join('')}</select></span></div></details>` : ''}
+      <fieldset class="full" style="border:0;padding:0;margin:0"><legend><strong>How we reach you</strong></legend>
+        <p class="muted" style="margin:4px 0 8px">Order updates always go to ${esc(S.account.email)}.${chans.length ? ' You can add:' : ''}</p>
+        ${chans.map(([k, l]) => `<label class="check"><input type="checkbox" id="pf-${k}" ${(P.prefs ? P.prefs[k] : pf.prefs[k]) ? 'checked' : ''}> ${l}</label>`).join('')}</fieldset>
+      ${P.err && P.err.msg ? `<span class="err full" role="alert">${esc(P.err.msg)}</span>` : ''}
+      <span class="full" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn" type="submit">${P.busy ? 'Saving…' : 'Save my details'}</button>${P.saved ? '<span class="ok-text" role="status">Saved.</span>' : ''}<button class="btn ghost" type="button" data-act="prof-clear">Clear my saved details</button></span></form>`;
+}
 function signInBox(next) {
   const A = UI.acct;
   return `<div class="signin"><span class="why-ic">${hl('user', 26)}</span><h2 style="font-size:32px">${T('acct.title')}</h2><p class="muted">${T('acct.sub')}</p>
@@ -2492,7 +2539,7 @@ function viewAccount() {
     <div class="acct-grid">${+SET.rewardPct ? `<div class="acct-card points"><span class="eyebrow">Bud Points</span><strong class="num">${pm.available}</strong><span>Worth ${inr(pm.available)} off your next order.${pm.pending ? ` ${pm.pending} more arrive once your open orders are delivered.` : ''} You earn ${esc(SET.rewardPct)}% back on every order.</span></div>` : ''}
       <a class="acct-card" href="#track"><span class="eyebrow">Orders</span><strong class="num">${list.length}</strong><span>Track an order →</span></a>
       <a class="acct-card" href="#saved"><span class="eyebrow">Saved</span><strong class="num">${S.saved.length}</strong><span>Pieces you loved →</span></a></div>
-    <h2 style="font-size:28px;margin:36px 0 14px">Your orders</h2>${orderRows(list)}</div>`;
+    <h2 style="font-size:28px;margin:36px 0 14px">Your orders</h2>${orderRows(list)}${profileBox()}</div>`;
 }
 
 // ---------- product page parts ----------
@@ -3231,7 +3278,12 @@ document.addEventListener('click', (e) => {
     case 'combo-add': { let n = 0; d.skus.split(',').forEach((sku) => { if (skuMap[sku] && addToCart(sku, 1, { quiet: true, source: 'combo' })) n++; }); if (n) { UI.drawer = true; UI.drawerMsg = `Added the set (${n} piece${n > 1 ? 's' : ''}) to your cart.`; renderOverlay(); track('combo_add', { items: n }); } break; }
     case 'acct-change': UI.acct = { email: UI.acct.email, next: UI.acct.next }; render(); $('#acct-email')?.focus(); break;
     case 'acct-resend': acctSend(UI.acct.email, UI.acct.next); break;
-    case 'acct-out': if (BTDB.on) BTDB.custSignOut(); S.account = null; UI.mine = null; save(); UI.acct = {}; render(); say('Signed out.'); break;
+    case 'use-addr': { const a = UI.prof && UI.prof.addresses[+d.i]; if (a) { UI.co.address = Object.assign({}, a); UI.co.errors = {}; render(); } break; }
+    case 'addr-del': case 'addr-first': { const pf = UI.prof; if (!pf || !pf.addresses[+d.i]) break; const list = pf.addresses.slice(); const [addr] = list.splice(+d.i, 1); if (addr === undefined) break;
+      if (a === 'addr-first') list.unshift(addr);
+      saveProfile(Object.assign({}, pf, { addresses: list })).then(() => { say(a === 'addr-first' ? 'Made your usual address.' : 'Address removed.'); render(); }, (err) => say('Couldn’t save: ' + err.message)); break; }
+    case 'prof-clear': if (confirm('Clear your saved name, mobile, addresses and update choices? Your past orders stay.')) { (BTDB.on ? BTDB.custRpc('forget_me') : Promise.resolve()).then(() => { if (S.account) delete S.account.profile; UI.prof = null; UI.profForm = null; save(); loadProfile(true); render(); say('Your saved details are cleared.'); }, (err) => say('Couldn’t clear: ' + err.message)); } break;
+    case 'acct-out': if (BTDB.on) BTDB.custSignOut(); S.account = null; UI.mine = null; UI.prof = null; UI.profForm = null; save(); UI.acct = {}; render(); say('Signed out.'); break;
     case 'room-photo': $(d.cam ? '#room-cam' : '#room-file')?.click(); break;
     case 'room-3d': if (window.ROOM3D) window.ROOM3D.close(); ROOM.mode = '3d'; roomDraw(); track('room_3d', { id: ROOM.pid }); break;
     case 'room-look': ROOM.look = d.v; if (window.ROOM3D) window.ROOM3D.setLook(d.v); ROOM.el.querySelectorAll('[data-act="room-look"]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === d.v)); break;
@@ -3442,6 +3494,18 @@ document.addEventListener('submit', (e) => {
       try { if (rows.length) await dbPut('media', rows); A.upMsg = (rows.length ? 'Added ' + rows.length + ' file' + (rows.length > 1 ? 's' : '') + '.' : 'Nothing was added.') + (skipped.length ? ' Skipped: ' + skipped.join(', ') + '.' : ''); }
       catch (err) { A.upMsg = 'Couldn’t save: ' + err.message; }
       render(); })();
+    return; }
+  if (kind === 'profile') {
+    const pf = UI.prof || emptyProf(), v = (id) => (($('#pf-' + id) || {}).value || '').trim(), c = (k) => !!($('#pf-' + k) || {}).checked;
+    const P = UI.profForm = { name: v('name'), phone: v('phone'), a_label: v('a-label'), a_pin: v('a-pin'), a_line1: v('a-line1'), a_line2: v('a-line2'), a_city: v('a-city'), a_state: v('a-state'), err: {}, busy: true };
+    const ph = P.phone ? asPhone(P.phone) : ''; if (P.phone && !ph) { P.err.phone = 1; P.err.msg = 'Enter a 10-digit mobile number starting with 6, 7, 8 or 9.'; }
+    const adding = P.a_line1 || P.a_pin || P.a_city || P.a_state;
+    if (adding && !P.err.msg && (!P.a_line1 || !/^[1-9]\d{5}$/.test(P.a_pin) || !P.a_city || !P.a_state)) { P.err.addr = 1; P.err.msg = 'To add an address, fill in the street, PIN code (6 digits), city and state.'; }
+    if (P.err.msg) { P.busy = false; render(); return; }
+    const addresses = pf.addresses.concat(adding ? [{ label: P.a_label, line1: P.a_line1, line2: P.a_line2, pin: P.a_pin, city: P.a_city, state: P.a_state }] : []);
+    const prefs = {}; CHANNELS.forEach(([k]) => { if ($('#pf-' + k)) prefs[k] = c(k); else if (pf.prefs[k] !== undefined) prefs[k] = pf.prefs[k]; });
+    render();
+    saveProfile({ name: P.name, phone: ph, addresses, prefs }).then(() => { UI.profForm = { saved: true }; track('profile_save', {}); render(); }, (err) => { UI.profForm = Object.assign(P, { busy: false, err: { msg: /bad_profile:address/.test(err.message) ? 'That address doesn’t look right. Check the PIN code and state.' : /sign_in/.test(err.message) ? 'Please sign in again.' : 'We couldn’t save just now (' + err.message + ').' } }); render(); });
     return; }
   if (kind === 'acct-email') { const em = $('#acct-email').value.trim().toLowerCase(); if (!isEmail(em)) { UI.acct = { email: em, next: f.dataset.next, err: 'Enter an email like name@example.com.' }; render(); $('#acct-email')?.focus(); return; } acctSend(em, f.dataset.next); return; }
   if (kind === 'acct-code') { const A = UI.acct; const code = $('#acct-code').value.replace(/\D/g, ''); if (code.length < 6 || code.length > 10) { A.err = 'Enter the code from the email.'; render(); $('#acct-code')?.focus(); return; }

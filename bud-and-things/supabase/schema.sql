@@ -49,6 +49,21 @@ create table if not exists reminders (id uuid primary key default gen_random_uui
 create table if not exists gift_cards (code text primary key, amount int not null check (amount > 0), balance int not null check (balance >= 0), note text, created_at timestamptz not null default now());
 -- a customer's share link (?ref=ABC123): orders placed through it are credited to them, and the owner sends the thank-you
 create table if not exists referrers (id text primary key, contact text not null unique, created_at timestamptz not null default now());
+-- a signed-in customer's saved details: name, mobile, up to 5 delivery addresses (the first is the usual one) and the
+-- extra channels they want order updates on. Keyed by the email they sign in with; read and changed only through
+-- my_profile() and save_profile() below.
+create table if not exists profiles (email text primary key, name text not null default '', phone text not null default '',
+  addresses jsonb not null default '[]', prefs jsonb not null default '{}', created_at timestamptz not null default now(), updated_at timestamptz not null default now());
+-- every message the shop sends (email now; SMS, WhatsApp and app push once a provider is set up), queued by the
+-- database when something happens and sent by the notify function (supabase/functions/notify). `ref` names the
+-- happening, such as BT-1042-7F3A9C:shipped, so each one is sent once per channel however often it's reported.
+create table if not exists notifications (id uuid primary key default gen_random_uuid(), event text not null,
+  channel text not null check (channel in ('email', 'sms', 'whatsapp', 'push')), recipient text not null, ref text not null,
+  order_id text, data jsonb not null default '{}', status text not null default 'queued' check (status in ('queued', 'sending', 'sent', 'failed')),
+  tries int not null default 0, error text, claimed_at timestamptz, sent_at timestamptz, created_at timestamptz not null default now());
+create unique index if not exists notifications_once on notifications (channel, ref);
+create index if not exists notifications_queue on notifications (status, created_at);
+alter table restock_requests add column if not exists notified_at timestamptz;
 
 -- ---------- limits ----------
 -- Every visitor action is counted per connection (a one-way hash of the IP address, never the address itself), per
@@ -100,6 +115,8 @@ alter table restock_requests enable row level security;
 alter table reminders enable row level security;
 alter table gift_cards enable row level security;
 alter table referrers enable row level security;
+alter table profiles enable row level security;
+alter table notifications enable row level security;
 alter table hits enable row level security; -- no rules on purpose: only the functions here read or write it
 revoke all on hits from anon, authenticated;
 
@@ -107,7 +124,7 @@ do $$
 declare t text;
 begin
   -- drop and recreate so the file can be run again
-  for t in select unnest(array['products','pairings','site_text','settings','stock','media','orders','reviews','subscribers','restock_requests','reminders','gift_cards','referrers','owners']) loop
+  for t in select unnest(array['products','pairings','site_text','settings','stock','media','orders','reviews','subscribers','restock_requests','reminders','gift_cards','referrers','profiles','notifications','owners']) loop
     execute format('drop policy if exists "read" on %I', t);
     execute format('drop policy if exists "owner" on %I', t);
     execute format('drop policy if exists "visitor" on %I', t);
@@ -135,6 +152,8 @@ create policy "owner" on restock_requests for all using (is_owner()) with check 
 create policy "owner" on reminders for all using (is_owner()) with check (is_owner());
 create policy "owner" on gift_cards for all using (is_owner()) with check (is_owner());
 create policy "owner" on referrers for all using (is_owner()) with check (is_owner());
+create policy "owner" on profiles for select using (is_owner());
+create policy "owner" on notifications for select using (is_owner());
 -- visitors may send a review (held until the owner publishes it), sign up, or ask to hear about a restock
 create policy "visitor" on reviews for insert with check (not published and length(name) between 1 and 60 and length(body) between 1 and 1500 and length(product_id) < 60);
 create policy "visitor" on subscribers for insert with check (length(contact) between 5 and 120 and length(coalesce(source, '')) <= 40);
@@ -337,6 +356,7 @@ begin
     'address', jsonb_build_object('line1', trim(a ->> 'line1'), 'line2', coalesce(a ->> 'line2', ''), 'pin', a ->> 'pin', 'city', trim(a ->> 'city'), 'state', a ->> 'state'),
     'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'pointsUsed', use_pts, 'points', earned, 'ship', ship, 'wrap', wrap, 'cod', cod, 'total', total,
     'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true', 'card', nullif(card, ''), 'cardOff', card_off, 'ref', ref), st, phone, total, method);
+  perform remember_details(em, trim(c ->> 'name'), phone, case when gift_on then null else a end);
   return new_id;
 end $$;
 
@@ -432,6 +452,186 @@ begin
   return rid;
 end $$;
 
+-- ---------- customer profiles ----------
+-- Saved on the account page and filled in from each order, so checkout can offer the customer's own details.
+-- An address is { label, line1, line2, pin, city, state }, checked the same way as place_order checks one.
+create or replace function ok_address(a jsonb) returns boolean language sql immutable as $$
+  select jsonb_typeof(a) = 'object' and length(coalesce(a ->> 'line1', '')) between 1 and 200 and length(coalesce(a ->> 'line2', '')) <= 200
+    and coalesce(a ->> 'pin', '') ~ '^[1-9][0-9]{5}$' and length(coalesce(a ->> 'city', '')) between 1 and 80
+    and length(coalesce(a ->> 'state', '')) between 1 and 60 and length(coalesce(a ->> 'label', '')) <= 30
+$$;
+create or replace function clean_address(a jsonb) returns jsonb language sql immutable as $$
+  select jsonb_build_object('label', trim(coalesce(a ->> 'label', '')), 'line1', trim(a ->> 'line1'), 'line2', trim(coalesce(a ->> 'line2', '')),
+    'pin', a ->> 'pin', 'city', trim(a ->> 'city'), 'state', a ->> 'state')
+$$;
+-- after an order: keep the name and mobile if none were saved, and add the address if it's new (never a gift
+-- recipient's address, and never more than 5)
+create or replace function remember_details(em text, nm text, ph text, addr jsonb) returns void language plpgsql security definer set search_path = public as $$
+begin
+  insert into profiles (email, name, phone, addresses) values (em, coalesce(nm, ''), coalesce(ph, ''), case when addr is null then '[]' else jsonb_build_array(clean_address(addr)) end)
+  on conflict (email) do update set
+    name = case when profiles.name = '' then excluded.name else profiles.name end,
+    phone = case when profiles.phone = '' then excluded.phone else profiles.phone end,
+    addresses = case when addr is null or jsonb_array_length(profiles.addresses) >= 5 or exists (select 1 from jsonb_array_elements(profiles.addresses) x
+        where lower(x ->> 'line1') = lower(trim(addr ->> 'line1')) and x ->> 'pin' = addr ->> 'pin') then profiles.addresses
+      else profiles.addresses || jsonb_build_array(clean_address(addr)) end,
+    updated_at = now();
+end $$;
+-- the signed-in customer's saved details; the first time, the name and mobile come from their latest order
+create or replace function my_profile() returns jsonb language plpgsql security definer set search_path = public as $$
+declare em text := customer_email();
+begin
+  if em is null then raise exception 'sign_in'; end if;
+  perform hit('profile', em, 120, '1 hour');
+  insert into profiles (email, name, phone)
+    select em, coalesce(o.data -> 'contact' ->> 'name', ''), coalesce(o.phone, '') from (select 1) x
+    left join lateral (select data, phone from orders where data ->> 'email' = em order by created_at desc limit 1) o on true
+    on conflict (email) do nothing;
+  return (select jsonb_build_object('email', p.email, 'name', p.name, 'phone', p.phone, 'addresses', p.addresses, 'prefs', p.prefs) from profiles p where p.email = em);
+end $$;
+-- the account page saves the whole profile at once: name, mobile, addresses and which extra channels to use
+create or replace function save_profile(p jsonb) returns jsonb language plpgsql security definer set search_path = public as $$
+declare em text := customer_email(); a jsonb; addrs jsonb := '[]'; pf jsonb := coalesce(p -> 'prefs', '{}'); k text;
+begin
+  if em is null then raise exception 'sign_in'; end if;
+  perform hit('profile', em, 120, '1 hour');
+  if jsonb_typeof(p) <> 'object' or length(coalesce(p ->> 'name', '')) > 80 then raise exception 'bad_profile:name'; end if;
+  if coalesce(p ->> 'phone', '') !~ '^([6-9][0-9]{9})?$' then raise exception 'bad_profile:phone'; end if;
+  if jsonb_typeof(coalesce(p -> 'addresses', '[]')) <> 'array' or jsonb_array_length(coalesce(p -> 'addresses', '[]')) > 5 then raise exception 'bad_profile:address'; end if;
+  for a in select * from jsonb_array_elements(coalesce(p -> 'addresses', '[]')) loop
+    if not ok_address(a) then raise exception 'bad_profile:address'; end if;
+    addrs := addrs || jsonb_build_array(clean_address(a));
+  end loop;
+  if jsonb_typeof(pf) <> 'object' then raise exception 'bad_profile:prefs'; end if;
+  for k in select jsonb_object_keys(pf) loop
+    if k not in ('whatsapp', 'sms', 'push') or jsonb_typeof(pf -> k) <> 'boolean' then raise exception 'bad_profile:prefs'; end if;
+  end loop;
+  insert into profiles (email, name, phone, addresses, prefs) values (em, trim(coalesce(p ->> 'name', '')), coalesce(p ->> 'phone', ''), addrs, pf)
+  on conflict (email) do update set name = excluded.name, phone = excluded.phone, addresses = excluded.addresses, prefs = excluded.prefs, updated_at = now();
+  return my_profile();
+end $$;
+-- "Clear my saved details": the orders stay (they're the shop's records), everything saved for checkout goes
+create or replace function forget_me() returns void language plpgsql security definer set search_path = public as $$
+declare em text := customer_email();
+begin
+  if em is null then raise exception 'sign_in'; end if;
+  update profiles set name = '', phone = '', addresses = '[]', prefs = '{}', updated_at = now() where email = em;
+end $$;
+
+-- ---------- messages to customers and the owner ----------
+-- The database queues a message when something happens; the notify function sends it (supabase/functions/notify).
+--   welcome      a customer's first sign-in (not for customers who ordered before profiles existed)
+--   confirmed    an order is Placed: paid online, a gift card or points, or cash on delivery (and new_order to the owner)
+--   shipped, delivered, cancelled   as the order moves along; refund when a late payment has to go back
+--   restock      a piece someone asked about is back in stock
+--   reminder     a week before a saved gift date (reminderDays), from the daily run
+-- Email always goes to the customer's sign-in address. WhatsApp, SMS and app push are added for customers who chose
+-- them, once the owner turns that channel on in Settings (whatsappOn, smsOn, pushOn) after its provider is set up.
+create or replace function shop_inbox() returns text language sql stable security definer set search_path = public as $$
+  select coalesce(nullif(trim(cfg_text('orderAlerts', '')), ''), nullif(trim(cfg_text('email', '')), ''), 'hello@budandthings.com')
+$$;
+create or replace function queue_note(ev text, ch text, rcpt text, rf text, oid text, d jsonb) returns void language sql security definer set search_path = public as $$
+  insert into notifications (event, channel, recipient, ref, order_id, data)
+    select ev, ch, rcpt, rf, oid, coalesce(d, '{}') where coalesce(rcpt, '') <> ''
+  on conflict (channel, ref) do nothing;
+$$;
+-- one happening, to one customer, on every channel they want. `asked` means they asked for this on that number
+-- (the WhatsApp tick at checkout, or a restock or reminder left with a mobile number).
+create or replace function tell(ev text, em text, ph text, rf text, oid text, d jsonb, asked boolean) returns void language plpgsql security definer set search_path = public as $$
+declare pf jsonb := coalesce((select prefs from profiles where email = em), '{}');
+begin
+  perform queue_note(ev, 'email', em, rf, oid, d);
+  if coalesce(ph, '') ~ '^[6-9][0-9]{9}$' then
+    if cfg_on('whatsappOn', false) and (asked or coalesce((pf ->> 'whatsapp')::boolean, false)) then perform queue_note(ev, 'whatsapp', ph, rf, oid, d); end if;
+    if cfg_on('smsOn', false) and (coalesce((pf ->> 'sms')::boolean, false) or (asked and em is null and not cfg_on('whatsappOn', false))) then perform queue_note(ev, 'sms', ph, rf, oid, d); end if;
+  end if;
+  if em is not null and cfg_on('pushOn', false) and coalesce((pf ->> 'push')::boolean, false) then perform queue_note(ev, 'push', em, rf, oid, d); end if;
+end $$;
+
+create or replace function order_notes() returns trigger language plpgsql security definer set search_path = public as $$
+declare ev text; em text := new.data ->> 'email'; optin boolean := coalesce((new.data ->> 'optin')::boolean, false);
+begin
+  -- a payment that came after the order was released goes back: tell the owner to refund it, and the customer
+  if coalesce((new.data ->> 'refundDue')::boolean, false) and (tg_op = 'INSERT' or not coalesce((old.data ->> 'refundDue')::boolean, false)) then
+    perform queue_note('refund_due', 'email', shop_inbox(), new.id || ':refund_due', new.id, '{}');
+    perform tell('refund', em, new.phone, new.id || ':refund', new.id, '{}', optin);
+  end if;
+  -- a new order only ever says "confirmed" (orders copied in with a later status send nothing)
+  if tg_op = 'UPDATE' and new.status is not distinct from old.status or tg_op = 'INSERT' and new.status <> 'Placed' then return new; end if;
+  ev := case new.status when 'Placed' then 'confirmed' when 'Shipped' then 'shipped' when 'Delivered' then 'delivered' when 'Cancelled' then 'cancelled' end;
+  if ev is null or em is null then return new; end if;
+  perform tell(ev, em, new.phone, new.id || ':' || ev, new.id, '{}', optin);
+  if ev = 'confirmed' then perform queue_note('new_order', 'email', shop_inbox(), new.id || ':new_order', new.id, '{}'); end if;
+  return new;
+end $$;
+drop trigger if exists order_notes on orders;
+create trigger order_notes after insert or update on orders for each row execute function order_notes();
+
+-- a customer's first sign-in (or first order) makes their profile: say hello, unless they'd already ordered before
+create or replace function welcome_note() returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if not exists (select 1 from orders where data ->> 'email' = new.email and created_at < now() - interval '1 hour') then
+    perform queue_note('welcome', 'email', new.email, 'welcome:' || new.email, null, '{}');
+  end if;
+  return new;
+end $$;
+drop trigger if exists welcome_note on profiles;
+create trigger welcome_note after insert on profiles for each row execute function welcome_note();
+
+-- stock goes from none to some (the owner adds a batch, or an unpaid order is released): tell everyone waiting for it
+create or replace function restock_notes() returns trigger language plpgsql security definer set search_path = public as $$
+declare r record;
+begin
+  if new.qty > 0 and (tg_op = 'INSERT' or old.qty <= 0) then
+    for r in select id, contact from restock_requests where sku = new.sku and notified_at is null for update skip locked loop
+      perform tell('restock', case when r.contact like '%@%' then r.contact end, case when r.contact not like '%@%' then r.contact end,
+        'restock:' || r.id, null, jsonb_build_object('sku', new.sku), true);
+      update restock_requests set notified_at = now() where id = r.id;
+    end loop;
+  end if;
+  return new;
+end $$;
+drop trigger if exists restock_notes on stock;
+create trigger restock_notes after insert or update of qty on stock for each row execute function restock_notes();
+
+-- the daily run (notify function, action "daily"): queue reminders for saved gift dates coming up in reminderDays days
+-- (7 unless set). Dates repeat every year. Each date is reminded once, however often this runs.
+create or replace function queue_reminders() returns int language plpgsql security definer set search_path = public as $$
+declare r record; today date := (now() at time zone 'Asia/Kolkata')::date; nxt date; n int := 0; ahead int := greatest(cfg_num('reminderDays', 7), 1)::int;
+begin
+  for r in select * from reminders where created_at < now() - interval '1 day' loop
+    nxt := (r.day + make_interval(years => greatest(extract(year from today)::int - extract(year from r.day)::int, 0)))::date;
+    if nxt < today then nxt := (nxt + interval '1 year')::date; end if;
+    if nxt - today between 1 and ahead then
+      perform tell('reminder', case when r.contact like '%@%' then r.contact end, case when r.contact not like '%@%' then r.contact end,
+        'reminder:' || r.id || ':' || nxt, null, jsonb_build_object('occasion', r.occasion, 'for', r.for_name, 'day', nxt), true);
+      n := n + 1;
+    end if;
+  end loop;
+  return n;
+end $$;
+
+-- the notify function takes up to n queued messages to send (with the order and the customer's name), then reports
+-- each one back. A failed message is tried again on the next run, up to 5 times; one that can never go (no provider
+-- set up for its channel) is given up at once. A message stuck "sending" for 10 minutes goes back in the queue.
+create or replace function claim_notes(n int) returns jsonb language plpgsql security definer set search_path = public as $$
+declare res jsonb;
+begin
+  update notifications set status = 'queued' where status = 'sending' and claimed_at < now() - interval '10 minutes';
+  with c as (select id from notifications where status = 'queued' and tries < 5 order by created_at limit least(greatest(n, 1), 50) for update skip locked),
+    u as (update notifications t set status = 'sending', tries = t.tries + 1, claimed_at = now() from c where t.id = c.id returning t.*)
+  select coalesce(jsonb_agg(jsonb_build_object('id', u.id, 'event', u.event, 'channel', u.channel, 'recipient', u.recipient, 'order_id', u.order_id, 'data', u.data,
+      'order', (select o.data || jsonb_build_object('status', o.status) from orders o where o.id = u.order_id),
+      'name', coalesce((select nullif(p.name, '') from profiles p where p.email = u.recipient), (select o.data -> 'contact' ->> 'name' from orders o where o.id = u.order_id)))), '[]')
+    into res from u;
+  return res;
+end $$;
+create or replace function finish_note(note_id uuid, ok boolean, err text, give_up boolean) returns void language sql security definer set search_path = public as $$
+  update notifications set status = case when ok then 'sent' when give_up or tries >= 5 then 'failed' else 'queued' end,
+    error = case when ok then null else left(err, 500) end, sent_at = case when ok then now() end
+  where id = note_id and status = 'sending';
+$$;
+
 -- who may call what: Supabase lets everyone call every function unless told otherwise
 revoke execute on function hit(text, text, int, interval) from public, anon, authenticated;
 revoke execute on function release_unpaid() from public, anon, authenticated;
@@ -460,6 +660,26 @@ revoke execute on function set_shipment(text, jsonb, text) from public, anon, au
 grant execute on function mark_paid(text, jsonb) to service_role;
 grant execute on function hit(text, text, int, interval) to service_role; -- the delivery function limits PIN checks per visitor
 grant execute on function set_shipment(text, jsonb, text) to service_role;
+-- profiles: only the signed-in customer, for their own email; messages: only the notify function
+revoke execute on function remember_details(text, text, text, jsonb) from public, anon, authenticated;
+revoke execute on function my_profile() from public, anon;
+revoke execute on function save_profile(jsonb) from public, anon;
+revoke execute on function forget_me() from public, anon;
+grant execute on function my_profile() to authenticated;
+grant execute on function save_profile(jsonb) to authenticated;
+grant execute on function forget_me() to authenticated;
+revoke execute on function shop_inbox() from public, anon, authenticated;
+revoke execute on function queue_note(text, text, text, text, text, jsonb) from public, anon, authenticated;
+revoke execute on function tell(text, text, text, text, text, jsonb, boolean) from public, anon, authenticated;
+revoke execute on function order_notes() from public, anon, authenticated;
+revoke execute on function welcome_note() from public, anon, authenticated;
+revoke execute on function restock_notes() from public, anon, authenticated;
+revoke execute on function queue_reminders() from public, anon, authenticated;
+revoke execute on function claim_notes(int) from public, anon, authenticated;
+revoke execute on function finish_note(uuid, boolean, text, boolean) from public, anon, authenticated;
+grant execute on function queue_reminders() to service_role;
+grant execute on function claim_notes(int) to service_role;
+grant execute on function finish_note(uuid, boolean, text, boolean) to service_role;
 
 -- ---------- photos and videos ----------
 -- only photos and videos, up to 50 MB each (so nothing that runs in a browser, such as HTML or SVG, can be stored)
