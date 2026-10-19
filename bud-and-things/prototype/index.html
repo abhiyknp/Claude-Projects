@@ -815,7 +815,7 @@ const TEXT = {
   'room.pick': ['Take a photo of the shelf, table or wall where it would go, and we’ll put it there for you.', 'See it in your room: first screen text'],
   'ghome.tour': ['Walk through our home in 3D', 'Gift home: 3D house card heading'],
   'ghome.tourSub': ['Wander the foyer and bedroom and tap any piece to see it up close.', 'Gift home: 3D house card text'],
-  'ghome.strip': ['UPI in two taps, done before your chai cools|Poured by hand, wrapped by hand, sent with love|Arrives broken? We send a new one, no questions asked|Your words, hand-written on our card|Order by 25 Oct, it lands before Diwali', 'Gift home: top strip (separate lines with |)'],
+  'ghome.strip': ['UPI in two taps, done before your chai cools|Poured by hand, wrapped by hand, sent with love|Arrives broken? We send a new one, no questions asked|Your words, hand-written on our card|Order today, it lands before Diwali', 'Gift home: top strip (separate lines with |)'],
   'box.eyebrow': ['Diwali gift boxes', 'Gift boxes: small heading'],
   'box.title': ['Gifting, sorted in one tap', 'Gift boxes: heading'],
   'box.sub': ['Every box comes wrapped, with your note hand-written inside. Send it to yourself or straight to them.', 'Gift boxes: text'],
@@ -914,8 +914,8 @@ const TEXT = {
   'faq.a1': ['By UPI, card or net banking when you place the order. We don’t offer cash on delivery, so every order is paid before we pack it.', 'FAQ: answer 1'],
   'faq.q2': ['How long does delivery take?', 'FAQ: question 2 (empty to hide)'],
   'faq.a2': ['Orders arrive in {deliveryDays} across India. Shipping is {shipFee}, and free over {freeOver}.', 'FAQ: answer 2'],
-  'faq.q3': ['Is there a last date to order for a festival or occasion?', 'FAQ: question 3 (empty to hide)'],
-  'faq.a3': ['Yes. Before big occasions we show an order-by date at the top of the site and on each product. Order by then and it should arrive in time.', 'FAQ: answer 3'],
+  'faq.q3': ['Will it arrive in time for my occasion?', 'FAQ: question 3 (empty to hide)'],
+  'faq.a3': ['Most orders arrive in {deliveryDays}. Before big festivals we show on each product whether it will reach you in time, so you know before you pay.', 'FAQ: answer 3'],
   'faq.q4': ['What if something arrives damaged?', 'FAQ: question 4 (empty to hide)'],
   'faq.a4': ['Message us within {exchangeDays} days of delivery with a photo or your unboxing video and we’ll send a replacement free. We replace instead of refunding.', 'FAQ: answer 4'],
   'faq.q5': ['Can I send it as a gift?', 'FAQ: question 5 (empty to hide)'],
@@ -945,7 +945,7 @@ const TEXT = {
 const TEXT_GROUPS = [['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['walk.', 'The house walk'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
 // settings: money in ₹, lists of product ids separated by commas
 const SET_META = [
-  ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Order-by line on product pages, e.g. Order by 1 Nov for Diwali delivery (empty to hide)', 'text'],
+  ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Delivery promise on product pages, e.g. Order today, delivered before Diwali (empty to hide; only while it is true)', 'text'],
   ['exchangeDays', 'Replacement window (days)', 'num'], ['codOn', 'Offer cash on delivery', 'bool'], ['codFee', 'Cash on delivery fee (₹)', 'num'],
   ['wrapFee', 'Gift wrap price (₹)', 'num'], ['ritualOff', 'Ritual saving: % off a candle and object bought together (0 for none)', 'num'],
   ['welcomeCode', 'Welcome code for newsletter sign-ups', 'text'], ['welcomeOff', 'Welcome code saving (%)', 'num'], ['repourPrice', 'Jar re-pour price (₹, 0 to hide)', 'num'],
