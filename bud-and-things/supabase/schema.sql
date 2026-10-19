@@ -255,8 +255,10 @@ begin
   if length(coalesce(a ->> 'line1', '')) not between 1 and 200 or length(coalesce(a ->> 'line2', '')) > 200 then raise exception 'bad_order:address'; end if;
   if coalesce(a ->> 'pin', '') !~ '^[1-9][0-9]{5}$' then raise exception 'bad_order:pin'; end if;
   if length(coalesce(a ->> 'city', '')) not between 1 and 80 or length(coalesce(a ->> 'state', '')) not between 1 and 60 then raise exception 'bad_order:address'; end if;
-  if method is null or method not in ('Cash on delivery', 'UPI ID', 'UPI QR', 'UPI app', 'Card') then raise exception 'bad_order:method'; end if;
-  if method = 'Cash on delivery' and not cfg_on('codOn', true) then raise exception 'bad_order:cod_off'; end if;
+  -- Online: paid through Cashfree (functions/pay). Gift card or points: only when they cover the whole total.
+  if method is null or method not in ('Online', 'Gift card or points', 'Cash on delivery') then raise exception 'bad_order:method'; end if;
+  -- the shop is prepaid: cash on delivery stays off unless the owner turns it on in Settings
+  if method = 'Cash on delivery' and not cfg_on('codOn', false) then raise exception 'bad_order:cod_off'; end if;
   perform hit('order-phone', phone, 3, '1 day');
   if jsonb_typeof(g) = 'object' and coalesce(g ->> 'on', 'false') = 'true' then
     gift_on := true;
@@ -321,12 +323,13 @@ begin
   end if;
   -- an order through a friend's share link is credited to that friend (never to yourself)
   if coalesce(o ->> 'ref', '') ~ '^[A-Z0-9]{6}$' then
-    select id into ref from referrers where id = o ->> 'ref' and contact <> phone;
+    select id into ref from referrers where id = o ->> 'ref' and contact <> phone and contact <> em;
   end if;
+  if (method = 'Gift card or points') <> (total = 0) then raise exception 'price_changed'; end if;
   -- the browser showed the customer a total; if it isn't this one, something changed and they should look again
   if coalesce(o ->> 'sub', '') <> sub::text or coalesce(o ->> 'total', '') <> total::text then raise exception 'price_changed'; end if;
 
-  st := case when method = 'Cash on delivery' then 'Placed' else 'Awaiting payment' end;
+  st := case when method in ('Cash on delivery', 'Gift card or points') then 'Placed' else 'Awaiting payment' end;
   new_id := 'BT-' || nextval('order_no') || '-' || upper(substr(md5(gen_random_uuid()::text), 1, 6));
   insert into orders (id, data, status, phone, total, method) values (new_id, jsonb_build_object(
     'id', new_id, 'placedAt', now(), 'method', method, 'items', items,
@@ -357,6 +360,52 @@ begin
   end loop;
   update gift_cards set balance = balance + coalesce((r.data ->> 'cardOff')::int, 0) where code = r.data ->> 'card';
   update orders set status = 'Cancelled' where id = r.id;
+end $$;
+
+-- ---------- online payment (Cashfree) and delivery (Shiprocket) ----------
+-- Only the pay and delivery functions (supabase/functions) call these, with the service key; visitors and the owner can't.
+
+-- Cashfree confirmed the payment. Usually the order is still waiting, and moves on to Placed. If it was paid after its
+-- hold ran out (and was cancelled), the pieces and gift card balance are taken again when they're still there;
+-- otherwise it stays cancelled and is marked refundDue so the owner refunds it in the Cashfree dashboard.
+create or replace function mark_paid(order_id text, pay jsonb) returns text language plpgsql security definer set search_path = public as $$
+declare r record; it jsonb; ok boolean := true;
+begin
+  select id, data, status into r from orders where id = order_id for update;
+  if r.id is null then raise exception 'not_found'; end if;
+  if r.data ? 'payment' then return r.status; end if; -- already recorded (the browser and the webhook both report it)
+  if r.status = 'Cancelled' then
+    begin
+      for it in select * from jsonb_array_elements(r.data -> 'items') loop
+        update stock set qty = qty - (it ->> 'qty')::int, updated_at = now() where sku = it ->> 'sku' and qty >= (it ->> 'qty')::int;
+        if not found then raise exception 'gone'; end if;
+      end loop;
+      if coalesce((r.data ->> 'cardOff')::int, 0) > 0 then
+        update gift_cards set balance = balance - (r.data ->> 'cardOff')::int where code = r.data ->> 'card' and balance >= (r.data ->> 'cardOff')::int;
+        if not found then raise exception 'gone'; end if;
+      end if;
+    exception when others then ok := false; -- undoes the partial stock changes above
+    end;
+    update orders set status = case when ok then 'Placed' else 'Cancelled' end,
+      data = data || jsonb_build_object('payment', pay, 'refundDue', not ok) where id = r.id;
+    return case when ok then 'Placed' else 'Cancelled' end;
+  end if;
+  update orders set status = case when status = 'Awaiting payment' then 'Placed' else status end,
+    data = data || jsonb_build_object('payment', pay) where id = r.id;
+  return (select status from orders where id = r.id);
+end $$;
+
+-- Shiprocket booked a courier, or reported where the parcel is. The status only moves forward (Packed → Shipped →
+-- Delivered), never back, and never for a cancelled or unpaid order.
+create or replace function set_shipment(order_id text, ship jsonb, new_status text) returns text language plpgsql security definer set search_path = public as $$
+declare cur text; steps text[] := array['Placed', 'Packed', 'Shipped', 'Delivered'];
+begin
+  select status into cur from orders where id = order_id for update;
+  if cur is null then raise exception 'not_found'; end if;
+  update orders set data = data || jsonb_build_object('parcel', coalesce(data -> 'parcel', '{}') || ship),
+    status = case when new_status = any (steps) and cur = any (steps) and array_position(steps, new_status) > array_position(steps, cur)
+      then new_status else status end where id = order_id;
+  return (select status from orders where id = order_id);
 end $$;
 
 -- a shopper checks a gift card before using it (20 tries an hour per connection, so codes can't be guessed)
@@ -406,6 +455,11 @@ revoke execute on function gift_card_balance(text) from public;
 revoke execute on function my_referral(text) from public;
 grant execute on function gift_card_balance(text) to anon, authenticated;
 grant execute on function my_referral(text) to anon, authenticated;
+revoke execute on function mark_paid(text, jsonb) from public, anon, authenticated;
+revoke execute on function set_shipment(text, jsonb, text) from public, anon, authenticated;
+grant execute on function mark_paid(text, jsonb) to service_role;
+grant execute on function hit(text, text, int, interval) to service_role; -- the delivery function limits PIN checks per visitor
+grant execute on function set_shipment(text, jsonb, text) to service_role;
 
 -- ---------- photos and videos ----------
 -- only photos and videos, up to 50 MB each (so nothing that runs in a browser, such as HTML or SVG, can be stored)

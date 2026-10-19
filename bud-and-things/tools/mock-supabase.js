@@ -1,6 +1,7 @@
 // A stand-in for Supabase, for testing the site's database mode without an account. It keeps everything in memory
-// and answers the small part of the Supabase HTTP API that prototype/db.js uses (tables, two functions, sign-in and
+// and answers the small part of the Supabase HTTP API that prototype/db.js uses (tables, functions, sign-in and
 // file storage, customer sign-in by emailed code: always 111111), with the same who-may-do-what rules as supabase/schema.sql.
+// The pay and delivery Edge Functions are stood in for too: a payment is accepted at once, and every PIN code is reachable.
 //   node tools/mock-supabase.js            serves on http://localhost:54321
 //   owner sign-in: hello@budandthings.com / demo, password only while TWO_STEP is off; with TWO_STEP=1, then the code 123456
 // Point the site at it with  window.BT_CONFIG = { supabase: { url: 'http://localhost:54321', anonKey: 'anon' } }  in config.js.
@@ -17,14 +18,14 @@ const CUST_CODE = '111111';
 const custSession = (email) => ({ access_token: custJwt(email), refresh_token: 'r.' + Buffer.from(email).toString('base64url'), expires_in: 3600, token_type: 'bearer', user: { email } });
 const TWO_STEP = process.env.TWO_STEP === '1'; // matches ownerTwoStep in config.js; off until launch
 const KEYS = { site_text: 'key', settings: 'key', stock: 'sku' };
-const T = { products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [] };
+const T = { products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [] };
 const FILES = {};
 let orderNo = 1001;
 const uuid = () => 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
 
 // what a visitor (not signed in) may read and write, as in schema.sql
 const canRead = (t, r, own) => own || ({ products: r.live, pairings: r.live, media: r.published, reviews: r.published, site_text: true, settings: true, stock: true }[t] || false);
-const canInsert = (t, r, own) => own || (t === 'reviews' && !r.published) || t === 'subscribers' || t === 'restock_requests';
+const canInsert = (t, r, own) => own || (t === 'reviews' && !r.published) || t === 'subscribers' || t === 'restock_requests' || t === 'reminders';
 
 function filter(rows, q) {
   for (const [k, v] of q) {
@@ -55,7 +56,8 @@ function placeOrder(o, em) {
   const c = o.contact || {}, a = o.address || {}, g = o.gift, bad = (w) => { throw new Error('bad_order:' + w); };
   if (!c.name || c.name.length > 80) bad('name'); if (!/^[6-9]\d{9}$/.test(c.phone || '')) bad('phone');
   if (!a.line1 || !/^[1-9]\d{5}$/.test(a.pin || '') || !a.city || !a.state) bad('address');
-  if (!['Cash on delivery', 'UPI ID', 'UPI QR', 'UPI app', 'Card'].includes(o.method)) bad('method');
+  if (!['Online', 'Gift card or points', 'Cash on delivery'].includes(o.method)) bad('method');
+  if (o.method === 'Cash on delivery' && !setting('codOn', false)) bad('cod_off');
   if (!Array.isArray(o.items) || !o.items.length || o.items.length > 20) bad('items');
   const items = [], seen = new Set(), candles = [], objects = []; let sub = 0, pieces = 0;
   for (const it of o.items) {
@@ -74,13 +76,19 @@ function placeOrder(o, em) {
   const wrap = giftOn && g.wrap ? Math.round(num('wrapFee', 99)) : 0; const cod = o.method === 'Cash on delivery' ? Math.round(num('codFee', 49)) : 0;
   if (!/^\d{1,6}$/.test(String(o.usePoints == null ? 0 : o.usePoints))) bad('points'); const usePts = +(o.usePoints || 0);
   if (usePts > 0 && (usePts > pointsOf(em).available || usePts > sub - ritual - codeOff)) throw new Error('points_changed');
-  const total = sub - ritual - codeOff - usePts + ship + wrap + cod; const earned = Math.floor((total - ship - wrap - cod) * Math.max(num('rewardPct', 5), 0) / 100);
+  let total = sub - ritual - codeOff - usePts + ship + wrap + cod; const earned = Math.floor((total - ship - wrap - cod) * Math.max(num('rewardPct', 5), 0) / 100);
+  // a gift card pays what its balance covers; an order through a share link is credited to the friend, never to yourself
+  const card = String(o.card || '').trim().toUpperCase(); let cardOff = 0; const gc = card && T.gift_cards.find((x) => x.code === card);
+  if (card) { if (!gc || gc.balance <= 0) throw new Error('bad_card'); cardOff = Math.min(gc.balance, total); total -= cardOff; }
+  const rf = T.referrers.find((x) => x.id === o.ref && x.contact !== c.phone && x.contact !== em); const ref = rf ? rf.id : null;
+  if ((o.method === 'Gift card or points') !== (total === 0)) throw new Error('price_changed');
   if (o.sub !== sub || o.total !== total) throw new Error('price_changed');
+  if (gc) gc.balance -= cardOff;
   items.forEach((it) => { T.stock.find((x) => x.sku === it.sku).qty -= it.qty; });
   const id = 'BT-' + orderNo++ + '-' + Math.random().toString(16).slice(2, 8).toUpperCase().padEnd(6, '0');
-  const status = o.method === 'Cash on delivery' ? 'Placed' : 'Awaiting payment';
+  const status = o.method === 'Online' ? 'Awaiting payment' : 'Placed';
   const data = { id, placedAt: new Date().toISOString(), method: o.method, items, email: em, contact: { name: c.name, phone: c.phone, email: em }, address: { line1: a.line1, line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state },
-    sub, ritual, code, codeOff, pointsUsed: usePts, points: earned, ship, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin };
+    sub, ritual, code, codeOff, pointsUsed: usePts, points: earned, ship, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin, card: card || null, cardOff, ref };
   T.orders.push({ id, data, status, phone: c.phone, total, method: o.method, created_at: data.placedAt });
   return id;
 }
@@ -121,8 +129,18 @@ http.createServer((req, res) => {
       if (m && m[1] === 'cancel_order') {
         if (!own) return fail(res, 400, 'not_allowed');
         const o = T.orders.find((x) => x.id === json().order_id); if (!o || !['Awaiting payment', 'Placed', 'Packed'].includes(o.status)) return fail(res, 400, 'cannot_cancel');
-        o.data.items.forEach((it) => { const s = T.stock.find((x) => x.sku === it.sku); if (s) s.qty += it.qty; }); o.status = 'Cancelled'; return send(res, 200, null);
+        o.data.items.forEach((it) => { const s = T.stock.find((x) => x.sku === it.sku); if (s) s.qty += it.qty; }); const gc = T.gift_cards.find((x) => x.code === o.data.card); if (gc) gc.balance += o.data.cardOff || 0; o.status = 'Cancelled'; return send(res, 200, null);
       }
+      if (m && m[1] === 'gift_card_balance') { const gc = T.gift_cards.find((x) => x.code === String(json().card_code).trim().toUpperCase()); return send(res, 200, gc ? String(gc.balance) : 'null', 'application/json'); }
+      if (m && m[1] === 'my_referral') { const who = String(json().contact_in).trim().toLowerCase(); let r = T.referrers.find((x) => x.contact === who); if (!r) { r = { id: Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'), contact: who, created_at: new Date().toISOString() }; T.referrers.push(r); } return send(res, 200, JSON.stringify(r.id), 'application/json'); }
+      // the pay (Cashfree) and delivery (Shiprocket) functions: paid at once, every PIN reachable, a made-up AWB number
+      if (u.pathname === '/functions/v1/pay') { const b = json(); const o = T.orders.find((x) => x.id === b.order_id); if (!o) return fail(res, 404, 'not_found');
+        if (o.status === 'Awaiting payment') { o.status = 'Placed'; o.data.payment = { by: 'mock' }; } return send(res, 200, { status: o.status, paid: true }); }
+      if (u.pathname === '/functions/v1/delivery') { const b = json();
+        if (b.action === 'pin') return send(res, 200, { ok: /^[1-9]\d{5}$/.test(b.pin || ''), days: 4 });
+        if (b.action === 'book') { if (!own) return fail(res, 403, 'owner_only'); const o = T.orders.find((x) => x.id === b.order_id); if (!o || !['Placed', 'Packed'].includes(o.status)) return fail(res, 409, 'not_ready');
+          o.data.parcel = { awb: 'MOCK' + o.id.slice(3, 7), courier: 'Mock Express', track: 'https://shiprocket.co/tracking/MOCK', booked: new Date().toISOString() }; o.status = 'Packed'; return send(res, 200, { status: o.status, ship: o.data.parcel }); }
+        return fail(res, 400, 'bad_request'); }
       m = /^\/rest\/v1\/(\w+)$/.exec(u.pathname); if (!m || !T[m[1]]) return fail(res, 404, 'no such table');
       const t = m[1], key = KEYS[t] || 'id', now = new Date().toISOString();
       if (req.method === 'GET') return send(res, 200, filter(T[t].filter((r) => canRead(t, r, own)), q));

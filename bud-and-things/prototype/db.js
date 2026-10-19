@@ -59,6 +59,8 @@
     update: (table, match, patch) => req('PATCH', '/rest/v1/' + table + '?' + match, patch, { Prefer: 'return=minimal' }),
     remove: (table, match) => req('DELETE', '/rest/v1/' + table + '?' + match),
     rpc: (fn, args) => req('POST', '/rest/v1/rpc/' + fn, args || {}),
+    // the shop's Edge Functions (supabase/functions): pay (Cashfree) and delivery (Shiprocket)
+    fn: (name, body) => req('POST', '/functions/v1/' + name, body || {}),
     // photos and videos, in the public "media" bucket
     fileUrl: (path) => (/^(https?:|data:|blob:|assets\/)/.test(path) ? path : url + '/storage/v1/object/public/media/' + enc(path)),
     upload: (path, file) => req('POST', '/storage/v1/object/media/' + enc(path), file, { 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'true' }),

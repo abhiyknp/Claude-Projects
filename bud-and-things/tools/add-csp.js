@@ -10,14 +10,16 @@ const db = (/url:\s*'([^']*)'/.exec(cfg) || [])[1] || '';
 const connect = ["'self'", db && new URL(db).origin, ...(process.env.BT_CSP_CONNECT || '').split(/\s+/)].filter(Boolean);
 // Meta Pixel and Google Analytics, used only when the owner adds an id in Settings
 const ads = { script: ['https://connect.facebook.net', 'https://www.googletagmanager.com'], connect: ['https://www.facebook.com', 'https://connect.facebook.net', 'https://*.google-analytics.com', 'https://*.analytics.google.com', 'https://www.googletagmanager.com'] };
+// Cashfree's checkout: its script, the payment window it opens over the page, and the calls it makes
+const pay = { script: ['https://sdk.cashfree.com'], frame: ['https://sdk.cashfree.com', 'https://*.cashfree.com'], connect: ['https://*.cashfree.com'] };
 const media = ["'self'", 'data:', 'blob:', db && new URL(db).origin].filter(Boolean);
 
 function policy(html) {
   const hashes = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)]
     .map((m) => `'sha256-${crypto.createHash('sha256').update(m[1], 'utf8').digest('base64')}'`);
-  return [`default-src 'self'`, `script-src 'self' ${ads.script.join(' ')} ${[...new Set(hashes)].join(' ')}`.trim(),
+  return [`default-src 'self'`, `script-src 'self' ${[...ads.script, ...pay.script].join(' ')} ${[...new Set(hashes)].join(' ')}`.trim(),
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, `font-src 'self' https://fonts.gstatic.com`,
-    `img-src ${media.join(' ')} https:`, `media-src ${media.join(' ')} https:`, `connect-src ${[...connect, ...ads.connect].join(' ')}`,
+    `img-src ${media.join(' ')} https:`, `media-src ${media.join(' ')} https:`, `connect-src ${[...connect, ...ads.connect, ...pay.connect].join(' ')}`, `frame-src ${pay.frame.join(' ')}`,
     `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `upgrade-insecure-requests`].join('; ');
 }
 

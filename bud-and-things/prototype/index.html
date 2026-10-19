@@ -971,7 +971,7 @@ body.app .why-band { padding-bottom: 96px; }
 
 <script src="config.js"></script>
 <script src="vendor/qrcode/qrcode.js"></script>
-<script src="db.js?v=7"></script>
+<script src="db.js?v=8"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -1176,6 +1176,7 @@ const TEXT = {
   'cart.gift': ['Sending it as a gift? Add a note, wrapping and a delivery date at checkout.', 'Cart: gift hint'],
   'co.giftTitle': ['Send it as a gift', 'Checkout: gift option'],
   'co.giftNote': ['We hand-write your note on our thank-you card. Prices are left out of the parcel.', 'Checkout: gift explanation'],
+  'co.payOnline': ['UPI, cards, net banking and wallets, through Cashfree’s secure checkout. We never see your card or bank details.', 'Checkout: paying online'],
   'co.cod': ['Pay in cash or by UPI when it arrives. A {codFee} fee covers the courier’s cash handling.', 'Checkout: cash on delivery'],
   'co.optin': ['Send my order updates and candle care tips on WhatsApp', 'Checkout: WhatsApp opt-in'],
   'gift.title': ['Small gift. Real feeling.', 'Gifting: heading'],
@@ -1252,6 +1253,7 @@ const SET_META = [
   ['featured', 'Home: featured product ids', 'text'], ['giftPicks', 'Gifting: popular product ids', 'text'], ['homeRitual', 'Home: ritual pairing id', 'text'], ['newIn', 'Home: new arrival product ids', 'text'], ['spotlight', 'Home: spotlight product id', 'text'],
   ['bizName', 'Policies: registered business name', 'text'], ['bizAddress', 'Policies: registered address (without "India")', 'text'], ['gstin', 'Policies: GSTIN', 'text'],
   ['grievanceName', 'Policies: grievance officer name', 'text'], ['grievancePhone', 'Policies: grievance officer phone', 'text'], ['courtCity', 'Policies: city whose courts have jurisdiction', 'text'], ['policyDate', 'Policies: last updated, e.g. 19 October 2026', 'text'],
+  ['pickupPin', 'Pickup PIN code, where the courier collects parcels (turns on the live PIN check)', 'text'], ['shiprocketPickup', 'Shiprocket pickup location name, as in Shiprocket → Settings → Pickup addresses', 'text'], ['parcelKg', 'Usual parcel weight (kg)', 'num'], ['parcelL', 'Usual box length (cm)', 'num'], ['parcelB', 'Usual box width (cm)', 'num'], ['parcelH', 'Usual box height (cm)', 'num'],
   ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
@@ -1260,7 +1262,7 @@ const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
-const SET_DEFAULTS = { giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
+const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
@@ -1278,6 +1280,7 @@ const PREVIEW = (() => { let v = null; try { v = localStorage.getItem('bt-previe
   const q = new URLSearchParams(location.search).get('preview'); if (!q) return v; v = q === 'off' ? null : q;
   try { if (v) localStorage.setItem('bt-preview', v); else localStorage.removeItem('bt-preview'); } catch (e) { /* this visit only */ }
   return v; })();
+const PAID_BACK = (() => { const q = (new URLSearchParams(location.search).get('paid') || '').toUpperCase(); if (!/^BT-\d+-[0-9A-F]{6}$/.test(q)) return ''; try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* keep the address */ } return q; })();
 const REF = (() => { const q = (new URLSearchParams(location.search).get('ref') || '').toUpperCase(); try { if (/^[A-Z0-9]{6}$/.test(q)) { localStorage.setItem('bt-ref', q); return q; } return localStorage.getItem('bt-ref') || ''; } catch (e) { return /^[A-Z0-9]{6}$/.test(q) ? q : ''; } })();
 const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !BTDB.owner() && !(SET.previewCode && PREVIEW === String(SET.previewCode));
 const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(SET.previewCode || '');
@@ -1834,6 +1837,8 @@ function viewCheckout() {
     const m = co.method; const tab = (k, l) => `<button class="chip" type="button" role="radio" aria-checked="${m === k}" data-act="pay-method" data-v="${k}">${l}</button>`;
     let panel = '';
     if (co.placing) panel = '<div class="pay-panel"><span class="waiting" role="status">Placing your order</span></div>';
+    else if (BTDB.on && !t.total) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Nothing more to pay</strong><span class="muted">Your ${t.card ? 'gift card' : 'Bud Points'} cover${t.card ? 's' : ''} the whole order.</span><button class="btn" type="button" data-act="pay-success" data-via="Gift card or points">Place order</button></div></div>`;
+    else if (BTDB.on && m !== 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay securely with Cashfree</strong><span class="muted">${T('co.payOnline')}</span><button class="btn" type="button" data-act="pay-success" data-via="Online">Pay <span class="num">${inr(t.total)}</span></button><span class="hint">Your order is saved first, so if the payment doesn’t go through you can try again from the order page.</span></div></div>`;
     else if (m === 'qr') panel = `<div class="pay-panel"><canvas id="qr" width="29" height="29" aria-label="Demo UPI QR code for ${inr(t.total)}"></canvas><div class="info"><strong style="font-size:18px">Scan with any UPI app</strong><span class="muted">Open your UPI app, scan the code and approve <strong class="num">${inr(t.total)}</strong>. The amount is fixed in the code, and this page updates on its own once the payment arrives.</span><span class="waiting" role="status">Waiting for your payment</span><span class="hint">Demo QR made for this order. It is not a real payment code.</span><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI QR">Demo: simulate payment received</button></div></div>`;
     else if (m === 'app') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay with a UPI app on this phone</strong><span class="muted">Opens the UPI apps installed on this phone. You approve <strong class="num">${inr(t.total)}</strong> and come straight back here.</span>${co.appSheet ? `<div class="status" role="status">Demo: your UPI app would now ask you to approve ${inr(t.total)} to BUD &amp; THINGS.</div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI app">Simulate: approved</button><button class="btn small ghost" type="button" data-act="pay-fail">Simulate: declined</button></span>` : '<button class="btn" type="button" data-act="pay-app">Open UPI app</button>'}<span class="hint">If you are shopping on a computer, use the QR code instead.</span></div></div>`;
     else if (m === 'upi') panel = `<form data-form="upi" class="pay-panel" novalidate><div class="info"><span class="field"><label for="co-upi">UPI ID <span class="hint">for example name@bank</span></label><input id="co-upi" data-co="upi" autocomplete="off" value="${esc(co.upi)}" ${co.errors.upi ? 'aria-invalid="true" aria-describedby="co-upi-err"' : ''}>${co.errors.upi ? `<span class="err" id="co-upi-err">${esc(co.errors.upi)}</span>` : ''}</span>
@@ -1844,7 +1849,7 @@ function viewCheckout() {
       <span class="field"><label for="co-ccvv">CVV</label><input id="co-ccvv" data-co="ccvv" inputmode="numeric" autocomplete="cc-csc" maxlength="4" value="${esc(c.ccvv || '')}" ${e.ccvv ? 'aria-invalid="true" aria-describedby="co-ccvv-err"' : ''}>${e.ccvv ? `<span class="err" id="co-ccvv-err">${esc(e.ccvv)}</span>` : ''}</span></div>
       <button class="btn" type="submit">Pay ${inr(t.total)} by card</button><span class="hint">In the real site this form belongs to the payment gateway. BUD &amp; THINGS never sees card details.</span></div></form>`; }
     else if (m === 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay when it arrives</strong><span class="muted">${T('co.cod')}</span><button class="btn" type="button" data-act="pay-success" data-via="Cash on delivery">Place order · pay <span class="num">${inr(t.total)}</span> on delivery</button></div></div>`;
-    main = `<h1 tabindex="-1" style="font-size:40px">Pay <span class="num">${inr(t.total)}</span></h1>${co.payErr ? `<div class="status err" role="alert">${esc(co.payErr)}</div>` : ''}<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('qr', 'UPI QR')}${tab('app', 'UPI app')}${tab('upi', 'UPI ID')}${tab('card', 'Card')}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>${panel}<button class="linkbtn" type="button" data-act="co-step" data-v="address">Back to delivery</button>`;
+    main = `<h1 tabindex="-1" style="font-size:40px">Pay <span class="num">${inr(t.total)}</span></h1>${co.payErr ? `<div class="status err" role="alert">${esc(co.payErr)}</div>` : ''}${BTDB.on ? (SET.codOn && t.total ? `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('online', 'Pay online')}${tab('cod', 'Cash on delivery')}</div>` : '') : `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('qr', 'UPI QR')}${tab('app', 'UPI app')}${tab('upi', 'UPI ID')}${tab('card', 'Card')}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>`}${panel}<button class="linkbtn" type="button" data-act="co-step" data-v="address">Back to delivery</button>`;
   }
   return `<div class="wrap"><div class="checkout"><div class="checkout-main">${steps}${main}</div>${side}</div></div>`;
 }
@@ -1865,22 +1870,27 @@ function socialLinks(waText) {
     wa && link(wa, 'WhatsApp us', 'whatsapp', true), /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) && link('mailto:' + em, 'Email ' + em, 'email')].filter(Boolean);
   return items.length ? `<ul class="social" aria-label="Find BUD &amp; THINGS">${items.join('')}</ul>` : '';
 }
+// the Pay now box on an unpaid order
+function payBox(o) {
+  const P = UI.pay && UI.pay.id === o.id ? UI.pay : {};
+  return `<div class="pay-panel"><div class="info">${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}${P.busy ? '<span class="waiting" role="status">Checking with Cashfree</span>' : `<span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="pay-order" data-id="${esc(o.id)}">Pay <span class="num">${inr(o.total)}</span> now</button><button class="btn ghost" type="button" data-act="pay-check" data-id="${esc(o.id)}">I’ve paid, check again</button></span>`}<span class="hint">${T('co.payOnline')}</span></div></div>`;
+}
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound();
-  if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && d.status !== o.status) { o.status = d.status; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
+  if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel))) { o.status = d.status; o.parcel = d.parcel; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
   const idx = STATUSES.indexOf(o.status); const cod = o.method === 'Cash on delivery'; const unpaid = o.status === 'Awaiting payment', gone = o.status === 'Cancelled';
   const fresh = UI.justPlaced === id; const wa = waLink('Hello, a question about my order ' + id);
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
-    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? '<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>' : ''}${gone ? '<div class="status err">This order was cancelled and nothing will be sent. If you paid, the money comes back to you.</div>' : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method)) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
+  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
+    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
-      <p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>
+      ${BTDB.on ? '' : '<p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>'}
       <div class="status">Questions about this order? ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener">Message us on WhatsApp</a>` : 'Message us on WhatsApp'} or write to ${esc(SET.email)}.</div>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="reorder" data-id="${o.id}">Buy again</button><a class="btn ghost" href="#shop">Keep browsing</a></span></div>
     <aside class="checkout-side"><strong>${o.id}</strong>${o.items.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.name)} · ${esc(l.label)} × ${l.qty}</span><span class="num">${inr(l.price * l.qty)}</span></div>`).join('')}
-      <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${o.pointsUsed ? row('Bud Points', '−' + inr(o.pointsUsed), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${row(cod ? 'To pay on delivery' : 'Paid', inr(o.total), 'grand')}</div>
+      <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${o.pointsUsed ? row('Bud Points', '−' + inr(o.pointsUsed), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${o.cardOff ? row('Gift card ' + esc(o.card || ''), '−' + inr(o.cardOff), 'save') : ''}${row(cod ? 'To pay on delivery' : unpaid || gone ? 'Total' : 'Paid', inr(o.total), 'grand')}</div>
       ${giftSummary(o.gift)}
       <figure class="photo" style="margin:0"><img src="${esc((brandImgs('gift', [[IMG.tag]])[0] || [IMG.tag])[0])}" alt="Rustic gift tag with the logo and olive leaf." loading="lazy"><figcaption>${o.gift && o.gift.on ? 'Your note goes on this tag' : 'A thank-you note goes in with orders where we can include one'}</figcaption></figure><span class="muted" style="font-size:14px">To ${o.gift && o.gift.on ? esc(o.gift.name) + ', ' : ''}${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
 }
@@ -2044,12 +2054,14 @@ function viewAdmin() {
   return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
+// what Shiprocket booked for an order, for the Owner view
+const parcelNote = (o) => { const p = o.parcel; if (!p || !p.awb) return ''; return `<span class="muted" style="display:block;font-size:13px;margin-top:6px">${esc(p.courier || 'Courier')} · AWB <span class="num sel">${esc(p.awb)}</span>${p.status ? ' · ' + esc(p.status) : ''}${p.label ? ` · <a href="${esc(p.label)}" target="_blank" rel="noopener">Print label</a>` : ''}${p.pickupErr ? ` · pickup not booked: ${esc(p.pickupErr)}` : ''}</span>`; };
 function admOrders() {
   const list = admData('orders'); if (!list) return loadingRow;
   const live = list.filter((o) => o.status !== 'Cancelled'); const rev = live.filter((o) => o.status !== 'Awaiting payment').reduce((a, o) => a + (o.total || 0), 0); const open = live.filter((o) => o.status !== 'Delivered').length;
   const low = Object.keys(skuMap).filter((s) => stockOf(s) <= 2).length; const gifts = live.filter((o) => o.gift && o.gift.on && o.status !== 'Delivered').length;
   return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
-    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`
+    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Cashfree</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
@@ -2192,7 +2204,7 @@ function admReminders(list) {
 }
 function admCards() {
   const d = admData('cards'); if (!d) return loadingRow; const orders = admData('orders') || []; const A = UI.adm;
-  const refCount = {}; orders.forEach((o) => { if (o.ref && o.status !== 'Cancelled') refCount[o.ref] = (refCount[o.ref] || 0) + 1; });
+  const refCount = {}; orders.forEach((o) => { if (o.ref && o.status !== 'Cancelled' && o.status !== 'Awaiting payment') refCount[o.ref] = (refCount[o.ref] || 0) + 1; });
   const refs = d.refs.filter((r) => refCount[r.id]).sort((a, b) => refCount[b.id] - refCount[a.id]);
   return `<form data-form="adm-card-new" class="form adm-card" style="max-width:560px" novalidate><h2 class="full" style="font-size:24px">Issue a gift card</h2><p class="full muted" style="margin:0">After a gift card is paid for, or as a thank-you. The code is made for you.</p>
       <span class="field"><label for="gcn-amt">Amount (₹)</label><input id="gcn-amt" type="number" min="1" inputmode="numeric"></span><span class="field"><label for="gcn-note">For <span class="hint">optional</span></label><input id="gcn-note" maxlength="80"></span>
@@ -3157,14 +3169,46 @@ async function placeOrder(via) {
         : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
       if (/sold_out|price_changed|unknown_item/.test(m)) loadData(); render(); return;
     }
-    co.placing = false; if (via !== 'Cash on delivery') o.status = 'Awaiting payment'; // until the payment gateway confirms it
+    co.placing = false; if (via === 'Online') o.status = 'Awaiting payment'; // until Cashfree confirms it
     UI.mine = null; // read the orders and points again
   } else id = 'BT-' + (1001 + S.orders.length);
   o.id = id;
   lines.forEach((l) => { S.stock[l.sku] = Math.max(0, stockOf(l.sku) - l.qty); });
-  S.orders.unshift(o); S.cart = []; save(); track('purchase', { order: id, value: t.total, method: via, gift: !!o.gift });
+  S.orders.unshift(o); S.cart = []; save();
+  if (o.status === 'Awaiting payment') track('order_saved', { order: id, value: t.total }); else track('purchase', { order: id, value: t.total, method: via, gift: !!o.gift });
   UI.justPlaced = id; UI.co = coFresh(o.contact, o.gift ? {} : o.address);
   location.hash = 'order-' + id;
+  if (o.status === 'Awaiting payment') payOnline(id);
+}
+
+// ---------- paying online (Cashfree) ----------
+// The order is saved first; the pay function opens a Cashfree payment for the total the database worked out, and the
+// order only counts as paid once Cashfree says so (here, or through its webhook if this page is closed).
+const loadScript = (src) => loadScript[src] || (loadScript[src] = new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.async = true; el.onload = ok; el.onerror = () => { delete loadScript[src]; no(new Error('script')); }; document.head.appendChild(el); }));
+async function payOnline(id) {
+  const o = S.orders.find((x) => x.id === id); const P = UI.pay = { id, busy: true, err: null }; render();
+  try {
+    const [r] = await Promise.all([BTDB.fn('pay', { action: 'start', order_id: id, phone: o.contact.phone }), loadScript('https://sdk.cashfree.com/js/v3/cashfree.js')]);
+    if (r.status) { await payCheck(id); return; }
+    P.busy = false; render();
+    const res = await window.Cashfree({ mode: r.mode }).checkout({ paymentSessionId: r.session, redirectTarget: '_modal' });
+    if (res && res.error) P.err = res.error.message || 'The payment didn’t go through.';
+    await payCheck(id);
+  } catch (e) {
+    P.busy = false;
+    P.err = /not_awaiting|not_payable/.test(e.message) ? 'This order can’t be paid any more. If its pieces were released, please place it again.' : /not_set_up/.test(e.message) ? 'Online payment isn’t switched on yet. Please message us on WhatsApp to pay.' : 'We couldn’t open the payment just now. Please try again.';
+    render();
+  }
+}
+// ask the pay function whether Cashfree has the money; it records the payment if so
+async function payCheck(id) {
+  const o = S.orders.find((x) => x.id === id); const P = UI.pay = UI.pay && UI.pay.id === id ? UI.pay : { id }; P.busy = true; render();
+  try {
+    const r = await BTDB.fn('pay', { action: 'verify', order_id: id });
+    if (o && r.status) { if (r.paid && o.status === 'Awaiting payment') track('purchase', { order: id, value: o.total, method: 'Online', gift: !!o.gift }); o.status = r.status; save(); }
+    P.busy = false; if (r.paid) P.err = null; else if (!P.err) P.err = 'We haven’t received the payment yet. If money left your account, it will show here within a few minutes; otherwise, try again.';
+  } catch (e) { P.busy = false; P.err = 'We couldn’t check the payment just now. Refresh this page in a minute.'; }
+  if (route() === 'order-' + id) render();
 }
 
 // ---------- validation ----------
@@ -3273,6 +3317,10 @@ document.addEventListener('click', (e) => {
     case 'pay-app': UI.co.appSheet = true; render(); break;
     case 'pay-fail': UI.co.appSheet = false; UI.co.payErr = 'The payment was declined in your UPI app. Nothing was charged. Try again or choose another method.'; track('payment_failed', { method: 'UPI app' }); render(); break;
     case 'pay-success': placeOrder(d.via); break;
+    case 'pay-order': payOnline(d.id); break;
+    case 'adm-ship': { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o || A.shipping) break; A.shipping = o.id; render();
+      admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
+    case 'pay-check': payCheck(d.id); break;
     case 'adm-cancel': if (!confirm('Cancel order ' + d.id + '? Its pieces go back into stock.')) break; admDo(async () => { const list = admData('orders') || []; const o = list.find((x) => x.id === d.id); if (!o) return;
       if (BTDB.on) { await BTDB.rpc('cancel_order', { order_id: o.id }); loadData(); } else o.items.forEach((l) => { S.stock[l.sku] = stockOf(l.sku) + l.qty; });
       o.status = 'Cancelled'; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = 'Cancelled'; save(); track('order_status', { order: o.id, status: 'Cancelled' }); render(); say(`${o.id} cancelled. Its pieces are back in stock.`); }); break;
@@ -3359,7 +3407,7 @@ document.addEventListener('submit', (e) => {
     return; }
   if (kind === 'adm-card-new') { const amt = parseInt($('#gcn-amt').value, 10); const note = $('#gcn-note').value.trim(); const A = UI.adm;
     if (!(amt > 0)) { say('Enter the amount in rupees.'); return; }
-    const pick = (n) => Array.from({ length: n }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 31)]).join('');
+    const pick = (n) => Array.from(crypto.getRandomValues(new Uint32Array(n)), (x) => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[x % 31]).join('');
     const row = { code: `BT-${pick(4)}-${pick(4)}`, amount: amt, balance: amt, note: note || null };
     admDo(async () => { if (BTDB.on) { await BTDB.insert('gift_cards', row); A.rows = {}; } else { S.db = S.db || {}; S.db.cards = [Object.assign({ created_at: new Date().toISOString() }, row)].concat(S.db.cards || []); save(); } A.cardMsg = `Made ${row.code} for ${inr(amt)}. Copy the code and send it with the card.`; render(); });
     return; }
@@ -3400,7 +3448,14 @@ document.addEventListener('submit', (e) => {
     if (!BTDB.on) { if (code === A.demo) acctIn(A.email, f.dataset.next); else { A.err = 'That code doesn’t match. Check it and try again.'; render(); $('#acct-code')?.focus(); } return; }
     A.busy = true; render(); BTDB.verifyEmailCode(A.email, code).then(() => acctIn(A.email, f.dataset.next), () => { A.busy = false; A.err = 'That code didn’t work or has expired. Check it, or send a new one.'; render(); $('#acct-code')?.focus(); });
     return; }
-  if (kind === 'pin') { const id = route().slice(2); const st = UI.pdp[id]; st.pin = f.querySelector('input').value.trim(); st.pinMsg = /^[1-9]\d{5}$/.test(st.pin) ? { ok: true, text: `Yes, we deliver to ${st.pin}. Order today and it usually arrives between ${arriveRange()}${SET.codOn ? '. Cash on delivery is available' : ''}.` } : { ok: false, text: 'Enter a 6-digit PIN code, for example 560001.' }; render(); return; }
+  if (kind === 'pin') { const id = route().slice(2); const st = UI.pdp[id]; st.pin = f.querySelector('input').value.trim();
+    const yes = (extra) => ({ ok: true, text: `Yes, we deliver to ${st.pin}. Order today and it usually arrives between ${arriveRange()}${extra || ''}${SET.codOn ? '. Cash on delivery is available' : ''}.` });
+    if (!/^[1-9]\d{5}$/.test(st.pin)) { st.pinMsg = { ok: false, text: 'Enter a 6-digit PIN code, for example 560001.' }; render(); return; }
+    if (!BTDB.on || !/^[1-9]\d{5}$/.test(String(SET.pickupPin || ''))) { st.pinMsg = yes(); render(); return; }
+    st.pinMsg = { ok: true, text: 'Checking couriers for ' + st.pin + '…' }; render(); const pin = st.pin;
+    BTDB.fn('delivery', { action: 'pin', pin }).then((r) => { if (st.pin !== pin) return; st.pinMsg = r.ok ? yes(r.days ? ` (couriers take about ${r.days} day${r.days > 1 ? 's' : ''} from dispatch)` : '') : { ok: false, text: `Couriers don’t reach ${pin} yet. Message us on WhatsApp and we’ll find a way.` }; track('pin_check', { ok: !!r.ok }); render(); },
+      () => { if (st.pin !== pin) return; st.pinMsg = yes(); render(); });
+    return; }
   readCo(f); co.errors = {};
   if (kind === 'contact') {
     const c = co.contact; if (!c.name) co.errors.name = 'Enter your name so we know who the parcel is for.';
@@ -3433,6 +3488,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && UI.house
 const origRender = render;
 render = function (nav) { if (route() === 'checkout' && nav && UI.co.step === 'contact' && cartCount()) track('checkout_start', { items: cartCount() }); origRender(nav); };
 loadData();
+if (PAID_BACK && BTDB.on) payCheck(PAID_BACK);
 render(false);
 })();
 </script>
