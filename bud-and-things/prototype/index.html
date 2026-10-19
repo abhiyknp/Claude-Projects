@@ -333,6 +333,7 @@ label { font-size: 14px; font-weight: 600; }
 .builder .sum { flex: 1 1 220px; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
 .check { display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 16px; }
 .check input { width: 20px; height: 20px; accent-color: var(--choc); }
+.pts-use { padding: 8px 12px; background: var(--ok-bg); font-size: 15px; }
 
 /* cart drawer */
 .scrim { position: fixed; inset: 0; background: rgba(58,41,32,.4); z-index: 40; }
@@ -970,7 +971,7 @@ body.app .why-band { padding-bottom: 96px; }
 
 <script src="config.js"></script>
 <script src="vendor/qrcode/qrcode.js"></script>
-<script src="db.js?v=6"></script>
+<script src="db.js?v=7"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -1045,6 +1046,7 @@ function defaults() {
 }
 let S = defaults();
 try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults(), JSON.parse(raw)); } catch (e) { /* storage unavailable */ }
+if (S.account && window.BTDB && BTDB.on && !BTDB.customer()) S.account = null; // the sign-in ended (signed out elsewhere or expired)
 S.opening = 'house'; // the other intros (A, B, C) are moved to the web-intros-and-themes repository
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
 const coFresh = (contact, address) => ({ step: 'contact', contact: contact || {}, address: address || {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, gift: { on: false, wrap: false, name: '', phone: '', note: '', date: '' }, code: '', codeErr: null, optin: false });
@@ -1095,11 +1097,11 @@ const TEXT = {
   'track.sub': ['Enter the order number from your confirmation email and the mobile number you ordered with.', 'Track order: text'],
   'foot.copy': ['© {year} BUD & THINGS by Ashi. All rights reserved.', 'Footer: copyright line'],
   'foot.made': ['Hand-made in India', 'Footer: made in line'],
-  'legal.note': ['This page is a template written for BUD & THINGS. Have it checked by a legal adviser and fill in the details in [brackets] before launch.', 'Policies: review note (empty to hide)'],
-  'legal.biz': ['[Registered business name], [full address], India. GSTIN: [to add]. Email: {email}.', 'Policies: business details'],
-  'legal.grievance': ['Grievance officer: [name], {email}, [phone]. We acknowledge complaints within 48 hours and resolve them within 30 days.', 'Policies: grievance officer'],
-  'legal.privacy': ['## Who we are\nBUD & THINGS ("we", "us") sells hand-made candles and Jesmonite objects through budandthings.com. This policy explains what personal data we collect, why, and the choices you have, in line with the Digital Personal Data Protection Act, 2023 and the Information Technology Act, 2000.\n\n## What we collect\nWhen you sign in or order: your name, email, mobile number and delivery address. If you send a gift: the name, mobile number and address of the person receiving it. When you pay: the payment gateway processes your card or UPI details; we never see or store full card numbers. When you browse: the pages you visit and items you add to your cart, kept to improve the shop.\n\n## Why we use it\nTo deliver your order and keep you updated about it, to answer your questions, to run Bud Points, to prevent fraud, and to keep accounts and tax records. We send offers and newsletters only if you sign up for them, and every email has a way to leave.\n\n## Who we share it with\nOnly with the services needed to run the shop: our payment gateway, courier partners, our database and email provider. Each is bound to use your data only for the work they do for us. We never sell your data.\n\n## How long we keep it\nOrder records are kept for 8 years, as Indian tax law requires. Newsletter sign-ups are kept until you leave the list. You can ask us to delete your account at any time.\n\n## Your rights\nYou can ask to see, correct or delete your data, withdraw consent for marketing, or name someone to act for you. Write to {email} and we will reply within 30 days.\n\n## Cookies and storage\nWe keep your cart, saved items and sign-in in your browser\'s storage so the shop works. We do not use advertising cookies.\n\n## Changes\nIf we change this policy we will update the date below and, for important changes, tell you by email. Last updated: [date].', 'Policies: privacy policy (## starts a heading)'],
-  'legal.terms': ['## About these terms\nThese terms apply when you browse budandthings.com or buy from us. By placing an order you agree to them. The shop is run by the business named below.\n\n## Your account\nYou sign in with a one-time code sent to your email. Keep access to that email secure; orders placed from your account are treated as yours. You must be 18 or older, or ordering with a parent or guardian.\n\n## Products\nOur pieces are hand-made, so colour, swirl, speckle and size vary slightly from piece to piece and from the photos. These variations are part of each piece and are not defects. Scent strength depends on the room and how the candle is burned.\n\n## Prices and payment\nPrices are in Indian rupees and include GST. Shipping is shown before you pay. Payment is taken in advance through our payment gateway (UPI, cards, net banking). An order is confirmed only once payment is received.\n\n## Offers, codes and Bud Points\nCodes and offers cannot be exchanged for cash and may be withdrawn at any time. Bud Points are earned on paid orders, have no cash value, and expire 12 months after they are earned.\n\n## Delivery\nDelivery times are estimates. See our Shipping and delivery policy for details.\n\n## Cancellations, damage and refunds\nSee our Cancellations and refunds policy.\n\n## Candle safety\nNever leave a burning candle unattended, keep it away from children, pets, curtains and anything that can catch fire, and follow the care card in the box. We are not responsible for damage caused by unsafe use.\n\n## Intellectual property\nThe BUD & THINGS name, logo, photos, designs and text on this site belong to us and may not be copied without permission.\n\n## Liability\nTo the extent the law allows, our liability for any order is limited to the amount you paid for it.\n\n## Law and disputes\nThese terms are governed by the laws of India. Courts in [city] have jurisdiction. For any complaint, please contact our grievance officer first.', 'Policies: terms and conditions (## starts a heading)'],
+  'legal.note': ['This page is a template written for BUD & THINGS. Have it checked by a legal adviser, and fill in the business details in Owner view → Settings, before launch. Clear this note once that is done.', 'Policies: review note (empty to hide)'],
+  'legal.biz': ['{bizName}, {bizAddress}, India. GSTIN: {gstin}. Email: {email}.', 'Policies: business details'],
+  'legal.grievance': ['Grievance officer: {grievanceName}, {email}, {grievancePhone}. We acknowledge complaints within 48 hours and resolve them within 30 days.', 'Policies: grievance officer'],
+  'legal.privacy': ['## Who we are\nBUD & THINGS ("we", "us") sells hand-made candles and Jesmonite objects through budandthings.com. This policy explains what personal data we collect, why, and the choices you have, in line with the Digital Personal Data Protection Act, 2023 and the Information Technology Act, 2000.\n\n## What we collect\nWhen you sign in or order: your name, email, mobile number and delivery address. If you send a gift: the name, mobile number and address of the person receiving it. When you pay: the payment gateway processes your card or UPI details; we never see or store full card numbers. When you browse: the pages you visit and items you add to your cart, kept to improve the shop.\n\n## Why we use it\nTo deliver your order and keep you updated about it, to answer your questions, to run Bud Points, to prevent fraud, and to keep accounts and tax records. We send offers and newsletters only if you sign up for them, and every email has a way to leave.\n\n## Who we share it with\nOnly with the services needed to run the shop: our payment gateway, courier partners, our database and email provider. Each is bound to use your data only for the work they do for us. We never sell your data.\n\n## How long we keep it\nOrder records are kept for 8 years, as Indian tax law requires. Newsletter sign-ups are kept until you leave the list. You can ask us to delete your account at any time.\n\n## Your rights\nYou can ask to see, correct or delete your data, withdraw consent for marketing, or name someone to act for you. Write to {email} and we will reply within 30 days.\n\n## Cookies and storage\nWe keep your cart, saved items and sign-in in your browser\'s storage so the shop works. We do not use advertising cookies.\n\n## Changes\nIf we change this policy we will update the date below and, for important changes, tell you by email. Last updated: {policyDate}.', 'Policies: privacy policy (## starts a heading)'],
+  'legal.terms': ['## About these terms\nThese terms apply when you browse budandthings.com or buy from us. By placing an order you agree to them. The shop is run by the business named below.\n\n## Your account\nYou sign in with a one-time code sent to your email. Keep access to that email secure; orders placed from your account are treated as yours. You must be 18 or older, or ordering with a parent or guardian.\n\n## Products\nOur pieces are hand-made, so colour, swirl, speckle and size vary slightly from piece to piece and from the photos. These variations are part of each piece and are not defects. Scent strength depends on the room and how the candle is burned.\n\n## Prices and payment\nPrices are in Indian rupees and include GST. Shipping is shown before you pay. Payment is taken in advance through our payment gateway (UPI, cards, net banking). An order is confirmed only once payment is received.\n\n## Offers, codes and Bud Points\nCodes and offers cannot be exchanged for cash and may be withdrawn at any time. Bud Points are earned on paid orders, have no cash value, and expire 12 months after they are earned.\n\n## Delivery\nDelivery times are estimates. See our Shipping and delivery policy for details.\n\n## Cancellations, damage and refunds\nSee our Cancellations and refunds policy.\n\n## Candle safety\nNever leave a burning candle unattended, keep it away from children, pets, curtains and anything that can catch fire, and follow the care card in the box. We are not responsible for damage caused by unsafe use.\n\n## Intellectual property\nThe BUD & THINGS name, logo, photos, designs and text on this site belong to us and may not be copied without permission.\n\n## Liability\nTo the extent the law allows, our liability for any order is limited to the amount you paid for it.\n\n## Law and disputes\nThese terms are governed by the laws of India. Courts in {courtCity} have jurisdiction. For any complaint, please contact our grievance officer first.', 'Policies: terms and conditions (## starts a heading)'],
   'legal.shipping': ['## Where we deliver\nWe deliver across India through trusted courier partners. Check your PIN code on any product page to see if we reach you and when.\n\n## Shipping charges\nShipping is {shipFee} per order, and free on orders over {freeOver}.\n\n## When it is sent\nEvery piece is made in small batches, so orders are packed and handed to the courier within 1 to 3 working days of payment. Prepaid orders are packed first.\n\n## How long it takes\nMost orders arrive in {deliveryDays} from the day they are sent. Metro cities are usually faster; remote areas, the North-East and islands can take longer.\n\n## Tracking\nOnce your order is sent we email you the courier name and tracking link. You can also follow it under Track your order with your order number and mobile number.\n\n## Gifts\nGift orders can go straight to the person, with your note hand-written on our card and no prices in the parcel. Pick an arrive-by date at checkout and we plan around it.\n\n## Festive deadlines\nAround Diwali and other festivals couriers get busy. Order early; we show the last order date for festive delivery on the site.\n\n## Address problems\nPlease check the address and mobile number carefully. If a parcel comes back because of a wrong address or no one to receive it, we can send it again for the shipping charge.', 'Policies: shipping and delivery (## starts a heading)'],
   'legal.refunds': ['## Cancelling an order\nYou can cancel any time before your order is packed: write to {email} with your order number and we refund the full amount. Once packed, it can no longer be cancelled.\n\n## Damaged or wrong items\nCandles and Jesmonite are fragile. If anything arrives broken, damaged or is not what you ordered, send us a photo or your unboxing video within {exchangeDays} days of delivery. We send a free replacement. Only if we can’t replace it (for example, it has sold out) do we refund it.\n\n## Returns\nBecause candles are a personal-care item and each piece is made by hand, we do not accept returns of undamaged pieces, and we do not offer exchanges or refunds for change of mind.\n\n## How refunds are paid\nRefunds go back to the payment method you used, through our payment gateway, within 5 to 7 working days of approval. Your bank may take a few more days to show it.\n\n## Codes and Bud Points\nIf an order with a code or Bud Points is refunded, the code or points are returned to your account where possible.', 'Policies: cancellations and replacements (## starts a heading)'],
   'pdp.room': ['See it in your room', 'Product: see it in your room button'],
@@ -1233,6 +1235,8 @@ const SET_META = [
   ['wrapFee', 'Gift wrap price (₹)', 'num'], ['ritualOff', 'Ritual saving: % off a candle and object bought together (0 for none)', 'num'],
   ['welcomeCode', 'Welcome code for newsletter sign-ups', 'text'], ['welcomeOff', 'Welcome code saving (%)', 'num'], ['repourPrice', 'Jar re-pour price (₹, 0 to hide)', 'num'], ['rewardPct', 'Bud Points: % of each paid order given back as points (1 point = ₹1; 0 to hide)', 'num'],
   ['featured', 'Home: featured product ids', 'text'], ['giftPicks', 'Gifting: popular product ids', 'text'], ['homeRitual', 'Home: ritual pairing id', 'text'], ['newIn', 'Home: new arrival product ids', 'text'], ['spotlight', 'Home: spotlight product id', 'text'],
+  ['bizName', 'Policies: registered business name', 'text'], ['bizAddress', 'Policies: registered address (without "India")', 'text'], ['gstin', 'Policies: GSTIN', 'text'],
+  ['grievanceName', 'Policies: grievance officer name', 'text'], ['grievancePhone', 'Policies: grievance officer phone', 'text'], ['courtCity', 'Policies: city whose courts have jurisdiction', 'text'], ['policyDate', 'Policies: last updated, e.g. 19 October 2026', 'text'],
   ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
@@ -1243,10 +1247,12 @@ const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: produ
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
 const SET_DEFAULTS = { shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
+  bizName: '', bizAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
-const fill = (s) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k === 'year' ? String(new Date().getFullYear()) : k in SET ? (/Fee|Price|Over/.test(k) ? inr(SET[k]) : String(SET[k])) : m));
+const LEGAL_KEYS = ['bizName', 'bizAddress', 'gstin', 'grievanceName', 'grievancePhone', 'courtCity', 'policyDate'];
+const fill = (s) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k === 'year' ? String(new Date().getFullYear()) : LEGAL_KEYS.includes(k) && !String(SET[k] || '').trim() ? '[to add]' : k in SET ? (/Fee|Price|Over/.test(k) ? inr(SET[k]) : String(SET[k])) : m));
 const Tx = (k) => fill(k in TXT ? TXT[k] : (TEXT[k] ? TEXT[k][0] : ''));
 const T = (k) => esc(Tx(k)).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
 const idList = (k) => String(SET[k] || '').split(',').map((x) => x.trim()).filter((id) => byId[id]);
@@ -1453,11 +1459,12 @@ function totals() {
   const ship = sub === 0 ? 0 : (+SET.freeOver && sub >= +SET.freeOver ? 0 : +SET.shipFee || 0);
   const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
   const cod = sub && UI.co.step === 'pay' && UI.co.method === 'cod' ? +SET.codFee || 0 : 0;
-  return { sub, ritual, code, ship, wrap, cod, total: sub - ritual - code + ship + wrap + cod };
+  const points = UI.co.usePts && S.account ? Math.max(0, Math.min(ptsMine().available, sub - ritual - code)) : 0;
+  return { sub, ritual, code, points, ship, wrap, cod, total: sub - ritual - code - points + ship + wrap + cod };
 }
 function totalsHTML(t) {
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
-  return `<div class="totals num">${row('Subtotal', inr(t.sub))}${t.ritual ? row(`Ritual saving <span class="hint">(${SET.ritualOff}% off candle + object)</span>`, '−' + inr(t.ritual), 'save') : ''}${t.code ? row(`Code ${esc(String(UI.co.code).toUpperCase())}`, '−' + inr(t.code), 'save') : ''}
+  return `<div class="totals num">${row('Subtotal', inr(t.sub))}${t.ritual ? row(`Ritual saving <span class="hint">(${SET.ritualOff}% off candle + object)</span>`, '−' + inr(t.ritual), 'save') : ''}${t.code ? row(`Code ${esc(String(UI.co.code).toUpperCase())}`, '−' + inr(t.code), 'save') : ''}${t.points ? row(`Bud Points <span class="hint">(${t.points} used)</span>`, '−' + inr(t.points), 'save') : ''}
     ${row(`Shipping${+SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`, t.ship ? inr(t.ship) : 'Free')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${row('Total', inr(t.total), 'grand')}</div>`;
 }
 function shipBar(t) {
@@ -1765,12 +1772,12 @@ function viewCheckout() {
   const co = UI.co; const lines = cartLines(); const t = totals(); const g = co.gift;
   if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:40px 80px"><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
   if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:24px 80px"><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
-  if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
+  loadMine(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
   const codeBox = codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> applied</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>`
     : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit">Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`;
-  const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
+  const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
   let main = '';
   if (co.step === 'contact') {
     main = `<h1 tabindex="-1" style="font-size:40px">Contact</h1><p class="muted">Signed in as <strong>${esc(S.account.email)}</strong>. We use these only for your delivery and order updates.</p>
@@ -1841,7 +1848,7 @@ function viewOrder(id) {
       <div class="status">Questions about this order? ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener">Message us on WhatsApp</a>` : 'Message us on WhatsApp'} or write to ${esc(SET.email)}.</div>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="reorder" data-id="${o.id}">Buy again</button><a class="btn ghost" href="#shop">Keep browsing</a></span></div>
     <aside class="checkout-side"><strong>${o.id}</strong>${o.items.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.name)} · ${esc(l.label)} × ${l.qty}</span><span class="num">${inr(l.price * l.qty)}</span></div>`).join('')}
-      <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${row(cod ? 'To pay on delivery' : 'Paid', inr(o.total), 'grand')}</div>
+      <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${o.pointsUsed ? row('Bud Points', '−' + inr(o.pointsUsed), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${row(cod ? 'To pay on delivery' : 'Paid', inr(o.total), 'grand')}</div>
       ${giftSummary(o.gift)}
       <figure class="photo" style="margin:0"><img src="${esc((brandImgs('gift', [[IMG.tag]])[0] || [IMG.tag])[0])}" alt="Rustic gift tag with the logo and olive leaf." loading="lazy"><figcaption>${o.gift && o.gift.on ? 'Your note goes on this tag' : 'A thank-you note goes in with orders where we can include one'}</figcaption></figure><span class="muted" style="font-size:14px">To ${o.gift && o.gift.on ? esc(o.gift.name) + ', ' : ''}${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
 }
@@ -2330,14 +2337,32 @@ function viewLegal(r) {
     <div class="legal-grid"><nav class="legal-nav" aria-label="Policies">${Object.entries(LEGAL).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
     <div class="article-body">${legalBody(k)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p><p>${T('legal.grievance')}</p></div></div></div>`;
 }
+// a signed-in customer's orders and Bud Points: from the database (my_orders), or this browser's orders in the preview
 function myOrders() {
+  if (BTDB.on) return (UI.mine && UI.mine.orders) || [];
   const em = S.account && S.account.email; return S.orders.filter((o) => !em || !o.contact.email || o.contact.email === em);
+}
+// earned points count once an order is delivered; spent points are held while an order is open
+function ptsMine() {
+  if (!S.account) return { available: 0, pending: 0 };
+  if (BTDB.on) return (UI.mine && UI.mine.points) || { available: 0, pending: 0 };
+  const list = myOrders(); const sum = (f) => list.reduce((a, o) => a + f(o), 0);
+  return { available: Math.max(0, sum((o) => (o.status === 'Delivered' ? o.points || 0 : 0)) - sum((o) => (o.status !== 'Cancelled' ? o.pointsUsed || 0 : 0))), pending: sum((o) => (['Placed', 'Packed', 'Shipped'].includes(o.status) ? o.points || 0 : 0)) };
+}
+function loadMine(force) {
+  if (!BTDB.on || !S.account || (!force && UI.mine && Date.now() - UI.mine.at < 30000) || UI.mineBusy) return;
+  UI.mineBusy = true;
+  BTDB.custRpc('my_orders').then((d) => { UI.mine = Object.assign({ at: Date.now() }, d); UI.mineBusy = false; render(); }, (err) => { UI.mineBusy = false; if (/sign_in/.test(err.message)) { S.account = null; save(); render(); } });
+}
+function ptsBox(t) {
+  const p = ptsMine(); if (!+SET.rewardPct || !S.account || !p.available) return '';
+  return `<label class="check pts-use"><input type="checkbox" data-act="pts-use" ${UI.co.usePts ? 'checked' : ''}> <span>Use my Bud Points <span class="hint">(${p.available} points, ${inr(p.available)} off)</span></span></label>`;
 }
 function orderRows(list) {
   return list.length ? `<ul class="order-list">${list.map((o) => `<li><a href="#order-${esc(o.id)}"><strong>${esc(o.id)}</strong><span class="muted">${new Date(o.placedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} · ${o.items.length} piece${o.items.length === 1 ? '' : 's'} · <span class="num">${inr(o.total)}</span></span><span class="pill ${esc(String(o.status).split(' ')[0])}">${esc(o.status)}</span></a></li>`).join('')}</ul>` : '<p class="muted">No orders yet.</p>';
 }
 function viewTrack() {
-  const tr = UI.track || {};
+  const tr = UI.track || {}; loadMine();
   return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Orders</span><h1 tabindex="-1">${T('track.title')}</h1><p class="muted" style="max-width:620px">${T('track.sub')}</p></div>
     <form data-form="track" class="track-form" novalidate><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label><input id="tr-phone" type="tel" inputmode="tel" maxlength="16" value="${esc(tr.phone || '')}" autocomplete="tel-national"></span><button class="btn" type="submit">Track order</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
     ${S.account ? `<h2 style="font-size:28px;margin-bottom:14px">Your orders</h2>${orderRows(myOrders())}` : `<p class="muted"><a href="#account">Sign in</a> to see all your orders here.</p>`}
@@ -2356,9 +2381,9 @@ function signInBox(next) {
 function viewAccount() {
   const a = S.account;
   if (!a) return `<div class="wrap" style="padding-block:40px 80px">${signInBox(UI.acct.next || '')}</div>`;
-  const list = myOrders(); const earned = list.filter((o) => !/Cancelled|Awaiting/.test(o.status)).reduce((s, o) => s + (o.points || 0), 0);
+  loadMine(); const list = myOrders(); const pm = ptsMine();
   return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Your account</span><h1 tabindex="-1">Hello${a.name ? ', ' + esc(a.name.split(' ')[0]) : ''}.</h1><p class="muted">Signed in as ${esc(a.email)}. <button class="linkbtn" type="button" data-act="acct-out">Sign out</button></p></div>
-    <div class="acct-grid">${+SET.rewardPct ? `<div class="acct-card points"><span class="eyebrow">Bud Points</span><strong class="num">${earned}</strong><span>Worth ${inr(earned)} off a future order. You earn ${esc(SET.rewardPct)}% back on every paid order.</span></div>` : ''}
+    <div class="acct-grid">${+SET.rewardPct ? `<div class="acct-card points"><span class="eyebrow">Bud Points</span><strong class="num">${pm.available}</strong><span>Worth ${inr(pm.available)} off your next order.${pm.pending ? ` ${pm.pending} more arrive once your open orders are delivered.` : ''} You earn ${esc(SET.rewardPct)}% back on every order.</span></div>` : ''}
       <a class="acct-card" href="#track"><span class="eyebrow">Orders</span><strong class="num">${list.length}</strong><span>Track an order →</span></a>
       <a class="acct-card" href="#saved"><span class="eyebrow">Saved</span><strong class="num">${S.saved.length}</strong><span>Pieces you loved →</span></a></div>
     <h2 style="font-size:28px;margin:36px 0 14px">Your orders</h2>${orderRows(list)}</div>`;
@@ -3014,25 +3039,28 @@ function acctSend(email, next) {
 }
 function acctIn(email, next) {
   const prev = S.orders.find((o) => o.contact.email === email); S.account = { email, name: (prev && prev.contact.name) || (UI.co.contact && UI.co.contact.name) || '', since: new Date().toISOString() };
-  save(); UI.acct = {}; track('signin', {}); say('Signed in as ' + email + '.'); if (next && location.hash.slice(1) !== next) location.hash = next; else render();
+  save(); UI.acct = {}; UI.mine = null; track('signin', {}); say('Signed in as ' + email + '.'); if (next && location.hash.slice(1) !== next) location.hash = next; else render();
 }
 async function placeOrder(via) {
   const lines = cartLines(); const co = UI.co; if (!lines.length || co.placing) return;
   for (const l of lines) if (stockOf(l.sku) < l.qty) { UI.co.payErr = `${l.p.name} (${l.v.label}) sold out while you were checking out. Please update your cart.`; render(); return; }
   const t = totals();
   const o = { placedAt: new Date().toISOString(), contact: { ...co.contact }, address: { ...co.address }, method: via, status: 'Placed', items: lines.map((l) => ({ sku: l.sku, name: l.p.name, label: l.v.label, price: l.v.price, qty: l.qty })),
-    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, points: pts(t.total - t.ship) };
+    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total - t.ship - t.wrap - t.cod), email: S.account.email };
   let id;
   if (BTDB.on) { // the database checks prices and takes the stock off in one step
     co.placing = true; co.payErr = null; render();
-    try { id = await BTDB.rpc('place_order', { o }); } catch (err) {
+    try { id = await BTDB.custRpc('place_order', { o }); } catch (err) {
       co.placing = false; const m = String(err.message || '');
+      if (/sign_in/.test(m)) { S.account = null; save(); UI.acct = { next: 'checkout' }; render(); say('Please sign in again to place your order.'); return; }
+      if (/points_changed/.test(m)) { co.usePts = false; co.payErr = 'Your Bud Points balance changed. We’ve taken them off this order; please check the total and pay again.'; loadMine(true); render(); return; }
       co.payErr = /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
         : /too_many/.test(m) ? 'We’ve had a lot of orders from this connection or number. Please message us on WhatsApp and we’ll place it for you.' : /bad_quantity/.test(m) ? 'That’s more than we can send in one order. Please lower the quantities, or message us for a bulk order.'
         : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
       if (/sold_out|price_changed|unknown_item/.test(m)) loadData(); render(); return;
     }
     co.placing = false; if (via !== 'Cash on delivery') o.status = 'Awaiting payment'; // until the payment gateway confirms it
+    UI.mine = null; // read the orders and points again
   } else id = 'BT-' + (1001 + S.orders.length);
   o.id = id;
   lines.forEach((l) => { S.stock[l.sku] = Math.max(0, stockOf(l.sku) - l.qty); });
@@ -3061,7 +3089,7 @@ document.addEventListener('click', (e) => {
     case 'combo-add': { let n = 0; d.skus.split(',').forEach((sku) => { if (skuMap[sku] && addToCart(sku, 1, { quiet: true, source: 'combo' })) n++; }); if (n) { UI.drawer = true; UI.drawerMsg = `Added the set (${n} piece${n > 1 ? 's' : ''}) to your cart.`; renderOverlay(); track('combo_add', { items: n }); } break; }
     case 'acct-change': UI.acct = { email: UI.acct.email, next: UI.acct.next }; render(); $('#acct-email')?.focus(); break;
     case 'acct-resend': acctSend(UI.acct.email, UI.acct.next); break;
-    case 'acct-out': S.account = null; save(); UI.acct = {}; render(); say('Signed out.'); break;
+    case 'acct-out': if (BTDB.on) BTDB.custSignOut(); S.account = null; UI.mine = null; save(); UI.acct = {}; render(); say('Signed out.'); break;
     case 'room-photo': $(d.cam ? '#room-cam' : '#room-file')?.click(); break;
     case 'room-3d': if (window.ROOM3D) window.ROOM3D.close(); ROOM.mode = '3d'; roomDraw(); track('room_3d', { id: ROOM.pid }); break;
     case 'room-look': ROOM.look = d.v; if (window.ROOM3D) window.ROOM3D.setLook(d.v); ROOM.el.querySelectorAll('[data-act="room-look"]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === d.v)); break;
@@ -3105,6 +3133,7 @@ document.addEventListener('click', (e) => {
     case 'walk-again': e.preventDefault(); window.scrollTo({ top: 0, behavior: reduce.matches ? 'auto' : 'smooth' }); track('walk_again', {}); break;
     case 'walk-shop': track('walk_shop', { at: LC.p.toFixed(2) }); break;
     case 'review-open': UI.review[d.id] = { open: true }; render(); setTimeout(() => $('#rv-name')?.focus(), 0); break;
+    case 'pts-use': UI.co.usePts = t.checked; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.codeErr = null; render(); break;
     case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;

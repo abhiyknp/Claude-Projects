@@ -17,7 +17,7 @@ Ashi edits all of it from the website's **Owner view** (`#admin`). The site read
 2. **Name the owner.** Open `schema.sql` in this folder. Change the email on its last line to the address Ashi will sign in with.
 3. **Create the tables.** In Supabase, open SQL Editor, choose New query, paste the whole of `schema.sql` and press Run. You can run it again safely after any change.
 4. **Create Ashi's login.** Open Authentication, then Users, then Add user. Enter the same email and a strong password, and tick "Auto confirm".
-5. **Stop strangers from signing up.** Open Authentication, then Sign In / Providers, and turn off "Allow new users to sign up". Leave "Confirm email" and "Secure email change" on. Only the confirmed email from step 2 can edit anything in any case, but this keeps the user list clean.
+5. **Let customers sign in with an emailed code.** Customers must sign in before they order. Open Authentication, then Sign In / Providers, and keep "Allow new users to sign up" and the Email provider on (a customer's first code creates their account). Leave "Confirm email" and "Secure email change" on. Then open Authentication → Emails → Templates → **Magic Link** and put the code in the email, for example: `<h2>Your BUD & THINGS code</h2><p>Type this code on the site to sign in: <strong>{{ .Token }}</strong></p><p>It works for one hour. If you didn't ask for it, ignore this email.</p>`. Under Authentication → Emails → SMTP Settings, connect your own email sender (for example Resend, Brevo or Zoho Mail on hello@budandthings.com): Supabase's built-in sender only allows a few emails an hour and is meant for testing. Customers can never edit anything: only the confirmed email from step 2, listed in the owners table, can.
 6. **Connect the site.** Open Project Settings, then API. Copy the Project URL and the `anon` `public` key into `prototype/config.js`:
    ```js
    window.BT_CONFIG = { supabase: { url: 'https://abcdefghijkl.supabase.co', anonKey: 'eyJhbGciOi…' } };
@@ -41,9 +41,11 @@ The preview code only keeps casual visitors out. It is not security: settings ar
 | | Visitors | Ashi (signed in) |
 |---|---|---|
 | Products, rituals, text, settings, stock, photos | Read what is live | Read and change everything, including hidden items |
-| Orders | Place one; look up their own with the order number and mobile | See all, mark paid, move them along, cancel |
+| Orders | Signed-in customers place one and see their own orders and Bud Points; anyone can look one up with the order number and mobile | See all, mark paid, move them along, cancel |
 | Reviews | Send one; it waits until Ashi publishes it | Publish, unpublish, delete |
 | Sign-ups and restock requests | Send one | See, download as a spreadsheet |
+
+**Bud Points.** Each order earns the setting `rewardPct` (5% by default) of what was paid for the pieces as points; 1 point is ₹1 off a later order. Points count once the order is **Delivered**. Points spent are held from the moment an order is placed and come back if it is cancelled. The database works all of this out from the customer's own orders (`points_of` and `my_orders` in `schema.sql`), so the page can't add points.
 
 When an order is placed, the database rebuilds it from what it knows (`place_order` in `schema.sql`): every price from the products table, and the ritual saving, welcome code, shipping, gift wrap and cash on delivery fee from settings. If the total the visitor saw isn't the same, the order is refused and they're asked to check their cart. It takes the stock off in the same step, so two people can never buy the last piece.
 
@@ -92,7 +94,7 @@ Files live in the public `media` storage bucket. Only Ashi can add, change or de
 node bud-and-things/tools/mock-supabase.js        # http://localhost:54321, owner hello@budandthings.com / demo
 ```
 
-Point a local preview's `config.js` at `http://localhost:54321` (any anon key works). The second step's code is always `123456`. Everything is lost when it stops.
+Point a local preview's `config.js` at `http://localhost:54321` (any anon key works). The second step's code is always `123456`, and a customer's emailed code is always `111111`. Everything is lost when it stops.
 
 ## Still to do before taking real money
 

@@ -13,6 +13,18 @@
   const aal = (t) => { try { return JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).aal; } catch (e) { return null; } };
   try { token = sessionStorage.getItem('bt-owner-token'); if (token && twoStep && aal(token) !== 'aal2') { token = null; sessionStorage.removeItem('bt-owner-token'); } } catch (e) { /* storage unavailable */ }
   const keep = (t) => { token = t; pending = null; try { sessionStorage.setItem('bt-owner-token', t); } catch (e) { /* ignore */ } };
+  // a customer's sign-in (emailed code): kept in this browser and renewed when it runs out, like Supabase's own library does
+  let cust = null;
+  try { cust = JSON.parse(localStorage.getItem('bt-customer') || 'null'); } catch (e) { cust = null; }
+  const keepCust = (d) => {
+    cust = d && d.access_token ? { access: d.access_token, refresh: d.refresh_token, exp: Date.now() + ((d.expires_in || 3600) - 60) * 1000, email: String((d.user && d.user.email) || (cust && cust.email) || '').toLowerCase() } : null;
+    try { if (cust) localStorage.setItem('bt-customer', JSON.stringify(cust)); else localStorage.removeItem('bt-customer'); } catch (e) { /* storage unavailable */ }
+  };
+  async function custToken() {
+    if (!cust) return null; if (Date.now() < cust.exp) return cust.access;
+    try { keepCust(await req('POST', '/auth/v1/token?grant_type=refresh_token', { refresh_token: cust.refresh }, null, key)); } catch (e) { keepCust(null); }
+    return cust && cust.access;
+  }
   const enc = (path) => path.split('/').map(encodeURIComponent).join('/');
 
   async function req(method, path, body, headers, bearer) {
@@ -87,9 +99,13 @@
     },
     // customers sign in with a 6-digit code emailed by Supabase (Authentication → Email: the "Magic Link" template must
     // include {{ .Token }}). Their session is separate from the owner's and only proves they own the email; customers
-    // are never owners (is_owner() checks the owners table), so it opens nothing in the database.
+    // are never owners (is_owner() checks the owners table). It lets them place orders and read their own orders and points.
     sendCode: (email) => req('POST', '/auth/v1/otp', { email, create_user: true }, null, key),
-    verifyEmailCode: (email, code) => req('POST', '/auth/v1/verify', { type: 'email', email, token: String(code) }, null, key),
+    verifyEmailCode: async (email, code) => { const d = await req('POST', '/auth/v1/verify', { type: 'email', email, token: String(code) }, null, key); keepCust(d); return cust; },
+    customer: () => (cust ? cust.email : null),
+    // functions only a signed-in customer may call: place_order and my_orders. "sign_in" means the session has ended.
+    custRpc: async (fn, args) => { const t = await custToken(); if (!t) { const e = new Error('sign_in'); e.status = 401; throw e; } return req('POST', '/rest/v1/rpc/' + fn, args || {}, null, t); },
+    custSignOut: () => { const t = cust && cust.access; keepCust(null); if (t) req('POST', '/auth/v1/logout', {}, null, t).catch(() => {}); },
     awaitingCode: () => !!pending,
     signOut: () => { token = null; pending = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ } }
   };

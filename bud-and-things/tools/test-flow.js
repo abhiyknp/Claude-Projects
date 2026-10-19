@@ -41,6 +41,15 @@ const { chromium } = require(require('child_process').execSync('npm root -g').to
     await pg.goto(url + '#admin'); await pg.waitForTimeout(100); await over('admin');
     await pg.click('[data-act="advance"]');
     console.log(w, 'admin status:', await pg.$$eval('td .pill', (e) => e.map((x) => x.textContent).slice(0, 1)));
+    await pg.click('[data-act="advance"]'); await pg.click('[data-act="advance"]');
+    console.log(w, 'admin status now:', await pg.$$eval('td .pill', (e) => e.map((x) => x.textContent).slice(0, 1)));
+    // Bud Points: earned once delivered, then spent at the next checkout
+    await pg.goto(url + '#account'); await pg.waitForTimeout(100);
+    console.log(w, 'points:', (await pg.textContent('.acct-card.points strong')).trim());
+    await pg.goto(url + '#p-ghat-tray'); await pg.click('[data-act="add"]'); await pg.keyboard.press('Escape'); await pg.goto(url + '#checkout'); await pg.waitForTimeout(100);
+    const before = (await pg.textContent('.checkout-side .grand')).trim(); await pg.click('[data-act="pts-use"]'); await pg.waitForTimeout(100);
+    console.log(w, 'with points:', before, '→', (await pg.textContent('.checkout-side .grand')).trim());
+    await pg.goto(url + '#admin'); await pg.waitForTimeout(100);
     await pg.click('[data-act="adm-tab"][data-v="stock"]'); console.log(w, 'stock CF-220:', await pg.inputValue('#st-BT-CN-CF-220'));
     await pg.goto(url + '#feeling'); await pg.click('[data-act="finder-opt"][data-v="calm"]');
     for (let i = 0; i < 5; i++) await pg.click('[data-act="finder-next"]');

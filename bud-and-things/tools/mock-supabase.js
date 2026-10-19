@@ -1,6 +1,6 @@
 // A stand-in for Supabase, for testing the site's database mode without an account. It keeps everything in memory
 // and answers the small part of the Supabase HTTP API that prototype/db.js uses (tables, two functions, sign-in and
-// file storage), with the same who-may-do-what rules as supabase/schema.sql.
+// file storage, customer sign-in by emailed code: always 111111), with the same who-may-do-what rules as supabase/schema.sql.
 //   node tools/mock-supabase.js            serves on http://localhost:54321
 //   owner sign-in: hello@budandthings.com / demo, password only while TWO_STEP is off; with TWO_STEP=1, then the code 123456
 // Point the site at it with  window.BT_CONFIG = { supabase: { url: 'http://localhost:54321', anonKey: 'anon' } }  in config.js.
@@ -10,6 +10,11 @@ const OWNER = { email: 'hello@budandthings.com', password: 'demo', code: '123456
 // tokens look like Supabase's (header.payload.signature); only the second step's token ("aal2") may edit
 const jwt = (aal) => ['x', Buffer.from(JSON.stringify({ email: OWNER.email, aal })).toString('base64url'), 'sig'].join('.');
 const TOKENS = { aal1: jwt('aal1'), aal2: jwt('aal2') };
+// customers: any email; the emailed code is always 111111. Their token carries their email, as Supabase's does.
+const custJwt = (email) => ['x', Buffer.from(JSON.stringify({ email, role: 'authenticated', customer: true })).toString('base64url'), 'sig'].join('.');
+const custOf = (auth) => { try { const p = JSON.parse(Buffer.from(auth.replace(/^Bearer /, '').split('.')[1], 'base64url').toString()); return p.customer ? String(p.email).toLowerCase() : null; } catch (e) { return null; } };
+const CUST_CODE = '111111';
+const custSession = (email) => ({ access_token: custJwt(email), refresh_token: 'r.' + Buffer.from(email).toString('base64url'), expires_in: 3600, token_type: 'bearer', user: { email } });
 const TWO_STEP = process.env.TWO_STEP === '1'; // matches ownerTwoStep in config.js; off until launch
 const KEYS = { site_text: 'key', settings: 'key', stock: 'sku' };
 const T = { products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [] };
@@ -39,7 +44,14 @@ const fail = (res, code, message) => send(res, code, { message });
 // place_order, as in schema.sql: the order is rebuilt from the products and settings, so the browser can't set prices
 const setting = (k, d) => { const r = T.settings.find((x) => x.key === k); return r ? r.value : d; };
 const num = (k, d) => { const v = setting(k, d); return /^\s*-?\d+(\.\d+)?\s*$/.test(String(v)) ? +v : 0; };
-function placeOrder(o) {
+// Bud Points, as points_of() in schema.sql
+function pointsOf(em) {
+  const mine = T.orders.filter((x) => x.data.email === em); const sum = (f) => mine.reduce((a, x) => a + f(x), 0);
+  return { available: Math.max(0, sum((x) => (x.status === 'Delivered' ? x.data.points || 0 : 0)) - sum((x) => (x.status !== 'Cancelled' ? x.data.pointsUsed || 0 : 0))),
+    pending: sum((x) => (['Placed', 'Packed', 'Shipped'].includes(x.status) ? x.data.points || 0 : 0)) };
+}
+function placeOrder(o, em) {
+  if (!em) throw new Error('sign_in');
   const c = o.contact || {}, a = o.address || {}, g = o.gift, bad = (w) => { throw new Error('bad_order:' + w); };
   if (!c.name || c.name.length > 80) bad('name'); if (!/^[6-9]\d{9}$/.test(c.phone || '')) bad('phone');
   if (!a.line1 || !/^[1-9]\d{5}$/.test(a.pin || '') || !a.city || !a.state) bad('address');
@@ -60,13 +72,15 @@ function placeOrder(o) {
   if (o.code) { if (String(o.code).trim().toUpperCase() !== String(setting('welcomeCode', 'HELLO10')).trim().toUpperCase()) throw new Error('price_changed'); code = String(o.code).trim().toUpperCase(); codeOff = Math.round((sub - ritual) * num('welcomeOff', 10) / 100); }
   const giftOn = !!(g && g.on); const ship = num('freeOver', 1999) > 0 && sub >= num('freeOver', 1999) ? 0 : Math.round(num('shipFee', 99));
   const wrap = giftOn && g.wrap ? Math.round(num('wrapFee', 99)) : 0; const cod = o.method === 'Cash on delivery' ? Math.round(num('codFee', 49)) : 0;
-  const total = sub - ritual - codeOff + ship + wrap + cod;
+  if (!/^\d{1,6}$/.test(String(o.usePoints == null ? 0 : o.usePoints))) bad('points'); const usePts = +(o.usePoints || 0);
+  if (usePts > 0 && (usePts > pointsOf(em).available || usePts > sub - ritual - codeOff)) throw new Error('points_changed');
+  const total = sub - ritual - codeOff - usePts + ship + wrap + cod; const earned = Math.floor((total - ship - wrap - cod) * Math.max(num('rewardPct', 5), 0) / 100);
   if (o.sub !== sub || o.total !== total) throw new Error('price_changed');
   items.forEach((it) => { T.stock.find((x) => x.sku === it.sku).qty -= it.qty; });
   const id = 'BT-' + orderNo++ + '-' + Math.random().toString(16).slice(2, 8).toUpperCase().padEnd(6, '0');
   const status = o.method === 'Cash on delivery' ? 'Placed' : 'Awaiting payment';
-  const data = { id, placedAt: new Date().toISOString(), method: o.method, items, contact: { name: c.name, phone: c.phone, email: c.email || '' }, address: { line1: a.line1, line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state },
-    sub, ritual, code, codeOff, ship, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin };
+  const data = { id, placedAt: new Date().toISOString(), method: o.method, items, email: em, contact: { name: c.name, phone: c.phone, email: em }, address: { line1: a.line1, line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state },
+    sub, ritual, code, codeOff, pointsUsed: usePts, points: earned, ship, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin };
   T.orders.push({ id, data, status, phone: c.phone, total, method: o.method, created_at: data.placedAt });
   return id;
 }
@@ -78,6 +92,10 @@ http.createServer((req, res) => {
     const auth = req.headers.authorization || ''; const own = auth === 'Bearer ' + TOKENS.aal2 || (!TWO_STEP && auth === 'Bearer ' + TOKENS.aal1); const signedIn = own || auth === 'Bearer ' + TOKENS.aal1;
     const json = () => (raw.length ? JSON.parse(raw.toString()) : null);
     try {
+      if (u.pathname === '/auth/v1/otp') { const b = json(); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email || '') ? send(res, 200, {}) : send(res, 400, { msg: 'Unable to validate email address' }); }
+      if (u.pathname === '/auth/v1/verify') { const b = json(); return b.token === CUST_CODE ? send(res, 200, custSession(String(b.email).toLowerCase())) : send(res, 403, { msg: 'Token has expired or is invalid' }); }
+      if (u.pathname === '/auth/v1/logout') return send(res, 204);
+      if (u.pathname === '/auth/v1/token' && q.get('grant_type') === 'refresh_token') { const b = json(); try { return send(res, 200, custSession(Buffer.from(String(b.refresh_token).slice(2), 'base64url').toString())); } catch (e) { return send(res, 400, { error: 'invalid_grant' }); } }
       if (u.pathname === '/auth/v1/token') { const b = json(); return b.email === OWNER.email && b.password === OWNER.password ? send(res, 200, { access_token: TOKENS.aal1, token_type: 'bearer' }) : send(res, 400, { error: 'invalid_grant', error_description: 'Invalid login credentials' }); }
       if (u.pathname.startsWith('/auth/v1/')) { // the second step: one TOTP factor, code 123456
         if (!signedIn) return send(res, 401, { msg: 'not signed in' });
@@ -97,7 +115,8 @@ http.createServer((req, res) => {
         FILES[path] = { body: raw, type: req.headers['content-type'] }; return send(res, 200, { Key: 'media/' + path });
       }
       m = /^\/rest\/v1\/rpc\/(\w+)$/.exec(u.pathname);
-      if (m && m[1] === 'place_order') { try { return send(res, 200, JSON.stringify(placeOrder(json().o)), 'application/json'); } catch (e) { return fail(res, 400, e.message); } }
+      if (m && m[1] === 'place_order') { try { return send(res, 200, JSON.stringify(placeOrder(json().o, custOf(auth))), 'application/json'); } catch (e) { return fail(res, 400, e.message); } }
+      if (m && m[1] === 'my_orders') { const em = custOf(auth); if (!em) return fail(res, 400, 'sign_in'); return send(res, 200, { points: pointsOf(em), orders: T.orders.filter((x) => x.data.email === em).slice().reverse().slice(0, 50).map((x) => Object.assign({}, x.data, { status: x.status })) }); }
       if (m && m[1] === 'get_order') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === a.phone_no); return send(res, 200, o ? Object.assign({}, o.data, { status: o.status }) : null); }
       if (m && m[1] === 'cancel_order') {
         if (!own) return fail(res, 400, 'not_allowed');

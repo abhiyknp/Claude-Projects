@@ -182,6 +182,32 @@ begin
   end loop;
 end $$;
 
+-- ---------- customers ----------
+-- Customers sign in with a 6-digit code emailed by Supabase. Their email comes from that session, never from the page,
+-- so an order and its Bud Points always belong to the inbox that proved itself.
+create or replace function customer_email() returns text language sql stable security definer set search_path = public as $$
+  select lower(u.email) from auth.users u where u.id = auth.uid() and u.email_confirmed_at is not null
+$$;
+create index if not exists orders_email on orders ((data ->> 'email'));
+-- Bud Points: earned points count once the order is delivered; points spent are held from the moment the order is placed
+-- and come back if it is cancelled
+create or replace function points_of(em text) returns jsonb language sql stable security definer set search_path = public as $$
+  select jsonb_build_object(
+    'available', greatest(0, coalesce(sum(case when status = 'Delivered' then coalesce((data ->> 'points')::int, 0) else 0 end), 0)
+      - coalesce(sum(case when status <> 'Cancelled' then coalesce((data ->> 'pointsUsed')::int, 0) else 0 end), 0))::int,
+    'pending', coalesce(sum(case when status in ('Placed', 'Packed', 'Shipped') then coalesce((data ->> 'points')::int, 0) else 0 end), 0)::int)
+  from orders where data ->> 'email' = em
+$$;
+-- a signed-in customer's own orders (newest 50) and points
+create or replace function my_orders() returns jsonb language plpgsql security definer set search_path = public as $$
+declare em text := customer_email();
+begin
+  if em is null then raise exception 'sign_in'; end if;
+  perform hit('mine', em, 60, '1 hour');
+  return jsonb_build_object('points', points_of(em), 'orders', coalesce((select jsonb_agg(x.d order by x.created_at desc) from (
+    select data || jsonb_build_object('status', status) d, created_at from orders where data ->> 'email' = em order by created_at desc limit 50) x), '[]'::jsonb));
+end $$;
+
 create or replace function place_order(o jsonb) returns text language plpgsql security definer set search_path = public as $$
 declare
   c jsonb := coalesce(o -> 'contact', '{}'); a jsonb := coalesce(o -> 'address', '{}'); g jsonb := o -> 'gift';
@@ -190,7 +216,10 @@ declare
   items jsonb := '[]'; skus text[] := '{}'; candles int[] := '{}'; objects int[] := '{}';
   sub int := 0; ritual int := 0; code_off int := 0; ship int := 0; wrap int := 0; cod int := 0; total int; code text := '';
   gift_on boolean := false; gift jsonb := null; new_id text; st text;
+  em text := customer_email(); use_pts int := 0; earned int := 0;
 begin
+  -- no guest orders: the customer signs in first
+  if em is null then raise exception 'sign_in'; end if;
   perform release_unpaid();
   -- how often: per connection, per phone, and for the whole shop
   perform hit('order', client_key(), 5, '1 hour');
@@ -200,7 +229,6 @@ begin
   if jsonb_typeof(o) <> 'object' or jsonb_typeof(o -> 'items') <> 'array' then raise exception 'bad_order'; end if;
   if length(coalesce(c ->> 'name', '')) not between 1 and 80 then raise exception 'bad_order:name'; end if;
   if coalesce(phone, '') !~ '^[6-9][0-9]{9}$' then raise exception 'bad_order:phone'; end if;
-  if coalesce(c ->> 'email', '') <> '' and (length(c ->> 'email') > 120 or (c ->> 'email') !~ '^[^\s@]+@[^\s@]+\.[^\s@]+$') then raise exception 'bad_order:email'; end if;
   if length(coalesce(a ->> 'line1', '')) not between 1 and 200 or length(coalesce(a ->> 'line2', '')) > 200 then raise exception 'bad_order:address'; end if;
   if coalesce(a ->> 'pin', '') !~ '^[1-9][0-9]{5}$' then raise exception 'bad_order:pin'; end if;
   if length(coalesce(a ->> 'city', '')) not between 1 and 80 or length(coalesce(a ->> 'state', '')) not between 1 and 60 then raise exception 'bad_order:address'; end if;
@@ -251,7 +279,15 @@ begin
   ship := case when sub = 0 then 0 when cfg_num('freeOver', 1999) > 0 and sub >= cfg_num('freeOver', 1999) then 0 else round(cfg_num('shipFee', 99)) end;
   if gift_on and (gift ->> 'wrap')::boolean then wrap := round(cfg_num('wrapFee', 99)); end if;
   if method = 'Cash on delivery' then cod := round(cfg_num('codFee', 49)); end if;
-  total := sub - ritual - code_off + ship + wrap + cod;
+  -- Bud Points: 1 point is ₹1 off the pieces, up to what the customer has; one order at a time per customer
+  if coalesce(o ->> 'usePoints', '0') !~ '^[0-9]{1,6}$' then raise exception 'bad_order'; end if;
+  use_pts := coalesce((o ->> 'usePoints')::int, 0);
+  if use_pts > 0 then
+    perform pg_advisory_xact_lock(hashtext('points:' || em));
+    if use_pts > (points_of(em) ->> 'available')::int or use_pts > sub - ritual - code_off then raise exception 'points_changed'; end if;
+  end if;
+  total := sub - ritual - code_off - use_pts + ship + wrap + cod;
+  earned := floor((total - ship - wrap - cod) * greatest(cfg_num('rewardPct', 5), 0) / 100);
   -- the browser showed the customer a total; if it isn't this one, something changed and they should look again
   if coalesce(o ->> 'sub', '') <> sub::text or coalesce(o ->> 'total', '') <> total::text then raise exception 'price_changed'; end if;
 
@@ -259,9 +295,9 @@ begin
   new_id := 'BT-' || nextval('order_no') || '-' || upper(substr(md5(gen_random_uuid()::text), 1, 6));
   insert into orders (id, data, status, phone, total, method) values (new_id, jsonb_build_object(
     'id', new_id, 'placedAt', now(), 'method', method, 'items', items,
-    'contact', jsonb_build_object('name', trim(c ->> 'name'), 'phone', phone, 'email', coalesce(c ->> 'email', '')),
+    'email', em, 'contact', jsonb_build_object('name', trim(c ->> 'name'), 'phone', phone, 'email', em),
     'address', jsonb_build_object('line1', trim(a ->> 'line1'), 'line2', coalesce(a ->> 'line2', ''), 'pin', a ->> 'pin', 'city', trim(a ->> 'city'), 'state', a ->> 'state'),
-    'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'ship', ship, 'wrap', wrap, 'cod', cod, 'total', total,
+    'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'pointsUsed', use_pts, 'points', earned, 'ship', ship, 'wrap', wrap, 'cod', cod, 'total', total,
     'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true'), st, phone, total, method);
   return new_id;
 end $$;
@@ -295,10 +331,14 @@ revoke execute on function cfg_on(text, boolean) from public, anon, authenticate
 revoke execute on function cfg_text(text, text) from public, anon, authenticated;
 revoke execute on function client_key() from public, anon, authenticated;
 revoke execute on function guard_visitor() from public, anon, authenticated;
-revoke execute on function place_order(jsonb) from public;
+revoke execute on function place_order(jsonb) from public, anon;
 revoke execute on function get_order(text, text) from public;
 revoke execute on function cancel_order(text) from public, anon;
-grant execute on function place_order(jsonb) to anon, authenticated;
+grant execute on function place_order(jsonb) to authenticated;
+revoke execute on function customer_email() from public, anon, authenticated;
+revoke execute on function points_of(text) from public, anon, authenticated;
+revoke execute on function my_orders() from public, anon;
+grant execute on function my_orders() to authenticated;
 grant execute on function get_order(text, text) to anon, authenticated;
 grant execute on function cancel_order(text) to authenticated;
 grant execute on function is_owner() to anon, authenticated;
