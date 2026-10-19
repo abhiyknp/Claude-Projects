@@ -44,6 +44,9 @@ The preview code only keeps casual visitors out. It is not security: settings ar
 | Orders | Signed-in customers place one and see their own orders and Bud Points; anyone can look one up with the order number and mobile | See all, mark paid, move them along, cancel |
 | Reviews | Send one; it waits until Ashi publishes it | Publish, unpublish, delete |
 | Sign-ups and restock requests | Send one | See, download as a spreadsheet |
+| Gift reminders | Save one (a date within the next year) | See what is coming up, message each customer |
+| Gift cards | Check a code's balance (20 tries an hour), spend it at checkout | Issue cards, see what is left on each |
+| Share links | Get their own link (5 an hour) | See which customers brought orders, send each a thank-you card |
 
 **Bud Points.** Each order earns the setting `rewardPct` (5% by default) of what was paid for the pieces as points; 1 point is ₹1 off a later order. Points count once the order is **Delivered**. Points spent are held from the moment an order is placed and come back if it is cancelled. The database works all of this out from the customer's own orders (`points_of` and `my_orders` in `schema.sql`), so the page can't add points.
 
@@ -60,6 +63,8 @@ So a script can't flood the shop, the database counts what each visitor sends, b
 | Order lookups | 20 an hour per connection |
 | Reviews | 3 an hour per connection, 60 an hour in all |
 | Sign-ups | 5 an hour per connection; the same email or number is only saved once |
+| Gift reminders | 10 an hour per connection; the same date for the same person is saved once |
+| Gift card checks | 20 an hour per connection, so codes can't be guessed |
 | Restock requests | 10 an hour per connection; once per piece per person |
 
 To change a limit, add a row with the name in brackets as its key and a number as its value in Supabase → Table Editor → settings. Names, phone numbers, addresses, PIN codes, emails and the payment method are checked as well.
@@ -102,3 +107,12 @@ Point a local preview's `config.js` at `http://localhost:54321` (any anon key wo
 - For cash on delivery, consider a one-time code by SMS or WhatsApp to the customer's mobile before the order is accepted (the delivery partner or an SMS service can send it); until then, the limits above keep a script from taking all the stock.
 - Send order updates on WhatsApp or by email when an order moves along (a Supabase Edge Function or the gateway's webhooks).
 - Back up: Supabase's free plan keeps daily backups for a short time only. Export orders regularly from the Table Editor, or move to a paid plan at launch.
+
+
+## Gift cards, reminders and share links (October 2026)
+
+Run `schema.sql` again in the SQL Editor to add them. It is safe to re-run. Then:
+
+- **Gift cards.** A shopper asks for a card on `#giftcard` (it opens WhatsApp or email). Once they have paid, open Owner view → Gift cards and make a card for that amount. The site generates the code (for example `BT-7KQM-3XRA`). Write it on the printed card, or send it on WhatsApp. At checkout, the code goes in the same box as the welcome code. It pays for as much of the order as its balance covers, and the balance goes down in the same step. If the order is cancelled, or never paid, the balance comes back.
+- **Gift reminders.** Shoppers save a date on the Gifting page. Owner view → Sign-ups lists them with the soonest first and a Message link for each. Send one about a week before the date.
+- **Share links.** On `#share`, a customer gets their own link (`?ref=ABC123`). An order placed through that link is credited to them, but never to their own number. Owner view → Gift cards lists the customers who brought orders, so you can send each one the thank-you card set in Settings → `refReward`.

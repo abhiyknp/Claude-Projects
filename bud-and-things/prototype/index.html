@@ -956,7 +956,7 @@ body.app .why-band { padding-bottom: 96px; }
       <span class="muted" id="foot-tag">Made with thought. Given with feeling.</span>
       <div id="foot-social"></div>
     </div>
-    <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#gifts">Gift boxes</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a><a href="#bulk">Corporate &amp; bulk gifts</a><a href="#share">Share with a friend</a></nav>
+    <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#gifts">Gift boxes</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a><a href="#bulk">Corporate &amp; bulk gifts</a><a href="#giftcard">Gift cards</a><a href="#share">Share with a friend</a></nav>
     <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact us</a><a href="#track">Track your order</a><a href="#shipping">Shipping &amp; delivery</a><a href="#refunds">Cancellations &amp; replacements</a><a href="#faq">FAQ</a><a href="#journal-first-burn">Product care</a></nav>
     <nav aria-label="About"><strong>About</strong><a href="#story">Our Story</a><a href="#why">Why buy from us</a><a href="#journal">Journal</a><a href="#tour">3D walk-through</a><a href="#account">Your account</a></nav>
     <nav aria-label="Policies"><strong>Policies</strong><a href="#privacy">Privacy policy</a><a href="#terms">Terms &amp; conditions</a><a href="#shipping">Shipping policy</a><a href="#refunds">Replacement policy</a></nav>
@@ -1197,6 +1197,15 @@ const TEXT = {
   'share.title': ['Give a friend *{welcomeOff}% off*', 'Share page: heading'],
   'share.sub': ['Know someone who would love a hand-poured candle? Send them our shop. They get {welcomeOff}% off their first order with {welcomeCode}.', 'Share page: line under the heading'],
   'share.msg': ['I found these hand-poured candles and Jesmonite pieces from BUD & THINGS. Use {welcomeCode} for {welcomeOff}% off your first order:', 'Share page: the message friends receive'],
+  'gc.title': ['Give a *gift card*', 'Gift cards: heading'],
+  'gc.sub': ['When you can’t choose, let them. A printed card with a code, posted in our envelope or sent on WhatsApp. It works on anything in the shop and never runs out until it’s spent.', 'Gift cards: line under the heading'],
+  'gc.how': ['Pick an amount and tell us who it’s for|We send you a UPI link to pay|We post the card, or WhatsApp it to them on the day', 'Gift cards: how it works (separate lines with |)'],
+  'rem.title': ['Never miss a moment', 'Gifting: reminder heading'],
+  'rem.sub': ['Tell us a birthday or anniversary and we’ll message you a week before, with gift ideas. Just one message, no spam.', 'Gifting: reminder text'],
+  'rem.done': ['Saved. We’ll remind you a week before.', 'Gifting: after a reminder is saved'],
+  'share.own': ['Get your own link, and when a friend orders through it we’ll send you a ₹{refReward} gift card as a thank-you.', 'Share page: your own link offer'],
+  'faq.q11': ['Do you sell gift cards?', 'FAQ: question 11 (empty to hide)'],
+  'faq.a11': ['Yes. Choose an amount on our gift card page. We post a printed card or send it on WhatsApp, and it works on anything in the shop until it’s spent.', 'FAQ: answer 11'],
   'faq.title': ['Questions, answered', 'FAQ: heading'],
   'faq.sub': ['Can’t find yours? Message us and Ashi will reply.', 'FAQ: line under the heading'],
   'faq.q1': ['How do I pay?', 'FAQ: question 1 (empty to hide)'],
@@ -1233,7 +1242,7 @@ const TEXT = {
   'soon.text': ['Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving. Leave your email and we’ll tell you the day we open.', 'Coming soon: text'],
   'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button']
 };
-const TEXT_GROUPS = [['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['walk.', 'The house walk'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['share.', 'Share with a friend'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
+const TEXT_GROUPS = [['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['walk.', 'The house walk'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['share.', 'Share with a friend'], ['gc.', 'Gift cards'], ['rem.', 'Gift reminders'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
 // settings: money in ₹, lists of product ids separated by commas
 const SET_META = [
   ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Delivery promise on product pages, e.g. Ships within 24 hours (empty to hide; only while it is true)', 'text'],
@@ -1243,7 +1252,7 @@ const SET_META = [
   ['featured', 'Home: featured product ids', 'text'], ['giftPicks', 'Gifting: popular product ids', 'text'], ['homeRitual', 'Home: ritual pairing id', 'text'], ['newIn', 'Home: new arrival product ids', 'text'], ['spotlight', 'Home: spotlight product id', 'text'],
   ['bizName', 'Policies: registered business name', 'text'], ['bizAddress', 'Policies: registered address (without "India")', 'text'], ['gstin', 'Policies: GSTIN', 'text'],
   ['grievanceName', 'Policies: grievance officer name', 'text'], ['grievancePhone', 'Policies: grievance officer phone', 'text'], ['courtCity', 'Policies: city whose courts have jurisdiction', 'text'], ['policyDate', 'Policies: last updated, e.g. 19 October 2026', 'text'],
-  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
+  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
@@ -1251,7 +1260,7 @@ const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
-const SET_DEFAULTS = { shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
+const SET_DEFAULTS = { giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
@@ -1269,6 +1278,7 @@ const PREVIEW = (() => { let v = null; try { v = localStorage.getItem('bt-previe
   const q = new URLSearchParams(location.search).get('preview'); if (!q) return v; v = q === 'off' ? null : q;
   try { if (v) localStorage.setItem('bt-preview', v); else localStorage.removeItem('bt-preview'); } catch (e) { /* this visit only */ }
   return v; })();
+const REF = (() => { const q = (new URLSearchParams(location.search).get('ref') || '').toUpperCase(); try { if (/^[A-Z0-9]{6}$/.test(q)) { localStorage.setItem('bt-ref', q); return q; } return localStorage.getItem('bt-ref') || ''; } catch (e) { return /^[A-Z0-9]{6}$/.test(q) ? q : ''; } })();
 const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !BTDB.owner() && !(SET.previewCode && PREVIEW === String(SET.previewCode));
 const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(SET.previewCode || '');
 
@@ -1335,8 +1345,8 @@ async function dbDel(table, col, val) {
 // what visitors send (reviews, sign-ups, restock requests): the database when connected, else this browser
 async function visitorSend(table, row) {
   if (BTDB.on) return BTDB.insert(table, row).catch((err) => { const m = String(err.message || '');
-    throw new Error(/too_many/.test(m) ? 'we’ve had a lot from this connection, so please try again in an hour' : /bad_contact/.test(m) ? 'check the email or mobile number' : /unknown_item/.test(m) ? 'that piece isn’t on the shop any more' : m); });
-  S.db = S.db || {}; const k = table === 'reviews' ? 'reviews' : 'people'; S.db[k] = S.db[k] || [];
+    throw new Error(/too_many/.test(m) ? 'we’ve had a lot from this connection, so please try again in an hour' : /bad_contact/.test(m) ? 'check the email or mobile number' : /unknown_item/.test(m) ? 'that piece isn’t on the shop any more' : /bad_reminder/.test(m) ? 'choose a date within the next year' : m); });
+  S.db = S.db || {}; const k = table === 'reviews' ? 'reviews' : table === 'gift_cards' ? 'cards' : 'people'; S.db[k] = S.db[k] || [];
   S.db[k].unshift(Object.assign({ id: 'L' + Date.now(), created_at: new Date().toISOString(), table }, row)); save();
 }
 
@@ -1480,12 +1490,13 @@ function totals() {
   const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
   const cod = sub && UI.co.step === 'pay' && UI.co.method === 'cod' ? +SET.codFee || 0 : 0;
   const points = UI.co.usePts && S.account ? Math.max(0, Math.min(ptsMine().available, sub - ritual - code)) : 0;
-  return { sub, ritual, code, points, ship, wrap, cod, total: sub - ritual - code - points + ship + wrap + cod };
+  const pre = sub - ritual - code - points + ship + wrap + cod; const card = UI.co.gcard ? Math.min(UI.co.gcard.bal, pre) : 0;
+  return { sub, ritual, code, points, ship, wrap, cod, card, total: pre - card };
 }
 function totalsHTML(t) {
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   return `<div class="totals num">${row('Subtotal', inr(t.sub))}${t.ritual ? row(`Ritual saving <span class="hint">(${SET.ritualOff}% off candle + object)</span>`, '−' + inr(t.ritual), 'save') : ''}${t.code ? row(`Code ${esc(String(UI.co.code).toUpperCase())}`, '−' + inr(t.code), 'save') : ''}${t.points ? row(`Bud Points <span class="hint">(${t.points} used)</span>`, '−' + inr(t.points), 'save') : ''}
-    ${row(`Shipping${+SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`, t.ship ? inr(t.ship) : 'Free')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${row('Total', inr(t.total), 'grand')}</div>`;
+    ${row(`Shipping${+SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`, t.ship ? inr(t.ship) : 'Free')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${t.card ? row(`Gift card ${esc(UI.co.gcard.code)}`, '−' + inr(t.card), 'save') : ''}${row('Total', inr(t.total), 'grand')}</div>`;
 }
 function shipBar(t) {
   if (!+SET.freeOver || !t.sub) return ''; const gap = +SET.freeOver - t.sub; const pct = Math.min(100, Math.round(t.sub / +SET.freeOver * 100));
@@ -1795,8 +1806,9 @@ function viewCheckout() {
   loadMine(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
-  const codeBox = codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> applied</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>`
-    : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit">Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`;
+  const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> applied</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
+    + (co.gcard ? `<div class="code-on"><span>Gift card <strong>${esc(co.gcard.code)}</strong> applied</span><button class="linkbtn" type="button" data-act="card-remove">Remove</button></div>` : '')
+    + (codeOk(co.code) && co.gcard ? '' : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code or gift card?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit">Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`);
   const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
   let main = '';
   if (co.step === 'contact') {
@@ -1906,11 +1918,37 @@ function viewHelp() {
     ${+SET.repourPrice ? `<div><strong>Refills</strong><span class="muted">${T('pdp.repour')}</span></div>` : ''}
     <div><strong>Privacy</strong><span class="muted">${T('help.privacy')} <a href="#privacy">Read the privacy policy</a>.</span></div></div></div>`;
 }
+function viewGiftCard() {
+  const amounts = csvList(SET.giftCards).map((x) => parseInt(x, 10)).filter((x) => x > 0); if (!amounts.length) return viewNotFound();
+  const g = UI.gc = UI.gc || { amt: amounts[Math.min(1, amounts.length - 1)] };
+  return `<div class="wrap" style="padding-bottom:80px;max-width:820px"><div class="page-head"><span class="eyebrow">Gift cards</span><h1 tabindex="-1">${T('gc.title')}</h1><p class="muted">${T('gc.sub')}</p></div>
+    <ol class="trust">${Tx('gc.how').split('|').map((x) => x.trim()).filter(Boolean).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+    <form data-form="giftcard" class="form adm-card" style="margin-top:24px" novalidate><strong class="full" style="font-size:20px">Choose an amount</strong>
+      <div class="full" role="radiogroup" aria-label="Amount" style="display:flex;flex-wrap:wrap;gap:10px">${amounts.map((a) => `<button class="chip" type="button" role="radio" aria-checked="${g.amt === a}" data-act="gc-amt" data-v="${a}">${inr(a)}</button>`).join('')}</div>
+      <span class="field"><label for="gc-to">Who it’s for</label><input id="gc-to" autocomplete="off" value="${esc(g.to || '')}"></span>
+      <span class="field"><label for="gc-from">Your name</label><input id="gc-from" autocomplete="name" value="${esc(g.from || '')}"></span>
+      <span class="field full"><label for="gc-msg">Message on the card <span class="hint">optional</span></label><textarea id="gc-msg" rows="2" maxlength="200">${esc(g.msg || '')}</textarea></span>
+      ${g.err ? `<span class="err full" role="alert">${esc(g.err)}</span>` : ''}${g.sent ? `<div class="status ok full" role="status">Your message is ready. We’ll reply with a payment link.</div>` : ''}
+      <span class="full"><button class="btn" type="submit">${SET.whatsapp ? 'Ask for it on WhatsApp' : 'Ask for it by email'}</button></span></form></div>`;
+}
+function reminderForm() {
+  const r = UI.rem = UI.rem || {}; const occ = OCCASIONS.filter(([k]) => ['birthday', 'anniversary', 'housewarming', 'wedding', 'new-baby', 'festive', 'milestone'].includes(k));
+  return `<section class="adm-card" aria-labelledby="rem-h" style="margin:48px 0 0"><h2 id="rem-h" style="font-size:clamp(26px,3vw,36px)">${T('rem.title')}</h2><p class="muted">${T('rem.sub')}</p>
+    ${r.done ? `<div class="status ok" role="status">${T('rem.done')}</div>` : `<form data-form="reminder" class="form" style="padding:0" novalidate>
+      <span class="field"><label for="rem-occ">Occasion</label><select id="rem-occ">${occ.map(([k, l]) => `<option value="${k}" ${r.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
+      <span class="field"><label for="rem-name">Whose? <span class="hint">optional</span></label><input id="rem-name" autocomplete="off" maxlength="60" value="${esc(r.name || '')}"></span>
+      <span class="field"><label for="rem-day">Date</label><input id="rem-day" type="date" value="${esc(r.day || '')}"></span>
+      <span class="field"><label for="rem-contact">Your WhatsApp number or email</label><input id="rem-contact" autocomplete="tel" value="${esc(r.contact || '')}"></span>
+      ${r.err ? `<span class="err full" role="alert">${esc(r.err)}</span>` : ''}<span class="full"><button class="btn ghost" type="submit">Remind me</button></span></form>`}</section>`;
+}
 function viewShare() {
-  const link = location.origin + location.pathname; const msg = Tx('share.msg') + ' ' + link;
+  const sh = UI.share = UI.share || {}; const link = location.origin + location.pathname + (sh.ref ? '?ref=' + sh.ref : ''); const msg = Tx('share.msg') + ' ' + link;
   return `<div class="wrap" style="padding-bottom:80px;max-width:760px"><div class="page-head"><span class="eyebrow">${T('share.eyebrow')}</span><h1 tabindex="-1">${T('share.title')}</h1><p class="muted">${T('share.sub')}</p></div>
     <div class="adm-card" style="display:flex;flex-direction:column;gap:14px"><strong>Your message</strong><p class="muted" style="margin:0">${esc(msg)}</p>
-      <span style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener" data-act="share-wa">Share on WhatsApp</a><button class="btn ghost" type="button" data-act="share-copy">Copy message</button></span></div></div>`;
+      <span style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener" data-act="share-wa">Share on WhatsApp</a><button class="btn ghost" type="button" data-act="share-copy">Copy message</button></span></div>
+    ${+SET.refReward && !sh.ref ? `<form data-form="myref" class="form adm-card" style="margin-top:20px" novalidate><p class="full" style="margin:0">${T('share.own')}</p>
+      <span class="field full"><label for="ref-contact">Your mobile number or email</label><input id="ref-contact" autocomplete="tel" value="${esc(sh.contact || '')}"></span>
+      ${sh.err ? `<span class="err full" role="alert">${esc(sh.err)}</span>` : ''}<span class="full"><button class="btn ghost" type="submit">Get my link</button></span></form>` : ''}</div>`;
 }
 function viewFaq() {
   const qs = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) qs.push(i);
@@ -1944,11 +1982,11 @@ function viewGifting() {
       <ul class="trust">${[`Hand-written note on our card`, `Gift wrap${+SET.wrapFee ? ' for ' + inr(SET.wrapFee) : ''}`, 'Send it straight to them, with no prices in the parcel', 'Choose the day it should arrive by'].map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
       <figure class="photo" style="margin:0;max-width:260px"><img src="${IMG.pouch}" alt="BUD &amp; THINGS gift bag with tissue and botanicals." loading="lazy"><figcaption>Gift bag · coming with gift sets</figcaption></figure></div></div>
     <div class="section-head"><h2>${T('gift.popular')}</h2></div><div class="grid">${picks.map((p, i) => card(p, i)).join('')}</div>
-    <p class="muted" style="margin-top:36px">Gifting 10 or more? <a href="#bulk">See corporate &amp; bulk gifts</a>.</p></div>`;
+    <p class="muted" style="margin-top:36px">Gifting 10 or more? <a href="#bulk">See corporate &amp; bulk gifts</a>.${csvList(SET.giftCards).length ? ' Can’t choose? <a href="#giftcard">Give a gift card</a>.' : ''}</p>${reminderForm()}</div>`;
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band']] };
@@ -1961,7 +1999,7 @@ const pairRows = () => (DATA.pairings && DATA.pairings.length ? DATA.pairings : 
 const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
-  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
+  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
   if (!UI.adm.rows[k]) { if (UI.adm.loading !== k) setTimeout(() => admLoad(k)); return null; }
   return UI.adm.rows[k];
 }
@@ -1970,7 +2008,8 @@ async function admLoad(k) {
   try {
     if (k === 'orders') A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status }));
     if (k === 'reviews') A.rows.reviews = await BTDB.list('reviews', 'order=created_at.desc&limit=300');
-    if (k === 'people') { const [a, b] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r))); }
+    if (k === 'people') { const [a, b, c] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500'), BTDB.list('reminders', 'order=day.asc&limit=1000')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r)), c.map((r) => Object.assign({ table: 'reminders' }, r))); }
+    if (k === 'cards') { const [a, b] = await Promise.all([BTDB.list('gift_cards', 'order=created_at.desc&limit=500'), BTDB.list('referrers', 'order=created_at.desc&limit=1000')]); A.rows.cards = { cards: a, refs: b }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     A.err = null;
   } catch (e) { A.rows[k] = A.rows[k] || []; A.err = e.message; }
   A.loading = null; if (route() === 'admin') render();
@@ -2001,7 +2040,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
@@ -2140,7 +2179,28 @@ function admPeople() {
   const tbl = (rows, cols) => rows.length ? `<div class="table-wrap"><table><thead><tr>${cols.map((c) => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="num">${esc(c[1](r))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>';
   const when = (r) => new Date(r.created_at).toLocaleDateString('en-IN');
   return `<div class="adm-bar"><h2 style="font-size:24px">Newsletter and WhatsApp list · ${subs.length}</h2>${subs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="subscribers">Download as a spreadsheet</button>' : ''}</div>${tbl(subs, [['Email or WhatsApp', (r) => r.contact], ['From', (r) => r.source || ''], ['Joined', when]])}
-    <div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Waiting for a restock · ${rs.length}</h2>${rs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="restock_requests">Download as a spreadsheet</button>' : ''}</div>${tbl(rs, [['Email or WhatsApp', (r) => r.contact], ['Piece', (r) => skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku], ['Asked', when]])}`;
+    ${admReminders(list)}<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Waiting for a restock · ${rs.length}</h2>${rs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="restock_requests">Download as a spreadsheet</button>' : ''}</div>${tbl(rs, [['Email or WhatsApp', (r) => r.contact], ['Piece', (r) => skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku], ['Asked', when]])}`;
+}
+// the next time a yearly date comes round, counting from today
+const nextDay = (iso) => { const d = new Date(iso + 'T00:00:00'), t = new Date(); t.setHours(0, 0, 0, 0); const n = new Date(t.getFullYear(), d.getMonth(), d.getDate()); if (n < t) n.setFullYear(n.getFullYear() + 1); return n; };
+function admReminders(list) {
+  const rows = list.filter((r) => r.table === 'reminders').map((r) => Object.assign({ next: nextDay(r.day) }, r)).sort((a, b) => a.next - b.next);
+  const days = (r) => Math.round((r.next - new Date().setHours(0, 0, 0, 0)) / 864e5); const occ = (k) => (OCCASIONS.find((x) => x[0] === k) || [k, k])[1];
+  const wa = (r) => /^\d{10}$/.test(r.contact) ? `<a href="https://wa.me/91${r.contact}?text=${encodeURIComponent(`Hi! A gentle reminder from BUD & THINGS: ${r.for_name ? r.for_name + '’s ' : 'the '}${occ(r.occasion).toLowerCase()} is on ${r.next.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}. Here are a few gift ideas: ${location.origin + location.pathname}#gifting`)}" target="_blank" rel="noopener">Message</a>` : esc(r.contact);
+  return `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift reminders · ${rows.length}</h2></div><p class="muted">Send each one about a week before. The soonest are at the top.</p>
+    ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>In</th><th>Occasion</th><th>Whose</th><th>Date</th><th>Contact</th></tr></thead><tbody>${rows.slice(0, 200).map((r) => `<tr${days(r) <= 7 ? ' style="font-weight:600"' : ''}><td class="num">${days(r)} days</td><td>${esc(occ(r.occasion))}</td><td>${esc(r.for_name || '')}</td><td class="num">${r.next.toLocaleDateString('en-IN')}</td><td>${wa(r)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
+}
+function admCards() {
+  const d = admData('cards'); if (!d) return loadingRow; const orders = admData('orders') || []; const A = UI.adm;
+  const refCount = {}; orders.forEach((o) => { if (o.ref && o.status !== 'Cancelled') refCount[o.ref] = (refCount[o.ref] || 0) + 1; });
+  const refs = d.refs.filter((r) => refCount[r.id]).sort((a, b) => refCount[b.id] - refCount[a.id]);
+  return `<form data-form="adm-card-new" class="form adm-card" style="max-width:560px" novalidate><h2 class="full" style="font-size:24px">Issue a gift card</h2><p class="full muted" style="margin:0">After a gift card is paid for, or as a thank-you. The code is made for you.</p>
+      <span class="field"><label for="gcn-amt">Amount (₹)</label><input id="gcn-amt" type="number" min="1" inputmode="numeric"></span><span class="field"><label for="gcn-note">For <span class="hint">optional</span></label><input id="gcn-note" maxlength="80"></span>
+      ${A.cardMsg ? `<span class="full status ok" role="status">${esc(A.cardMsg)}</span>` : ''}<span class="full"><button class="btn small" type="submit">Make the card</button></span></form>
+    <div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift cards · ${d.cards.length}</h2></div>
+    ${d.cards.length ? `<div class="table-wrap"><table><thead><tr><th>Code</th><th>Amount</th><th>Left</th><th>For</th><th>Made</th></tr></thead><tbody>${d.cards.map((c) => `<tr><td class="num sel">${esc(c.code)}</td><td class="num">${inr(c.amount)}</td><td class="num">${inr(c.balance)}</td><td>${esc(c.note || '')}</td><td class="num">${new Date(c.created_at).toLocaleDateString('en-IN')}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}
+    <div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Friends who brought orders · ${refs.length}</h2></div><p class="muted">Orders placed through a customer’s share link. Send each a ${inr(SET.refReward)} gift card as a thank-you.</p>
+    ${refs.length ? `<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Link</th><th>Orders</th></tr></thead><tbody>${refs.map((r) => `<tr><td>${esc(r.contact)}</td><td class="num">${esc(r.id)}</td><td class="num">${refCount[r.id]}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
 }
 function admEvents() {
   return `<p class="muted">The events the live site will send to analytics, recorded in this browser so the tracking plan can be checked.</p>
@@ -2688,6 +2748,7 @@ function render(nav) {
   else if (r === 'faq') html = viewFaq();
   else if (r === 'bulk') html = viewBulk();
   else if (r === 'share') html = viewShare();
+  else if (r === 'giftcard') html = viewGiftCard();
   else if (r === 'gifts') html = viewShop('gifts');
   else if (r === 'under-999') html = viewShop('under-999');
   else if (r === 'why') html = viewWhy();
@@ -3082,7 +3143,7 @@ async function placeOrder(via) {
   for (const l of lines) if (stockOf(l.sku) < l.qty) { UI.co.payErr = `${l.p.name} (${l.v.label}) sold out while you were checking out. Please update your cart.`; render(); return; }
   const t = totals();
   const o = { placedAt: new Date().toISOString(), contact: { ...co.contact }, address: { ...co.address }, method: via, status: 'Placed', items: lines.map((l) => ({ sku: l.sku, name: l.p.name, label: l.v.label, price: l.v.price, qty: l.qty })),
-    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total - t.ship - t.wrap - t.cod), email: S.account.email };
+    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, card: co.gcard ? co.gcard.code : '', cardOff: t.card, ref: REF, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total + t.card - t.ship - t.wrap - t.cod), email: S.account.email };
   let id;
   if (BTDB.on) { // the database checks prices and takes the stock off in one step
     co.placing = true; co.payErr = null; render();
@@ -3090,7 +3151,8 @@ async function placeOrder(via) {
       co.placing = false; const m = String(err.message || '');
       if (/sign_in/.test(m)) { S.account = null; save(); UI.acct = { next: 'checkout' }; render(); say('Please sign in again to place your order.'); return; }
       if (/points_changed/.test(m)) { co.usePts = false; co.payErr = 'Your Bud Points balance changed. We’ve taken them off this order; please check the total and pay again.'; loadMine(true); render(); return; }
-      co.payErr = /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
+      if (/bad_card/.test(m)) co.gcard = null;
+      co.payErr = /bad_card/.test(m) ? 'That gift card has no balance left, so we took it off. Please check the total and pay again.' : /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
         : /too_many/.test(m) ? 'We’ve had a lot of orders from this connection or number. Please message us on WhatsApp and we’ll place it for you.' : /bad_quantity/.test(m) ? 'That’s more than we can send in one order. Please lower the quantities, or message us for a bulk order.'
         : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
       if (/sold_out|price_changed|unknown_item/.test(m)) loadData(); render(); return;
@@ -3164,7 +3226,7 @@ document.addEventListener('click', (e) => {
     case 'pdp-qty': { const st = UI.pdp[d.id]; const v = byId[d.id].variants[st.vi]; st.qty = Math.max(1, Math.min(stockOf(v.sku), st.qty + +d.d)); render(); break; }
     case 'add': { const st = UI.pdp[d.id]; addToCart(byId[d.id].variants[st.vi].sku, st.qty, { source: 'product' }); setTimeout(() => $('#drawer-close')?.focus(), 0); break; }
     case 'notify': if (S.notify[d.sku]) { say('You’re already on the list for this one.'); break; } UI.restock = d.sku; render(); setTimeout(() => $('.restock input')?.focus(), 0); break;
-    case 'share-copy': navigator.clipboard?.writeText(Tx('share.msg') + ' ' + location.origin + location.pathname).then(() => say('Copied.'), () => say('Couldn’t copy. Select the message and copy it.')); track('share', { via: 'copy' }); break;
+    case 'share-copy': navigator.clipboard?.writeText(Tx('share.msg') + ' ' + location.origin + location.pathname + (UI.share && UI.share.ref ? '?ref=' + UI.share.ref : '')).then(() => say('Copied.'), () => say('Couldn’t copy. Select the message and copy it.')); track('share', { via: 'copy' }); break;
     case 'share-wa': track('share', { via: 'whatsapp' }); break;
     case 'add-sku': addToCart(d.sku, 1, { source: 'suggest' }); break;
     case 'reorder': { const o = S.orders.find((x) => x.id === d.id); if (!o) break; let n = 0; o.items.forEach((l) => { if (skuMap[l.sku] && stockOf(l.sku) > 0 && addToCart(l.sku, l.qty, { quiet: true, source: 'reorder' })) n++; }); if (n) { UI.drawer = true; UI.drawerMsg = n === o.items.length ? 'Your last order is back in the cart.' : `Added ${n} of ${o.items.length} pieces; the rest are sold out.`; renderOverlay(); track('reorder', { order: o.id }); setTimeout(() => $('#drawer-close')?.focus(), 0); } else say('Sorry, those pieces are sold out right now.'); break; }
@@ -3172,8 +3234,10 @@ document.addEventListener('click', (e) => {
     case 'walk-shop': track('walk_shop', { at: LC.p.toFixed(2) }); break;
     case 'review-open': UI.review[d.id] = { open: true }; render(); setTimeout(() => $('#rv-name')?.focus(), 0); break;
     case 'pts-use': UI.co.usePts = t.checked; render(); break;
+    case 'gc-amt': UI.gc.amt = +d.v; render(); break;
+    case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.codeErr = null; render(); break;
-    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -3241,6 +3305,21 @@ document.addEventListener('submit', (e) => {
     f.querySelector('button').disabled = true;
     visitorSend('subscribers', { contact: c, source: f.dataset.src || 'home' }).then(() => { msg.innerHTML = `<span class="status ok" role="status" style="display:block">${T('home.newsDone')}</span>`; track('signup', { via: 'email' }); }, (err) => { f.querySelector('button').disabled = false; msg.innerHTML = `<span class="err" role="alert">That didn’t go through (${esc(err.message)}). Please try again.</span>`; });
     return; }
+  if (kind === 'giftcard') { const g = UI.gc; g.to = $('#gc-to').value.trim(); g.from = $('#gc-from').value.trim(); g.msg = $('#gc-msg').value.trim();
+    g.err = !g.to ? 'Add who the card is for.' : !g.from ? 'Add your name.' : null; if (g.err) { g.sent = false; render(); return; }
+    const text = `Gift card request\nAmount: ₹${g.amt}\nFor: ${g.to}\nFrom: ${g.from}${g.msg ? '\nMessage: ' + g.msg : ''}`;
+    const url = waLink(text) || `mailto:${SET.email}?subject=${encodeURIComponent('Gift card request')}&body=${encodeURIComponent(text)}`;
+    track('gift_card_request', { value: g.amt }); g.sent = true; render(); if (SET.whatsapp) window.open(url, '_blank', 'noopener'); else location.href = url;
+    return; }
+  if (kind === 'reminder') { const r = UI.rem; r.occ = $('#rem-occ').value; r.name = $('#rem-name').value.trim(); r.day = $('#rem-day').value; r.contact = $('#rem-contact').value.trim(); const c = contactOf(r.contact);
+    r.err = !r.day ? 'Choose the date.' : !c ? 'Enter an email like name@example.com, or a 10-digit mobile number.' : null; if (r.err) { render(); return; }
+    visitorSend('reminders', { contact: c, occasion: r.occ, for_name: r.name.slice(0, 60) || null, day: r.day }).then(() => { r.done = true; r.err = null; track('reminder_set', { occasion: r.occ }); render(); }, (err) => { r.err = 'That didn’t go through: ' + err.message; render(); });
+    return; }
+  if (kind === 'myref') { const sh = UI.share; sh.contact = $('#ref-contact').value.trim(); const c = contactOf(sh.contact);
+    if (!c) { sh.err = 'Enter an email like name@example.com, or a 10-digit mobile number.'; render(); return; }
+    if (!BTDB.on) { sh.err = 'Share links work once the shop is connected to its database.'; render(); return; }
+    BTDB.rpc('my_referral', { contact_in: c }).then((id) => { sh.ref = id; sh.err = null; track('share_link', {}); render(); say('Your link is ready.'); }, (err) => { sh.err = /too_many/.test(err.message) ? 'Too many tries. Please wait an hour.' : 'We couldn’t make your link right now. Please try again.'; render(); });
+    return; }
   if (kind === 'bulk') { const b = UI.bulk = UI.bulk || {}; ['name', 'company', 'phone', 'qty', 'budget', 'date'].forEach((k) => { b[k] = $('#bk-' + k).value.trim(); }); b.msg = $('#bk-msg').value.trim();
     b.err = !b.name ? 'Add your name.' : !/\d{10}/.test(b.phone.replace(/\D/g, '')) ? 'Add a 10-digit phone or WhatsApp number.' : !(+b.qty > 0) ? 'Add roughly how many gifts you need.' : null;
     if (b.err) { b.sent = false; render(); return; }
@@ -3258,7 +3337,12 @@ document.addEventListener('submit', (e) => {
     if (R.err) { render(); return; }
     visitorSend('reviews', { product_id: id, name: R.name.slice(0, 60), rating: R.rating, body: R.body.slice(0, 1500), published: false }).then(() => { R.sent = true; R.open = false; track('review_sent', { id, rating: R.rating }); render(); }, (err) => { R.err = 'That didn’t go through (' + err.message + '). Please try again.'; render(); });
     return; }
-  if (kind === 'code') { const v = $('#co-code').value.trim(); co.code = v; co.codeErr = codeOk(v) ? null : v ? 'That code isn’t valid. Check the spelling, or leave it empty.' : 'Enter a code.'; if (!co.codeErr) { track('code_applied', { code: v.toUpperCase() }); say('Code applied.'); } else co.code = ''; render(); if (co.codeErr) $('#co-code')?.focus(); return; }
+  if (kind === 'code') { const v = $('#co-code').value.trim(); const bad = 'That code isn’t valid. Check the spelling, or leave it empty.'; const done = () => { render(); if (co.codeErr) $('#co-code')?.focus(); };
+    if (codeOk(v)) { co.code = v; co.codeErr = null; track('code_applied', { code: v.toUpperCase() }); say('Code applied.'); done(); return; }
+    if (!v || !BTDB.on) { co.codeErr = v ? bad : 'Enter a code.'; done(); return; }
+    BTDB.rpc('gift_card_balance', { card_code: v }).then((bal) => { if (+bal > 0) { co.gcard = { code: v.toUpperCase(), bal: +bal }; co.codeErr = null; track('gift_card_applied', {}); say('Gift card applied.'); } else co.codeErr = bal === 0 ? 'That gift card has been used up.' : bad; done(); },
+      (err) => { co.codeErr = /too_many/.test(err.message) ? 'Too many tries from this connection. Please wait an hour, or message us.' : 'We couldn’t check that code right now. Please try again.'; done(); });
+    return; }
   if (kind === 'track') { const id = $('#tr-id').value.trim().toUpperCase(); const ph = asPhone($('#tr-phone').value); UI.track = { id, phone: $('#tr-phone').value.trim() };
     const mine = S.orders.find((o) => o.id === id && o.contact.phone === ph); if (mine) { location.hash = 'order-' + id; return; }
     if (!id || !ph) { UI.track.msg = 'Enter your order number and the mobile number you ordered with.'; render(); return; }
@@ -3272,6 +3356,12 @@ document.addEventListener('submit', (e) => {
     return; }
   if (kind === 'owner-code') { const code = $('#own-code').value.replace(/\D/g, ''); if (code.length !== 6) { UI.adm.err = 'Enter the 6 digits from your authenticator app.'; render(); $('#own-code')?.focus(); return; }
     BTDB.verifyCode(code).then(() => { UI.adm.err = null; UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid|expired|code/i.test(err.message) ? 'That code didn’t work. Type the newest code the app shows.' : err.message; render(); $('#own-code')?.focus(); });
+    return; }
+  if (kind === 'adm-card-new') { const amt = parseInt($('#gcn-amt').value, 10); const note = $('#gcn-note').value.trim(); const A = UI.adm;
+    if (!(amt > 0)) { say('Enter the amount in rupees.'); return; }
+    const pick = (n) => Array.from({ length: n }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 31)]).join('');
+    const row = { code: `BT-${pick(4)}-${pick(4)}`, amount: amt, balance: amt, note: note || null };
+    admDo(async () => { if (BTDB.on) { await BTDB.insert('gift_cards', row); A.rows = {}; } else { S.db = S.db || {}; S.db.cards = [Object.assign({ created_at: new Date().toISOString() }, row)].concat(S.db.cards || []); save(); } A.cardMsg = `Made ${row.code} for ${inr(amt)}. Copy the code and send it with the card.`; render(); });
     return; }
   if (kind === 'adm-product') { const r = readProductForm(f); const d = r.data; const A = UI.adm; const others = prodRows().filter((x) => x.id !== r.id); const skus = new Set(); others.forEach((x) => ((x.data || {}).variants || []).forEach((v) => skus.add(v.sku)));
     A.formErr = !d.name ? 'Give the product a name.' : r.isNew && !/^[a-z0-9][a-z0-9-]{1,59}$/.test(r.id) ? 'Choose a web address name with lowercase letters, numbers and dashes.' : r.isNew && prodRows().some((x) => x.id === r.id) ? 'That web address name is already used.'
