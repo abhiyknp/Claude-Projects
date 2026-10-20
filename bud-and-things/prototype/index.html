@@ -5,11 +5,11 @@
 <style>
 /* Layout: Atelier of Light. One plaster room; warm light carries the colour; square, quiet UI around a single scroll moment. Single light theme by brand choice. */
 :root {
-  --ivory: #FFF8ED; --plaster: #F6EADA; --linen: #F8EDDD; --sand: #EFDCC3; --sand2: #F3E4CF; --card: #FFFCF6;
+  --ivory: #FFFBF4; --plaster: #FAF1E4; --linen: #FBF3E6; --sand: #EFDCC3; --sand2: #F3E4CF; --card: #FFFEFB;
   --caramel: #C9A227; --terra: #C45A3A; --terra-ink: #A3472B; --olive: #5B6B46;
   --choc: #4B2E1E; --choc2: #6A4A38; --line: #E2D1BC; --line2: #CDB79C; --dusk: #6E5444; --glow: #F3D9B8;
   --cta: #A3472B; --on-cta: #FFF8ED;
-  --ok: #4F5E3E; --warn: #A3472B; --ok-bg: #E4E8D9; --err-bg: #F4DDD2; --head-bg: rgba(255,248,237,.96);
+  --ok: #4F5E3E; --warn: #A3472B; --ok-bg: #E4E8D9; --err-bg: #F4DDD2; --head-bg: rgba(255,251,244,.96);
   --sk-ink: #4B2E1E; --sk-ink2: #6A4A38; --sk-accent: #A3472B; --sk-light: #FFF8ED; --sk-dark: #4B2E1E; --sk-glow: #F3D9B8; --sk-cta: #FFF8ED; --sk-on-cta: #4B2E1E; --sk-chip: rgba(255,248,237,.94);
   --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --body: 'Lato', 'Segoe UI', system-ui, sans-serif;
@@ -950,6 +950,13 @@ body.app .why-band { padding-bottom: 96px; }
   .grow li::before { top: 2px; left: -8px; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+/* Comfortable tap targets on touch screens (44px) without changing the desktop look */
+@media (pointer: coarse), (max-width: 820px) {
+  .card .name, .note-card a, .in-house, .finder-nav .linkbtn, .deliv-form .linkbtn, .adm-banner .linkbtn { display: inline-flex; align-items: center; min-height: 44px; }
+  .deliv-form .linkbtn { min-width: 44px; justify-content: center; }
+  .section-head a, .section a[href^="#"]:not(.btn):not(.tile):not(.card) { min-height: 44px; display: inline-flex; align-items: center; }
+  .adm-banner .linkbtn { display: inline; min-height: 0; padding: 12px 4px; }
+}
 </style>
 
 <div class="proto" role="region" aria-label="Preview controls">
@@ -970,7 +977,6 @@ body.app .why-band { padding-bottom: 96px; }
   </div>
 </div>
 
-<div id="offers-slot"></div>
 <header class="site-head">
   <div class="wrap">
     <a class="logo" href="#home" aria-label="BUD &amp; THINGS by Ashi, home"><span class="mark wordmark" aria-hidden="true"></span><span class="mark monogram" aria-hidden="true"></span></a>
@@ -985,6 +991,7 @@ body.app .why-band { padding-bottom: 96px; }
   </div>
   <div class="mobile-menu" id="mobile-menu" hidden><div class="wrap" id="mobile-menu-inner"></div></div>
 </header>
+<div id="offers-slot"></div>
 
 <main id="app" tabindex="-1"></main>
 
@@ -1474,7 +1481,7 @@ function renderChrome() {
   document.body.classList.toggle('app', S.mode === 'app');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also'); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-made').innerHTML = T('foot.made'); $('#foot-pay').innerHTML = payBadges();
-  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = cs ? '' : offersBar(); $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
+  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = cs || r === 'home' ? '' : offersBar(); $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   $('#home-foyer').setAttribute('aria-pressed', String(homeStyle() === 'foyer')); $('#home-gift').setAttribute('aria-pressed', String(homeStyle() === 'gift'));
@@ -1621,6 +1628,7 @@ function viewHome() {
       </div>
     </div>
   </section>
+  ${document.body.classList.contains('cs') ? '' : offersBar()}
 
   <section class="section wrap" id="after-intro" aria-label="About"><div class="intro"><span class="mark leafmark" aria-hidden="true"></span><p>${T('home.intro')}</p><a href="#story" style="font-weight:600">${T('home.introLink')}</a></div></section>
   ${catTiles('cats-h')}
