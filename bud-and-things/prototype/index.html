@@ -950,6 +950,13 @@ body.app .why-band { padding-bottom: 96px; }
   .grow li::before { top: 2px; left: -8px; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+/* Comfortable tap targets on touch screens (44px) without changing the desktop look */
+@media (pointer: coarse), (max-width: 820px) {
+  .card .name, .note-card a, .in-house, .finder-nav .linkbtn, .deliv-form .linkbtn, .adm-banner .linkbtn { display: inline-flex; align-items: center; min-height: 44px; }
+  .deliv-form .linkbtn { min-width: 44px; justify-content: center; }
+  .section-head a, .section a[href^="#"]:not(.btn):not(.tile):not(.card) { min-height: 44px; display: inline-flex; align-items: center; }
+  .adm-banner .linkbtn { display: inline; min-height: 0; padding: 12px 4px; }
+}
 </style>
 
 <div class="proto" role="region" aria-label="Preview controls">
@@ -970,7 +977,6 @@ body.app .why-band { padding-bottom: 96px; }
   </div>
 </div>
 
-<div id="offers-slot"></div>
 <header class="site-head">
   <div class="wrap">
     <a class="logo" href="#home" aria-label="BUD &amp; THINGS by Ashi, home"><span class="mark wordmark" aria-hidden="true"></span><span class="mark monogram" aria-hidden="true"></span></a>
@@ -985,6 +991,7 @@ body.app .why-band { padding-bottom: 96px; }
   </div>
   <div class="mobile-menu" id="mobile-menu" hidden><div class="wrap" id="mobile-menu-inner"></div></div>
 </header>
+<div id="offers-slot"></div>
 
 <main id="app" tabindex="-1"></main>
 
@@ -1474,7 +1481,7 @@ function renderChrome() {
   document.body.classList.toggle('app', S.mode === 'app');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also'); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-made').innerHTML = T('foot.made'); $('#foot-pay').innerHTML = payBadges();
-  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = cs ? '' : offersBar(); $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
+  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = cs || r === 'home' ? '' : offersBar(); $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   $('#home-foyer').setAttribute('aria-pressed', String(homeStyle() === 'foyer')); $('#home-gift').setAttribute('aria-pressed', String(homeStyle() === 'gift'));
@@ -1621,6 +1628,7 @@ function viewHome() {
       </div>
     </div>
   </section>
+  ${document.body.classList.contains('cs') ? '' : offersBar()}
 
   <section class="section wrap" id="after-intro" aria-label="About"><div class="intro"><span class="mark leafmark" aria-hidden="true"></span><p>${T('home.intro')}</p><a href="#story" style="font-weight:600">${T('home.introLink')}</a></div></section>
   ${catTiles('cats-h')}
