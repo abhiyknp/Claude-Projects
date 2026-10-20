@@ -14,6 +14,13 @@
   --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --body: 'Lato', 'Segoe UI', system-ui, sans-serif;
   --wrap: 1280px;
+  /* spacing scale (4px base) and fluid layout rhythm: the same steps everywhere, scaled by screen width */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 80px;
+  --gutter: clamp(20px, 4vw, 40px);
+  --section: clamp(48px, 7vw, 80px);
+  --section-sm: clamp(36px, 5vw, 56px);
+  --fs-h1: clamp(36px, 5vw, 60px);
+  --fs-h2: clamp(28px, 3.2vw, 40px);
   color-scheme: light;
 }
 :root[data-skin="atelier"] { --ivory: #F4EBDF; --plaster: #EBDCCB; --linen: #EADBC8; --sand: #D9B99A; --sand2: #E4CDB2; --card: #FBF5EE; --caramel: #B88352; --terra: #C2522B; --terra-ink: #A63D17; --olive: #5E6B1F; --choc: #22140E; --choc2: #4E3326; --line: #DCC3A8; --line2: #C9A685; --glow: #FFB37A; --cta: #A63D17; --on-cta: #FFF6EE; --ok: #4E6B3A; --ok-bg: #E5E6C4; --err-bg: #F6D3C2; --head-bg: rgba(244,235,223,.96); --sk-ink: #22140E; --sk-ink2: #4E3326; --sk-accent: #A63D17; --sk-dark: #22140E; --sk-glow: #FFB37A; --sk-cta: #FFB37A; --sk-on-cta: #22140E; --sk-chip: rgba(255,246,236,.94); }
@@ -67,7 +74,7 @@ a { color: var(--choc); }
 a:hover { color: var(--terra-ink); }
 button, input, select { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--terra-ink); outline-offset: 2px; }
-.wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: 20px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
 .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--olive); }
 .muted { color: var(--choc2); }
 .num { font-variant-numeric: tabular-nums; }
@@ -130,7 +137,7 @@ body.app .site-foot { display: none; }
 .lc-hero .eyebrow { color: var(--sk-ink2); }
 .lc-hero .btn { background: var(--sk-ink); color: var(--sk-light); border-color: var(--sk-ink); }
 .lc-hero .btn.ghost { background: transparent; color: var(--sk-ink); }
-.lc-hero { position: absolute; pointer-events: auto; left: max(20px, calc((100vw - var(--wrap)) / 2 + 20px)); top: 9%; width: min(470px, 40vw); display: flex; flex-direction: column; gap: 16px; }
+.lc-hero { position: absolute; pointer-events: auto; left: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter))); top: 9%; width: min(470px, 40vw); display: flex; flex-direction: column; gap: 16px; }
 .lc-hero h1 { font-size: clamp(54px, 7.4vw, 104px); line-height: .95; }
 .lc-hero .tag { font-family: var(--display); font-style: italic; font-weight: 300; font-size: clamp(22px, 2.4vw, 30px); color: var(--sk-accent); line-height: 1.2; }
 .lc-hero .sub { font-size: 17px; max-width: 420px; color: var(--sk-ink2); }
@@ -168,7 +175,7 @@ body.app .site-foot { display: none; }
 .ink-light .lc-progress { background: var(--sk-glow); }
 @media (max-width: 760px) {
   .lc { height: 330vh; }
-  .lc-hero { left: 20px; right: 20px; width: auto; top: 4%; gap: 10px; }
+  .lc-hero { left: var(--gutter); right: var(--gutter); width: auto; top: 4%; gap: 10px; }
   .lc-hero h1 { font-size: 52px; }
   .lc-hero .sub { font-size: 15px; }
   .lc-cap { top: 6%; }
@@ -231,9 +238,9 @@ body.app .site-foot { display: none; }
 .proto select { min-height: 32px; padding: 0 8px; background: var(--choc); color: var(--ivory); border: 1px solid rgba(245,239,228,.5); font-size: 13px; }
 
 /* sections */
-.section { padding-block: 80px; }
-.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
-.section-head h2 { font-size: clamp(28px, 3.2vw, 38px); }
+.section { padding-block: var(--section); }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s2) var(--s3); flex-wrap: wrap; margin-bottom: var(--s5); }
+.section-head h2 { font-size: var(--fs-h2); }
 .intro { text-align: center; max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; align-items: center; }
 .intro p { font-family: var(--display); font-weight: 300; font-size: clamp(24px, 3vw, 36px); line-height: 1.28; }
 .cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
@@ -242,8 +249,8 @@ body.app .site-foot { display: none; }
 .cat .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .cat .row strong { font-family: var(--display); font-weight: 300; font-size: 28px; }
 .band { background: var(--terra-ink); color: var(--ivory); }
-.band .wrap { display: flex; flex-wrap: wrap; gap: 32px; align-items: center; padding-block: 72px; }
-.band h2 { flex: 1 1 360px; font-size: clamp(28px, 3.4vw, 42px); }
+.band .wrap { display: flex; flex-wrap: wrap; gap: var(--s6); align-items: center; padding-block: var(--section); }
+.band h2 { flex: 1 1 360px; font-size: var(--fs-h2); }
 .band .eyebrow { color: var(--ivory); display: block; margin-bottom: 10px; }
 .band .opts { flex: 1 1 420px; display: flex; flex-wrap: wrap; gap: 10px; }
 .band .opts button { min-height: 54px; padding: 0 20px; border: 1.5px solid var(--ivory); background: transparent; color: var(--ivory); cursor: pointer; font-size: 16px; font-weight: 500; }
@@ -276,21 +283,21 @@ body.app .site-foot { display: none; }
 .feel-card h3 { font-style: italic; color: var(--terra-ink); font-size: 26px; }
 
 /* shop */
-.page-head { padding-block: 36px 18px; display: flex; flex-direction: column; gap: 12px; }
-.page-head h1 { font-size: clamp(40px, 5vw, 60px); }
+.page-head { padding-block: var(--s6) var(--s4); display: flex; flex-direction: column; gap: var(--s3); }
+.page-head h1 { font-size: var(--fs-h1); }
 .crumbs { font-size: 14px; color: var(--choc2); }
 .toolbar { border-block: 1px solid var(--line); padding-block: 12px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .toolbar .group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 select, input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input:not([type]) { min-height: 48px; border: 1px solid var(--line2); background: var(--card); padding: 0 12px; font-size: 16px; border-radius: 0; }
 label { font-size: 14px; font-weight: 600; }
-.empty { padding: 48px; background: var(--linen); display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.empty { padding: clamp(24px, 5vw, 48px); background: var(--linen); display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
 
 /* product page */
-.pdp { display: flex; flex-wrap: wrap; gap: 48px; padding-bottom: 60px; }
+.pdp { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 48px); padding-bottom: var(--section-sm); }
 .pdp-gallery { flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 .pdp-gallery .tile { height: min(620px, 80vw); }
 .pdp-info { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
-.pdp-info h1 { font-size: clamp(40px, 5vw, 58px); }
+.pdp-info h1 { font-size: var(--fs-h1); }
 .pdp-info .line { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 22px; color: var(--terra-ink); }
 .price { font-size: 26px; font-weight: 600; }
 .qty { display: inline-flex; align-items: center; border: 1px solid var(--line2); height: 52px; }
@@ -309,14 +316,14 @@ label { font-size: 14px; font-weight: 600; }
 
 /* finder */
 .finder { display: flex; flex-wrap: wrap; min-height: 70vh; }
-.finder-side { flex: 1 1 360px; background: var(--terra-ink); color: var(--ivory); padding: 48px 32px; display: flex; flex-direction: column; gap: 20px; }
+.finder-side { flex: 1 1 360px; background: var(--terra-ink); color: var(--ivory); padding: clamp(32px, 5vw, 48px) var(--gutter); display: flex; flex-direction: column; gap: 20px; }
 .finder-side h1 { font-size: clamp(30px, 3.4vw, 42px); }
 .finder-side .eyebrow { color: var(--ivory); }
 .progress { display: flex; gap: 4px; }
 .progress span { flex: 1; height: 3px; background: var(--ivory); opacity: .35; }
 .progress span.on { opacity: 1; }
 .progress span.on { background: var(--ivory); }
-.finder-main { flex: 2 1 520px; min-width: 0; padding: 48px 32px; display: flex; flex-direction: column; gap: 20px; }
+.finder-main { flex: 2 1 520px; min-width: 0; padding: clamp(32px, 5vw, 48px) var(--gutter); display: flex; flex-direction: column; gap: 20px; }
 .options { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
 .options button { min-height: 64px; padding: 0 18px; text-align: left; border: 1px solid var(--line2); background: var(--card); cursor: pointer; font-size: 16px; }
 .options button[aria-checked="true"] { border: 1.5px solid var(--choc); background: var(--choc); color: var(--ivory); font-weight: 600; }
@@ -352,9 +359,9 @@ label { font-size: 14px; font-weight: 600; }
 .totals .grand { font-weight: 600; font-size: 18px; padding-top: 6px; border-top: 1px solid var(--line); }
 
 /* checkout */
-.checkout { display: flex; flex-wrap: wrap; gap: 40px; padding-block: 36px 80px; }
+.checkout { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 40px); padding-block: var(--s6) var(--section); }
 .checkout-main { flex: 2 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
-.checkout-side { flex: 1 1 300px; min-width: 0; background: var(--linen); padding: 26px; display: flex; flex-direction: column; gap: 14px; align-self: flex-start; }
+.checkout-side { flex: 1 1 300px; min-width: 0; background: var(--linen); padding: var(--s5); display: flex; flex-direction: column; gap: 14px; align-self: flex-start; }
 .steps { display: flex; gap: 18px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; font-size: 14px; }
 .steps li { color: var(--choc2); }
 .steps li[aria-current="step"] { color: var(--choc); font-weight: 600; border-bottom: 2px solid var(--choc); }
@@ -403,7 +410,7 @@ body.app .toast { bottom: 96px; }
 .result { display: flex; gap: 12px; align-items: center; text-decoration: none; min-height: 64px; }
 .result .tile { width: 64px; height: 64px; flex-shrink: 0; }
 .site-foot { background: var(--linen); border-top: 1px solid var(--line); }
-.site-foot .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 28px; padding-block: 56px 28px; font-size: 15px; }
+.site-foot .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s6) var(--s5); padding-block: var(--section-sm) var(--s6); font-size: 15px; }
 .site-foot nav { display: flex; flex-direction: column; gap: 6px; }
 /* focus rings only for keyboard users; headings focused after a page change stay quiet */
 [tabindex="-1"]:focus { outline: none; }
@@ -671,7 +678,7 @@ body.cs main { padding-bottom: 0; }
 .gh-strip.offers { background: var(--choc); }
 .gh-strip.offers .gh-marq span { display: inline-flex; align-items: center; gap: 8px; }
 .gh-strip.offers svg { color: var(--glow); }
-.why-band { background: var(--plaster); border-top: 1px solid var(--line); padding-block: 56px; }
+.why-band { background: var(--plaster); border-top: 1px solid var(--line); padding-block: var(--section-sm); }
 body.app .why-band { padding-bottom: 96px; }
 .why-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .why-grid li { display: flex; flex-direction: column; gap: 6px; padding: 18px; background: var(--card); border: 1px solid var(--line); font-size: 14px; color: var(--choc2); }
@@ -691,7 +698,7 @@ body.app .why-band { padding-bottom: 96px; }
 @media (max-width: 900px) { .cat-tiles { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 42%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; scrollbar-width: none; } .cat-tile { scroll-snap-align: start; } }
 @media (max-width: 560px) { .cat-tiles { grid-auto-columns: 62%; } }
 .badge.new { background: var(--olive); color: var(--ivory); }
-.promos { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); padding-bottom: 80px; }
+.promos { display: grid; gap: var(--s4); grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); padding-bottom: var(--section); }
 .promo { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 8px; padding: 30px 28px; min-height: 210px; justify-content: flex-end; color: var(--ivory); }
 .promo::before { content: ""; position: absolute; inset: 0; background: url(assets/pattern-arches-choc.png) right center / 260px auto repeat-y; opacity: .18; pointer-events: none; }
 .promo > * { position: relative; }
@@ -738,11 +745,11 @@ body.app .why-band { padding-bottom: 96px; }
 .post strong { font-family: var(--display); font-size: 26px; font-weight: 500; line-height: 1.1; }
 .post .muted { font-size: 15px; }
 .article-head { max-width: 760px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 28px; }
-.article-head h1 { font-size: clamp(38px, 5vw, 60px); }
+.article-head h1 { font-size: var(--fs-h1); }
 .lead { font-family: var(--display); font-size: 24px; line-height: 1.35; color: var(--choc2); }
 .article-ph { aspect-ratio: 21 / 9; height: auto; margin-bottom: 36px; }
 .article-body { max-width: 720px; display: flex; flex-direction: column; gap: 14px; font-size: 17px; line-height: 1.7; }
-.article-body h2 { font-size: 30px; margin-top: 18px; }
+.article-body h2 { font-size: clamp(26px, 2.6vw, 30px); margin-top: var(--s4); }
 .story-band { background: var(--plaster); }
 .story-band-ph { position: relative; padding: 0 0 40px 0; }
 .story-band-ph > :first-child { width: 86%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }
@@ -777,7 +784,7 @@ body.app .why-band { padding-bottom: 96px; }
 .track-steps svg { color: var(--terra-ink); }
 .track-steps strong { font-size: 16px; }
 .track-form .field { flex: 1 1 200px; }
-.signin { max-width: 520px; margin: 0 auto; padding: 36px 32px; background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
+.signin { max-width: 520px; margin: 0 auto; padding: clamp(24px, 5vw, 36px) clamp(20px, 4vw, 32px); background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
 .signin .btn { align-self: flex-start; }
 .acct-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .acct-card { display: flex; flex-direction: column; gap: 6px; padding: 22px; background: var(--linen); text-decoration: none; }
@@ -854,7 +861,7 @@ body.app .why-band { padding-bottom: 96px; }
 /* story page */
 .story-top { background: var(--choc); color: var(--ivory); overflow: hidden; position: relative; }
 .story-top::before { content: ""; position: absolute; inset: 0; background: url(assets/pattern-arches-choc.png) right top / 340px auto; opacity: .12; pointer-events: none; filter: invert(1); }
-.story-top-in { position: relative; display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: center; padding-block: 72px; }
+.story-top-in { position: relative; display: grid; grid-template-columns: 1fr 1.05fr; gap: var(--s8); align-items: center; padding-block: var(--section); }
 .story-top-copy { display: flex; flex-direction: column; gap: 18px; }
 .story-top-copy h1 { font-size: clamp(42px, 5.6vw, 72px); color: var(--ivory); }
 .story-top-copy .eyebrow { color: var(--glow); }
@@ -868,7 +875,7 @@ body.app .why-band { padding-bottom: 96px; }
 .story-collage .c3 { grid-column: 5 / 7; grid-row: 1 / 3; }
 .story-collage .c4 { position: absolute; left: -18px; bottom: -6px; width: 72px; height: auto; box-shadow: none; }
 .story-collage div.c1 > * { width: 100%; height: 100%; object-fit: cover; }
-.founder-note { max-width: 760px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 48px 28px; background: var(--linen); }
+.founder-note { max-width: 760px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--s4); padding: clamp(32px, 5vw, 48px) clamp(20px, 4vw, 40px); background: var(--linen); }
 .founder-note p { font-family: var(--display); font-size: clamp(22px, 2.4vw, 28px); line-height: 1.4; font-style: italic; }
 .how-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .how-steps li { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 24px 22px; border: 1px solid var(--line); background: var(--card); }
@@ -881,7 +888,7 @@ body.app .why-band { padding-bottom: 96px; }
 .grow li.now::before { background: var(--terra-ink); border-color: var(--terra-ink); }
 .grow strong { color: var(--choc); font-size: 16px; }
 @media (min-width: 900px) { .pdp-gallery { position: sticky; top: 84px; align-self: flex-start; } }
-@media (max-width: 860px) { .story-top-in { grid-template-columns: 1fr; padding-block: 44px; gap: 36px; } .story-collage { grid-template-rows: repeat(6, 44px); } }
+@media (max-width: 860px) { .story-top-in { grid-template-columns: 1fr; gap: var(--s6); } .story-collage { grid-template-rows: repeat(6, 44px); } }
 .help-cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
 .help-cards a { display: flex; flex-direction: column; gap: 6px; padding: 22px; background: var(--linen); text-decoration: none; border: 1px solid transparent; }
 .help-cards a:hover { border-color: var(--line2); color: var(--choc); }
@@ -908,6 +915,40 @@ body.app .why-band { padding-bottom: 96px; }
 .room-load { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; font-weight: 700; background: #1E130D; }
 .room-shadow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(20,12,8,.9), rgba(20,12,8,0)); filter: blur(4px); pointer-events: none; }
 .room-obj { filter: none; }
+/* layout rhythm: line things up the same way on every screen */
+/* product cards: price and buttons sit on one baseline across a row, whatever is above them */
+.card > .row { margin-top: auto; }
+/* why-us cards: even rows (2, 3, then 6 across) instead of a 4 + 2 split */
+.why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 760px) { .why-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1180px) { .why-grid:not(.big) { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+/* slim offer banners: text starts at the left edge, buttons line up */
+.promos.slim .promo { justify-content: flex-start; }
+.promos.slim .promo .eyebrow { flex: 0 0 auto; }
+/* sets: the pieces shrink to fit the card instead of spilling out of it */
+.combo-tiles { min-width: 0; }
+.combo-tiles .tile { width: auto; height: auto; flex: 1 1 0; min-width: 0; max-width: 100px; aspect-ratio: 10 / 11; }
+.plus { flex: none; }
+@media (max-width: 560px) {
+  /* every card: price on its own line, then save and add, so names and prices line up in both columns */
+  .card .row { flex-wrap: wrap; row-gap: var(--s1); }
+  .card .row > .num { flex: 1 0 100%; }
+  .card .row > span:last-child { margin-left: -10px; }
+  .why-grid, .why-grid.big { grid-template-columns: 1fr; gap: var(--s2); }
+  .why-grid li, .why-grid.big li { display: grid; grid-template-columns: auto 1fr; column-gap: var(--s4); row-gap: var(--s1); align-items: start; padding: var(--s4); }
+  .why-grid .why-ic { grid-row: span 2; margin: 0; width: 44px; height: 44px; }
+  .promos.slim .promo { padding: var(--s4) var(--s5); }
+  .promos.slim .promo .eyebrow { flex-basis: 100%; }
+  .promos.slim .promo strong { flex-basis: 100%; }
+  .section-head { margin-bottom: var(--s4); }
+}
+/* growth timeline: one column on narrow screens reads top to bottom with a line down the left */
+@media (max-width: 640px) {
+  .grow { grid-template-columns: 1fr; border-top: 0; border-left: 2px solid var(--line2); margin-left: 7px; }
+  .grow li { padding: 0 0 var(--s5) var(--s5); }
+  .grow li:last-child { padding-bottom: 0; }
+  .grow li::before { top: 2px; left: -8px; }
+}
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 
@@ -1584,7 +1625,7 @@ function viewHome() {
   <section class="section wrap" id="after-intro" aria-label="About"><div class="intro"><span class="mark leafmark" aria-hidden="true"></span><p>${T('home.intro')}</p><a href="#story" style="font-weight:600">${T('home.introLink')}</a></div></section>
   ${catTiles('cats-h')}
   ${giftBoxesHTML('foyer-boxes-h')}
-  ${last ? `<section class="wrap" aria-labelledby="back-h" style="padding-bottom:64px"><div class="welcome-back"><div><span class="eyebrow">${T('home.back')}</span><h2 id="back-h">Your last order, ${esc(last.id)}</h2><span class="muted">${last.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join(', ')}</span></div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="reorder" data-id="${last.id}">Buy again</button><a class="btn ghost" href="#order-${last.id}">Track it</a></span></div></section>` : ''}
+  ${last ? `<section class="wrap" aria-labelledby="back-h" style="padding-bottom:var(--section)"><div class="welcome-back"><div><span class="eyebrow">${T('home.back')}</span><h2 id="back-h">Your last order, ${esc(last.id)}</h2><span class="muted">${last.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join(', ')}</span></div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="reorder" data-id="${last.id}">Buy again</button><a class="btn ghost" href="#order-${last.id}">Track it</a></span></div></section>` : ''}
 
   ${newArrivals('new-h')}
   ${promoBanners()}
@@ -1650,7 +1691,7 @@ function viewShop(cat) {
       <label for="f-sort">Sort</label><select id="f-sort" data-act="shop-filter" data-k="sort"><option value="featured" ${sh.sort === 'featured' ? 'selected' : ''}>Featured</option><option value="low" ${sh.sort === 'low' ? 'selected' : ''}>Price: low to high</option><option value="high" ${sh.sort === 'high' ? 'selected' : ''}>Price: high to low</option></select></div></div>
     ${promoBanners().replace('wrap promos', 'promos slim')}
     <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'piece' : 'pieces'}${+SET.ritualOff ? ` · <span class="save-note">Pair any candle with an object and save ${SET.ritualOff}%</span>` : ''}</p>
-    ${list.length ? `<div class="grid" style="padding-bottom:40px">${cards.join('')}</div>` : `<div class="empty" style="margin-bottom:40px"><strong>Nothing matches these filters yet.</strong><span class="muted">Clear a filter, or try Find Your Feeling for suggestions.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="clear-filters">Clear filters</button><a class="btn small ghost" href="#feeling">Find Your Feeling</a></span></div>`}
+    ${list.length ? `<div class="grid" style="padding-bottom:var(--s7)">${cards.join('')}</div>` : `<div class="empty" style="margin-bottom:40px"><strong>Nothing matches these filters yet.</strong><span class="muted">Clear a filter, or try Find Your Feeling for suggestions.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="clear-filters">Clear filters</button><a class="btn small ghost" href="#feeling">Find Your Feeling</a></span></div>`}
     <div class="next-up" style="margin-bottom:80px"><span class="eyebrow">Coming later, not yet available</span><span class="muted">${FUTURE.map((f) => esc(f[0])).join(' · ')}.</span></div>
   </div>`;
 }
@@ -1707,12 +1748,12 @@ function viewProduct(id) {
     </div></div></div>
   ${comboHTML(p)}
   ${bestWith(p)}
-  <section class="section" aria-labelledby="rev-h" style="padding-top:56px;padding-bottom:0"><div class="section-head"><h2 id="rev-h">Reviews</h2>${rv.some((r) => r.sample) ? '<span class="muted" style="font-size:14px">Sample reviews in this preview</span>' : ''}</div>
+  <section class="section" aria-labelledby="rev-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="rev-h">Reviews</h2>${rv.some((r) => r.sample) ? '<span class="muted" style="font-size:14px">Sample reviews in this preview</span>' : ''}</div>
     ${rv.length ? `${reviewSummary(rv)}<div class="reviews">${rv.slice(0, 12).map((r) => reviewCard(r)).join('')}</div>` : `<p class="muted">${T('pdp.reviewsEmpty')}</p>`}
     ${R.sent ? `<div class="status ok" role="status">${T('pdp.reviewThanks')}</div>` : R.open ? `<form data-form="review" data-id="${id}" class="form review-form" novalidate><span class="field"><label for="rv-name">Your name</label><input id="rv-name" maxlength="60" autocomplete="given-name" value="${esc(R.name || '')}"></span>
       <fieldset class="field rating"><legend>Your rating</legend><span>${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="rv-rating" value="${n}" ${+R.rating === n ? 'checked' : ''}> ${n}★</label>`).join('')}</span></fieldset>
       <span class="field full"><label for="rv-body">Your review</label><textarea id="rv-body" rows="4" maxlength="1500">${esc(R.body || '')}</textarea></span>${R.err ? `<span class="err full" role="alert">${esc(R.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Send review</button></span></form>` : `<button class="btn ghost" type="button" data-act="review-open" data-id="${id}">Write a review</button>`}</section>
-  <section class="section" aria-labelledby="box-h" style="padding-top:56px;padding-bottom:0"><div class="section-head"><h2 id="box-h">How it arrives</h2><span class="muted" style="font-size:14px">Approved packaging direction; final pieces may differ.</span></div>
+  <section class="section" aria-labelledby="box-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="box-h">How it arrives</h2><span class="muted" style="font-size:14px">Approved packaging direction; final pieces may differ.</span></div>
     <div class="pack-grid">${brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set box.', 'Gift set box'], [IMG.tag, 'Hang tag with the tagline.', 'Hang tag'], [IMG.card, 'Candle care tag.', 'Care tag'], [IMG.seal, 'BUD & THINGS wax seals in brand colours.', 'Wax seals']]).slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>
   ${similar(p)}</div>`;
 }
@@ -1772,7 +1813,7 @@ function viewRitual() {
   const sel = R.pick[key];
   const lines = items.map(([pid, vi], i) => ({ p: byId[pid], v: byId[pid].variants[vi], vi, i }));
   const rp = ritualPrice(lines.filter((l) => sel[l.i]).map((l) => [l.p, l.vi]));
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Build Your Ritual</span><h1 tabindex="-1">Pair a candle with an object</h1><p class="muted" style="max-width:620px">Start from a pairing we like, or make your own.${+SET.ritualOff ? ` A candle and an object bought together are ${SET.ritualOff}% off, in any combination.` : ''} Nothing goes into your cart until you add it.</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Build Your Ritual</span><h1 tabindex="-1">Pair a candle with an object</h1><p class="muted" style="max-width:620px">Start from a pairing we like, or make your own.${+SET.ritualOff ? ` A candle and an object bought together are ${SET.ritualOff}% off, in any combination.` : ''} Nothing goes into your cart until you add it.</p></div>
     <div class="rituals" role="group" aria-label="Pairings">${PAIRINGS.map((x) => `<button type="button" aria-pressed="${R.preset === x.id}" data-act="ritual" data-v="${x.id}"><strong>${esc(x.name)}</strong><span class="muted" style="font-size:14px">${esc(x.why)}</span></button>`).join('')}<button type="button" aria-pressed="${R.preset === 'custom'}" data-act="ritual" data-v="custom"><strong>Make your own</strong><span class="muted" style="font-size:14px">Choose any candle and any object.</span></button></div>
     ${R.preset === 'custom' ? `<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px"><span class="field" style="flex:1 1 240px"><label for="r-candle">Candle</label><select id="r-candle" data-act="ritual-custom" data-k="candle">${P.filter((x) => x.cat === 'candles').map((x) => `<option value="${x.id}" ${R.custom.candle === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span><span class="field" style="flex:1 1 240px"><label for="r-object">Object</label><select id="r-object" data-act="ritual-custom" data-k="object">${P.filter((x) => x.cat !== 'candles').map((x) => `<option value="${x.id}" ${R.custom.object === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span></div>` : ''}
     <div class="builder">${lines.map((l) => `<label class="piece"><span class="tile">${tileArt(l.p, l.vi, .9)}</span><span class="check"><input type="checkbox" id="rit-${l.i}" data-act="ritual-pick" data-i="${l.i}" ${sel[l.i] ? 'checked' : ''} ${stockOf(l.v.sku) ? '' : 'disabled'}> ${esc(l.p.name)} · ${esc(l.v.label)}</span><span class="num">${inr(l.v.price)}${stockOf(l.v.sku) ? '' : ' · sold out'}</span><a href="#p-${l.p.id}" style="font-size:14px">View details</a></label>`).join('<span aria-hidden="true" style="align-self:center;font-family:var(--display);font-size:32px">+</span>')}
@@ -1781,13 +1822,13 @@ function viewRitual() {
 
 function viewSaved() {
   const list = S.saved.map((id) => byId[id]).filter(Boolean);
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><h1 tabindex="-1">Saved <span class="num">· ${list.length}</span></h1><p class="muted">Kept in this browser, no account needed.</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><h1 tabindex="-1">Saved <span class="num">· ${list.length}</span></h1><p class="muted">Kept in this browser, no account needed.</p></div>
     ${list.length ? `<div class="grid">${list.map(card).join('')}</div>` : `<div class="empty"><strong>Nothing saved yet.</strong><span class="muted">Tap the heart on any piece to keep it here.</span><a class="btn small" href="#shop">Browse the shop</a></div>`}</div>`;
 }
 
 function viewCart() {
   const lines = cartLines(); const t = totals();
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><h1 tabindex="-1">Your cart</h1></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><h1 tabindex="-1">Your cart</h1></div>
     ${lines.length ? `<div class="checkout" style="padding-top:0"><div class="checkout-main">${shipBar(t)}${lines.map(lineItem).join('')}${cartSuggest()}</div><div class="checkout-side">${totalsHTML(t)}<a class="btn" href="#checkout">${S.account ? 'Checkout' : 'Sign in to checkout'}</a><span class="hint">${T('cart.gift')}</span><a href="#shop" style="text-align:center">Keep browsing</a></div></div>` : `<div class="empty"><strong>Your cart is empty.</strong><span class="muted">Start with a candle, an object, or Find Your Feeling.</span><a class="btn small" href="#shop">Browse the shop</a></div>`}</div>`;
 }
 
@@ -1804,8 +1845,8 @@ function giftSummary(g) {
 }
 function viewCheckout() {
   const co = UI.co; const lines = cartLines(); const t = totals(); const g = co.gift;
-  if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:40px 80px"><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
-  if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:24px 80px"><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
+  if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
+  if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:var(--s5) var(--section)"><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
   loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
@@ -1883,7 +1924,7 @@ function viewOrder(id) {
   const fresh = UI.justPlaced === id; const wa = waLink('Hello, a question about my order ' + id);
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
     <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
@@ -1904,7 +1945,7 @@ function viewStory() {
     <div class="story-top-copy"><span class="eyebrow">Our Story</span><h1 id="story-h1" tabindex="-1">${T('story.title')}</h1><p class="lead">${T('story.lead')}</p>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn light" href="#shop">Shop the collection</a><a class="btn ghost on-dark" href="#tour">Walk through our home</a></span></div>
     <div class="story-collage">${founder ? `<div class="c1">${mediaEl(founder)}</div>` : `<img class="c1" src="${IMG.box}" alt="A BUD &amp; THINGS gift box tied with ribbon." loading="lazy">`}<img class="c2" src="${IMG.jar}" alt="A BUD &amp; THINGS candle among dried botanicals." loading="lazy"><img class="c3" src="${IMG.seal}" alt="BUD &amp; THINGS wax seals." loading="lazy"><span class="mark monogram c4" aria-hidden="true"></span></div></div></section>
-  <div class="wrap" style="padding-bottom:80px">
+  <div class="wrap" style="padding-bottom:var(--section)">
     <section class="section" aria-labelledby="name-h"><div class="split" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:18px;max-width:640px">
       <span class="eyebrow">The name</span><h2 id="name-h" style="font-size:clamp(30px,3.4vw,44px)">A bud is a small beginning.</h2>
       <p class="muted">${T('story.p1')}</p><p class="muted">${T('story.p2')}</p></div>
@@ -1919,7 +1960,7 @@ function viewStory() {
     <section class="section" style="padding-bottom:0">${discover('story-disc').replace('section wrap', '')}</section></div>`;
 }
 function viewHelp() {
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">We usually reply within a working day.</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">We usually reply within a working day.</p></div>
     <div class="help-cards"><a href="#track">${hl('box', 26)}<strong>Track your order</strong><span>Order number and mobile number</span></a><a href="#shipping">${hl('truck', 26)}<strong>Shipping &amp; delivery</strong><span>Charges, times and gifts</span></a><a href="#refunds">${hl('shield', 26)}<strong>Cancellations &amp; replacements</strong><span>Damaged items replaced free</span></a><a href="#faq">${hl('note', 26)}<strong>FAQs</strong><span>Quick answers</span></a></div>
     <div class="facts" style="border-top:0;margin-top:32px"><div><strong>Contact us</strong>${SET.email ? `<span class="muted sel">${esc(SET.email)}</span>` : ''}${socialLinks()}</div>
     <div><strong>Shipping &amp; delivery</strong><span class="muted">${T('help.shipping')}</span></div>
@@ -1932,7 +1973,7 @@ function viewHelp() {
 function viewGiftCard() {
   const amounts = csvList(SET.giftCards).map((x) => parseInt(x, 10)).filter((x) => x > 0); if (!amounts.length) return viewNotFound();
   const g = UI.gc = UI.gc || { amt: amounts[Math.min(1, amounts.length - 1)] };
-  return `<div class="wrap" style="padding-bottom:80px;max-width:820px"><div class="page-head"><span class="eyebrow">Gift cards</span><h1 tabindex="-1">${T('gc.title')}</h1><p class="muted">${T('gc.sub')}</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section);max-width:820px"><div class="page-head"><span class="eyebrow">Gift cards</span><h1 tabindex="-1">${T('gc.title')}</h1><p class="muted">${T('gc.sub')}</p></div>
     <ol class="trust">${Tx('gc.how').split('|').map((x) => x.trim()).filter(Boolean).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
     <form data-form="giftcard" class="form adm-card" style="margin-top:24px" novalidate><strong class="full" style="font-size:20px">Choose an amount</strong>
       <div class="full" role="radiogroup" aria-label="Amount" style="display:flex;flex-wrap:wrap;gap:10px">${amounts.map((a) => `<button class="chip" type="button" role="radio" aria-checked="${g.amt === a}" data-act="gc-amt" data-v="${a}">${inr(a)}</button>`).join('')}</div>
@@ -1954,7 +1995,7 @@ function reminderForm() {
 }
 function viewShare() {
   const sh = UI.share = UI.share || {}; const link = location.origin + location.pathname + (sh.ref ? '?ref=' + sh.ref : ''); const msg = Tx('share.msg') + ' ' + link;
-  return `<div class="wrap" style="padding-bottom:80px;max-width:760px"><div class="page-head"><span class="eyebrow">${T('share.eyebrow')}</span><h1 tabindex="-1">${T('share.title')}</h1><p class="muted">${T('share.sub')}</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section);max-width:760px"><div class="page-head"><span class="eyebrow">${T('share.eyebrow')}</span><h1 tabindex="-1">${T('share.title')}</h1><p class="muted">${T('share.sub')}</p></div>
     <div class="adm-card" style="display:flex;flex-direction:column;gap:14px"><strong>Your message</strong><p class="muted" style="margin:0">${esc(msg)}</p>
       <span style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener" data-act="share-wa">Share on WhatsApp</a><button class="btn ghost" type="button" data-act="share-copy">Copy message</button></span></div>
     ${+SET.refReward && !sh.ref ? `<form data-form="myref" class="form adm-card" style="margin-top:20px" novalidate><p class="full" style="margin:0">${T('share.own')}</p>
@@ -1963,7 +2004,7 @@ function viewShare() {
 }
 function viewFaq() {
   const qs = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) qs.push(i);
-  return `<div class="wrap" style="padding-bottom:80px;max-width:820px"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">${T('faq.title')}</h1><p class="muted">${T('faq.sub')}</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section);max-width:820px"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">${T('faq.title')}</h1><p class="muted">${T('faq.sub')}</p></div>
     <div class="faq">${qs.map((i) => `<details><summary>${T('faq.q' + i)}</summary><p class="muted">${T('faq.a' + i)}</p></details>`).join('')}</div>
     <p style="margin-top:28px">${socialLinks()}</p></div>`;
 }
@@ -1971,7 +2012,7 @@ function viewBulk() {
   const b = UI.bulk = UI.bulk || {}; const list = (k) => Tx(k).split('|').map((x) => x.trim()).filter(Boolean);
   const boxes = P.filter((p) => p.cat === 'gifts').sort((a, c) => minPrice(a) - minPrice(c));
   const inp = (id, label, opts) => `<span class="field${opts && opts.full ? ' full' : ''}"><label for="bk-${id}">${label}</label><input id="bk-${id}" ${opts && opts.type ? `type="${opts.type}"` : ''} ${opts && opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts && opts.ac ? `autocomplete="${opts.ac}"` : ''} value="${esc(b[id] || '')}"></span>`;
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">${T('bulk.eyebrow')}</span><h1 tabindex="-1">${T('bulk.title')}</h1><p class="muted" style="max-width:640px">${T('bulk.sub')}</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">${T('bulk.eyebrow')}</span><h1 tabindex="-1">${T('bulk.title')}</h1><p class="muted" style="max-width:640px">${T('bulk.sub')}</p></div>
     <div class="split" style="margin-bottom:40px;align-items:start"><div style="display:flex;flex-direction:column;gap:18px">
       <ul class="trust">${list('bulk.perks').map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
       <div><strong>Good for</strong><div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">${list('bulk.uses').map((x) => `<span class="chip">${esc(x)}</span>`).join('')}</div></div>
@@ -1986,7 +2027,7 @@ function viewBulk() {
 function viewGifting() {
   const picks = idList('giftPicks').map((id) => byId[id]);
   const gimg = brandImgs('gift', [[IMG.tag, 'Rustic gift tag with the logo and olive leaf.', 'Your note, hand-written on our tag']]);
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">${T('gift.title')}</h1><p class="muted" style="max-width:620px">${T('gift.sub')}</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">${T('gift.title')}</h1><p class="muted" style="max-width:620px">${T('gift.sub')}</p></div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div>
     <div class="split" style="margin-bottom:48px"><figure class="photo" style="margin:0"><img src="${esc(gimg[0][0])}" alt="${esc(gimg[0][1] || '')}" loading="lazy"><figcaption>${esc(gimg[0][2] || '')}</figcaption></figure>
       <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">${T('gift.h2')}</h2><p class="muted">${T('gift.text')}</p>
@@ -2036,7 +2077,7 @@ function viewAdmin() {
     : DB.state === 'error' ? `<div class="status err adm-banner">The database didn’t answer: ${esc(DB.error || '')}. The site is showing its last saved copy.</div>` : '';
   if (BTDB.on && !BTDB.owner() && A.mfa && BTDB.awaitingCode()) {
     const m = A.mfa;
-    return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}<form data-form="owner-code" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">${m.step === 'enrol' ? 'Set up your second step' : 'Enter your code'}</h2>
+    return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}<form data-form="owner-code" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">${m.step === 'enrol' ? 'Set up your second step' : 'Enter your code'}</h2>
       ${m.step === 'enrol' ? `<p class="full muted">Once, on this sign-in: open an authenticator app on your phone (Google Authenticator, Microsoft Authenticator or 1Password), add an account and scan this code. From then on, signing in needs your password and the 6-digit code the app shows, so a stolen password alone can’t change the shop.</p>
       ${m.uri && window.qrcode ? '<canvas id="mfa-qr" class="full" role="img" aria-label="Set-up code for the authenticator app" style="width:200px;height:200px;border-radius:8px"></canvas>'
         : m.qr ? `<img class="full" src="${esc(m.qr)}" alt="Set-up code for the authenticator app" width="180" height="180" style="background:#fff;padding:8px;border-radius:8px">` : ''}${m.secret ? `<p class="full muted" style="font-size:14px">Can’t scan it? Type this key into the app: <strong class="num" style="word-break:break-all">${esc(m.secret)}</strong></p>` : ''}`
@@ -2045,14 +2086,14 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue</button><button class="btn ghost" type="button" data-act="adm-signout">Start again</button></span></form></div>`;
   }
   if (BTDB.on && !BTDB.owner()) {
-    return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}<form data-form="owner-signin" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">Sign in</h2>
+    return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}<form data-form="owner-signin" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">Sign in</h2>
       <span class="field full"><label for="own-email">Email</label><input id="own-email" type="email" autocomplete="username" value="${esc(A.email || '')}" required></span>
       <span class="field full"><label for="own-pass">Password</label><input id="own-pass" type="password" autocomplete="current-password" required></span>
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
   const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
-  return `<div class="wrap adm" style="padding-bottom:80px">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
+  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
 // what Shiprocket booked for an order, for the Owner view
@@ -2331,7 +2372,7 @@ function promoBanners() {
 }
 function festiveBanner() {
   if (!P.some((p) => p.cat === 'gifts')) return '';
-  return `<section class="wrap" aria-labelledby="fest-h" style="padding-bottom:64px"><a class="festive" href="#gifts"><img src="${IMG.box}" alt="" loading="lazy"><span class="festive-copy"><span class="eyebrow">Diwali 2026</span><strong id="fest-h">${T('home.festive')}</strong><span>${T('home.festiveText')}</span><span class="btn small light" style="align-self:flex-start">Shop gift boxes →</span></span></a></section>`;
+  return `<section class="wrap" aria-labelledby="fest-h" style="padding-bottom:var(--section)"><a class="festive" href="#gifts"><img src="${IMG.box}" alt="" loading="lazy"><span class="festive-copy"><span class="eyebrow">Diwali 2026</span><strong id="fest-h">${T('home.festive')}</strong><span>${T('home.festiveText')}</span><span class="btn small light" style="align-self:flex-start">Shop gift boxes →</span></span></a></section>`;
 }
 
 function spotlight(id) {
@@ -2400,10 +2441,10 @@ function homeJournal(id) {
   return `<section class="section wrap" aria-labelledby="${id}" style="padding-top:0"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="${id}">${T('home.journal')}</h2><span class="muted">${T('home.journalSub')}</span></div><a href="#journal" style="font-weight:600">All stories →</a></div>${journalCards(3)}</section>`;
 }
 function viewJournal(id) {
-  if (!id) return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Journal</span><h1 tabindex="-1">Stories, care and gifting</h1><p class="muted" style="max-width:620px">${T('home.journalSub')}</p></div>${journalCards()}</div>`;
+  if (!id) return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Journal</span><h1 tabindex="-1">Stories, care and gifting</h1><p class="muted" style="max-width:620px">${T('home.journalSub')}</p></div>${journalCards()}</div>`;
   const j = JOURNAL.find((x) => x.id === id); if (!j) return viewNotFound();
   const links = j.links.map((x) => byId[x]).filter(Boolean);
-  return `<article class="wrap article" style="padding-bottom:80px"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#journal">Journal</a> / ${esc(j.title)}</nav>
+  return `<article class="wrap article" style="padding-bottom:var(--section)"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#journal">Journal</a> / ${esc(j.title)}</nav>
     <header class="article-head"><span class="eyebrow">${esc(j.eyebrow)} · ${j.mins} min read</span><h1 tabindex="-1">${esc(j.title)}</h1><p class="lead">${esc(j.lead)}</p></header>
     <div class="article-ph tile${j.img ? ' photo-tile' : ' alt'}">${postArt(j)}</div>
     <div class="article-body">${j.body.map(([h, t]) => `<h2>${esc(h)}</h2><p>${esc(t)}</p>`).join('')}<p class="muted" style="font-size:14px">Written by Ashi at the BUD &amp; THINGS studio.</p></div>
@@ -2430,9 +2471,9 @@ function discover(id) {
 
 // ---------- pages: why us, policies, FAQ, track an order, account ----------
 function viewWhy() {
-  return `<div class="wrap" style="padding-bottom:40px"><div class="page-head"><span class="eyebrow">Why from us</span><h1 tabindex="-1">${T('why.title')}</h1><p class="muted" style="max-width:620px">${T('why.lead')}</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--s7)"><div class="page-head"><span class="eyebrow">Why from us</span><h1 tabindex="-1">${T('why.title')}</h1><p class="muted" style="max-width:620px">${T('why.lead')}</p></div>
     <ul class="why-grid big">${whyItems().map(([i, h, t]) => `<li><span class="why-ic">${hl(i, 30)}</span><strong>${esc(h)}</strong><span>${esc(t)}</span></li>`).join('')}</ul>
-    <div class="split" style="margin-top:56px"><figure class="photo" style="margin:0"><img src="${IMG.box}" alt="A BUD &amp; THINGS gift box tied with ribbon." loading="lazy"><figcaption>How it arrives</figcaption></figure>
+    <div class="split" style="margin-top:var(--section-sm)"><figure class="photo" style="margin:0"><img src="${IMG.box}" alt="A BUD &amp; THINGS gift box tied with ribbon." loading="lazy"><figcaption>How it arrives</figcaption></figure>
       <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">Small batches, real care</h2><p class="muted">We are not a factory. Every candle is poured and every tray is cast by hand, then checked, wrapped and packed in our studio. If something is not right when it reaches you, we put it right.</p>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#story">Read our story</a><a class="btn ghost" href="#shipping">Shipping &amp; delivery</a></span></div></div></div>`;
 }
@@ -2440,7 +2481,7 @@ const LEGAL = { privacy: ['Privacy policy', 'legal.privacy'], terms: ['Terms & c
 function legalBody(k) { return Tx(k).split(/\n\n+/).map((b) => { const m = /^## (.+)\n?([\s\S]*)$/.exec(b); return m ? `<h2>${esc(m[1])}</h2>${m[2] ? `<p>${esc(m[2]).replace(/\n/g, '<br>')}</p>` : ''}` : `<p>${esc(b).replace(/\n/g, '<br>')}</p>`; }).join(''); }
 function viewLegal(r) {
   const [title, k] = LEGAL[r];
-  return `<div class="wrap legal" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Policies</span><h1 tabindex="-1">${esc(title)}</h1>${Tx('legal.note') ? `<div class="status" role="note">${T('legal.note')}</div>` : ''}</div>
+  return `<div class="wrap legal" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Policies</span><h1 tabindex="-1">${esc(title)}</h1>${Tx('legal.note') ? `<div class="status" role="note">${T('legal.note')}</div>` : ''}</div>
     <div class="legal-grid"><nav class="legal-nav" aria-label="Policies">${Object.entries(LEGAL).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
     <div class="article-body">${legalBody(k)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p><p>${T('legal.grievance')}</p></div></div></div>`;
 }
@@ -2470,7 +2511,7 @@ function orderRows(list) {
 }
 function viewTrack() {
   const tr = UI.track || {}; loadMine();
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Orders</span><h1 tabindex="-1">${T('track.title')}</h1><p class="muted" style="max-width:620px">${T('track.sub')}</p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Orders</span><h1 tabindex="-1">${T('track.title')}</h1><p class="muted" style="max-width:620px">${T('track.sub')}</p></div>
     <form data-form="track" class="track-form" novalidate><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label><input id="tr-phone" type="tel" inputmode="tel" maxlength="16" value="${esc(tr.phone || '')}" autocomplete="tel-national"></span><button class="btn" type="submit">Track order</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
     ${S.account ? `<h2 style="font-size:28px;margin-bottom:14px">Your orders</h2>${orderRows(myOrders())}` : `<p class="muted"><a href="#account">Sign in</a> to see all your orders here.</p>`}
     <ol class="track-steps">${[['box', 'Placed', 'We have your order and payment.'], ['gift', 'Packed', 'Wrapped by hand, usually within 1 to 3 working days.'], ['truck', 'Shipped', 'We email the courier tracking link.'], ['home', 'Delivered', 'Usually ' + SET.deliveryDays + ' after it ships.']].map(([i, h, t]) => `<li>${hl(i, 26)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></div>`;
@@ -2533,9 +2574,9 @@ function signInBox(next) {
 }
 function viewAccount() {
   const a = S.account;
-  if (!a) return `<div class="wrap" style="padding-block:40px 80px">${signInBox(UI.acct.next || '')}</div>`;
+  if (!a) return `<div class="wrap" style="padding-block:var(--s6) var(--section)">${signInBox(UI.acct.next || '')}</div>`;
   loadMine(); const list = myOrders(); const pm = ptsMine();
-  return `<div class="wrap" style="padding-bottom:80px"><div class="page-head"><span class="eyebrow">Your account</span><h1 tabindex="-1">Hello${a.name ? ', ' + esc(a.name.split(' ')[0]) : ''}.</h1><p class="muted">Signed in as ${esc(a.email)}. <button class="linkbtn" type="button" data-act="acct-out">Sign out</button></p></div>
+  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Your account</span><h1 tabindex="-1">Hello${a.name ? ', ' + esc(a.name.split(' ')[0]) : ''}.</h1><p class="muted">Signed in as ${esc(a.email)}. <button class="linkbtn" type="button" data-act="acct-out">Sign out</button></p></div>
     <div class="acct-grid">${+SET.rewardPct ? `<div class="acct-card points"><span class="eyebrow">Bud Points</span><strong class="num">${pm.available}</strong><span>Worth ${inr(pm.available)} off your next order.${pm.pending ? ` ${pm.pending} more arrive once your open orders are delivered.` : ''} You earn ${esc(SET.rewardPct)}% back on every order.</span></div>` : ''}
       <a class="acct-card" href="#track"><span class="eyebrow">Orders</span><strong class="num">${list.length}</strong><span>Track an order →</span></a>
       <a class="acct-card" href="#saved"><span class="eyebrow">Saved</span><strong class="num">${S.saved.length}</strong><span>Pieces you loved →</span></a></div>
@@ -2573,7 +2614,7 @@ function combosFor(p) {
 }
 function comboHTML(p) {
   const sets = combosFor(p); if (!sets.length) return '';
-  return `<section class="section" aria-labelledby="combo-h" style="padding-top:56px;padding-bottom:0"><div class="section-head"><h2 id="combo-h">${T('pdp.combo')}</h2>${+SET.ritualOff ? `<span class="muted" style="font-size:14px">Candle and object together save ${esc(SET.ritualOff)}%</span>` : ''}</div>
+  return `<section class="section" aria-labelledby="combo-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="combo-h">${T('pdp.combo')}</h2>${+SET.ritualOff ? `<span class="muted" style="font-size:14px">Candle and object together save ${esc(SET.ritualOff)}%</span>` : ''}</div>
     <div class="combos">${sets.map((c) => { const rp = ritualPrice(c.items); return `<div class="combo"><span class="combo-tiles">${c.items.map(([x, vi], i) => `${i ? '<span class="plus" aria-hidden="true">+</span>' : ''}<a class="tile${i % 2 ? ' alt' : ''}" href="#p-${x.id}" aria-label="${esc(x.name)}">${tileArt(x, vi, .55)}</a>`).join('')}</span>
       <strong>${c.items.map(([x, vi]) => esc(x.name) + (x.variants.length > 1 ? ' <span class="muted">(' + esc(x.variants[vi].label) + ')</span>' : '')).join(' + ')}</strong><span class="muted" style="font-size:14px">${esc(c.why)}</span>
       <span class="combo-buy"><span class="num" style="font-weight:700;font-size:18px">${rp.save ? `<s class="muted" style="font-weight:400">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span>${rp.save ? `<span class="pill save">Save ${inr(rp.save)}</span>` : ''}<button class="btn small" type="button" data-act="combo-add" data-skus="${c.items.map(([x, vi]) => x.variants[vi].sku).join(',')}">Add set</button></span></div>`; }).join('')}</div></section>`;
@@ -2583,13 +2624,13 @@ function bestWith(p) {
   const list = P.filter((x) => x.id !== p.id && x.cat !== p.cat && x.cat !== 'gifts' && inStock(x)).sort((a, b) => score(b) - score(a)).slice(0, 3);
   if (!list.length) return '';
   const why = (x) => { const m = x.mood.find((k) => p.mood.includes(k)); const s = x.space.find((k) => p.space.includes(k)); return s ? 'Both made for the ' + (SPACES.find((z) => z[0] === s) || [s, s])[1].toLowerCase() : m ? 'Same ' + (MOODS.find((z) => z[0] === m) || [m, m])[1].toLowerCase().split(' ')[0] + ' mood' : esc(x.line); };
-  return `<section class="section" aria-labelledby="best-h" style="padding-top:56px;padding-bottom:0"><div class="section-head"><h2 id="best-h">${T('pdp.best')}</h2><a href="#ritual" style="font-weight:600">Build your ritual →</a></div>
+  return `<section class="section" aria-labelledby="best-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="best-h">${T('pdp.best')}</h2><a href="#ritual" style="font-weight:600">Build your ritual →</a></div>
     <div class="best">${list.map((x, i) => `<div class="best-item"><a class="tile${i % 2 ? '' : ' alt'}" href="#p-${x.id}" aria-label="${esc(x.name)}">${tileArt(x, 0, .6)}</a><span class="meta"><span class="eyebrow">${esc(why(x))}</span><a class="name" href="#p-${x.id}">${esc(x.name)}</a><span class="num">${priceFrom(x)}</span></span><button class="btn ghost small" type="button" data-act="quick-add" data-id="${x.id}">Add</button></div>`).join('')}</div></section>`;
 }
 function similar(p) {
   const score = (x) => (x.type === p.type ? 3 : 0) + x.mood.filter((m) => p.mood.includes(m)).length * 2 + x.occ.filter((s) => p.occ.includes(s)).length;
   const list = P.filter((x) => x.id !== p.id && x.cat === p.cat).sort((a, b) => score(b) - score(a)).concat(P.filter((x) => x.cat !== p.cat && x.id !== p.id)).slice(0, 4);
-  return `<section class="section" aria-labelledby="rel-h" style="padding-top:56px"><div class="section-head"><h2 id="rel-h">${T('pdp.similar')}</h2><a href="#${p.cat === 'gifts' ? 'gifts' : p.cat}" style="font-weight:600">See all ${p.cat === 'gifts' ? 'gift boxes' : p.cat === 'candles' ? 'candles' : 'objects'} →</a></div><div class="grid">${list.map(card).join('')}</div></section>`;
+  return `<section class="section" aria-labelledby="rel-h" style="padding-top:var(--section-sm)"><div class="section-head"><h2 id="rel-h">${T('pdp.similar')}</h2><a href="#${p.cat === 'gifts' ? 'gifts' : p.cat}" style="font-weight:600">See all ${p.cat === 'gifts' ? 'gift boxes' : p.cat === 'candles' ? 'candles' : 'objects'} →</a></div><div class="grid">${list.map(card).join('')}</div></section>`;
 }
 const PAY_ICONS = ['UPI', 'Visa', 'Mastercard', 'RuPay', 'Net banking', 'Wallets'];
 function payBadges() {
@@ -2597,7 +2638,7 @@ function payBadges() {
   return `<ul class="pay-badges" aria-label="We accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
 }
 
-function viewNotFound() { return `<div class="wrap" style="padding-block:60px 100px"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
+function viewNotFound() { return `<div class="wrap" style="padding-block:var(--section) calc(var(--section) + 20px)"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
 
 // ---------- render ----------
 // ---------- see it in your room: the piece on the visitor's own photo. The photo stays in the browser; nothing is uploaded ----------
@@ -2743,7 +2784,7 @@ function viewGiftHome() {
     </div>
   </section>
 
-  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:40px" aria-label="Your welcome gift">${G.open
+  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--s7)" aria-label="Your welcome gift">${G.open
     ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">You unwrapped</span><strong>${esc(SET.welcomeOff)}% off your first order</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
     : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}
 
@@ -2752,7 +2793,7 @@ function viewGiftHome() {
   ${newArrivals('gh-new')}
   ${promoBanners()}
 
-  <section class="wrap" aria-labelledby="gh-best" style="padding-block:24px 64px">
+  <section class="wrap" aria-labelledby="gh-best" style="padding-block:var(--s5) var(--section)">
     <div class="section-head"><h2 id="gh-best">${esc(cats.find((c) => c[0] === G.cat)[1])}</h2><a href="#shop" style="font-weight:600">See all ${P.length} →</a></div>
     <div class="gh-chips" role="group" aria-label="Show">${cats.map(([k, l]) => `<button type="button" class="chip" data-act="gh-cat" data-v="${k}" aria-pressed="${G.cat === k}">${l}</button>`).join('')}</div>
     <div class="grid" style="margin-top:16px">${list.length ? list.map(card).join('') : '<p class="muted">Nothing here yet.</p>'}</div>
@@ -2772,7 +2813,7 @@ function viewGiftHome() {
   ${spotlight('gh-spot')}
   ${homeReviews('gh-rev')}
 
-  <section class="wrap" aria-labelledby="gh-arrive" style="padding-bottom:80px"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.arriveEyebrow')}</span><h2 id="gh-arrive">${T('home.arrive')}</h2></div></div>
+  <section class="wrap" aria-labelledby="gh-arrive" style="padding-bottom:var(--section)"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.arriveEyebrow')}</span><h2 id="gh-arrive">${T('home.arrive')}</h2></div></div>
     <div class="pack-grid">${pack.slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>
 
   ${storyBand('gh-story')}
