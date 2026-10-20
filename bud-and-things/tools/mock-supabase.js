@@ -18,7 +18,7 @@ const CUST_CODE = '111111';
 const custSession = (email) => ({ access_token: custJwt(email), refresh_token: 'r.' + Buffer.from(email).toString('base64url'), expires_in: 3600, token_type: 'bearer', user: { email } });
 const TWO_STEP = process.env.TWO_STEP === '1'; // matches ownerTwoStep in config.js; off until launch
 const KEYS = { site_text: 'key', settings: 'key', stock: 'sku' };
-const T = { products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [] };
+const T = { products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], profiles: [] };
 const FILES = {};
 let orderNo = 1001;
 const uuid = () => 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
@@ -90,6 +90,9 @@ function placeOrder(o, em) {
   const data = { id, placedAt: new Date().toISOString(), method: o.method, items, email: em, contact: { name: c.name, phone: c.phone, email: em }, address: { line1: a.line1, line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state },
     sub, ritual, code, codeOff, pointsUsed: usePts, points: earned, ship, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin, card: card || null, cardOff, ref };
   T.orders.push({ id, data, status, phone: c.phone, total, method: o.method, created_at: data.placedAt });
+  let pr = T.profiles.find((x) => x.email === em); if (!pr) T.profiles.push(pr = { email: em, name: '', phone: '', addresses: [], prefs: {} });
+  if (!pr.name) pr.name = c.name; if (!pr.phone) pr.phone = c.phone;
+  if (!(g && g.on) && pr.addresses.length < 5 && !pr.addresses.some((x) => x.line1.toLowerCase() === a.line1.trim().toLowerCase() && x.pin === a.pin)) pr.addresses.push({ label: '', line1: a.line1.trim(), line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state });
   return id;
 }
 
@@ -125,6 +128,24 @@ http.createServer((req, res) => {
       m = /^\/rest\/v1\/rpc\/(\w+)$/.exec(u.pathname);
       if (m && m[1] === 'place_order') { try { return send(res, 200, JSON.stringify(placeOrder(json().o, custOf(auth))), 'application/json'); } catch (e) { return fail(res, 400, e.message); } }
       if (m && m[1] === 'my_orders') { const em = custOf(auth); if (!em) return fail(res, 400, 'sign_in'); return send(res, 200, { points: pointsOf(em), orders: T.orders.filter((x) => x.data.email === em).slice().reverse().slice(0, 50).map((x) => Object.assign({}, x.data, { status: x.status })) }); }
+      // profiles, as my_profile / save_profile / forget_me in schema.sql
+      if (m && ['my_profile', 'save_profile', 'forget_me'].includes(m[1])) {
+        const em = custOf(auth); if (!em) return fail(res, 400, 'sign_in');
+        let p = T.profiles.find((x) => x.email === em);
+        if (!p) { const last = T.orders.filter((x) => x.data.email === em).pop(); p = { email: em, name: last ? last.data.contact.name : '', phone: last ? last.phone : '', addresses: [], prefs: {} }; T.profiles.push(p); }
+        if (m[1] === 'forget_me') { Object.assign(p, { name: '', phone: '', addresses: [], prefs: {} }); return send(res, 200, null); }
+        if (m[1] === 'save_profile') {
+          const b = json().p, bad = (w) => { throw new Error('bad_profile:' + w); };
+          try {
+            if (String(b.name || '').length > 80) bad('name'); if (!/^([6-9]\d{9})?$/.test(b.phone || '')) bad('phone');
+            if (!Array.isArray(b.addresses || []) || (b.addresses || []).length > 5) bad('address');
+            (b.addresses || []).forEach((a) => { if (!a.line1 || !/^[1-9]\d{5}$/.test(a.pin || '') || !a.city || !a.state) bad('address'); });
+            Object.keys(b.prefs || {}).forEach((k) => { if (!['whatsapp', 'sms', 'push'].includes(k) || typeof b.prefs[k] !== 'boolean') bad('prefs'); });
+          } catch (e) { return fail(res, 400, e.message); }
+          Object.assign(p, { name: String(b.name || '').trim(), phone: b.phone || '', addresses: (b.addresses || []).map((a) => ({ label: a.label || '', line1: a.line1, line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state })), prefs: b.prefs || {} });
+        }
+        return send(res, 200, p);
+      }
       if (m && m[1] === 'get_order') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === a.phone_no); return send(res, 200, o ? Object.assign({}, o.data, { status: o.status }) : null); }
       if (m && m[1] === 'cancel_order') {
         if (!own) return fail(res, 400, 'not_allowed');
