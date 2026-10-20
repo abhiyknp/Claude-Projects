@@ -1402,11 +1402,11 @@ async function visitorSend(table, row) {
 }
 
 // ---------- photos and videos ----------
-const ROLE_ORDER = ['packshot', 'lifestyle', 'lit', 'detail', 'hand', 'loop', 'packaging', 'gift', 'unboxing', 'ritual', 'founder', 'process', 'story'];
+const ROLE_ORDER = ['packshot', 'lifestyle', 'lit', 'detail', 'hand', 'loop', 'packaging', 'gift', 'unboxing', 'ritual', 'founder', 'process', 'story', 'cutout'];
 const mUrl = (m) => BTDB.fileUrl(m.path);
 function mediaFor(pid, o) {
   o = o || {};
-  return DATA.media.filter((m) => m.published !== false && m.product_id === pid && (!o.kind || m.kind === o.kind) && (!o.role || [].concat(o.role).includes(m.role)) && (!o.variant || !m.variant || m.variant === o.variant))
+  return DATA.media.filter((m) => m.published !== false && m.product_id === pid && (!o.kind || m.kind === o.kind) && (o.role ? [].concat(o.role).includes(m.role) : m.role !== 'cutout') && (!o.variant || !m.variant || m.variant === o.variant))
     .sort((a, b) => (o.variant ? (b.variant === o.variant) - (a.variant === o.variant) : 0) || ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role) || (a.sort || 0) - (b.sort || 0));
 }
 const coverOf = (p, vi) => mediaFor(p.id, { kind: 'photo', variant: p.variants[vi || 0] && p.variants[vi || 0].label })[0];
@@ -2050,7 +2050,7 @@ const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', '
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band']] };
-const ROLE_LABEL = { packshot: 'Pack shot, plain background', lifestyle: 'In a room', lit: 'Lit candle', detail: 'Close-up detail', hand: 'In the hand', loop: 'Short looping video', packaging: 'Packaging', gift: 'Gift wrap and card', unboxing: 'Unboxing', ritual: 'Ritual pairing', founder: 'Ashi', process: 'Making it', story: 'Home page story band' };
+const ROLE_LABEL = { packshot: 'Pack shot, plain background', lifestyle: 'In a room', lit: 'Lit candle', detail: 'Close-up detail', hand: 'In the hand', loop: 'Short looping video', packaging: 'Packaging', gift: 'Gift wrap and card', unboxing: 'Unboxing', ritual: 'Ritual pairing', founder: 'Ashi', process: 'Making it', story: 'Home page story band', cutout: 'Cut-out, no background (for See it in your room)' };
 const roleOpts = (sel) => ROLE_ORDER.map((r) => `<option value="${r}" ${sel === r ? 'selected' : ''}>${ROLE_LABEL[r] || r}</option>`).join('');
 const slug = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').slice(0, 60);
 const uuid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16)));
@@ -2671,7 +2671,7 @@ function roomOpen(pid, vi) {
 }
 function roomClose() { if (!ROOM.el) return; if (window.ROOM3D) window.ROOM3D.close(); ROOM.el.hidden = true; ROOM.el.innerHTML = ''; document.body.style.overflow = ''; ROOM.back?.focus?.(); }
 function roomDraw() {
-  const p = roomPiece(); if (!p) return roomClose(); const v = p.variants[ROOM.vi] || p.variants[0]; const img = ROOM.snap || prodImg(p, ROOM.vi);
+  const p = roomPiece(); if (!p) return roomClose(); const v = p.variants[ROOM.vi] || p.variants[0]; const cut = roomCut(p, v); ROOM.cut = !!cut; const img = cut || ROOM.snap || prodImg(p, ROOM.vi);
   const sw = p.variants.length > 1 ? `<div class="room-sw" role="group" aria-label="Option">${p.variants.map((x, i) => `<button type="button" data-act="room-vi" data-i="${i}" aria-pressed="${i === ROOM.vi}"><i style="background:${colorFor(p, i)}"></i>${esc(x.label)}</button>`).join('')}</div>` : '';
   const left = stockOf(v.sku); const lit = window.ROOM3D && window.ROOM3D.lit();
   const add = left > 0 ? `<button class="btn" type="button" data-act="room-add">Add · ${inr(v.price)}</button>` : `<a class="btn" href="#p-${p.id}" data-act="room-close">See options</a>`;
@@ -2681,11 +2681,11 @@ function roomDraw() {
     bar = `<div class="room-row"><div class="room-sw" role="group" aria-label="Light">${[['day', 'Daylight'], ['dusk', 'Evening']].map(([k, l]) => `<button type="button" data-act="room-look" data-v="${k}" aria-pressed="${ROOM.look === k}">${l}</button>`).join('')}${isCandle(p) ? `<button type="button" data-act="room-lit" aria-pressed="${!!lit}">${lit ? 'Blow it out' : 'Light it'}</button>` : ''}</div>${sw}</div>
       <div class="room-acts"><button class="btn ghost" type="button" data-act="room-mode" data-v="photo">Use your photo</button><button class="btn ghost" type="button" data-act="room-share">${navigator.share ? 'Share' : 'Save photo'}</button>${add}</div>`;
   } else if (ROOM.mode === 'photo' && ROOM.bg) {
-    stage = `<div class="room-frame" id="room-frame"><img class="room-bg" src="${ROOM.bg}" alt="Your photo"><span class="room-shadow" id="room-shadow" aria-hidden="true"></span><img class="room-obj" id="room-obj" src="${esc(img)}" alt="${esc(p.name)}. Drag to move it, use the arrow keys to nudge it, plus and minus to resize." tabindex="0" draggable="false" style="${ROOM.tone ? 'filter:' + ROOM.tone.css : ''}"></div><span class="room-hint" aria-hidden="true">Drag to move · pinch to resize</span>`;
+    stage = `<div class="room-frame" id="room-frame"><img class="room-bg" src="${ROOM.bg}" alt="Your photo"><span class="room-shadow" id="room-shadow" aria-hidden="true"></span><img class="room-obj" id="room-obj"${cut ? ' crossorigin="anonymous"' : ''} src="${esc(img)}" alt="${esc(p.name)}. Drag to move it, use the arrow keys to nudge it, plus and minus to resize." tabindex="0" draggable="false" style="${ROOM.tone ? 'filter:' + ROOM.tone.css : ''}"></div><span class="room-hint" aria-hidden="true">Drag to move · pinch to resize</span>`;
     bar = `<div class="room-row"><label for="room-size">Size</label><input type="range" id="room-size" min="8" max="90" value="${Math.round(ROOM.s * 100)}">${sw}</div>
       <div class="room-acts"><button class="btn ghost" type="button" data-act="room-photo">New photo</button><button class="btn ghost" type="button" data-act="room-3d">Sample room</button><button class="btn ghost" type="button" data-act="room-share">${navigator.share ? 'Share' : 'Save photo'}</button>${add}</div>`;
   } else {
-    stage = `<div class="room-pick"><span class="room-demo"><img src="${esc(prodImg(p, ROOM.vi))}" alt=""></span>
+    stage = `<div class="room-pick"><span class="room-demo"><img src="${esc(cut || prodImg(p, ROOM.vi))}" alt=""></span>
       <button type="button" class="room-opt" data-act="room-3d"><span class="room-opt-ph day" aria-hidden="true"></span><span><strong>Try it in our sample room</strong><span>The real piece in 3D on an oak console, in daylight or by lamplight. Turn it and look closer.</span></span></button>
       <div class="room-opt own"><span><strong>Use a photo of your space</strong><span>${T('room.pick')}</span></span><span class="room-opt-btns"><button class="btn" type="button" id="room-cam-btn" data-act="room-photo" data-cam="1">Take a photo</button><button class="btn ghost" type="button" data-act="room-photo">Choose from gallery</button></span><small>Your photo stays on your phone. Nothing is uploaded.</small></div></div>`;
   }
@@ -2697,12 +2697,13 @@ function roomDraw() {
       .catch(() => { const l = $('#room-load'); if (l) l.textContent = 'The 3D room couldn’t open on this device. Try a photo of your space instead.'; });
   } else if (ROOM.mode === 'photo' && ROOM.bg) {
     roomFit(); const o = $('#room-obj'); o.onload = roomPlace; roomPlace();
-    if (!ROOM.snap) { const key = p.id + ':' + ROOM.vi; room3d().then((R) => R.snapshot(roomItem(p, ROOM.vi), key)).then((url) => { if (url && ROOM.pid === p.id && ROOM.mode === 'photo' && $('#room-obj')) { ROOM.snap = url; $('#room-obj').src = url; } }).catch(() => {}); }
+    if (!ROOM.snap && !cut) { const key = p.id + ':' + ROOM.vi; room3d().then((R) => R.snapshot(roomItem(p, ROOM.vi), key)).then((url) => { if (url && ROOM.pid === p.id && ROOM.mode === 'photo' && $('#room-obj')) { ROOM.snap = url; $('#room-obj').src = url; } }).catch(() => {}); }
   }
 }
 // the frame keeps the photo's shape and fills as much of the stage as it can
 function roomFit() { const st = $('#room-stage'), f = $('#room-frame'); if (!st || !f) return; const W = st.clientWidth - 24, H = st.clientHeight; const w = Math.min(W, H * ROOM.ratio); f.style.width = w + 'px'; f.style.height = w / ROOM.ratio + 'px'; }
-const roomAnchor = () => (ROOM.snap ? .985 : .867); // where the piece's base sits in its image
+const roomCut = (p, v) => { const m = mediaFor(p.id, { kind: 'photo', role: 'cutout', variant: v && v.label })[0]; return m ? mUrl(m) : ''; }; // owner-uploaded cut-out photo wins over the 3D render
+const roomAnchor = () => (ROOM.cut ? .99 : ROOM.snap ? .985 : .867); // where the piece's base sits in its image
 function roomPlace() {
   const f = $('#room-frame'), o = $('#room-obj'); if (!f || !o) return; const W = f.clientWidth, H = f.clientHeight; const w = ROOM.s * W; const h = w * ((o.naturalHeight || 1) / (o.naturalWidth || 1));
   o.style.width = w + 'px'; o.style.left = (ROOM.x * W - w / 2) + 'px'; o.style.top = (ROOM.y * H - h * roomAnchor()) + 'px'; o.style.transformOrigin = `50% ${roomAnchor() * 100}%`;
