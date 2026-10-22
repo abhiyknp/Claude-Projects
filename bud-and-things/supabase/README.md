@@ -199,3 +199,13 @@ Sign-in codes stay with Supabase's own email. Email always works. WhatsApp, SMS 
 ## Coupons, points, invoices and delayed orders
 
 Run `schema.sql` again in the SQL editor (it is safe to repeat): it adds the `coupons`, `points_log`, `invoices` and `invoice_counters` tables, moves the old welcome code into the first coupon (HELLO10 or whatever Settings had), and adds `check_coupon`, `issue_invoice`, `void_invoice` and `set_delay`. Then redeploy the `notify` function so the "running late" email can be sent. Nothing else changes.
+
+## Sign-ups, Analytics and Reviews (October 2026)
+
+Run `schema.sql` again in the SQL Editor to add them. It is safe to re-run.
+
+- **Sign-ups → Customers.** One row per person, joined by email and mobile from orders, saved accounts, sign-ups, gift dates, restock requests and share links. Search, filter by group, source or city, download as a spreadsheet. Open a customer for orders, addresses, consent, gift dates, timeline, tags, a private note and a birthday. "Delete their details" removes everything except orders and invoices.
+- **Analytics.** Visits are now saved to the `events` table (anonymous: a random id per browser and per visit, no names or numbers). Add `?utm_source=instagram` to shared links to count sources. Settings has a monthly goal and the Monday email. Events older than `eventDays` (400) are cleared.
+- **Reviews.** Waiting / Published tabs, star and piece filters, bulk actions, replies, Featured (shown first on the home page), reviews added by hand, a Verified buyer tick for signed-in customers who received the piece, one review per piece per customer, email alerts for 1 and 2 stars, a review request email `reviewAskDays` after delivery, and `reviewPoints` Bud Points for published reviews. Product pages carry star markup for Google.
+- **WhatsApp.** A 10-digit number in Settings gets `91` added. Real WhatsApp alerts still need a Business API provider (not connected yet).
+- **Site text.** About 30 more labels (festive banner, offer banners, house walk labels, home links) are now editable. The festive banner has an on/off switch in Settings.

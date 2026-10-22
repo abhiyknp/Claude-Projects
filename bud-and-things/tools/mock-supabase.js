@@ -17,20 +17,21 @@ const custOf = (auth) => { try { const p = JSON.parse(Buffer.from(auth.replace(/
 const CUST_CODE = '111111';
 const custSession = (email) => ({ access_token: custJwt(email), refresh_token: 'r.' + Buffer.from(email).toString('base64url'), expires_in: 3600, token_type: 'bearer', user: { email } });
 const TWO_STEP = process.env.TWO_STEP === '1'; // matches ownerTwoStep in config.js; off until launch
-const KEYS = { site_text: 'key', settings: 'key', stock: 'sku', coupons: 'code', invoices: 'id' };
-const T = { coupons: [{ code: 'HELLO10', kind: 'percent', amount: 10, min_order: 0, max_off: 0, starts_on: null, ends_on: null, max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true, created_at: new Date().toISOString() }], invoices: [], points_log: [], products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], profiles: [] };
+const KEYS = { site_text: 'key', settings: 'key', stock: 'sku', coupons: 'code', invoices: 'id', customer_meta: 'contact', review_authors: 'review_id' };
+const T = { coupons: [{ code: 'HELLO10', kind: 'percent', amount: 10, min_order: 0, max_off: 0, starts_on: null, ends_on: null, max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true, created_at: new Date().toISOString() }], invoices: [], points_log: [], products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], review_authors: [], customer_meta: [], events: [], notifications: [], profiles: [] };
 const FILES = {};
 let orderNo = 1001;
 const uuid = () => 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
 
 // what a visitor (not signed in) may read and write, as in schema.sql
 const canRead = (t, r, own) => own || ({ products: r.live, pairings: r.live, media: r.published, reviews: r.published, site_text: true, settings: true, stock: true }[t] || false);
-const canInsert = (t, r, own) => (own && t !== 'invoices') || (t === 'reviews' && !r.published) || t === 'subscribers' || t === 'restock_requests' || t === 'reminders';
+const canInsert = (t, r, own) => (own && !['invoices', 'review_authors', 'events'].includes(t)) || (t === 'reviews' && !r.published) || t === 'subscribers' || t === 'restock_requests' || t === 'reminders' || (t === 'events' && !own);
 
 function filter(rows, q) {
   for (const [k, v] of q) {
     if (['select', 'order', 'limit'].includes(k)) continue;
     const m = /^eq\.(.*)$/.exec(v); if (m) rows = rows.filter((r) => String(r[k]) === m[1]);
+    const n = /^in\.\((.*)\)$/.exec(v); if (n) { const set = n[1].split(','); rows = rows.filter((r) => set.includes(String(r[k]))); }
   }
   const o = q.get('order'); if (o) { const [col, dir] = o.split('.'); rows = rows.slice().sort((a, b) => (a[col] > b[col] ? 1 : a[col] < b[col] ? -1 : 0) * (dir === 'desc' ? -1 : 1)); }
   const l = q.get('limit'); if (l) rows = rows.slice(0, +l);
@@ -134,6 +135,19 @@ function placeOrder(o, em) {
   return id;
 }
 
+// event_stats() in schema.sql
+function eventStats(days) {
+  const since = Date.now() - days * 864e5; const e = T.events.filter((x) => new Date(x.created_at) >= since); const ses = {};
+  e.forEach((x) => { if (!x.sid) return; const s = ses[x.sid] = ses[x.sid] || { src: x.src, viewed: false, added: false, checkout: false, bought: false }; if (x.name === 'product_view') s.viewed = true; if (['add_to_cart', 'ritual_add', 'combo_add'].includes(x.name)) s.added = true; if (x.name === 'checkout_start') s.checkout = true; if (x.name === 'purchase') s.bought = true; });
+  const S = Object.values(ses); const count = (arr, f) => arr.reduce((m, x) => { const k = f(x); if (k != null) m[k] = (m[k] || 0) + 1; return m; }, {});
+  const daily = {}; e.forEach((x) => { const d = x.created_at.slice(0, 10); daily[d] = daily[d] || { v: new Set(), s: new Set() }; daily[d].v.add(x.vid); daily[d].s.add(x.sid); });
+  const src = {}; S.forEach((s) => { const k = s.src || 'direct'; src[k] = src[k] || { src: k, sessions: 0, bought: 0 }; src[k].sessions++; if (s.bought) src[k].bought++; });
+  const names = ['wa_click', 'finder_complete', 'filter', 'house_focus', 'house_mood', 'walk_skip', 'walk_shop', 'share', 'pin_check', 'payment_failed', 'search', 'search_no_results']; const detail = {};
+  names.forEach((n) => { const g = count(e.filter((x) => x.name === n), (x) => JSON.stringify(x.data)); const v = Object.entries(g).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([k, c]) => ({ data: JSON.parse(k), n: c })); if (v.length) detail[n] = v; });
+  return { visitors: new Set(e.map((x) => x.vid)).size, sessions: S.length, funnel: { visits: S.length, viewed: S.filter((s) => s.viewed).length, added: S.filter((s) => s.added).length, checkout: S.filter((s) => s.checkout).length, bought: S.filter((s) => s.bought).length },
+    daily: Object.keys(daily).sort().map((d) => ({ d, visitors: daily[d].v.size, sessions: daily[d].s.size })), sources: Object.values(src).sort((a, b) => b.sessions - a.sessions), names: count(e, (x) => x.name),
+    views: count(e.filter((x) => x.name === 'product_view'), (x) => x.data.id), adds: count(e.filter((x) => x.name === 'add_to_cart'), (x) => x.data.sku), pages: count(e.filter((x) => x.name === 'page_view'), (x) => x.page || 'home'), detail };
+}
 http.createServer((req, res) => {
   if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE', 'Access-Control-Allow-Headers': 'apikey,authorization,content-type,prefer,x-upsert' }); return res.end(); }
   const chunks = []; req.on('data', (c) => chunks.push(c)); req.on('end', () => {
@@ -184,6 +198,13 @@ http.createServer((req, res) => {
         }
         return send(res, 200, p);
       }
+      // event_stats and forget_customer, as in schema.sql (owner only)
+      if (m && m[1] === 'event_stats') { if (!own) return fail(res, 400, 'not_allowed'); return send(res, 200, eventStats(Math.min(Math.max(+json().days || 30, 1), 400))); }
+      if (m && m[1] === 'forget_customer') {
+        if (!own) return fail(res, 400, 'not_allowed'); const c = (json().contacts || []).map((x) => String(x).trim().toLowerCase());
+        ['subscribers', 'restock_requests', 'reminders', 'customer_meta', 'referrers'].forEach((t) => { T[t] = T[t].filter((r) => !c.includes(r.contact)); }); T.review_authors = T.review_authors.filter((r) => !c.includes(r.email));
+        T.profiles.filter((p) => c.includes(p.email)).forEach((p) => Object.assign(p, { name: '', phone: '', addresses: [], prefs: {} })); return send(res, 200, null);
+      }
       if (m && m[1] === 'get_invoice') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === a.phone_no); return send(res, 200, (o && T.invoices.find((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued')) || null); }
       if (m && m[1] === 'get_order') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === a.phone_no); return send(res, 200, o ? Object.assign({}, o.data, { status: o.status }) : null); }
       if (m && m[1] === 'cancel_order') {
@@ -226,7 +247,15 @@ http.createServer((req, res) => {
         for (const r of rows) {
           if (!canInsert(t, r, own)) return fail(res, 403, 'new row violates row-level security policy for table "' + t + '"');
           if (key === 'id' && !r.id) r.id = uuid();
-          if (!own && t === 'reviews') r.published = false;
+          if (!own && t === 'reviews') {
+            const em = custOf(auth); Object.assign(r, { published: false, verified: false, reply: null, featured: false, source: 'site' });
+            if (em) {
+              if (T.review_authors.some((a) => a.email === em && (T.reviews.find((x) => x.id === a.review_id) || {}).product_id === r.product_id)) return fail(res, 400, 'already_reviewed');
+              const p = T.products.find((x) => x.id === r.product_id); r.verified = !!p && T.orders.some((o) => o.data.email === em && o.status === 'Delivered' && o.data.items.some((i) => p.data.variants.some((v) => v.sku === i.sku)));
+              T.review_authors.push({ review_id: r.id, email: em, created_at: now });
+            }
+          }
+          if (t === 'events') { if (!/^[a-z_]{2,40}$/.test(r.name || '')) return fail(res, 400, 'bad_event'); r.id = T.events.length + 1; }
           const i = T[t].findIndex((x) => x[key] === r[key]);
           if (i >= 0) { if (!upsert) return fail(res, 409, 'duplicate key'); T[t][i] = Object.assign({}, T[t][i], r, { updated_at: now }); } else T[t].push(Object.assign({ created_at: now }, r));
         }

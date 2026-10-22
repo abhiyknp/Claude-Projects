@@ -455,6 +455,21 @@ input[type="file"] { padding: 10px 12px; }
 .adm-thumb { aspect-ratio: 4 / 3; background: var(--linen); display: block; overflow: hidden; }
 .adm-thumb img, .adm-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .adm-review p { margin: 0; }
+.adm-filters { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.adm-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 18px; }
+.rv-reply { background: var(--linen); padding: 12px 14px; border-left: 3px solid var(--olive); font-size: 15px; }
+.rv-reply p { margin: 4px 0 0; }
+.rv-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--olive); }
+.ch { margin: 0; }
+.ch svg { width: 100%; height: 180px; display: block; overflow: visible; }
+.ch .ch-axis { stroke: var(--line2); stroke-width: 1; }
+.ch .ch-t { font-size: 11px; fill: var(--choc2); font-family: var(--sans, inherit); }
+.ch .ch-col:hover rect { fill: var(--linen); }
+.ch details { margin-top: 8px; font-size: 14px; }
+.hb { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.hb li { display: grid; grid-template-columns: minmax(90px, 1fr) 2fr auto; gap: 10px; align-items: center; }
+.hb-bar { height: 10px; background: var(--linen); display: block; }
+.hb-bar > span { display: block; height: 100%; background: var(--terra); border-radius: 0 4px 4px 0; }
 .adm-steps { display: flex; flex-direction: column; gap: 6px; padding-left: 20px; margin: 0; }
 .btn.danger { color: var(--terra-ink); border-color: var(--terra-ink); }
 @media (max-width: 560px) { .adm-var { grid-template-columns: 1fr 1fr; } .adm-var input[name^="v-sku"] { grid-column: 1 / -1; } }
@@ -929,7 +944,7 @@ body.app .why-band { padding-bottom: 96px; }
 
 <script src="config.js"></script>
 <script src="vendor/qrcode/qrcode.js"></script>
-<script src="db.js?v=8"></script>
+<script src="db.js?v=9"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -1066,6 +1081,23 @@ const TEXT = {
   'home.discover': ['Get to know us', 'Home: discover heading'],
   'home.festive': ['Diwali gifting is open', 'Home: festive banner heading'],
   'home.festiveText': ['Gift boxes wrapped by hand, with your note inside. Order by 25 Oct to have it there before Diwali.', 'Home: festive banner text'],
+  'home.festiveEyebrow': ['Diwali 2026', 'Home: festive banner small line (switch the banner off in Settings)'],
+  'home.festiveBtn': ['Shop gift boxes →', 'Home: festive banner button'],
+  'home.lastOrder': ['Your last order, {order}', 'Home: returning customer line ({order} is the order number)'],
+  'home.buyAgain': ['Buy again', 'Home: returning customer first button'],
+  'home.trackIt': ['Track it', 'Home: returning customer second button'],
+  'home.seeAll': ['See all {count} →', 'Home: link to the whole shop ({count} is the number of pieces)'],
+  'home.naAll': ['All|Candles|Jesmonite|Gift boxes', 'Home: new arrivals filter buttons (All|Candles|Jesmonite|Gift boxes)'],
+  'promo.welcomeEyebrow': ['Welcome offer', 'Offer banner: welcome small line'],
+  'promo.welcomeBtn': ['Shop now', 'Offer banner: welcome button'],
+  'promo.pairEyebrow': ['Rituals', 'Offer banner: ritual small line'],
+  'promo.pairBtn': ['Build a pair', 'Offer banner: ritual button'],
+  'ghome.wonEyebrow': ['You unwrapped', 'Gift home: unwrapped gift small line'],
+  'ghome.wonTitle': ['{welcomeOff}% off your first order', 'Gift home: unwrapped gift heading'],
+  'ghome.ship': ['Free shipping on orders over {freeOver}', 'Gift home: free shipping line before anything is in the cart'],
+  'pdp.verified': ['Verified buyer', 'Reviews: tick for customers who bought the piece'],
+  'pdp.replyFrom': ['Reply from BUD & THINGS', 'Reviews: heading over the shop’s reply'],
+  'pdp.reviewVerify': ['Signed in? Reviews from customers who bought the piece show a Verified buyer tick.', 'Reviews: note in the form for visitors who aren’t signed in'],
   'promo.pairTitle': ['Pair and save {ritualOff}%', 'Offer banner: ritual heading'],
   'promo.pairText': ['Choose any candle with any object and both cost {ritualOff}% less.', 'Offer banner: ritual text'],
   'promo.welcomeTitle': ['{welcomeOff}% off your first order', 'Offer banner: welcome heading'],
@@ -1235,13 +1267,15 @@ const SET_META = [
   ['bizName', 'Policies: registered business name', 'text'], ['bizAddress', 'Policies: registered address (without "India")', 'text'], ['gstin', 'Policies: GSTIN', 'text'],
   ['grievanceName', 'Policies: grievance officer name', 'text'], ['grievancePhone', 'Policies: grievance officer phone', 'text'], ['courtCity', 'Policies: city whose courts have jurisdiction', 'text'], ['policyDate', 'Policies: last updated, e.g. 19 October 2026', 'text'],
   ['pickupPin', 'Pickup PIN code, where the courier collects parcels (turns on the live PIN check)', 'text'], ['shiprocketPickup', 'Shiprocket pickup location name, as in Shiprocket → Settings → Pickup addresses', 'text'], ['parcelKg', 'Usual parcel weight (kg)', 'num'], ['parcelL', 'Usual box length (cm)', 'num'], ['parcelB', 'Usual box width (cm)', 'num'], ['parcelH', 'Usual box height (cm)', 'num'],
-  ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['orderAlerts', 'Email that gets a message for every new order (empty: the contact email)', 'text'], ['reminderDays', 'Gift reminders: send this many days before the date', 'num'], ['whatsappOn', 'Messages: send order updates on WhatsApp to customers who ask (turn on once the provider is set up)', 'bool'], ['smsOn', 'Messages: send order updates by SMS to customers who ask (turn on once the provider is set up)', 'bool'], ['pushOn', 'Messages: send notifications to customers who allowed them (turn on once push is set up)', 'bool'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
+  ['whatsapp', 'Shop WhatsApp number (10 digits; 91 is added for you)', 'text'], ['orderAlerts', 'Email that gets a message for every new order (empty: the contact email)', 'text'], ['reminderDays', 'Gift reminders: send this many days before the date', 'num'], ['whatsappOn', 'Messages: send order updates on WhatsApp to customers who ask (turn on once the provider is set up)', 'bool'], ['smsOn', 'Messages: send order updates by SMS to customers who ask (turn on once the provider is set up)', 'bool'], ['pushOn', 'Messages: send notifications to customers who allowed them (turn on once push is set up)', 'bool'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
   ['gstOn', 'GST: I am registered, make tax invoices', 'bool'], ['gstState', 'GST: my state', 'text'], ['invoicePrefix', 'Invoice number prefix (up to 3 letters, e.g. BT)', 'text'], ['invoiceAuto', 'Make the invoice automatically when an order is paid', 'bool'], ['hsnCandles', 'HSN: candles', 'text'], ['gstCandles', 'GST rate: candles (%)', 'num'], ['hsnObjects', 'HSN: Jesmonite objects', 'text'], ['gstObjects', 'GST rate: Jesmonite objects (%)', 'num'], ['hsnGifts', 'HSN: gift boxes', 'text'], ['gstGifts', 'GST rate: gift boxes (%)', 'num'],
+  ['reviewAskDays', 'Ask for a review this many days after delivery (0 for never)', 'num'], ['reviewPoints', 'Bud Points for each published review by a signed-in customer (0 for none)', 'num'],
+  ['monthlyGoal', 'Monthly sales goal (₹, 0 to hide)', 'num'], ['weeklySummary', 'Email me a summary every Monday', 'bool'], ['festiveOn', 'Home page: show the festive banner (needs at least one gift box)', 'bool'],
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
 // settings with their own place in Owner view (the Coupons, Rewards and Invoices tabs)
-const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct', 'gstin', 'gstOn', 'gstState', 'invoicePrefix', 'invoiceAuto', 'hsnCandles', 'gstCandles', 'hsnObjects', 'gstObjects', 'hsnGifts', 'gstGifts'];
+const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct', 'gstin', 'gstOn', 'gstState', 'invoicePrefix', 'invoiceAuto', 'hsnCandles', 'gstCandles', 'hsnObjects', 'gstObjects', 'hsnGifts', 'gstGifts', 'reviewAskDays', 'reviewPoints', 'monthlyGoal', 'weeklySummary'];
 const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
@@ -1249,6 +1283,7 @@ const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STY
 const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
+  reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
   theme: 'signature', homeStyle: 'gift', comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
@@ -1265,6 +1300,25 @@ const PREVIEW = (() => { let v = null; try { v = localStorage.getItem('bt-previe
   try { if (v) localStorage.setItem('bt-preview', v); else localStorage.removeItem('bt-preview'); } catch (e) { /* this visit only */ }
   return v; })();
 const PAID_BACK = (() => { const q = (new URLSearchParams(location.search).get('paid') || '').toUpperCase(); if (!/^BT-\d+-[0-9A-F]{6}$/.test(q)) return ''; try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* keep the address */ } return q; })();
+// where this visit came from: utm_source in the link, a share link, or the site that sent them ("direct" when nothing
+// says). `first` is the very first visit's, kept in this browser and saved with a sign-up or an order. `vid` (this
+// browser) and `sid` (this visit) are random, so Analytics can count visitors without knowing who they are.
+function srcOf() {
+  const q = new URLSearchParams(location.search); const u = (q.get('utm_source') || '').toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40); if (u) return u;
+  if (q.get('ref')) return 'share-link';
+  let h = ''; try { h = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; } catch (e) { h = ''; }
+  if (!h || h === location.hostname) return 'direct';
+  const k = [['instagram', 'instagram'], ['facebook', 'facebook'], ['fb.', 'facebook'], ['google', 'google'], ['bing', 'bing'], ['pinterest', 'pinterest'], ['pin.it', 'pinterest'], ['whatsapp', 'whatsapp'], ['wa.me', 'whatsapp'], ['youtube', 'youtube'], ['t.co', 'x'], ['twitter', 'x'], ['linkedin', 'linkedin']].find(([m]) => h.includes(m));
+  return k ? k[1] : h.toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40);
+}
+const VISIT = (() => {
+  const rnd = () => Math.random().toString(36).slice(2, 12) + Date.now().toString(36); const v = { vid: rnd(), sid: rnd(), src: 'direct', first: 'direct' };
+  try {
+    v.vid = localStorage.getItem('bt-vid') || v.vid; localStorage.setItem('bt-vid', v.vid); v.sid = sessionStorage.getItem('bt-sid') || v.sid; sessionStorage.setItem('bt-sid', v.sid);
+    v.src = sessionStorage.getItem('bt-src') || srcOf(); sessionStorage.setItem('bt-src', v.src); v.first = localStorage.getItem('bt-first') || v.src; localStorage.setItem('bt-first', v.first);
+  } catch (e) { v.src = v.first = srcOf(); }
+  return v;
+})();
 const REF = (() => { const q = (new URLSearchParams(location.search).get('ref') || '').toUpperCase(); try { if (/^[A-Z0-9]{6}$/.test(q)) { localStorage.setItem('bt-ref', q); return q; } return localStorage.getItem('bt-ref') || ''; } catch (e) { return /^[A-Z0-9]{6}$/.test(q) ? q : ''; } })();
 const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !BTDB.owner() && !(SET.previewCode && PREVIEW === String(SET.previewCode));
 const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(SET.previewCode || '');
@@ -1331,8 +1385,8 @@ async function dbDel(table, col, val) {
 }
 // what visitors send (reviews, sign-ups, restock requests): the database when connected, else this browser
 async function visitorSend(table, row) {
-  if (BTDB.on) return BTDB.insert(table, row).catch((err) => { const m = String(err.message || '');
-    throw new Error(/too_many/.test(m) ? 'we’ve had a lot from this connection, so please try again in an hour' : /bad_contact/.test(m) ? 'check the email or mobile number' : /unknown_item/.test(m) ? 'that piece isn’t on the shop any more' : /bad_reminder/.test(m) ? 'choose a date within the next year' : m); });
+  if (BTDB.on) return (table === 'reviews' ? BTDB.custInsert : BTDB.insert)(table, row).catch((err) => { const m = String(err.message || '');
+    throw new Error(/already_reviewed/.test(m) ? 'you’ve already reviewed this piece. Thank you' : /too_many/.test(m) ? 'we’ve had a lot from this connection, so please try again in an hour' : /bad_contact/.test(m) ? 'check the email or mobile number' : /unknown_item/.test(m) ? 'that piece isn’t on the shop any more' : /bad_reminder/.test(m) ? 'choose a date within the next year' : m); });
   S.db = S.db || {}; const k = table === 'reviews' ? 'reviews' : table === 'gift_cards' ? 'cards' : 'people'; S.db[k] = S.db[k] || [];
   S.db[k].unshift(Object.assign({ id: 'L' + Date.now(), created_at: new Date().toISOString(), table }, row)); save();
 }
@@ -1361,7 +1415,16 @@ const minPrice = (p) => Math.min(...p.variants.map((v) => v.price));
 const priceFrom = (p) => (new Set(p.variants.map((v) => v.price)).size > 1 ? 'from ' : '') + inr(minPrice(p));
 const stockOf = (sku) => (S.stock[sku] ?? 0);
 const inStock = (p) => p.variants.some((v) => stockOf(v.sku) > 0);
-function track(name, data) { S.events.unshift({ t: new Date().toISOString(), name, data: data || {} }); S.events = S.events.slice(0, 60); save(); adsTrack(name, data || {}); }
+// Each event is kept in this browser (the demo's Analytics reads these) and, on the live site, sent to the database for
+// Owner view → Analytics in small batches. The owner's own clicks are never sent.
+const EV_Q = []; let evTimer = 0;
+const pageName = (r) => (/^order-/.test(r) ? 'order' : r).slice(0, 80);
+function sendEvents() { clearTimeout(evTimer); evTimer = 0; if (!EV_Q.length) return; BTDB.beacon(EV_Q.splice(0, 50)); if (EV_Q.length) evTimer = setTimeout(sendEvents, 1000); }
+function track(name, data) {
+  S.events.unshift({ t: new Date().toISOString(), name, data: data || {}, sid: VISIT.sid, vid: VISIT.vid, src: VISIT.src, page: pageName(route()) }); S.events = S.events.slice(0, 400); save(); adsTrack(name, data || {});
+  if (BTDB.on && !BTDB.owner() && route() !== 'admin') { EV_Q.push({ name, data: data || {}, vid: VISIT.vid, sid: VISIT.sid, page: pageName(route()), src: VISIT.src }); if (!evTimer) evTimer = setTimeout(sendEvents, 4000); }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sendEvents(); });
 // ad and analytics tags: loaded only when the owner has added an id in Settings, and only for real visitors
 function adsLoad() {
   const px = String(SET.metaPixel || '').replace(/\D/g, ''), ga = String(SET.gaId || '').trim();
@@ -1401,7 +1464,7 @@ function toggleSave(id) { const i = S.saved.indexOf(id); if (i >= 0) { S.saved.s
 // ---------- routing ----------
 // old 3D-house links (#tour, #house-<piece>) land on the product or the home page
 function route() { const h = (location.hash || '#home').slice(1) || 'home'; if (h === 'tour') return 'home'; if (h.startsWith('house-')) return 'p-' + h.slice(6); return h; }
-window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false; UI.orderSync = {}; UI.invSync = {}; render(true); });
+window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false; UI.orderSync = {}; UI.invSync = {}; render(true); track('page_view', { page: pageName(route()) }); });
 
 // ---------- chrome ----------
 const NAV = [['shop', 'Shop'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story']];
@@ -1601,7 +1664,7 @@ function viewProduct(id) {
   const main = g.render ? `<div class="tile" style="background:var(--linen)">${art(p, st.vi, 2.1)}<span class="hint" style="position:absolute;right:14px;bottom:10px;letter-spacing:.12em;text-transform:uppercase;font-size:11px">Render · product photo to come</span></div>`
     : g.m ? `<div class="tile media-main">${mediaEl(g.m, 'fill')}</div>` : `<figure class="photo gal" style="margin:0"><img src="${esc(g.src)}" alt="${esc(g.label)}"><figcaption>${esc(g.label)}</figcaption></figure>`;
   const thumb = (x) => x.render ? art(p, st.vi, .42) : x.m ? (x.m.kind === 'video' ? `<span class="vid-thumb" aria-hidden="true">▶</span>` : `<img src="${esc(mUrl(x.m))}" alt="">`) : `<img src="${esc(x.src)}" alt="">`;
-  const rv = reviewPool(id); const R = UI.review[id] || {};
+  const rvSort = UI.rvSort || 'new'; const rv = reviewPool(id).slice().sort(rvSort === 'high' ? (a, b) => b.rating - a.rating : rvSort === 'low' ? (a, b) => a.rating - b.rating : (a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || new Date(b.created_at) - new Date(a.created_at)); const R = UI.review[id] || {};
   const pz = p.pyramid; const one = p.variants.length < 2;
   const optName = p.art === 'jar' ? 'Size' : p.cat === 'candles' ? 'Colour' : 'Finish';
   const acc = (key, icon, title, body, open) => `<details class="acc"${open ? ' open' : ''} data-acc="${key}"><summary>${hl(icon, 20)}<span>${title}</span><span class="acc-ic" aria-hidden="true"></span></summary><div class="acc-body">${body}</div></details>`;
@@ -1633,10 +1696,11 @@ function viewProduct(id) {
   ${comboHTML(p)}
   ${bestWith(p)}
   <section class="section" aria-labelledby="rev-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="rev-h">Reviews</h2>${rv.some((r) => r.sample) ? '<span class="muted" style="font-size:14px">Sample reviews in this preview</span>' : ''}</div>
-    ${rv.length ? `${reviewSummary(rv)}<div class="reviews">${rv.slice(0, 12).map((r) => reviewCard(r)).join('')}</div>` : `<p class="muted">${T('pdp.reviewsEmpty')}</p>`}
+    ${rv.length ? `${reviewSummary(rv)}${rv.length > 2 ? `<span class="field" style="max-width:220px"><label for="rv-sort">Sort reviews</label><select id="rv-sort" data-act="rv-sort">${[['new', 'Newest'], ['high', 'Highest rated'], ['low', 'Lowest rated']].map(([k, l]) => `<option value="${k}" ${rvSort === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>` : ''}<div class="reviews">${rv.slice(0, 12).map((r) => reviewCard(r)).join('')}</div>` : `<p class="muted">${T('pdp.reviewsEmpty')}</p>`}
+    ${productLD(p, rv)}
     ${R.sent ? `<div class="status ok" role="status">${T('pdp.reviewThanks')}</div>` : R.open ? `<form data-form="review" data-id="${id}" class="form review-form" novalidate><span class="field"><label for="rv-name">Your name</label><input id="rv-name" maxlength="60" autocomplete="given-name" value="${esc(R.name || '')}"></span>
       <fieldset class="field rating"><legend>Your rating</legend><span>${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="rv-rating" value="${n}" ${+R.rating === n ? 'checked' : ''}> ${n}★</label>`).join('')}</span></fieldset>
-      <span class="field full"><label for="rv-body">Your review</label><textarea id="rv-body" rows="4" maxlength="1500">${esc(R.body || '')}</textarea></span>${R.err ? `<span class="err full" role="alert">${esc(R.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Send review</button></span></form>` : `<button class="btn ghost" type="button" data-act="review-open" data-id="${id}">Write a review</button>`}</section>
+      <span class="field full"><label for="rv-body">Your review</label><textarea id="rv-body" rows="4" maxlength="1500">${esc(R.body || '')}</textarea></span>${BTDB.on && !BTDB.customer() ? `<p class="muted full" style="margin:0;font-size:14px">${T('pdp.reviewVerify')}</p>` : ''}${R.err ? `<span class="err full" role="alert">${esc(R.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Send review</button></span></form>` : `<button class="btn ghost" type="button" data-act="review-open" data-id="${id}">Write a review</button>`}</section>
   <section class="section" aria-labelledby="box-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="box-h">How it arrives</h2><span class="muted" style="font-size:14px">Approved packaging direction; final pieces may differ.</span></div>
     <div class="pack-grid">${brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set box.', 'Gift set box'], [IMG.tag, 'Hang tag with the tagline.', 'Hang tag'], [IMG.card, 'Candle care tag.', 'Care tag'], [IMG.seal, 'BUD & THINGS wax seals in brand colours.', 'Wax seals']]).slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>
   ${similar(p)}</div>`;
@@ -1781,7 +1845,9 @@ function viewCheckout() {
   return `<div class="wrap"><div class="checkout"><div class="checkout-main">${steps}${main}</div>${side}</div></div>`;
 }
 
-const waLink = (text) => SET.whatsapp ? `https://wa.me/${String(SET.whatsapp).replace(/\D/g, '')}?text=${encodeURIComponent(text)}` : '';
+// a WhatsApp number as wa.me wants it: country code and number, digits only. A 10-digit Indian number gets 91 in front.
+const waNumber = (n) => { const d = String(n || '').replace(/\D/g, '').replace(/^0+/, ''); return d.length === 10 ? '91' + d : d; };
+const waLink = (text) => SET.whatsapp ? `https://wa.me/${waNumber(SET.whatsapp)}?text=${encodeURIComponent(text)}` : '';
 // Instagram, Pinterest, WhatsApp and email as icons; each shows only once its setting is filled in
 const SOCIAL_ICONS = {
   instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
@@ -1940,7 +2006,7 @@ const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Bo
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
   if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'invoices' ? ((S.db && S.db.invoices) || []) : k === 'coupons' ? localCoupons() : k === 'rewards' ? { log: (S.db && S.db.pointsLog) || [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
-  if (!UI.adm.rows[k]) { if (UI.adm.loading !== k) setTimeout(() => admLoad(k)); return null; }
+  if (!UI.adm.rows[k]) { const f = UI.adm.inflight = UI.adm.inflight || {}; if (!f[k]) { f[k] = true; setTimeout(() => admLoad(k)); } return null; }
   return UI.adm.rows[k];
 }
 async function admLoad(k) {
@@ -1948,14 +2014,20 @@ async function admLoad(k) {
   try {
     if (k === 'orders') A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status }));
     if (k === 'orders' || k === 'invoices') { try { A.rows.invoices = await BTDB.list('invoices', 'order=created_at.desc&limit=500'); } catch (e) { A.rows.invoices = []; } }
-    if (k === 'reviews') A.rows.reviews = await BTDB.list('reviews', 'order=created_at.desc&limit=300');
-    if (k === 'people') { const [a, b, c] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500'), BTDB.list('reminders', 'order=day.asc&limit=1000')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r)), c.map((r) => Object.assign({ table: 'reminders' }, r))); }
+    if (k === 'reviews') { const [a, b] = await Promise.all([BTDB.list('reviews', 'order=created_at.desc&limit=1000'), BTDB.list('review_authors', 'limit=1000').catch(() => [])]); A.rows.reviews = a; A.rows.revAuthors = b; }
+    if (k === 'people') {
+      const [a, b, c, pr, rf, lg, au, mt, rv] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=1000'), BTDB.list('restock_requests', 'order=created_at.desc&limit=1000'), BTDB.list('reminders', 'order=day.asc&limit=1000'),
+        BTDB.list('profiles', 'limit=1000'), BTDB.list('referrers', 'limit=1000'), BTDB.list('points_log', 'limit=1000'), BTDB.list('review_authors', 'limit=1000').catch(() => []), BTDB.list('customer_meta', 'limit=1000').catch(() => []), BTDB.list('reviews', 'order=created_at.desc&limit=1000')]);
+      A.rows.crm = { profiles: pr, refs: rf, log: lg, authors: au, meta: mt, reviews: rv };
+      A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r)), c.map((r) => Object.assign({ table: 'reminders' }, r)));
+    }
+    if (k === 'events') { const [stats, notes] = await Promise.all([BTDB.rpc('event_stats', { days: A.days || 30 }), BTDB.list('notifications', 'event=in.(shipped,delivered)&channel=eq.email&select=order_id,event,created_at&order=created_at.desc&limit=1000').catch(() => [])]); A.rows.events = { stats, notes }; }
     if (k === 'coupons') { A.rows.coupons = await BTDB.list('coupons', 'order=created_at.desc&limit=500'); if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     if (k === 'rewards') { A.rows.rewards = { log: await BTDB.list('points_log', 'order=created_at.desc&limit=500') }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     if (k === 'cards') { const [a, b] = await Promise.all([BTDB.list('gift_cards', 'order=created_at.desc&limit=500'), BTDB.list('referrers', 'order=created_at.desc&limit=1000')]); A.rows.cards = { cards: a, refs: b }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     A.err = null;
   } catch (e) { A.rows[k] = A.rows[k] || []; A.err = e.message; }
-  A.loading = null; if (route() === 'admin') render();
+  A.loading = null; if (A.inflight) delete A.inflight[k]; if (route() === 'admin') render();
 }
 async function admDo(fn, ok) { try { await fn(); if (ok) say(ok); } catch (e) { say('Couldn’t save: ' + e.message); } }
 const loadingRow = '<p class="muted" role="status">Loading…</p>';
@@ -1984,7 +2056,8 @@ function viewAdmin() {
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
   const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
-  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
+  const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
+  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
 // what Shiprocket booked for an order, for the Owner view
@@ -2123,8 +2196,7 @@ function admStock() {
     <div class="table-wrap"><table><thead><tr><th>Product</th><th>Option</th><th>SKU</th><th>In stock</th><th>Website</th></tr></thead><tbody>${Object.entries(skuMap).map(([sku, { p, v }]) => { const n = stockOf(sku); return `<tr><td>${esc(p.name)}</td><td>${esc(v.label)}</td><td class="num">${esc(sku)}</td><td><label class="sr" for="st-${esc(sku)}">Stock for ${esc(p.name)} ${esc(v.label)}</label><input type="number" min="0" max="9999" id="st-${esc(sku)}" data-act="stock" data-sku="${esc(sku)}" value="${n}"></td><td>${n === 0 ? '<span class="pill out">Sold out</span>' : n <= 2 ? '<span class="pill low">Low</span>' : '<span class="pill">Listed</span>'}${waiting[sku] ? ` <span class="pill">${waiting[sku]} waiting</span>` : ''}</td></tr>`; }).join('')}</tbody></table></div>`;
 }
 function admSettings() {
-  const field = ([k, l, t]) => t === 'bool' ? `<label class="check full"><input type="checkbox" data-act="adm-set" data-k="${k}" ${SET[k] ? 'checked' : ''}> ${esc(l)}</label>`
-    : `<span class="field${t === 'text' && /featured|giftPicks/.test(k) ? ' full' : ''}"><label for="set-${k}">${esc(l)}</label><input id="set-${k}" data-act="adm-set" data-k="${k}" ${t === 'num' ? 'type="number" min="0"' : ''} value="${esc(SET[k])}"></span>`;
+  const field = setField;
   return `<p class="muted">Each change saves when you leave the box and shows on the site at once.</p>
     <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon page</h2><p class="muted full">While it is on, visitors see only the Coming soon page and its sign-up form${BTDB.on ? '' : ' (once the database is connected)'}. You see the whole site while signed in, and so does anyone who opens the preview link. To launch, switch it off.</p>
       ${SET_META.filter((m) => CS_KEYS.includes(m[0])).map(field).join('')}<span class="field full"><label for="cs-link">Preview link for testers</label><span style="display:flex;flex-wrap:wrap;gap:8px"><input id="cs-link" readonly value="${esc(previewLink())}" style="flex:1 1 260px;min-width:0"><button class="btn small ghost" type="button" data-act="cs-copy">Copy link</button></span></span></div>
@@ -2143,18 +2215,178 @@ function admSettings() {
     <div class="form adm-card">${SET_META.filter((m) => !CS_KEYS.includes(m[0]) && !THEME_KEYS.includes(m[0]) && !ELSEWHERE_KEYS.includes(m[0])).map(field).join('')}</div>
     <details class="adm-group"><summary>Product and ritual names to use above</summary><p class="muted num" style="padding:12px 0">${P.map((p) => esc(p.id)).join(', ')}</p><p class="muted num">Rituals: ${PAIRINGS.map((x) => esc(x.id)).join(', ')}</p></details>`;
 }
+// ---------- reviews ----------
+const starStr = (n) => '★'.repeat(n) + '☆'.repeat(5 - n);
+const revAuthor = (r) => { const a = ((UI.adm.rows.revAuthors) || []).find((x) => String(x.review_id) === String(r.id)); return a ? a.email : r.email || ''; };
+// change one review (null deletes it), in the database and on the page
+async function revPatch(id, patch) {
+  if (BTDB.on) { if (patch) await BTDB.update('reviews', 'id=eq.' + encodeURIComponent(id), patch); else await BTDB.remove('reviews', 'id=eq.' + encodeURIComponent(id)); }
+  const list = admData('reviews') || []; const i = list.findIndex((x) => String(x.id) === String(id)); if (i >= 0) { if (patch) Object.assign(list[i], patch); else list.splice(i, 1); }
+  save(); DATA.reviews = list.filter((x) => x.published);
+}
+// one setting as a box (or a tick box) that saves when it changes
+const setField = ([k, l, t]) => t === 'bool' ? `<label class="check full"><input type="checkbox" data-act="adm-set" data-k="${k}" ${SET[k] ? 'checked' : ''}> ${esc(l)}</label>`
+  : `<span class="field${t === 'text' && /featured|giftPicks/.test(k) ? ' full' : ''}"><label for="set-${k}">${esc(l)}</label><input id="set-${k}" data-act="adm-set" data-k="${k}" ${t === 'num' ? 'type="number" min="0"' : ''} value="${esc(SET[k])}"></span>`;
 function admReviews() {
-  const list = admData('reviews'); if (!list) return loadingRow;
-  return `<p class="muted">Reviews wait here until you publish them. Publish honest ones, good or bad; remove only spam or abuse.</p>${list.length ? `<div class="adm-stack">${list.map((r) => `<div class="adm-card adm-review"><div class="adm-bar"><strong>${esc((byId[r.product_id] || { name: r.product_id }).name)} · ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</strong>${pill(r.published, 'Published', 'Waiting')}</div><p>${esc(r.body)}</p><span class="muted">${esc(r.name)} · ${new Date(r.created_at).toLocaleString('en-IN')}</span>
-    <span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small${r.published ? ' ghost' : ''}" type="button" data-act="adm-review" data-id="${esc(r.id)}" data-v="${r.published ? '0' : '1'}">${r.published ? 'Unpublish' : 'Publish'}</button><button class="btn small ghost danger" type="button" data-act="adm-review-del" data-id="${esc(r.id)}">Delete</button></span></div>`).join('')}</div>` : '<p class="muted">No reviews yet.</p>'}`;
+  const list = admData('reviews'); if (!list) return loadingRow; const A = UI.adm; const f = A.rf = A.rf || { view: 'waiting', star: 0, prod: '', q: '' }; A.rsel = A.rsel || {};
+  const pub = list.filter((r) => r.published), wait = list.filter((r) => !r.published);
+  const avg = pub.length ? pub.reduce((a, r) => a + r.rating, 0) / pub.length : 0; const month = new Date(); month.setDate(1); month.setHours(0, 0, 0, 0);
+  const none = P.filter((p) => !pub.some((r) => r.product_id === p.id));
+  const q = f.q.trim().toLowerCase();
+  const rows = list.filter((r) => (f.view === 'all' || (f.view === 'published') === !!r.published) && (!f.star || r.rating === f.star) && (!f.prod || r.product_id === f.prod)
+    && (!q || (r.name + ' ' + r.body + ' ' + (r.reply || '') + ' ' + revAuthor(r)).toLowerCase().includes(q)));
+  const nSel = rows.filter((r) => A.rsel[r.id]).length;
+  const months = []; for (let i = 5; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const k = d.toISOString().slice(0, 7); const m = list.filter((r) => String(r.created_at).slice(0, 7) === k); months.push([d.toLocaleDateString('en-IN', { month: 'short' }), m.length, m.length ? (m.reduce((a, r) => a + r.rating, 0) / m.length).toFixed(1) : '—']); }
+  const setF = (k) => { const m = SET_META.find((x) => x[0] === k); return m ? setField(m) : ''; };
+  const card = (r) => { const p = byId[r.product_id]; const em = revAuthor(r); return `<div class="adm-card adm-review"><div class="adm-bar"><label class="check" style="min-height:0"><input type="checkbox" data-act="adm-rv-sel" data-id="${esc(r.id)}" ${A.rsel[r.id] ? 'checked' : ''}> <strong>${esc(p ? p.name : r.product_id)} · <span aria-label="${r.rating} out of 5">${starStr(r.rating)}</span></strong></label>
+      <span>${r.verified ? '<span class="pill Delivered">Verified buyer</span> ' : ''}${r.featured ? '<span class="pill">Featured</span> ' : ''}${r.source && r.source !== 'site' ? `<span class="pill">From ${esc(r.source)}</span> ` : ''}${pill(r.published, 'Published', 'Waiting')}</span></div>
+    <p>${esc(r.body)}</p><span class="muted">${esc(r.name)}${em ? ` · <button class="linkbtn" type="button" data-act="adm-cust-open" data-v="${esc('e:' + em)}">${esc(em)}</button>` : ''} · ${new Date(r.created_at).toLocaleString('en-IN')}</span>
+    ${r.reply && A.reply !== r.id ? `<div class="rv-reply"><strong>Your reply</strong><p>${esc(r.reply)}</p></div>` : ''}
+    ${A.reply === r.id ? `<form class="form" data-form="adm-rv-reply" data-id="${esc(r.id)}" novalidate><span class="field full"><label for="rr-${esc(r.id)}">Reply, shown under the review</label><textarea id="rr-${esc(r.id)}" rows="3" maxlength="1000">${esc(r.reply || '')}</textarea></span><span class="full" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" type="submit">Save reply</button><button class="btn small ghost" type="button" data-act="adm-rv-reply" data-id="">Cancel</button></span></form>` : ''}
+    <span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small${r.published ? ' ghost' : ''}" type="button" data-act="adm-review" data-id="${esc(r.id)}" data-v="${r.published ? '0' : '1'}">${r.published ? 'Unpublish' : 'Publish'}</button>
+      ${A.reply === r.id ? '' : `<button class="btn small ghost" type="button" data-act="adm-rv-reply" data-id="${esc(r.id)}">${r.reply ? 'Edit reply' : 'Reply'}</button>`}${r.published ? `<button class="btn small ghost" type="button" data-act="adm-rv-feature" data-id="${esc(r.id)}">${r.featured ? 'Stop featuring' : 'Feature on the home page'}</button>` : ''}
+      <button class="btn small ghost danger" type="button" data-act="adm-review-del" data-id="${esc(r.id)}">Delete</button></span></div>`; };
+  return `<div class="owner-grid"><div class="stat"><span class="muted">Average rating</span><strong class="num">${pub.length ? avg.toFixed(1) + '★' : '—'}</strong></div><div class="stat"><span class="muted">Published</span><strong class="num">${pub.length}</strong></div>
+      <div class="stat"><span class="muted">Waiting for you</span><strong class="num">${wait.length}</strong></div><div class="stat"><span class="muted">This month</span><strong class="num">${list.filter((r) => new Date(r.created_at) >= month).length}</strong></div><div class="stat"><span class="muted">Verified buyers</span><strong class="num">${list.filter((r) => r.verified).length}</strong></div></div>
+    <p class="muted">Reviews wait here until you publish them. Publish honest ones, good or bad; remove only spam or abuse. A 1 or 2 star review also comes to you by email, so you can put it right. Signed-in customers who bought and received the piece get a <strong>Verified buyer</strong> tick.</p>
+    <div class="gh-chips" role="group" aria-label="Show">${[['waiting', `Waiting (${wait.length})`], ['published', `Published (${pub.length})`], ['all', `All (${list.length})`]].map(([k, l]) => `<button type="button" class="chip" data-act="adm-rv-view" data-v="${k}" aria-pressed="${f.view === k}">${l}</button>`).join('')}</div>
+    <form class="form adm-card adm-filters" data-form="adm-rf" novalidate><span class="field"><label for="rf-q">Find</label><input id="rf-q" value="${esc(f.q)}" placeholder="A word, a name or an email"></span>
+      <span class="field"><label for="rf-star">Stars</label><select id="rf-star" data-act="adm-rf" data-k="star"><option value="0">Any</option>${[5, 4, 3, 2, 1].map((n) => `<option value="${n}" ${f.star === n ? 'selected' : ''}>${n}★</option>`).join('')}</select></span>
+      <span class="field"><label for="rf-prod">Piece</label><select id="rf-prod" data-act="adm-rf" data-k="prod"><option value="">Every piece</option>${P.map((p) => `<option value="${esc(p.id)}" ${f.prod === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></span></form>
+    ${rows.length ? `<div class="adm-bar"><label class="check"><input type="checkbox" data-act="adm-rv-all" ${nSel && nSel === rows.length ? 'checked' : ''}> Select all ${rows.length} shown</label>${nSel ? `<span style="display:flex;gap:8px;flex-wrap:wrap"><span class="muted">${nSel} selected</span><button class="btn small" type="button" data-act="adm-rv-bulk" data-v="publish">Publish</button><button class="btn small ghost" type="button" data-act="adm-rv-bulk" data-v="unpublish">Unpublish</button><button class="btn small ghost danger" type="button" data-act="adm-rv-bulk" data-v="delete">Delete</button></span>` : ''}</div>
+      <div class="adm-stack">${rows.map(card).join('')}</div>` : `<p class="muted">${list.length ? 'Nothing here. Try another tab or filter.' : 'No reviews yet.'}</p>`}
+    <details class="adm-group"><summary>Add a review by hand</summary><form class="form" data-form="adm-rv-add" style="padding:18px" novalidate><p class="muted full" style="margin:0">For kind words sent on Instagram, WhatsApp or email. Copy them as written, and only with the customer’s permission.</p>
+      <span class="field"><label for="ra-prod">Piece</label><select id="ra-prod">${P.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></span><span class="field"><label for="ra-name">Their name, as it should show</label><input id="ra-name" maxlength="60" placeholder="Priya, Bengaluru"></span>
+      <span class="field"><label for="ra-rating">Stars</label><select id="ra-rating">${[5, 4, 3, 2, 1].map((n) => `<option value="${n}">${n}★</option>`).join('')}</select></span><span class="field"><label for="ra-src">Where it came from</label><select id="ra-src">${['Instagram', 'WhatsApp', 'Email', 'In person', 'Other'].map((v) => `<option>${v}</option>`).join('')}</select></span>
+      <span class="field full"><label for="ra-body">What they said</label><textarea id="ra-body" rows="3" maxlength="1500"></textarea></span><label class="check full"><input id="ra-pub" type="checkbox" checked> Publish it now</label>${A.rvErr ? `<span class="err full" role="alert">${esc(A.rvErr)}</span>` : ''}<span class="full"><button class="btn small" type="submit">Add the review</button></span></form></details>
+    <div class="form adm-card"><h3 class="full" style="font-size:22px">Asking and thanking</h3>${setF('reviewAskDays')}${setF('reviewPoints')}<p class="muted full" style="margin:0">The review request is an email with a button straight to the piece, sent once per order. Bud Points go to signed-in writers when you publish their review.</p></div>
+    <div class="facts" style="border-top:0"><div><strong>Last 6 months</strong><span class="muted">${months.map(([m, n, a]) => `${m}: ${n}${n ? ' (' + a + '★)' : ''}`).join(' · ')}</span></div>
+      <div><strong>Pieces with no published review · ${none.length}</strong><span class="muted">${none.length ? esc(none.slice(0, 12).map((p) => p.name).join(', ')) + (none.length > 12 ? '…' : '') : 'None: every piece has one.'}</span></div></div>`;
+}
+// ---------- customers: one row per person, joined up by email and mobile ----------
+const normPhone = (p) => { const d = String(p || '').replace(/\D/g, ''); return d.length === 12 && d.startsWith('91') ? d.slice(2) : d.length === 10 ? d : ''; };
+const ckey = (c) => { const v = String(c || '').trim().toLowerCase(); if (/@/.test(v)) return 'e:' + v; const p = normPhone(v); return p ? 'p:' + p : ''; };
+const okOrder = (o) => o.status !== 'Cancelled' && o.status !== 'Awaiting payment';
+const dayMs = 864e5; const ago = (d) => Math.floor((Date.now() - new Date(d)) / dayMs);
+const fmtDay = (d) => (d ? new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
+// everything the customer list is made from; null while it loads
+function crmData() {
+  const people = admData('people'); const orders = admData('orders'); if (!people || !orders) return null;
+  const x = BTDB.on ? UI.adm.rows.crm : null; if (BTDB.on && !x) return null;
+  return { people, orders, profiles: x ? x.profiles : [], refs: x ? x.refs : ((S.db && S.db.refs) || []), log: x ? x.log : ((S.db && S.db.pointsLog) || []), authors: x ? x.authors : [], meta: x ? x.meta : ((S.db && S.db.meta) || []), reviews: x ? x.reviews : ((S.db && S.db.reviews) || []) };
+}
+const SEGMENTS = [['vip', 'VIP (3+ orders or ₹5,000+)'], ['first', 'First order only'], ['lapsed', 'No order for 90 days'], ['gift', 'Gift buyers'], ['none', 'Not ordered yet']];
+function customers() {
+  const c = crmData(); if (!c) return null;
+  const par = {}; const root = (k) => { if (!(k in par)) par[k] = k; while (par[k] !== k) { par[k] = par[par[k]]; k = par[k]; } return k; };
+  const join = (a, b) => { if (!a) return; root(a); if (b) { const x = root(a), y = root(b); if (x !== y) par[y] = x; } };
+  const oc = (o) => [ckey(o.email || (o.contact || {}).email), ckey((o.contact || {}).phone)];
+  c.orders.forEach((o) => { const [e, p] = oc(o); join(e || p, e ? p : ''); });
+  c.profiles.forEach((p) => join(ckey(p.email), ckey(p.phone)));
+  c.people.forEach((r) => join(ckey(r.contact))); c.refs.forEach((r) => join(ckey(r.contact))); c.meta.forEach((m) => join(ckey(m.contact)));
+  c.authors.forEach((a) => join(ckey(a.email))); c.log.forEach((l) => join(ckey(l.email)));
+  const by = {}; const P_ = (k) => { const r = root(k); return by[r] = by[r] || { id: r, keys: new Set(), orders: [], subs: [], restock: [], reminders: [], refs: [], log: [], reviews: [], meta: null, profile: null }; };
+  Object.keys(par).forEach((k) => P_(k).keys.add(k));
+  c.orders.forEach((o) => { const [e, p] = oc(o); if (e || p) P_(e || p).orders.push(o); });
+  c.profiles.forEach((p) => { const k = ckey(p.email); if (k) P_(k).profile = p; });
+  c.people.forEach((r) => { const k = ckey(r.contact); if (!k) return; const b = P_(k); (r.table === 'subscribers' ? b.subs : r.table === 'restock_requests' ? b.restock : b.reminders).push(r); });
+  c.refs.forEach((r) => { const k = ckey(r.contact); if (k) P_(k).refs.push(r); });
+  c.log.forEach((l) => { const k = ckey(l.email); if (k) P_(k).log.push(l); });
+  const revById = Object.fromEntries(c.reviews.map((r) => [String(r.id), r]));
+  c.authors.forEach((a) => { const k = ckey(a.email); if (k && revById[a.review_id]) P_(k).reviews.push(revById[a.review_id]); });
+  c.meta.forEach((m) => { const k = ckey(m.contact); if (k) { const b = P_(k); if (!b.meta || ckey(m.contact) === b.id) b.meta = m; } });
+  const refOrders = {}; c.orders.forEach((o) => { if (o.ref && okOrder(o)) refOrders[o.ref] = (refOrders[o.ref] || 0) + 1; });
+  return Object.values(by).map((b) => {
+    const emails = [...b.keys].filter((k) => k[0] === 'e').map((k) => k.slice(2)), phones = [...b.keys].filter((k) => k[0] === 'p').map((k) => k.slice(2));
+    const ords = b.orders.slice().sort((x, y) => new Date(y.placedAt) - new Date(x.placedAt)); const good = ords.filter(okOrder);
+    const spent = good.reduce((a, o) => a + (o.total || 0) + (o.cardOff || 0), 0); const last = good[0], first = good[good.length - 1];
+    const pr = b.profile || {}; const addr = (ords.find((o) => o.address && o.address.city && !(o.gift && o.gift.on)) || ords[0] || {}).address || {};
+    const points = Math.max(0, good.filter((o) => o.status === 'Delivered').reduce((a, o) => a + (o.points || 0), 0) - ords.filter((o) => o.status !== 'Cancelled').reduce((a, o) => a + (o.pointsUsed || 0), 0) + b.log.reduce((a, l) => a + (l.delta || 0), 0));
+    const dates = [...ords.map((o) => o.placedAt), ...b.subs.map((r) => r.created_at), ...b.restock.map((r) => r.created_at), ...b.reminders.map((r) => r.created_at), pr.created_at].filter(Boolean).map((d) => new Date(d)).sort((x, y) => x - y);
+    const oldest = (arr, f) => arr.slice().sort((x, y) => new Date(x.created_at || x.placedAt) - new Date(y.created_at || y.placedAt)).map(f).find(Boolean);
+    const cameFrom = oldest(ords, (o) => o.src) || oldest(b.subs, (r) => r.came_from) || '';
+    const prefs = pr.prefs || {}; const waOrder = ords.slice().reverse().find((o) => o.optin);
+    const consent = { news: b.subs[0] ? { at: b.subs[b.subs.length - 1].created_at, how: b.subs[b.subs.length - 1].source || '' } : null, whatsapp: waOrder ? { at: waOrder.placedAt, how: 'checkout tick' } : prefs.whatsapp ? { at: pr.updated_at, how: 'account settings' } : null,
+      sms: prefs.sms ? { at: pr.updated_at, how: 'account settings' } : null, push: prefs.push ? { at: pr.updated_at, how: 'account settings' } : null };
+    const seg = [];
+    if (good.length >= 3 || spent >= 5000) seg.push('vip'); if (good.length === 1) seg.push('first'); if (last && ago(last.placedAt) > 90) seg.push('lapsed');
+    if (good.some((o) => o.gift && o.gift.on)) seg.push('gift'); if (!good.length) seg.push('none');
+    const soon = b.reminders.map((r) => nextDay(r.day)).filter((d) => (d - Date.now()) / dayMs <= 30).sort((x, y) => x - y)[0];
+    const name = pr.name || (ords.find((o) => o.contact && o.contact.name) || { contact: {} }).contact.name || (b.reviews[0] || {}).name || '';
+    return { id: b.id, key: emails[0] || phones[0], name, emails, phones, city: addr.city || '', state: addr.state || '', orders: ords, good, spent, aov: good.length ? Math.round(spent / good.length) : 0, first, last, points, cameFrom, signedUpOn: (b.subs[b.subs.length - 1] || {}).source || '',
+      consent, seg, tags: (b.meta && b.meta.tags) || [], notes: (b.meta && b.meta.notes) || '', birthday: (b.meta && b.meta.birthday) || '', joined: dates[0] || null, soon,
+      subs: b.subs, restock: b.restock, reminders: b.reminders, refs: b.refs, refOrders: b.refs.reduce((a, r) => a + (refOrders[r.id] || 0), 0), log: b.log, reviews: b.reviews, profile: b.profile };
+  });
 }
 function admPeople() {
-  const list = admData('people'); if (!list) return loadingRow;
+  const A = UI.adm; A.pv = A.pv || 'customers'; const list = admData('people'); if (!list) return loadingRow;
+  const nav = `<div class="gh-chips" role="group" aria-label="Show">${[['customers', 'Customers'], ['reminders', 'Gift reminders'], ['restock', 'Waiting for a restock'], ['news', 'Newsletter and WhatsApp list']].map(([k, l]) => `<button type="button" class="chip" data-act="adm-pv" data-v="${k}" aria-pressed="${A.pv === k}">${l}</button>`).join('')}</div>`;
+  if (A.pv === 'reminders') return nav + admReminders(list);
   const subs = list.filter((r) => r.table === 'subscribers'), rs = list.filter((r) => r.table === 'restock_requests');
   const tbl = (rows, cols) => rows.length ? `<div class="table-wrap"><table><thead><tr>${cols.map((c) => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td class="num">${esc(c[1](r))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>';
   const when = (r) => new Date(r.created_at).toLocaleDateString('en-IN');
-  return `<div class="adm-bar"><h2 style="font-size:24px">Newsletter and WhatsApp list · ${subs.length}</h2>${subs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="subscribers">Download as a spreadsheet</button>' : ''}</div>${tbl(subs, [['Email or WhatsApp', (r) => r.contact], ['From', (r) => r.source || ''], ['Joined', when]])}
-    ${admReminders(list)}<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Waiting for a restock · ${rs.length}</h2>${rs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="restock_requests">Download as a spreadsheet</button>' : ''}</div>${tbl(rs, [['Email or WhatsApp', (r) => r.contact], ['Piece', (r) => skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku], ['Asked', when]])}`;
+  if (A.pv === 'news') return nav + `<div class="adm-bar"><h2 style="font-size:24px">Newsletter and WhatsApp list · ${subs.length}</h2>${subs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="subscribers">Download as a spreadsheet</button>' : ''}</div>${tbl(subs, [['Email or WhatsApp', (r) => r.contact], ['Signed up on', (r) => r.source || ''], ['Came from', (r) => r.came_from || ''], ['Joined', when]])}`;
+  if (A.pv === 'restock') {
+    const want = {}; rs.forEach((r) => { want[r.sku] = (want[r.sku] || 0) + 1; }); const top = Object.entries(want).sort((a, b) => b[1] - a[1]);
+    return nav + `<div class="adm-bar"><h2 style="font-size:24px">Waiting for a restock · ${rs.length}</h2>${rs.length ? '<button class="btn small ghost" type="button" data-act="adm-csv" data-v="restock_requests">Download as a spreadsheet</button>' : ''}</div>
+      ${top.length ? `<p class="muted">Most asked for: ${top.slice(0, 5).map(([s, n]) => `${esc(skuMap[s] ? skuMap[s].p.name + ' · ' + skuMap[s].v.label : s)} (${n})`).join(', ')}</p>` : ''}${tbl(rs, [['Email or WhatsApp', (r) => r.contact], ['Piece', (r) => skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku], ['Asked', when], ['Told', (r) => r.notified_at ? new Date(r.notified_at).toLocaleDateString('en-IN') : '']])}`;
+  }
+  const all = customers(); if (!all) return nav + loadingRow;
+  if (A.cust) { const c = all.find((x) => x.id === A.cust || x.emails.some((e) => 'e:' + e === A.cust) || x.phones.some((p) => 'p:' + p === A.cust)); if (c) return nav + admCustomer(c); A.cust = null; }
+  const f = A.cf = A.cf || { q: '', seg: '', src: '', city: '', wa: false, soon: false, sort: 'recent' };
+  const q = f.q.trim().toLowerCase();
+  let rows = all.filter((c) => (!q || [c.name, ...c.emails, ...c.phones, ...c.orders.map((o) => o.id)].join(' ').toLowerCase().includes(q))
+    && (!f.seg || c.seg.includes(f.seg) || c.tags.includes(f.seg)) && (!f.src || c.cameFrom === f.src) && (!f.city || c.city === f.city) && (!f.wa || c.consent.whatsapp) && (!f.soon || c.soon));
+  const sorts = { recent: (a, b) => new Date(b.last ? b.last.placedAt : b.joined || 0) - new Date(a.last ? a.last.placedAt : a.joined || 0), spent: (a, b) => b.spent - a.spent, orders: (a, b) => b.good.length - a.good.length, name: (a, b) => a.name.localeCompare(b.name) };
+  rows.sort(sorts[f.sort] || sorts.recent); A.custRows = rows;
+  const uniq = (fn) => [...new Set(all.map(fn).filter(Boolean))].sort();
+  const tags = uniq((c) => c.tags.join('\n')).join('\n').split('\n').filter(Boolean); const buyers = all.filter((c) => c.good.length);
+  const opt = (v, cur, l) => `<option value="${esc(v)}" ${cur === v ? 'selected' : ''}>${esc(l || v)}</option>`;
+  const segLabel = (c) => c.seg.map((s) => (SEGMENTS.find((x) => x[0] === s) || [s, s])[1].replace(/ \(.*\)/, '')).concat(c.tags);
+  return nav + `<div class="owner-grid"><div class="stat"><span class="muted">Customers and sign-ups</span><strong class="num">${all.length}</strong></div><div class="stat"><span class="muted">Have ordered</span><strong class="num">${buyers.length}</strong></div>
+      <div class="stat"><span class="muted">Ordered more than once</span><strong class="num">${buyers.length ? Math.round(buyers.filter((c) => c.good.length > 1).length / buyers.length * 100) : 0}%</strong></div><div class="stat"><span class="muted">On the newsletter</span><strong class="num">${subs.length}</strong></div></div>
+    <form class="form adm-card adm-filters" data-form="adm-cf" novalidate>
+      <span class="field"><label for="cf-q">Find</label><input id="cf-q" value="${esc(f.q)}" placeholder="Name, email, mobile or order number"></span>
+      <span class="field"><label for="cf-seg">Group</label><select id="cf-seg" data-act="adm-cf" data-k="seg"><option value="">Everyone</option>${SEGMENTS.map(([k, l]) => opt(k, f.seg, l)).join('')}${tags.map((t) => opt(t, f.seg, 'Tag: ' + t)).join('')}</select></span>
+      <span class="field"><label for="cf-src">Came from</label><select id="cf-src" data-act="adm-cf" data-k="src"><option value="">Anywhere</option>${uniq((c) => c.cameFrom).map((v) => opt(v, f.src)).join('')}</select></span>
+      <span class="field"><label for="cf-city">City</label><select id="cf-city" data-act="adm-cf" data-k="city"><option value="">Any city</option>${uniq((c) => c.city).map((v) => opt(v, f.city)).join('')}</select></span>
+      <span class="field"><label for="cf-sort">Sort by</label><select id="cf-sort" data-act="adm-cf" data-k="sort">${[['recent', 'Most recent'], ['spent', 'Most spent'], ['orders', 'Most orders'], ['name', 'Name']].map(([k, l]) => opt(k, f.sort, l)).join('')}</select></span>
+      <span class="adm-checks full"><span><label><input type="checkbox" data-act="adm-cf" data-k="wa" ${f.wa ? 'checked' : ''}> Said yes to WhatsApp</label><label><input type="checkbox" data-act="adm-cf" data-k="soon" ${f.soon ? 'checked' : ''}> Gift date in the next 30 days</label></span></span></form>
+    <div class="adm-bar"><h2 style="font-size:24px">Customers · ${rows.length}</h2>${rows.length ? '<button class="btn small ghost" type="button" data-act="adm-cust-csv">Download these as a spreadsheet</button>' : ''}</div>
+    ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Email or mobile</th><th>City</th><th>Orders</th><th>Spent</th><th>Last order</th><th>Points</th><th>Came from</th><th>Groups</th></tr></thead><tbody>${rows.slice(0, 300).map((c) => `<tr>
+      <td><button class="linkbtn" type="button" data-act="adm-cust" data-v="${esc(c.id)}">${esc(c.name || 'No name yet')}</button></td><td class="num">${esc(c.emails[0] || '')}${c.emails[0] && c.phones[0] ? '<br>' : ''}${esc(c.phones[0] || '')}</td><td>${esc(c.city)}</td>
+      <td class="num">${c.good.length}</td><td class="num">${c.spent ? inr(c.spent) : ''}</td><td class="num">${c.last ? fmtDay(c.last.placedAt) : ''}</td><td class="num">${c.points || ''}</td><td>${esc(c.cameFrom)}</td><td>${segLabel(c).map((t) => `<span class="pill">${esc(t)}</span>`).join(' ')}</td></tr>`).join('')}</tbody></table></div>${rows.length > 300 ? `<p class="muted">Showing 300 of ${rows.length}. Search or pick a group to narrow it down.</p>` : ''}` : '<p class="muted">Nobody matches. Clear a filter to see more.</p>'}`;
+}
+function admCustomer(c) {
+  const wa = c.phones[0] ? `<a class="btn small" href="https://wa.me/${waNumber(c.phones[0])}" target="_blank" rel="noopener">WhatsApp ${esc(c.phones[0])}</a>` : '';
+  const mail = c.emails[0] ? `<a class="btn small ghost" href="mailto:${esc(c.emails[0])}">Email ${esc(c.emails[0])}</a>` : '';
+  const addrs = []; const seen = new Set(); ((c.profile && c.profile.addresses) || []).concat(c.orders.filter((o) => !(o.gift && o.gift.on)).map((o) => o.address || {})).forEach((a) => { const k = (a.line1 || '').toLowerCase() + a.pin; if (a.line1 && !seen.has(k)) { seen.add(k); addrs.push(a); } });
+  const stat = (l, v) => `<div class="stat"><span class="muted">${l}</span><strong class="num">${v}</strong></div>`;
+  const cons = [['news', 'Newsletter'], ['whatsapp', 'WhatsApp updates'], ['sms', 'Text messages'], ['push', 'Phone notifications']].map(([k, l]) => `<li>${l}: ${c.consent[k] ? `<strong>yes</strong> <span class="muted">· ${esc(c.consent[k].how)}${c.consent[k].at ? ', ' + fmtDay(c.consent[k].at) : ''}</span>` : '<span class="muted">no</span>'}</li>`).join('');
+  const tl = [].concat(c.orders.map((o) => [o.placedAt, `Order ${esc(o.id)} · ${inr(o.total || 0)} · ${esc(o.status)}`]), c.subs.map((r) => [r.created_at, `Joined the list on ${esc(r.source || 'the site')}`]),
+    c.reminders.map((r) => [r.created_at, `Saved a gift date: ${esc((OCCASIONS.find((x) => x[0] === r.occasion) || [0, r.occasion])[1])}${r.for_name ? ' for ' + esc(r.for_name) : ''}, ${fmtDay(r.day)}`]),
+    c.restock.map((r) => [r.created_at, `Asked about ${esc(skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku)}`]), c.reviews.map((r) => [r.created_at, `Reviewed ${esc((byId[r.product_id] || { name: r.product_id }).name)}: ${r.rating}★`]),
+    c.log.map((l) => [l.created_at, `Bud Points ${l.delta > 0 ? '+' : ''}${l.delta}${l.note ? ' · ' + esc(l.note) : ''}`])).filter((x) => x[0]).sort((a, b) => new Date(b[0]) - new Date(a[0]));
+  return `<div class="adm-bar"><button class="linkbtn" type="button" data-act="adm-cust" data-v="">← All customers</button></div>
+    <div class="adm-card"><div class="adm-bar"><h2 style="font-size:30px">${esc(c.name || 'No name yet')}</h2><span>${c.seg.map((s) => `<span class="pill">${esc((SEGMENTS.find((x) => x[0] === s) || [s, s])[1].replace(/ \(.*\)/, ''))}</span>`).join(' ')} ${c.tags.map((t) => `<span class="pill">${esc(t)}</span>`).join(' ')}</span></div>
+      <span style="display:flex;gap:8px;flex-wrap:wrap">${wa}${mail}</span>
+      <p class="muted" style="margin:0">${c.joined ? 'First seen ' + fmtDay(c.joined) : ''}${c.cameFrom ? ' · came from ' + esc(c.cameFrom) : ''}${c.signedUpOn ? ' · signed up on ' + esc(c.signedUpOn) : ''}${[...c.emails.slice(1), ...c.phones.slice(1)].length ? ' · also ' + esc([...c.emails.slice(1), ...c.phones.slice(1)].join(', ')) : ''}</p></div>
+    <div class="owner-grid">${stat('Orders', c.good.length)}${stat('Spent', inr(c.spent))}${stat('Average order', c.aov ? inr(c.aov) : '—')}${stat('First order', c.first ? fmtDay(c.first.placedAt) : '—')}${stat('Last order', c.last ? fmtDay(c.last.placedAt) + ` <span class="muted" style="font-size:14px">(${ago(c.last.placedAt)} days)</span>` : '—')}${stat('Bud Points', c.points)}</div>
+    <form class="form adm-card" data-form="adm-cust-meta" data-key="${esc(c.key)}" novalidate><h3 class="full" style="font-size:22px">Your notes</h3>
+      <span class="field"><label for="cm-tags">Tags <span class="hint">separate with commas, e.g. corporate, wholesale</span></label><input id="cm-tags" value="${esc(c.tags.join(', '))}" maxlength="200"></span>
+      <span class="field"><label for="cm-bday">Birthday <span class="hint">optional</span></label><input id="cm-bday" type="date" value="${esc(c.birthday || '')}"></span>
+      <span class="field full"><label for="cm-notes">Private note <span class="hint">only you see it</span></label><textarea id="cm-notes" rows="3" maxlength="2000">${esc(c.notes)}</textarea></span>
+      <span class="full"><button class="btn small" type="submit">Save notes</button></span></form>
+    <div class="adm-card"><h3 style="font-size:22px">Orders · ${c.orders.length}</h3>${c.orders.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Date</th><th>Pieces</th><th>Total</th><th>Paid by</th><th>Status</th></tr></thead><tbody>${c.orders.map((o) => `<tr><td class="num">${esc(o.id)}</td><td class="num">${fmtDay(o.placedAt)}</td><td>${esc((o.items || []).map((l) => l.name + ' × ' + l.qty).join(', '))}${o.gift && o.gift.on ? ' <span class="pill">Gift</span>' : ''}${o.code ? ` <span class="pill">${esc(o.code)}</span>` : ''}</td><td class="num">${inr(o.total || 0)}</td><td>${esc(o.method || '')}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No orders yet.</p>'}</div>
+    <div class="facts" style="border-top:0">
+      <div><strong>Addresses</strong>${addrs.length ? addrs.map((a) => `<span class="muted" style="display:block">${esc([a.line1, a.line2, a.city, a.state, a.pin].filter(Boolean).join(', '))}</span>`).join('') : '<span class="muted">None saved</span>'}</div>
+      <div><strong>What they said yes to</strong><ul class="muted" style="margin:0;padding-left:18px">${cons}</ul></div>
+      <div><strong>Gift dates</strong>${c.reminders.length ? c.reminders.map((r) => `<span class="muted" style="display:block">${esc((OCCASIONS.find((x) => x[0] === r.occasion) || [0, r.occasion])[1])}${r.for_name ? ' · ' + esc(r.for_name) : ''} · ${nextDay(r.day).toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}</span>`).join('') : '<span class="muted">None</span>'}</div>
+      <div><strong>Share link</strong><span class="muted">${c.refs.length ? `${esc(c.refs.map((r) => r.id).join(', '))} · ${c.refOrders} order${c.refOrders === 1 ? '' : 's'} from friends` : 'None'}</span></div>
+      <div><strong>Reviews</strong>${c.reviews.length ? c.reviews.map((r) => `<span class="muted" style="display:block">${esc((byId[r.product_id] || { name: r.product_id }).name)} · ${r.rating}★ · ${r.published ? 'published' : 'waiting'}</span>`).join('') : '<span class="muted">None</span>'}</div>
+      <div><strong>Waiting for a restock</strong>${c.restock.length ? c.restock.map((r) => `<span class="muted" style="display:block">${esc(skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku)}</span>`).join('') : '<span class="muted">Nothing</span>'}</div></div>
+    <div class="adm-card"><h3 style="font-size:22px">Timeline</h3>${tl.length ? `<ul class="muted" style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px">${tl.slice(0, 60).map(([d, t]) => `<li><span class="num">${fmtDay(d)}</span> · ${t}</li>`).join('')}</ul>` : '<p class="muted">Nothing yet.</p>'}</div>
+    <div class="adm-card"><h3 style="font-size:22px">Delete this customer</h3><p class="muted" style="margin:0">For a request to remove their data. Their sign-ups, gift dates, restock requests, your notes, saved details and share link go. Orders and invoices stay, as the law asks you to keep them.</p><button class="btn small ghost danger" type="button" data-act="adm-cust-del" data-v="${esc(c.id)}" style="align-self:flex-start">Delete their details</button></div>`;
 }
 // the next time a yearly date comes round, counting from today
 const nextDay = (iso) => { const d = new Date(iso + 'T00:00:00'), t = new Date(); t.setHours(0, 0, 0, 0); const n = new Date(t.getFullYear(), d.getMonth(), d.getDate()); if (n < t) n.setFullYear(n.getFullYear() + 1); return n; };
@@ -2357,9 +2589,107 @@ function admCards() {
     <div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Friends who brought orders · ${refs.length}</h2></div><p class="muted">Orders placed through a customer’s share link. Send each a ${inr(SET.refReward)} gift card as a thank-you.</p>
     ${refs.length ? `<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Link</th><th>Orders</th></tr></thead><tbody>${refs.map((r) => `<tr><td>${esc(r.contact)}</td><td class="num">${esc(r.id)}</td><td class="num">${refCount[r.id]}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
 }
+// ---------- analytics ----------
+const EV_DETAIL = ['wa_click', 'finder_complete', 'filter', 'house_focus', 'house_mood', 'walk_skip', 'walk_shop', 'share', 'pin_check', 'payment_failed', 'search', 'search_no_results'];
+// the same sums as event_stats() in schema.sql, from this browser's own events (demo mode)
+function localEventStats(days) {
+  const since = Date.now() - days * dayMs; const e = S.events.filter((x) => new Date(x.t) >= since).map((x) => Object.assign({ sid: 'local', vid: 'local' }, x));
+  const ses = {}; e.forEach((x) => { const s = ses[x.sid] = ses[x.sid] || { src: x.src || 'direct', viewed: false, added: false, checkout: false, bought: false }; if (x.name === 'product_view') s.viewed = true; if (['add_to_cart', 'ritual_add', 'combo_add'].includes(x.name)) s.added = true; if (x.name === 'checkout_start') s.checkout = true; if (x.name === 'purchase') s.bought = true; });
+  const S_ = Object.values(ses); const count = (arr, fn) => arr.reduce((m, x) => { const k = fn(x); if (k != null) m[k] = (m[k] || 0) + 1; return m; }, {});
+  const daily = {}; e.forEach((x) => { const d = new Date(x.t).toLocaleDateString('en-CA'); daily[d] = daily[d] || { v: new Set(), s: new Set() }; daily[d].v.add(x.vid); daily[d].s.add(x.sid); });
+  const srcs = {}; S_.forEach((s) => { const r = srcs[s.src] = srcs[s.src] || { src: s.src, sessions: 0, bought: 0 }; r.sessions++; if (s.bought) r.bought++; });
+  const detail = {}; EV_DETAIL.forEach((n) => { const g = {}; e.filter((x) => x.name === n).forEach((x) => { const k = JSON.stringify(x.data); g[k] = (g[k] || 0) + 1; }); const v = Object.entries(g).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([k, c]) => ({ data: JSON.parse(k), n: c })); if (v.length) detail[n] = v; });
+  return { visitors: new Set(e.map((x) => x.vid)).size, sessions: S_.length, funnel: { visits: S_.length, viewed: S_.filter((s) => s.viewed).length, added: S_.filter((s) => s.added).length, checkout: S_.filter((s) => s.checkout).length, bought: S_.filter((s) => s.bought).length },
+    daily: Object.keys(daily).sort().map((d) => ({ d, visitors: daily[d].v.size, sessions: daily[d].s.size })), sources: Object.values(srcs).sort((a, b) => b.sessions - a.sessions), names: count(e, (x) => x.name),
+    views: count(e.filter((x) => x.name === 'product_view'), (x) => x.data.id), adds: count(e.filter((x) => x.name === 'add_to_cart'), (x) => x.data.sku), pages: count(e.filter((x) => x.name === 'page_view'), (x) => x.data.page || 'home'), detail };
+}
+// one series of columns (revenue per day), with the numbers on hover and in a table underneath
+function colChart(points, fmt, label) {
+  const W = 720, H = 180, pad = 24, max = Math.max(1, ...points.map((p) => p.v)); const bw = (W - pad) / Math.max(points.length, 1); const w = Math.max(2, Math.min(28, bw - 2));
+  const bars = points.map((p, i) => { const h = p.v ? Math.max(3, (H - pad) * p.v / max) : 0; const x = pad + i * bw + (bw - w) / 2; return `<g class="ch-col"><rect x="${pad + i * bw}" y="0" width="${bw}" height="${H}" fill="transparent"><title>${esc(p.label)}: ${esc(fmt(p.v))}${p.tip ? ' · ' + esc(p.tip) : ''}</title></rect>${h ? `<path d="M${x},${H - pad} v${-(h - 4)} q0,-4 4,-4 h${w - 8} q4,0 4,4 v${h - 4} z" fill="var(--terra)" pointer-events="none"/>` : ''}</g>`; }).join('');
+  const ticks = points.length ? [0, Math.floor(points.length / 2), points.length - 1].filter((v, i, a) => a.indexOf(v) === i).map((i) => `<text x="${pad + i * bw + bw / 2}" y="${H - 6}" text-anchor="middle" class="ch-t">${esc(points[i].short || points[i].label)}</text>`).join('') : '';
+  return `<figure class="ch"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}" preserveAspectRatio="none"><line x1="${pad}" x2="${W}" y1="${H - pad}" y2="${H - pad}" class="ch-axis"/><text x="0" y="12" class="ch-t">${esc(fmt(max))}</text>${bars}${ticks}</svg>
+    <details><summary class="muted">See the numbers</summary><div class="table-wrap"><table><tbody>${points.filter((p) => p.v).map((p) => `<tr><td class="num">${esc(p.label)}</td><td class="num">${esc(fmt(p.v))}${p.tip ? ' · ' + esc(p.tip) : ''}</td></tr>`).join('') || '<tr><td class="muted">Nothing in this period.</td></tr>'}</tbody></table></div></details></figure>`;
+}
+// horizontal bars for shares of a whole: funnel steps, sources, categories
+const hbars = (rows, fmt) => `<ul class="hb">${rows.map(([l, v, max, note]) => `<li><span>${esc(l)}</span><span class="hb-bar" aria-hidden="true"><span style="width:${max ? Math.max(v ? 2 : 0, Math.round(v / max * 100)) : 0}%"></span></span><span class="num">${fmt ? fmt(v) : v}${note ? ` <span class="muted">${esc(note)}</span>` : ''}</span></li>`).join('')}</ul>`;
+const pct = (a, b) => (b ? Math.round(a / b * 100) + '%' : '—');
 function admEvents() {
-  return `<p class="muted">The events the live site will send to analytics, recorded in this browser so the tracking plan can be checked.</p>
-    ${S.events.length ? `<div class="table-wrap"><table><thead><tr><th>Time</th><th>Event</th><th>Details</th></tr></thead><tbody>${S.events.slice(0, 40).map((e) => `<tr><td class="num">${new Date(e.t).toLocaleTimeString('en-IN')}</td><td>${esc(e.name)}</td><td class="num">${esc(Object.entries(e.data).map(([k, v]) => k + ': ' + v).join(', '))}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No events yet. Browse the shop to create some.</p>'}`;
+  const A = UI.adm; A.days = A.days || 30; const days = A.days;
+  const orders = admData('orders'); const people = admData('people'); const revs = admData('reviews'); const cards = admData('cards'); const rew = admData('rewards');
+  const ev = BTDB.on ? admData('events') : {}; if (!ev) return loadingRow; const st = BTDB.on ? ev.stats || {} : localEventStats(days);
+  if (!orders || !people || !revs || !cards || !rew || !st) return loadingRow;
+  const now = Date.now(), since = now - days * dayMs, prevSince = since - days * dayMs;
+  const inP = (o) => new Date(o.placedAt) >= since, inPrev = (o) => new Date(o.placedAt) >= prevSince && new Date(o.placedAt) < since;
+  const good = orders.filter(okOrder), cur = good.filter(inP), prev = good.filter(inPrev); const rev = (l) => l.reduce((a, o) => a + (o.total || 0) + (o.cardOff || 0), 0);
+  const revCur = rev(cur), revPrev = rev(prev); const items = cur.reduce((a, o) => a + (o.items || []).reduce((b, l) => b + l.qty, 0), 0);
+  const change = (a, b) => (b ? `${a >= b ? '▲' : '▼'} ${Math.abs(Math.round((a - b) / b * 100))}% on the ${days} days before` : 'nothing to compare yet');
+  const goal = +SET.monthlyGoal || 0; const mStart = new Date(); mStart.setDate(1); mStart.setHours(0, 0, 0, 0); const revMonth = rev(good.filter((o) => new Date(o.placedAt) >= mStart));
+  const tile = (l, v, sub) => `<div class="stat"><span class="muted">${l}</span><strong class="num">${v}</strong>${sub ? `<span class="muted" style="font-size:13px">${sub}</span>` : ''}</div>`;
+  // revenue per day (per week for a year)
+  const step = days > 120 ? 7 : 1; const pts = []; for (let t = since; t < now; t += step * dayMs) { const e = t + step * dayMs; const l = good.filter((o) => { const d = +new Date(o.placedAt); return d >= t && d < e; }); const d = new Date(t); pts.push({ label: (step > 1 ? 'Week of ' : '') + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), short: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), v: rev(l), tip: l.length + ' order' + (l.length === 1 ? '' : 's') }); }
+  // products
+  const prod = {}; const P_ = (id) => prod[id] = prod[id] || { views: 0, adds: 0, sold: 0, rev: 0 };
+  Object.entries(st.views || {}).forEach(([id, n]) => { P_(id).views += n; }); Object.entries(st.adds || {}).forEach(([sku, n]) => { if (skuMap[sku]) P_(skuMap[sku].p.id).adds += n; });
+  const cat = {}; cur.forEach((o) => (o.items || []).forEach((l) => { const s = skuMap[l.sku]; const id = s ? s.p.id : l.name; P_(id).sold += l.qty; P_(id).rev += l.price * l.qty; const c = s ? ({ candles: 'Candles', jesmonite: 'Jesmonite objects', gifts: 'Gift boxes' }[s.p.cat] || s.p.cat) : 'Other'; cat[c] = (cat[c] || 0) + l.price * l.qty; }));
+  const prows = Object.entries(prod).sort((a, b) => b[1].rev - a[1].rev || b[1].views - a[1].views).slice(0, 15);
+  // customers: new or returning, by whether they had ordered before this order
+  const who = (o) => String(o.email || (o.contact || {}).email || (o.contact || {}).phone || '').toLowerCase();
+  const firstAt = {}; good.forEach((o) => { const k = who(o); if (k && (!firstAt[k] || new Date(o.placedAt) < firstAt[k])) firstAt[k] = new Date(o.placedAt); });
+  const newC = cur.filter((o) => +firstAt[who(o)] === +new Date(o.placedAt)).length; const byWho = {}; good.forEach((o) => { (byWho[who(o)] = byWho[who(o)] || []).push(+new Date(o.placedAt)); });
+  const repeaters = Object.values(byWho).filter((l) => l.length > 1); const gaps = repeaters.flatMap((l) => l.sort((a, b) => a - b).slice(1).map((t, i) => (t - l[i]) / dayMs));
+  // payments, coupons, points, gift cards, share links
+  const pay = {}; orders.filter(inP).forEach((o) => { const k = o.status === 'Cancelled' ? 'Cancelled' : o.status === 'Awaiting payment' ? 'Not paid yet' : o.method || 'Other'; pay[k] = pay[k] || [0, 0]; pay[k][0]++; pay[k][1] += o.total || 0; });
+  const coup = {}; cur.filter((o) => o.code).forEach((o) => { const c = coup[o.code] = coup[o.code] || [0, 0, 0]; c[0]++; c[1] += o.codeOff || 0; c[2] += o.total || 0; });
+  const ptsIssued = good.filter((o) => o.status === 'Delivered' && inP(o)).reduce((a, o) => a + (o.points || 0), 0) + (rew.log || []).filter((l) => l.delta > 0 && new Date(l.created_at) >= since).reduce((a, l) => a + l.delta, 0);
+  const ptsUsed = cur.reduce((a, o) => a + (o.pointsUsed || 0), 0); const gcLeft = (cards.cards || []).reduce((a, c) => a + (c.balance || 0), 0); const gcUsed = cur.reduce((a, o) => a + (o.cardOff || 0), 0);
+  const refO = cur.filter((o) => o.ref); const nm = st.names || {};
+  // places
+  const city = {}; cur.forEach((o) => { const a = o.address || {}; if (a.city) { const k = a.city + (a.state ? ', ' + a.state : ''); city[k] = (city[k] || 0) + 1; } }); const cities = Object.entries(city).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const det = st.detail || {}; const dl = (n, fn) => (det[n] || []).map((x) => [fn(x.data), x.n]).filter((x) => x[0]);
+  const pinBad = (det.pin_check || []).filter((x) => x.data.ok === false).reduce((a, x) => a + x.n, 0);
+  // stock, reminders, delivery
+  const low = []; const out = []; P.forEach((p) => p.variants.forEach((v) => { const q = stockOf(v.sku); if (q <= 0) out.push(p.name + ' · ' + v.label); else if (q <= 2) low.push(`${p.name} · ${v.label} (${q})`); }));
+  const restock = {}; people.filter((r) => r.table === 'restock_requests' && !r.notified_at).forEach((r) => { restock[r.sku] = (restock[r.sku] || 0) + 1; });
+  const rem = people.filter((r) => r.table === 'reminders').map((r) => (nextDay(r.day) - now) / dayMs); const rem7 = rem.filter((d) => d <= 7).length, rem30 = rem.filter((d) => d <= 30).length;
+  const notes = (A.rows.events && A.rows.events.notes) || []; const at = (o, ev) => { const n = notes.find((x) => x.order_id === o.id && x.event === ev); return n ? +new Date(n.created_at) : null; };
+  const ship = cur.map((o) => at(o, 'shipped') && (at(o, 'shipped') - new Date(o.placedAt)) / dayMs).filter((x) => x > 0), deliv = cur.map((o) => at(o, 'delivered') && at(o, 'shipped') && (at(o, 'delivered') - at(o, 'shipped')) / dayMs).filter((x) => x > 0);
+  const avgOf = (l) => (l.length ? (l.reduce((a, b) => a + b, 0) / l.length).toFixed(1) + ' days' : '—'); const late = cur.filter((o) => o.delay && o.status !== 'Delivered').length;
+  // reviews
+  const rv = revs.filter((r) => new Date(r.created_at) >= since); const pubRv = revs.filter((r) => r.published);
+  const unpaid = orders.filter((o) => o.status === 'Awaiting payment' && now - new Date(o.placedAt) > 30 * 60e3).slice(0, 10);
+  const fu = st.funnel || {}; const fMax = fu.visits || 0; const srcMax = Math.max(1, ...(st.sources || []).map((s) => s.sessions)); const catMax = Math.max(1, ...Object.values(cat));
+  const box = (title, body, note) => `<div class="adm-card"><h3 style="font-size:22px">${title}</h3>${note ? `<p class="muted" style="margin:0">${note}</p>` : ''}${body}</div>`;
+  const small = (rows, head) => rows.length ? `<div class="table-wrap"><table>${head ? `<thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead>` : ''}<tbody>${rows.map((r) => `<tr>${r.map((c, i) => `<td${i ? ' class="num"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="muted">Nothing yet.</p>';
+  const setF = (k) => { const m = SET_META.find((x) => x[0] === k); return m ? setField(m) : ''; };
+  return `<div class="adm-bar"><div class="gh-chips" role="group" aria-label="Period">${[[7, '7 days'], [30, '30 days'], [90, '90 days'], [365, '12 months']].map(([d, l]) => `<button type="button" class="chip" data-act="adm-days" data-v="${d}" aria-pressed="${days === d}">${l}</button>`).join('')}</div>${BTDB.on ? '' : '<span class="muted">Demo mode: visits counted in this browser only.</span>'}</div>
+    <div class="owner-grid">${tile('Sales', inr(revCur), change(revCur, revPrev))}${tile('Orders', cur.length, change(cur.length, prev.length))}${tile('Average order', cur.length ? inr(Math.round(revCur / cur.length)) : '—', cur.length ? (items / cur.length).toFixed(1) + ' pieces per order' : '')}
+      ${tile('Visitors', st.visitors || 0, (st.sessions || 0) + ' visits')}${tile('Visits that bought', pct(fu.bought || 0, fu.visits || 0), '')}${goal ? tile('This month’s goal', pct(revMonth, goal), `${inr(revMonth)} of ${inr(goal)}<span class="hb-bar" aria-hidden="true" style="display:block;margin-top:6px"><span style="width:${Math.min(100, Math.round(revMonth / goal * 100))}%"></span></span>`) : ''}</div>
+    ${box(`Sales ${step > 1 ? 'by week' : 'by day'}`, colChart(pts, inr, 'Sales by ' + (step > 1 ? 'week' : 'day')), 'Paid and cash on delivery orders, not cancelled. Gift card payments count as sales.')}
+    <div class="adm-cols">
+    ${box('From visit to order', hbars([['Visits', fu.visits || 0, fMax], ['Looked at a piece', fu.viewed || 0, fMax, pct(fu.viewed, fMax)], ['Added to cart', fu.added || 0, fMax, pct(fu.added, fMax)], ['Started checkout', fu.checkout || 0, fMax, pct(fu.checkout, fMax)], ['Ordered', fu.bought || 0, fMax, pct(fu.bought, fMax)]]), fu.checkout > fu.bought ? `${fu.checkout - fu.bought} visit${fu.checkout - fu.bought === 1 ? '' : 's'} started checkout and stopped.` : '')}
+    ${box('Where visitors come from', (st.sources || []).length ? hbars(st.sources.slice(0, 8).map((s) => [s.src, s.sessions, srcMax, s.bought ? s.bought + ' ordered' : ''])) : '<p class="muted">Nothing yet.</p>', 'Add <span class="num">?utm_source=instagram</span> to links you share, so each one is counted by name.')}
+    </div>
+    ${box('Pieces', small(prows.map(([id, r]) => [esc((byId[id] || { name: id }).name), r.views, r.adds, r.sold, r.rev ? inr(r.rev) : '', r.views ? pct(r.sold, r.views) : '']), ['Piece', 'Views', 'Added to cart', 'Sold', 'Sales', 'Views that sold']))}
+    <div class="adm-cols">
+    ${box('By category', Object.keys(cat).length ? hbars(Object.entries(cat).sort((a, b) => b[1] - a[1]).map(([k, v]) => [k, v, catMax, pct(v, revCur)]), inr) : '<p class="muted">No sales in this period.</p>')}
+    ${box('Customers', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${newC} new · ${cur.length - newC} returning</strong><span class="muted">orders in this period</span></div><div><strong class="num">${pct(repeaters.length, Object.keys(byWho).length)}</strong><span class="muted">of customers have ordered more than once</span></div><div><strong class="num">${gaps.length ? Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length) + ' days' : '—'}</strong><span class="muted">between a customer’s orders, on average</span></div></div>`)}
+    ${box('How people paid', small(Object.entries(pay).map(([k, v]) => [esc(k), v[0], inr(v[1])]), ['', 'Orders', 'Value']) + (dl('payment_failed', (d) => d.method).length ? `<p class="muted" style="margin:0">Payments that failed: ${dl('payment_failed', (d) => d.method).map(([m, n]) => esc(m) + ' ' + n).join(', ')}</p>` : ''))}
+    ${box('Codes', small(Object.entries(coup).sort((a, b) => b[1][0] - a[1][0]).map(([k, v]) => [esc(k), v[0], inr(v[1]), inr(v[2])]), ['Code', 'Used', 'Taken off', 'Orders worth']))}
+    ${box('Bud Points and gift cards', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${ptsIssued}</strong><span class="muted">points given</span></div><div><strong class="num">${ptsUsed}</strong><span class="muted">points spent</span></div><div><strong class="num">${inr(gcUsed)}</strong><span class="muted">paid with gift cards</span></div><div><strong class="num">${inr(gcLeft)}</strong><span class="muted">left on all gift cards</span></div></div>`)}
+    ${box('Share links', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${refO.length}</strong><span class="muted">orders from a friend’s link, worth ${inr(rev(refO))}</span></div><div><strong class="num">${(nm.share || 0) + (nm.share_link || 0) + (nm.house_share || 0) + (nm.room_share || 0)}</strong><span class="muted">times the shop was shared</span></div></div>`)}
+    ${box('Where orders go', small(cities.map(([k, n]) => [esc(k), n]), ['City', 'Orders']) + (pinBad ? `<p class="muted" style="margin:0">${pinBad} PIN code check${pinBad === 1 ? '' : 's'} found no delivery.</p>` : ''))}
+    ${box('Searches and Find Your Feeling', small([...dl('search', (d) => d.q).map(([q, n]) => [esc(q), n]), ...dl('search_no_results', (d) => d.q).map(([q, n]) => [esc(q) + ' <span class="pill low">nothing found</span>', n]), ...dl('finder_complete', (d) => 'Quiz: ' + d.mood).map(([q, n]) => [esc(q), n])], ['Looked for', 'Times']))}
+    ${box('The house walk', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${nm.walk_complete || 0}</strong><span class="muted">walked to the end</span></div><div><strong class="num">${nm.walk_skip || 0}</strong><span class="muted">skipped it</span></div><div><strong class="num">${nm.walk_shop || 0}</strong><span class="muted">went to the shop from it</span></div></div>${dl('house_focus', (d) => (byId[d.id] || { name: d.id }).name).length ? `<p class="muted" style="margin:0">Most tapped: ${dl('house_focus', (d) => (byId[d.id] || { name: d.id }).name).slice(0, 5).map(([k, n]) => esc(k) + ' (' + n + ')').join(', ')}</p>` : ''}`)}
+    ${box('WhatsApp taps', small(dl('wa_click', (d) => d.where).map(([k, n]) => [esc(k), n]), ['Page', 'Taps']), 'Taps on your WhatsApp links. WhatsApp can’t tell the site whether they then pressed Send.')}
+    ${box('Stock', `${low.length ? `<p style="margin:0"><strong>Running low:</strong> ${esc(low.join(', '))}</p>` : ''}${out.length ? `<p style="margin:0"><strong>Sold out:</strong> ${esc(out.join(', '))}</p>` : ''}${Object.keys(restock).length ? `<p style="margin:0"><strong>Most asked to restock:</strong> ${Object.entries(restock).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([s, n]) => esc(skuMap[s] ? skuMap[s].p.name + ' · ' + skuMap[s].v.label : s) + ' (' + n + ')').join(', ')}</p>` : ''}${low.length || out.length || Object.keys(restock).length ? '' : '<p class="muted">Everything is in stock.</p>'}`)}
+    ${box('Delivery', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${avgOf(ship)}</strong><span class="muted">from order to shipped</span></div><div><strong class="num">${avgOf(deliv)}</strong><span class="muted">from shipped to delivered</span></div><div><strong class="num">${late}</strong><span class="muted">running late now</span></div></div>`)}
+    ${box('Gift dates coming up', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${rem7}</strong><span class="muted">in the next 7 days</span></div><div><strong class="num">${rem30}</strong><span class="muted">in the next 30 days</span></div></div><button class="linkbtn" type="button" data-act="adm-goto" data-v="people" data-pv="reminders" style="align-self:flex-start">See them in Sign-ups</button>`)}
+    ${box('Reviews', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${rv.length}</strong><span class="muted">new in this period${rv.length ? ', average ' + (rv.reduce((a, r) => a + r.rating, 0) / rv.length).toFixed(1) + '★' : ''}</span></div><div><strong class="num">${pubRv.length ? (pubRv.reduce((a, r) => a + r.rating, 0) / pubRv.length).toFixed(1) + '★' : '—'}</strong><span class="muted">average of all published</span></div><div><strong class="num">${P.filter((p) => !pubRv.some((r) => r.product_id === p.id)).length}</strong><span class="muted">pieces with no review yet</span></div></div>`)}
+    ${box('Not paid yet', unpaid.length ? small(unpaid.map((o) => [esc(o.id), fmtDay(o.placedAt), inr(o.total || 0), (o.contact || {}).phone ? `<a href="https://wa.me/${waNumber(o.contact.phone)}?text=${encodeURIComponent(`Hi ${(o.contact.name || '').split(' ')[0]}, this is BUD & THINGS. Your order ${o.id} is waiting for payment. Can we help with anything?`)}" target="_blank" rel="noopener">Message</a>` : '']), ['Order', 'Placed', 'Total', 'WhatsApp']) : '<p class="muted">None waiting.</p>', 'Checkouts that reached payment and stopped. A friendly message often brings them back.')}
+    </div>
+    <div class="form adm-card"><h3 class="full" style="font-size:22px">Goal and weekly email</h3>${setF('monthlyGoal')}${setF('weeklySummary')}<p class="muted full" style="margin:0">The weekly email goes every Monday to ${esc(SET.orderAlerts || SET.email || 'the shop’s email')}: orders, sales, visitors, new sign-ups, reviews waiting and stock running low.</p></div>
+    <details class="adm-group"><summary>Every event in this period</summary><div style="padding:12px 18px">${small(Object.entries(nm).sort((a, b) => b[1] - a[1]).map(([k, n]) => [esc(k), n]), ['Event', 'Times'])}</div></details>`;
 }
 function admSetup() {
   const n = (x) => (x ? x.length : 0);
@@ -2457,7 +2787,7 @@ function catTiles(id) {
 
 function newArrivals(id) {
   const list = idList('newIn').map((x) => byId[x]); if (!list.length) return '';
-  const tabs = [['all', 'All']].concat([['candles', 'Candles'], ['jesmonite', 'Jesmonite'], ['gifts', 'Gift boxes']].filter(([k]) => list.some((p) => p.cat === k)));
+  const nl = Tx('home.naAll').split('|'); const tabs = [['all', nl[0] || 'All']].concat([['candles', nl[1] || 'Candles'], ['jesmonite', nl[2] || 'Jesmonite'], ['gifts', nl[3] || 'Gift boxes']].filter(([k]) => list.some((p) => p.cat === k)));
   const cur = tabs.some((t) => t[0] === UI.na) ? UI.na : 'all'; const show = list.filter((p) => cur === 'all' || p.cat === cur).slice(0, 4);
   return `<section class="wrap section" aria-labelledby="${id}" style="padding-top:0"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.newEyebrow')}</span><h2 id="${id}">${T('home.new')}</h2></div>
     <div class="gh-chips" role="group" aria-label="New arrivals by category">${tabs.map(([k, l]) => `<button type="button" class="chip" data-act="na-tab" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div></div>
@@ -2467,13 +2797,14 @@ function newArrivals(id) {
 // banners for offers and rewards, and a seasonal one
 function promoBanners() {
   const b = [];
-  if (SET.welcomeCode && +SET.welcomeOff) b.push(`<div class="promo promo-choc"><span class="eyebrow">Welcome offer</span><strong>${T('promo.welcomeTitle')}</strong><span>${T('promo.welcomeText')}</span><span class="promo-acts"><button type="button" class="code-chip" data-act="copy-code" data-v="${esc(SET.welcomeCode)}">${hl('copy', 16)} ${esc(SET.welcomeCode)}</button><a class="btn light small" href="#shop">Shop now</a></span></div>`);
-  if (+SET.ritualOff) b.push(`<div class="promo promo-terra"><span class="eyebrow">Rituals</span><strong>${T('promo.pairTitle')}</strong><span>${T('promo.pairText')}</span><span class="promo-acts"><a class="btn light small" href="#ritual">Build a pair</a></span></div>`);
+  if (SET.welcomeCode && +SET.welcomeOff) b.push(`<div class="promo promo-choc"><span class="eyebrow">${T('promo.welcomeEyebrow')}</span><strong>${T('promo.welcomeTitle')}</strong><span>${T('promo.welcomeText')}</span><span class="promo-acts"><button type="button" class="code-chip" data-act="copy-code" data-v="${esc(SET.welcomeCode)}">${hl('copy', 16)} ${esc(SET.welcomeCode)}</button><a class="btn light small" href="#shop">${T('promo.welcomeBtn')}</a></span></div>`);
+  if (+SET.ritualOff) b.push(`<div class="promo promo-terra"><span class="eyebrow">${T('promo.pairEyebrow')}</span><strong>${T('promo.pairTitle')}</strong><span>${T('promo.pairText')}</span><span class="promo-acts"><a class="btn light small" href="#ritual">${T('promo.pairBtn')}</a></span></div>`);
   return b.length ? `<section class="wrap promos" aria-label="Offers">${b.join('')}</section>` : '';
 }
 function festiveBanner() {
-  if (!P.some((p) => p.cat === 'gifts')) return '';
-  return `<section class="wrap" aria-labelledby="fest-h" style="padding-bottom:var(--section)"><a class="festive" href="#gifts"><img src="${IMG.box}" alt="" loading="lazy"><span class="festive-copy"><span class="eyebrow">Diwali 2026</span><strong id="fest-h">${T('home.festive')}</strong><span>${T('home.festiveText')}</span><span class="btn small light" style="align-self:flex-start">Shop gift boxes →</span></span></a></section>`;
+  if (!SET.festiveOn || !P.some((p) => p.cat === 'gifts')) return '';
+  const ph = brandImgs('gift', [[IMG.box]])[0][0]; // a brand photo of gift wrap from Photos & videos, else the box
+  return `<section class="wrap" aria-labelledby="fest-h" style="padding-bottom:var(--section)"><a class="festive" href="#gifts"><img src="${esc(ph)}" alt="" loading="lazy"><span class="festive-copy">${Tx('home.festiveEyebrow') ? `<span class="eyebrow">${T('home.festiveEyebrow')}</span>` : ''}<strong id="fest-h">${T('home.festive')}</strong><span>${T('home.festiveText')}</span><span class="btn small light" style="align-self:flex-start">${T('home.festiveBtn')}</span></span></a></section>`;
 }
 
 function spotlight(id) {
@@ -2500,15 +2831,27 @@ const reviewPool = (pid) => { const real = DATA.reviews.filter((r) => r.publishe
 function reviewCard(r, withProduct) {
   const p = byId[r.product_id];
   return `<blockquote class="review"><span class="stars" role="img" aria-label="${r.rating} out of 5"><span aria-hidden="true">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span></span><p>“${esc(r.body)}”</p>
-    <footer class="muted">${esc(r.name)}${withProduct && p ? ` · on <a href="#p-${p.id}">${esc(p.name)}</a>` : ''}${r.sample ? ' · <span class="sample-tag">Sample</span>' : r.created_at ? ' · ' + new Date(r.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : ''}</footer></blockquote>`;
+    ${r.reply ? `<div class="rv-reply"><strong>${T('pdp.replyFrom')}</strong><p>${esc(r.reply)}</p></div>` : ''}
+    <footer class="muted">${r.verified ? `<span class="rv-badge">✓ ${T('pdp.verified')}</span> · ` : ''}${esc(r.name)}${withProduct && p ? ` · on <a href="#p-${p.id}">${esc(p.name)}</a>` : ''}${r.sample ? ' · <span class="sample-tag">Sample</span>' : r.created_at ? ' · ' + new Date(r.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : ''}</footer></blockquote>`;
 }
 function reviewSummary(list) {
   if (!list.length) return ''; const avg = list.reduce((a, r) => a + r.rating, 0) / list.length;
   return `<div class="rv-sum"><span class="rv-avg num">${avg.toFixed(1)}</span><span><span class="stars big" aria-hidden="true">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5 - Math.round(avg))}</span><br><span class="muted num" style="font-size:14px">${list.length} review${list.length === 1 ? '' : 's'}</span></span>
     <ul class="rv-bars">${[5, 4, 3, 2, 1].map((n) => { const k = list.filter((r) => r.rating === n).length; return `<li><span class="num">${n}★</span><span class="bar" aria-hidden="true"><span style="width:${Math.round(k / list.length * 100)}%"></span></span><span class="num muted">${k}</span></li>`; }).join('')}</ul></div>`;
 }
+// what Google reads about a product (price, stock, star rating), so stars can show in search results. Sample reviews never count.
+function productLD(p, rv) {
+  const real = rv.filter((r) => !r.sample); const v = p.variants; const site = location.origin + location.pathname;
+  const ld = { '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: descOf(p), brand: { '@type': 'Brand', name: 'BUD & THINGS' }, url: site + '#p-' + p.id,
+    offers: { '@type': 'AggregateOffer', priceCurrency: 'INR', lowPrice: Math.min(...v.map((x) => x.price)), highPrice: Math.max(...v.map((x) => x.price)), offerCount: v.length, availability: 'https://schema.org/' + (inStock(p) ? 'InStock' : 'OutOfStock') } };
+  if (real.length) {
+    ld.aggregateRating = { '@type': 'AggregateRating', ratingValue: +(real.reduce((a, r) => a + r.rating, 0) / real.length).toFixed(1), reviewCount: real.length };
+    ld.review = real.slice(0, 5).map((r) => ({ '@type': 'Review', author: { '@type': 'Person', name: r.name }, reviewRating: { '@type': 'Rating', ratingValue: r.rating }, reviewBody: r.body, datePublished: String(r.created_at || '').slice(0, 10) }));
+  }
+  return `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}<\/script>`;
+}
 function homeReviews(id) {
-  const list = reviewPool().slice(0, 6);
+  const list = reviewPool().slice().sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).slice(0, 6);
   return `<section class="section wrap" aria-labelledby="${id}"><div class="section-head"><h2 id="${id}">${T('home.reviews')}</h2>${list.some((r) => r.sample) ? '<span class="muted" style="font-size:14px">Sample reviews in this preview; real ones replace them as customers write in.</span>' : ''}</div>
     ${list.length ? `${reviewSummary(list)}<div class="reviews">${list.map((r) => reviewCard(r, true)).join('')}</div>` : `<div class="empty"><strong>${T('home.reviewsEmpty')}</strong><a class="btn small" href="#shop">Browse the shop</a></div>`}</section>`;
 }
@@ -2882,12 +3225,12 @@ function viewGiftHome() {
       <h1 id="gh-h" class="gh-rise">${T('ghome.title')}</h1>
       <p class="muted gh-rise d1" style="font-size:17px;max-width:520px">${T('ghome.sub')}</p>
       <div class="gh-cta gh-rise d2"><a class="btn gh-shine" href="#gifting">${T('ghome.cta1')}</a><a class="btn ghost" href="#feeling">${T('ghome.cta2')}</a></div>
-      ${free ? `<div class="gh-ship"><span>${sub >= free ? T('cart.freeShipDone') : sub ? T('cart.freeShip').replace('{gap}', `<strong class="num">${inr(free - sub)}</strong>`) : `Free shipping on orders over <strong class="num">${inr(free)}</strong>`}</span><span class="bar" aria-hidden="true"><span style="width:${Math.min(100, Math.round(sub / free * 100))}%"></span></span></div>` : ''}
+      ${free ? `<div class="gh-ship"><span>${sub >= free ? T('cart.freeShipDone') : sub ? T('cart.freeShip').replace('{gap}', `<strong class="num">${inr(free - sub)}</strong>`) : T('ghome.ship')}</span><span class="bar" aria-hidden="true"><span style="width:${Math.min(100, Math.round(sub / free * 100))}%"></span></span></div>` : ''}
     </div>
   </section>
 
   ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--s7)" aria-label="Your welcome gift">${G.open
-    ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">You unwrapped</span><strong>${esc(SET.welcomeOff)}% off your first order</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
+    ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">${T('ghome.wonEyebrow')}</span><strong>${T('ghome.wonTitle')}</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
     : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}
 
   ${catTiles('gh-cats')}
@@ -2896,7 +3239,7 @@ function viewGiftHome() {
   ${promoBanners()}
 
   <section class="wrap" aria-labelledby="gh-best" style="padding-block:var(--s5) var(--section)">
-    <div class="section-head"><h2 id="gh-best">${esc(cats.find((c) => c[0] === G.cat)[1])}</h2><a href="#shop" style="font-weight:600">See all ${P.length} →</a></div>
+    <div class="section-head"><h2 id="gh-best">${esc(cats.find((c) => c[0] === G.cat)[1])}</h2><a href="#shop" style="font-weight:600">${T('home.seeAll').replace('{count}', P.length)}</a></div>
     <div class="gh-chips" role="group" aria-label="Show">${cats.map(([k, l]) => `<button type="button" class="chip" data-act="gh-cat" data-v="${k}" aria-pressed="${G.cat === k}">${l}</button>`).join('')}</div>
     <div class="grid" style="margin-top:16px">${list.length ? list.map(card).join('') : '<p class="muted">Nothing here yet.</p>'}</div>
   </section>
@@ -3142,7 +3485,7 @@ async function placeOrder(via) {
   for (const l of lines) if (stockOf(l.sku) < l.qty) { UI.co.payErr = `${l.p.name} (${l.v.label}) sold out while you were checking out. Please update your cart.`; render(); return; }
   const t = totals();
   const o = { placedAt: new Date().toISOString(), contact: { ...co.contact }, address: { ...co.address }, method: via, status: 'Placed', items: lines.map((l) => ({ sku: l.sku, name: l.p.name, label: l.v.label, price: l.v.price, qty: l.qty })),
-    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, card: co.gcard ? co.gcard.code : '', cardOff: t.card, ref: REF, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total + t.card - t.ship - t.wrap - t.cod), email: S.account.email };
+    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, card: co.gcard ? co.gcard.code : '', cardOff: t.card, ref: REF, src: VISIT.first, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total + t.card - t.ship - t.wrap - t.cod), email: S.account.email };
   let id;
   if (BTDB.on) { // the database checks prices and takes the stock off in one step
     co.placing = true; co.payErr = null; render();
@@ -3210,6 +3553,7 @@ function focusFirstError() { const el = document.querySelector('[aria-invalid="t
 
 // ---------- events ----------
 document.addEventListener('click', (e) => {
+  const wl = e.target.closest('a[href^="https://wa.me/"]'); if (wl && !/wa\.me\/\?/.test(wl.href) && route() !== 'admin') track('wa_click', { where: pageName(route()) });
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act; const d = t.dataset;
   switch (a) {
     case 'room-open': roomOpen(d.id, UI.pdp[d.id] ? UI.pdp[d.id].vi || 0 : 0); break;
@@ -3265,7 +3609,7 @@ document.addEventListener('click', (e) => {
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
-    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -3275,6 +3619,25 @@ document.addEventListener('click', (e) => {
     case 'adm-media-del': if (confirm('Delete this file?')) admDo(async () => { const m = DATA.media.find((x) => x.id === d.id); if (BTDB.on && m && !/^(https?:|data:|assets\/)/.test(m.path)) await BTDB.removeFile(m.path).catch(() => {}); await dbDel('media', 'id', d.id); render(); }, 'Deleted.'); break;
     case 'adm-text-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = d.k.split('.')[0] + '.'; render(); renderChrome(); }, 'Back to the original.'); break;
     case 'adm-review': admDo(async () => { const v = d.v === '1'; if (BTDB.on) await BTDB.update('reviews', 'id=eq.' + encodeURIComponent(d.id), { published: v }); const list = admData('reviews') || []; const r = list.find((x) => String(x.id) === d.id); if (r) r.published = v; save(); DATA.reviews = list.filter((x) => x.published); render(); }, d.v === '1' ? 'Published.' : 'Unpublished.'); break;
+    case 'adm-rv-view': UI.adm.rf.view = d.v; UI.adm.rsel = {}; render(); break;
+    case 'adm-rv-sel': UI.adm.rsel[d.id] = t.checked; render(); $(`[data-act="adm-rv-sel"][data-id="${CSS.escape(d.id)}"]`)?.focus(); break;
+    case 'adm-rv-all': { const on = t.checked; document.querySelectorAll('[data-act="adm-rv-sel"]').forEach((x) => { UI.adm.rsel[x.dataset.id] = on; }); render(); break; }
+    case 'adm-rv-bulk': { const ids = Object.keys(UI.adm.rsel).filter((k) => UI.adm.rsel[k] && $(`[data-act="adm-rv-sel"][data-id="${CSS.escape(k)}"]`)); if (!ids.length) break;
+      if (d.v === 'delete' && !confirm(`Delete ${ids.length} review${ids.length === 1 ? '' : 's'}?`)) break;
+      admDo(async () => { for (const id of ids) await revPatch(id, d.v === 'delete' ? null : { published: d.v === 'publish' }); UI.adm.rsel = {}; render(); }, d.v === 'delete' ? 'Deleted.' : d.v === 'publish' ? 'Published.' : 'Unpublished.'); break; }
+    case 'adm-rv-reply': UI.adm.reply = d.id || null; render(); if (d.id) $(`#rr-${CSS.escape(d.id)}`)?.focus(); break;
+    case 'adm-rv-feature': { const r = (admData('reviews') || []).find((x) => String(x.id) === d.id); if (r) admDo(async () => { await revPatch(d.id, { featured: !r.featured }); render(); }, r.featured ? 'No longer featured.' : 'Featured on the home page.'); break; }
+    case 'adm-pv': UI.adm.pv = d.v; UI.adm.cust = null; render(); break;
+    case 'adm-cust': UI.adm.cust = d.v || null; render(); window.scrollTo(0, 0); break;
+    case 'adm-cust-open': UI.adm.tab = 'people'; UI.adm.pv = 'customers'; UI.adm.cust = d.v; render(); window.scrollTo(0, 0); break;
+    case 'adm-goto': UI.adm.tab = d.v; if (d.pv) UI.adm.pv = d.pv; UI.adm.cust = null; render(); window.scrollTo(0, 0); break;
+    case 'adm-days': UI.adm.days = +d.v; if (UI.adm.rows) delete UI.adm.rows.events; render(); break;
+    case 'adm-cust-csv': downloadCSV('bud-and-things-customers', (UI.adm.custRows || []).map((c) => ({ name: c.name, email: c.emails.join(' '), mobile: c.phones.join(' '), city: c.city, state: c.state, orders: c.good.length, spent: c.spent, last_order: c.last ? c.last.placedAt.slice(0, 10) : '', points: c.points, came_from: c.cameFrom, signed_up_on: c.signedUpOn,
+      groups: c.seg.concat(c.tags).join(' '), newsletter: c.consent.news ? 'yes' : '', whatsapp_ok: c.consent.whatsapp ? 'yes' : '', birthday: c.birthday, notes: c.notes })), ['name', 'email', 'mobile', 'city', 'state', 'orders', 'spent', 'last_order', 'points', 'came_from', 'signed_up_on', 'groups', 'newsletter', 'whatsapp_ok', 'birthday', 'notes']); break;
+    case 'adm-cust-del': { const c = (customers() || []).find((x) => x.id === d.v); if (!c || !confirm(`Delete everything kept about ${c.name || c.key}, except their orders and invoices? This can’t be undone.`)) break;
+      const contacts = c.emails.concat(c.phones);
+      admDo(async () => { if (BTDB.on) await BTDB.rpc('forget_customer', { contacts }); else { S.db.people = (S.db.people || []).filter((r) => !contacts.includes(String(r.contact).toLowerCase())); S.db.meta = (S.db.meta || []).filter((m) => !contacts.includes(m.contact)); save(); }
+        UI.adm.cust = null; if (BTDB.on) UI.adm.rows = {}; render(); }, 'Their details are deleted.'); break; }
     case 'adm-review-del': if (confirm('Delete this review?')) admDo(async () => { if (BTDB.on) await BTDB.remove('reviews', 'id=eq.' + encodeURIComponent(d.id)); const list = admData('reviews') || []; const i = list.findIndex((x) => String(x.id) === d.id); if (i >= 0) list.splice(i, 1); save(); DATA.reviews = list.filter((x) => x.published); render(); }, 'Review deleted.'); break;
     case 'adm-csv': downloadCSV(d.v === 'subscribers' ? 'bud-and-things-sign-ups' : 'bud-and-things-restock-requests', (admData('people') || []).filter((r) => r.table === d.v)); break;
     case 'cs-copy': { const l = $('#cs-link'); l.select(); (navigator.clipboard ? navigator.clipboard.writeText(l.value) : Promise.reject()).then(() => say('Preview link copied.'), () => say('Select the link and copy it.')); break; }
@@ -3339,6 +3702,9 @@ document.addEventListener('change', (e) => {
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
   if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); if (d.k === 'theme') render(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
   if (d.act === 'adm-text') { const k = d.k; admDo(async () => { if (t.value === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); renderChrome(); }, 'Saved.'); }
+  if (d.act === 'rv-sort') { UI.rvSort = t.value; render(); $('#rv-sort')?.focus(); }
+  if (d.act === 'adm-cf') { UI.adm.cf[d.k] = t.type === 'checkbox' ? t.checked : t.value; render(); $('#' + t.id)?.focus(); }
+  if (d.act === 'adm-rf') { UI.adm.rf[d.k] = d.k === 'star' ? +t.value : t.value; UI.adm.rsel = {}; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'adm-up-prod') { UI.adm.upProd = t.value; UI.adm.upMsg = null; render(); $('#up-prod')?.focus(); }
   if (d.act === 'gift-toggle') { readCo(t.form); render(); $('#co-g-on')?.focus(); }
 });
@@ -3347,6 +3713,7 @@ document.addEventListener('input', (e) => {
   if (ti.id === 'co-pin') { pinAutofill(ti, 'co-city', 'co-state', 'pin-note'); return; }
   if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
   if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
+  if (ti.id === 'cf-q' || ti.id === 'rf-q') { (ti.id === 'cf-q' ? UI.adm.cf : UI.adm.rf).q = ti.value; clearTimeout(document.cq); document.cq = setTimeout(() => { render(); const el = $('#' + ti.id); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
   if (e.target.id === 'tx-q') { UI.adm.q = e.target.value; clearTimeout(document.tq); document.tq = setTimeout(() => { render(); const el = $('#tx-q'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
   if (e.target.id === 'search-q') { UI.searchQ = e.target.value; const q = UI.searchQ.trim().toLowerCase(); const res = q ? P.filter((p) => (p.name + ' ' + p.type + ' ' + (p.notes || []).join(' ') + ' ' + p.line).toLowerCase().includes(q)) : []; $('#search-res').innerHTML = searchResults(q, res); clearTimeout(document.st); document.st = setTimeout(() => { if (q) track(res.length ? 'search' : 'search_no_results', { q }); }, 900); }
 });
@@ -3356,7 +3723,7 @@ document.addEventListener('submit', (e) => {
   if (kind === 'news') { const v = $('#news-email').value.trim().toLowerCase(); const c = isEmail(v) ? v : null; const msg = $('#news-msg');
     if (!c) { msg.innerHTML = '<span class="err" role="alert" style="color:var(--terra-ink);font-weight:500">Enter an email like name@example.com.</span>'; return; }
     f.querySelector('button').disabled = true;
-    visitorSend('subscribers', { contact: c, source: f.dataset.src || 'home' }).then(() => { msg.innerHTML = `<span class="status ok" role="status" style="display:block">${T('home.newsDone')}</span>`; track('signup', { via: 'email' }); }, (err) => { f.querySelector('button').disabled = false; msg.innerHTML = `<span class="err" role="alert">That didn’t go through (${esc(err.message)}). Please try again.</span>`; });
+    visitorSend('subscribers', { contact: c, source: f.dataset.src || 'home', came_from: VISIT.first }).then(() => { msg.innerHTML = `<span class="status ok" role="status" style="display:block">${T('home.newsDone')}</span>`; track('signup', { via: 'email' }); }, (err) => { f.querySelector('button').disabled = false; msg.innerHTML = `<span class="err" role="alert">That didn’t go through (${esc(err.message)}). Please try again.</span>`; });
     return; }
   if (kind === 'giftcard') { const g = UI.gc; g.to = $('#gc-to').value.trim(); g.from = $('#gc-from').value.trim(); g.msg = $('#gc-msg').value.trim();
     g.err = !g.to ? 'Add who the card is for.' : !g.from ? 'Add your name.' : null; if (g.err) { g.sent = false; render(); return; }
@@ -3449,6 +3816,18 @@ document.addEventListener('submit', (e) => {
     const delay = pick === 'Something else' ? { reason: note, note: '' } : { reason: pick, note }; Object.assign(delay, { until: until || '', tell, at: new Date().toISOString() });
     admDo(async () => { await setDelay(o, delay); A.delayFor = null; A.delayErr = null; render(); }, `${o.id} marked as delayed${tell ? '; the customer would get an email' : ''}.`);
     return; }
+  if (kind === 'adm-cf' || kind === 'adm-rf') return;
+  if (kind === 'adm-rv-reply') { const id = f.dataset.id; const v = $('#rr-' + CSS.escape(id)).value.trim(); admDo(async () => { await revPatch(id, { reply: v || null, replied_at: v ? new Date().toISOString() : null }); UI.adm.reply = null; render(); }, v ? 'Reply saved.' : 'Reply removed.'); return; }
+  if (kind === 'adm-rv-add') {
+    const row = { product_id: $('#ra-prod').value, name: $('#ra-name').value.trim().slice(0, 60), rating: +$('#ra-rating').value, body: $('#ra-body').value.trim().slice(0, 1500), source: $('#ra-src').value, published: $('#ra-pub').checked, created_at: new Date().toISOString() };
+    UI.adm.rvErr = !row.name ? 'Add the name to show with it.' : row.body.length < 3 ? 'Add what they said.' : null; if (UI.adm.rvErr) { render(); return; }
+    admDo(async () => { if (BTDB.on) { await BTDB.insert('reviews', row); UI.adm.rows = {}; } else { S.db = S.db || {}; S.db.reviews = S.db.reviews || []; S.db.reviews.unshift(Object.assign({ id: 'L' + Date.now() }, row)); save(); DATA.reviews = S.db.reviews.filter((x) => x.published); } render(); }, 'Review added.'); return;
+  }
+  if (kind === 'adm-cust-meta') {
+    const contact = f.dataset.key; const row = { contact, tags: [...new Set($('#cm-tags').value.split(',').map((x) => x.trim().toLowerCase()).filter(Boolean))].slice(0, 12), notes: $('#cm-notes').value.trim(), birthday: $('#cm-bday').value || null, updated_at: new Date().toISOString() };
+    admDo(async () => { let list; if (BTDB.on) { await BTDB.upsert('customer_meta', [row]); list = UI.adm.rows.crm.meta; } else { S.db = S.db || {}; list = S.db.meta = S.db.meta || []; }
+      const i = list.findIndex((m) => m.contact === contact); if (i >= 0) list[i] = row; else list.push(row); save(); render(); }, 'Notes saved.'); return;
+  }
   if (kind === 'adm-card-new') { const amt = parseInt($('#gcn-amt').value, 10); const note = $('#gcn-note').value.trim(); const A = UI.adm;
     if (!(amt > 0)) { say('Enter the amount in rupees.'); return; }
     const pick = (n) => Array.from(crypto.getRandomValues(new Uint32Array(n)), (x) => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[x % 31]).join('');
@@ -3546,5 +3925,6 @@ render = function (nav) { if (route() === 'checkout' && nav && UI.co.step === 'c
 loadData();
 if (PAID_BACK && BTDB.on) payCheck(PAID_BACK);
 render(false);
+track('page_view', { page: pageName(route()) });
 })();
 </script>
