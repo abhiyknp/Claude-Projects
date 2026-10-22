@@ -338,7 +338,7 @@ declare
   sub int := 0; ritual int := 0; code_off int := 0; ship int := 0; wrap int := 0; cod int := 0; total int; code text := '';
   gift_on boolean := false; gift jsonb := null; new_id text; st text;
   em text := customer_email(); use_pts int := 0; earned int := 0;
-  card text := upper(trim(coalesce(o ->> 'card', ''))); card_off int := 0; bal int; ref text := null; cp jsonb;
+  card text := upper(trim(coalesce(o ->> 'card', ''))); card_off int := 0; bal int; ref text := null; cpn jsonb;
 begin
   -- no guest orders: the customer signs in first
   if em is null then raise exception 'sign_in'; end if;
@@ -396,8 +396,8 @@ begin
     ritual := round(ritual * cfg_num('ritualOff', 10) / 100);
   end if;
   if coalesce(o ->> 'code', '') <> '' then
-    cp := coupon_off(o ->> 'code', sub - ritual, em, true);
-    code := cp ->> 'code'; code_off := (cp ->> 'off')::int;
+    cpn := coupon_off(o ->> 'code', sub - ritual, em, true);
+    code := cpn ->> 'code'; code_off := (cpn ->> 'off')::int;
   end if;
   ship := case when sub = 0 then 0 when cfg_num('freeOver', 1999) > 0 and sub >= cfg_num('freeOver', 1999) then 0 else round(cfg_num('shipFee', 99)) end;
   if gift_on and (gift ->> 'wrap')::boolean then wrap := round(cfg_num('wrapFee', 99)); end if;
@@ -527,15 +527,75 @@ begin
 end $$;
 
 -- ---------- invoices ----------
--- The owner makes an invoice for a paid order from Owner view. The browser sends the lines and tax worked out from the order
--- and the GST settings; the number and date are given here, in one step, so numbers can't skip or repeat.
+-- An invoice is made automatically when an order is paid (Placed) unless the owner turned that off in Settings
+-- (invoiceAuto), and by hand from Owner view with "Make invoice". Either way the lines and tax are worked out here from the
+-- order and the GST settings, and the number and date are given in one step, so numbers can't skip or repeat.
 -- Numbers look like BT/26-27/0001 (credit notes BTCN/26-27/0001): at most 16 characters, restarting each 1 April.
-create or replace function issue_invoice(order_id_in text, kind_in text, against_in text, snap jsonb) returns jsonb language plpgsql security definer set search_path = public as $$
-declare ord record; orig invoices%rowtype; row invoices%rowtype; fy text; yy int; n int; num text; today date := (now() at time zone 'Asia/Kolkata')::date;
+-- A cancelled order that had an invoice gets a credit note automatically.
+create or replace function invoice_snapshot(oid text) returns jsonb language plpgsql security definer set search_path = public as $$
+declare
+  ord orders%rowtype; d jsonb; it jsonb; a jsonb; c jsonb;
+  gst boolean := cfg_on('gstOn', false); home text := coalesce(cfg_text('gstState', ''), ''); inter boolean := false;
+  cat text; hk text; rk text; hsn text; rate numeric; top numeric := 0;
+  names text[] := '{}'; qtys int[] := '{}'; hsns text[] := '{}'; rates numeric[] := '{}'; gross bigint[] := '{}'; disc bigint[] := '{}';
+  n int; i int; gsum bigint := 0; disc_all bigint; left_ bigint; net bigint; tax bigint; taxable bigint; cg bigint; sg bigint; ig bigint;
+  lines jsonb := '[]'; t_tax bigint := 0; t_cg bigint := 0; t_sg bigint := 0; t_ig bigint := 0; t_total bigint := 0; ch record;
+begin
+  select * into ord from orders where id = oid;
+  if ord.id is null then raise exception 'not_found'; end if;
+  d := ord.data; a := coalesce(d -> 'address', '{}'); c := coalesce(d -> 'contact', '{}');
+  if gst then
+    if upper(trim(cfg_text('gstin', ''))) !~ '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$' then raise exception 'invoice_setup:gstin'; end if;
+    if home = '' then raise exception 'invoice_setup:state'; end if;
+    if trim(cfg_text('bizName', '')) = '' or trim(cfg_text('bizAddress', '')) = '' then raise exception 'invoice_setup:business'; end if;
+    inter := coalesce(a ->> 'state', '') <> '' and (a ->> 'state') <> home;
+  end if;
+  for it in select * from jsonb_array_elements(d -> 'items') loop
+    select p.data ->> 'cat' into cat from products p, jsonb_array_elements(p.data -> 'variants') v where v ->> 'sku' = it ->> 'sku' limit 1;
+    hk := case coalesce(cat, 'jesmonite') when 'candles' then 'hsnCandles' when 'gifts' then 'hsnGifts' else 'hsnObjects' end;
+    rk := case coalesce(cat, 'jesmonite') when 'candles' then 'gstCandles' when 'gifts' then 'gstGifts' else 'gstObjects' end;
+    hsn := case when gst then trim(cfg_text(hk, '')) else '' end; rate := case when gst then cfg_num(rk, 18) else 0 end;
+    if gst and hsn = '' then raise exception 'invoice_setup:hsn:%', hk; end if;
+    names := array_append(names, (it ->> 'name') || case when coalesce(it ->> 'label', '') <> '' then ' · ' || (it ->> 'label') else '' end);
+    qtys := array_append(qtys, (it ->> 'qty')::int); hsns := array_append(hsns, hsn); rates := array_append(rates, rate); gross := array_append(gross, (it ->> 'price')::bigint * (it ->> 'qty')::bigint * 100); disc := array_append(disc, 0::bigint);
+    top := greatest(top, rate);
+  end loop;
+  n := coalesce(array_length(names, 1), 0);
+  if n = 0 then raise exception 'bad_invoice'; end if;
+  -- the ritual saving, coupon and Bud Points come off the price of the pieces, shared in proportion to their price
+  for i in 1 .. n loop gsum := gsum + gross[i]; end loop;
+  disc_all := round((coalesce((d ->> 'ritual')::numeric, 0) + coalesce((d ->> 'codeOff')::numeric, 0) + coalesce((d ->> 'pointsUsed')::numeric, 0)) * 100)::bigint; left_ := disc_all;
+  for i in 1 .. n loop
+    disc[i] := case when i = n then left_ else least(left_, floor(disc_all::numeric * gross[i] / greatest(gsum, 1))::bigint) end; left_ := left_ - disc[i];
+  end loop;
+  for ch in select * from (values (1, 'Shipping', coalesce((d ->> 'ship')::numeric, 0)), (2, 'Gift wrap', coalesce((d ->> 'wrap')::numeric, 0)), (3, 'Cash on delivery fee', coalesce((d ->> 'cod')::numeric, 0))) x(k, nm, v) where v > 0 order by k loop
+    names := array_append(names, ch.nm); qtys := array_append(qtys, 1); hsns := array_append(hsns, ''::text); rates := array_append(rates, case when gst then top else 0::numeric end); gross := array_append(gross, round(ch.v * 100)::bigint); disc := array_append(disc, 0::bigint);
+  end loop;
+  n := array_length(names, 1);
+  for i in 1 .. n loop
+    net := gross[i] - disc[i]; cg := 0; sg := 0; ig := 0;
+    if gst then
+      taxable := round(net * 100 / (100 + rates[i]))::bigint; tax := net - taxable;
+      if inter then ig := tax; else cg := round(tax / 2.0)::bigint; sg := tax - cg; end if;
+    else taxable := net; end if;
+    t_tax := t_tax + taxable; t_cg := t_cg + cg; t_sg := t_sg + sg; t_ig := t_ig + ig; t_total := t_total + net;
+    lines := lines || jsonb_build_object('name', names[i], 'qty', qtys[i], 'hsn', hsns[i], 'rate', rates[i], 'gross', gross[i], 'disc', disc[i], 'net', net, 'taxable', taxable, 'cgst', cg, 'sgst', sg, 'igst', ig);
+  end loop;
+  return jsonb_build_object('gst', gst, 'inter', inter, 'placeOfSupply', coalesce(a ->> 'state', ''), 'orderId', ord.id, 'orderDate', d ->> 'placedAt', 'method', d ->> 'method', 'lines', lines,
+    'totals', jsonb_build_object('discount', disc_all, 'taxable', t_tax, 'cgst', t_cg, 'sgst', t_sg, 'igst', t_ig, 'total', t_total),
+    'seller', jsonb_build_object('name', coalesce(nullif(trim(cfg_text('bizName', '')), ''), 'BUD & THINGS'),
+      'address', case when trim(cfg_text('bizAddress', '')) <> '' then trim(cfg_text('bizAddress', '')) || ', India' else '' end,
+      'gstin', case when gst then upper(trim(cfg_text('gstin', ''))) else '' end, 'email', cfg_text('email', 'hello@budandthings.com')),
+    'buyer', jsonb_build_object('name', coalesce(c ->> 'name', ''), 'phone', coalesce(c ->> 'phone', ''), 'email', coalesce(c ->> 'email', ''), 'line1', coalesce(a ->> 'line1', ''), 'line2', coalesce(a ->> 'line2', ''),
+      'city', coalesce(a ->> 'city', ''), 'pin', coalesce(a ->> 'pin', ''), 'state', coalesce(a ->> 'state', '')));
+end $$;
+
+-- makes the invoice (or credit note); no owner check, so the trigger below can use it. Owner view calls issue_invoice().
+create or replace function make_invoice(order_id_in text, kind_in text, against_in text, reason_in text) returns jsonb language plpgsql security definer set search_path = public as $$
+declare ord record; orig invoices%rowtype; inv invoices%rowtype; fyr text; yy int; n int; num text; snap jsonb; today date := (now() at time zone 'Asia/Kolkata')::date;
   pre text := left(upper(regexp_replace(coalesce(nullif(trim(cfg_text('invoicePrefix', 'BT')), ''), 'BT'), '[^A-Za-z0-9]', '', 'g')), 3);
 begin
-  if not is_owner() then raise exception 'not_allowed'; end if;
-  if kind_in not in ('invoice', 'credit_note') or jsonb_typeof(snap) <> 'object' or jsonb_typeof(snap -> 'lines') <> 'array' then raise exception 'bad_invoice'; end if;
+  if kind_in not in ('invoice', 'credit_note') then raise exception 'bad_invoice'; end if;
   if pre = '' then pre := 'BT'; end if;
   select id, status into ord from orders where id = order_id_in for update;
   if ord.id is null then raise exception 'not_found'; end if;
@@ -545,29 +605,57 @@ begin
   else
     select * into orig from invoices where id = against_in and kind = 'invoice' and status = 'Issued' for update;
     if orig.id is null then raise exception 'no_invoice'; end if;
-    if length(coalesce(snap ->> 'reason', '')) not between 1 and 200 then raise exception 'bad_invoice'; end if;
+    if length(coalesce(reason_in, '')) not between 1 and 200 then raise exception 'bad_invoice'; end if;
     if exists (select 1 from invoices where against = against_in and kind = 'credit_note' and status = 'Issued') then raise exception 'already_credited'; end if;
   end if;
+  snap := invoice_snapshot(order_id_in);
+  if kind_in = 'credit_note' then snap := snap || jsonb_build_object('reason', trim(reason_in), 'against', against_in); end if;
   yy := case when extract(month from today) >= 4 then extract(year from today)::int else extract(year from today)::int - 1 end;
-  fy := lpad((yy % 100)::text, 2, '0') || '-' || lpad(((yy + 1) % 100)::text, 2, '0');
-  insert into invoice_counters (fy, kind, last) values (fy, kind_in, 1) on conflict (fy, kind) do update set last = invoice_counters.last + 1 returning last into n;
-  num := case kind_in when 'invoice' then pre || '/' || fy || '/' || lpad(n::text, 4, '0') else pre || 'CN/' || fy || '/' || lpad(n::text, 4, '0') end;
+  fyr := lpad((yy % 100)::text, 2, '0') || '-' || lpad(((yy + 1) % 100)::text, 2, '0');
+  insert into invoice_counters (fy, kind, last) values (fyr, kind_in, 1) on conflict on constraint invoice_counters_pkey do update set last = invoice_counters.last + 1 returning last into n;
+  num := case kind_in when 'invoice' then pre || '/' || fyr || '/' || lpad(n::text, 4, '0') else pre || 'CN/' || fyr || '/' || lpad(n::text, 4, '0') end;
   if length(num) > 16 then raise exception 'bad_invoice'; end if;
-  insert into invoices (id, kind, order_id, fy, seq, against, data) values (num, kind_in, order_id_in, fy, n, case when kind_in = 'credit_note' then against_in end,
-    snap || jsonb_build_object('number', num, 'date', today)) returning * into row;
-  return to_jsonb(row);
+  insert into invoices (id, kind, order_id, fy, seq, against, data) values (num, kind_in, order_id_in, fyr, n, case when kind_in = 'credit_note' then against_in end,
+    snap || jsonb_build_object('number', num, 'date', today)) returning * into inv;
+  return to_jsonb(inv);
 end $$;
+-- Owner view: Make invoice, or Credit note (the reason travels in snap). The browser's own copy of the lines is ignored.
+create or replace function issue_invoice(order_id_in text, kind_in text, against_in text, snap jsonb) returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  if not is_owner() then raise exception 'not_allowed'; end if;
+  return make_invoice(order_id_in, kind_in, against_in, coalesce(snap ->> 'reason', ''));
+end $$;
+-- an order that is paid gets its invoice; a cancelled one that had an invoice gets a credit note. A problem here (such as GST
+-- switched on with no HSN code yet) never stops the order: the owner makes the invoice by hand after fixing it.
+create or replace function auto_invoice() returns trigger language plpgsql security definer set search_path = public as $$
+declare inv_id text;
+begin
+  if not cfg_on('invoiceAuto', true) then return new; end if;
+  begin
+    if new.status in ('Placed', 'Packed', 'Shipped', 'Delivered') and (tg_op = 'INSERT' or old.status is distinct from new.status) then
+      if not exists (select 1 from invoices where order_id = new.id and kind = 'invoice') then perform make_invoice(new.id, 'invoice', null, null); end if;
+    elsif new.status = 'Cancelled' and tg_op = 'UPDATE' and old.status is distinct from new.status then
+      select id into inv_id from invoices where order_id = new.id and kind = 'invoice' and status = 'Issued';
+      if inv_id is not null then perform make_invoice(new.id, 'credit_note', inv_id, 'Order cancelled'); end if;
+    end if;
+  exception when others then
+    raise warning 'automatic invoice for % skipped: %', new.id, sqlerrm;
+  end;
+  return new;
+end $$;
+drop trigger if exists auto_invoice on orders;
+create trigger auto_invoice after insert or update on orders for each row execute function auto_invoice();
 -- cancelling an invoice keeps it on record, marked Void with the reason. An invoice that already has a credit note stays as it is.
 create or replace function void_invoice(inv_id text, reason text) returns jsonb language plpgsql security definer set search_path = public as $$
-declare row invoices%rowtype;
+declare inv invoices%rowtype;
 begin
   if not is_owner() then raise exception 'not_allowed'; end if;
   if length(coalesce(reason, '')) not between 1 and 200 then raise exception 'bad_invoice'; end if;
-  select * into row from invoices where id = inv_id for update;
-  if row.id is null or row.status <> 'Issued' then raise exception 'not_found'; end if;
-  if row.kind = 'invoice' and exists (select 1 from invoices where against = row.id and kind = 'credit_note' and status = 'Issued') then raise exception 'has_credit_note'; end if;
-  update invoices set status = 'Void', void_reason = trim(reason), voided_at = now() where id = inv_id returning * into row;
-  return to_jsonb(row);
+  select * into inv from invoices where id = inv_id for update;
+  if inv.id is null or inv.status <> 'Issued' then raise exception 'not_found'; end if;
+  if inv.kind = 'invoice' and exists (select 1 from invoices where against = inv.id and kind = 'credit_note' and status = 'Issued') then raise exception 'has_credit_note'; end if;
+  update invoices set status = 'Void', void_reason = trim(reason), voided_at = now() where id = inv_id returning * into inv;
+  return to_jsonb(inv);
 end $$;
 
 -- a shopper checks a gift card before using it (20 tries an hour per connection, so codes can't be guessed)
@@ -793,6 +881,9 @@ revoke execute on function set_delay(text, jsonb) from public, anon;
 revoke execute on function coupon_off(text, int, text, boolean) from public, anon, authenticated;
 revoke execute on function check_coupon(text, int) from public;
 revoke execute on function issue_invoice(text, text, text, jsonb) from public, anon;
+revoke execute on function invoice_snapshot(text) from public, anon, authenticated;
+revoke execute on function make_invoice(text, text, text, text) from public, anon, authenticated;
+revoke execute on function auto_invoice() from public, anon, authenticated;
 revoke execute on function void_invoice(text, text) from public, anon;
 grant execute on function place_order(jsonb) to authenticated;
 revoke execute on function customer_email() from public, anon, authenticated;
