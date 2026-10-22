@@ -100,6 +100,27 @@ create table if not exists notifications (id uuid primary key default gen_random
 create unique index if not exists notifications_once on notifications (channel, ref);
 create index if not exists notifications_queue on notifications (status, created_at);
 alter table restock_requests add column if not exists notified_at timestamptz;
+-- reviews: a tick when the writer bought that piece and it was delivered, the owner's public reply, pinned ("featured")
+-- reviews, and where the owner copied one from when added by hand (Instagram, WhatsApp…)
+alter table reviews add column if not exists verified boolean not null default false;
+alter table reviews add column if not exists reply text;
+alter table reviews add column if not exists replied_at timestamptz;
+alter table reviews add column if not exists featured boolean not null default false;
+alter table reviews add column if not exists source text;
+-- who wrote a review (when they were signed in). Kept apart from reviews, which anyone can read once published.
+create table if not exists review_authors (review_id uuid primary key references reviews (id) on delete cascade, email text not null, created_at timestamptz not null default now());
+create index if not exists review_authors_email on review_authors (email);
+-- where a sign-up first came from (instagram, google, a share link…), as the site saw it on their first visit
+alter table subscribers add column if not exists came_from text;
+-- what the owner keeps about a customer beyond their orders: tags, a private note and a birthday. `contact` is the
+-- customer's email, or their 10-digit mobile when there is no email.
+create table if not exists customer_meta (contact text primary key, tags text[] not null default '{}', notes text not null default '',
+  birthday date, updated_at timestamptz not null default now());
+-- what visitors do on the site, for Owner view → Analytics. Anonymous: `vid` is a random id kept in the browser and `sid`
+-- one per visit; never a name, email, number or address. Kept for eventDays days (400 unless set).
+create table if not exists events (id bigint generated always as identity primary key, name text not null, data jsonb not null default '{}',
+  vid text, sid text, page text, src text, created_at timestamptz not null default now());
+create index if not exists events_time on events (created_at);
 
 -- ---------- limits ----------
 -- Every visitor action is counted per connection (a one-way hash of the IP address, never the address itself), per
@@ -163,6 +184,9 @@ alter table points_log enable row level security;
 alter table invoice_counters enable row level security; -- no rules on purpose: only issue_invoice() uses it
 alter table invoices enable row level security;
 alter table notifications enable row level security;
+alter table review_authors enable row level security;
+alter table customer_meta enable row level security;
+alter table events enable row level security;
 alter table hits enable row level security; -- no rules on purpose: only the functions here read or write it
 revoke all on hits from anon, authenticated;
 revoke all on invoice_counters from anon, authenticated;
@@ -172,7 +196,7 @@ do $$
 declare t text;
 begin
   -- drop and recreate so the file can be run again
-  for t in select unnest(array['products','pairings','site_text','settings','stock','media','orders','reviews','subscribers','restock_requests','reminders','gift_cards','referrers','profiles','notifications','owners','coupons','points_log','invoices']) loop
+  for t in select unnest(array['products','pairings','site_text','settings','stock','media','orders','reviews','subscribers','restock_requests','reminders','gift_cards','referrers','profiles','notifications','owners','coupons','points_log','invoices','review_authors','customer_meta','events']) loop
     execute format('drop policy if exists "read" on %I', t);
     execute format('drop policy if exists "owner" on %I', t);
     execute format('drop policy if exists "visitor" on %I', t);
@@ -205,11 +229,15 @@ create policy "owner" on coupons for all using (is_owner()) with check (is_owner
 create policy "owner" on points_log for all using (is_owner()) with check (is_owner());
 create policy "owner" on invoices for select using (is_owner());
 create policy "owner" on notifications for select using (is_owner());
+create policy "owner" on review_authors for select using (is_owner());
+create policy "owner" on customer_meta for all using (is_owner()) with check (is_owner());
+create policy "owner" on events for select using (is_owner());
 -- visitors may send a review (held until the owner publishes it), sign up, or ask to hear about a restock
 create policy "visitor" on reviews for insert with check (not published and length(name) between 1 and 60 and length(body) between 1 and 1500 and length(product_id) < 60);
 create policy "visitor" on subscribers for insert with check (length(contact) between 5 and 120 and length(coalesce(source, '')) <= 40);
 create policy "visitor" on restock_requests for insert with check (length(contact) between 5 and 120 and length(sku) < 60);
 create policy "visitor" on reminders for insert with check (length(contact) between 5 and 120 and length(occasion) <= 30 and length(coalesce(for_name, '')) <= 60);
+create policy "visitor" on events for insert with check (length(name) <= 40 and length(data::text) <= 1000);
 
 -- what a visitor sends is checked, tidied and counted before it is saved
 create or replace function guard_visitor() returns trigger language plpgsql security definer set search_path = public as $$
@@ -217,14 +245,28 @@ declare me text := client_key();
 begin
   if is_owner() then return new; end if;
   new.created_at := now();
-  if tg_table_name = 'reviews' then
+  if tg_table_name = 'events' then
+    if new.name !~ '^[a-z_]{2,40}$' or jsonb_typeof(new.data) <> 'object' then raise exception 'bad_event'; end if;
+    new.vid := case when new.vid ~ '^[a-z0-9]{6,40}$' then new.vid end; new.sid := case when new.sid ~ '^[a-z0-9]{6,40}$' then new.sid end;
+    new.page := left(new.page, 80); new.src := case when new.src ~ '^[a-z0-9._-]{1,40}$' then new.src end;
+    perform hit('event', me, 600, '1 hour'); perform hit('event', 'site', 30000, '1 hour');
+    if random() < 0.001 then delete from events where created_at < now() - make_interval(days => greatest(cfg_num('eventDays', 400), 30)::int); end if;
+  elsif tg_table_name = 'reviews' then
     new.id := gen_random_uuid(); new.published := false; new.name := trim(new.name); new.body := trim(new.body);
+    new.verified := false; new.reply := null; new.replied_at := null; new.featured := false; new.source := 'site';
     if not exists (select 1 from products where id = new.product_id and live) then raise exception 'unknown_item'; end if;
+    -- signed in: one review per piece, and "Verified buyer" when one of their delivered orders had it
+    if customer_email() is not null then
+      if exists (select 1 from review_authors a join reviews r on r.id = a.review_id where a.email = customer_email() and r.product_id = new.product_id) then raise exception 'already_reviewed'; end if;
+      new.verified := exists (select 1 from orders o, jsonb_array_elements(o.data -> 'items') i, products p, jsonb_array_elements(p.data -> 'variants') v
+        where o.data ->> 'email' = customer_email() and o.status = 'Delivered' and p.id = new.product_id and v ->> 'sku' = i ->> 'sku');
+    end if;
     perform hit('review', me, 3, '1 hour'); perform hit('review', 'site', 60, '1 hour');
   elsif tg_table_name = 'subscribers' then
     new.id := gen_random_uuid(); new.contact := lower(trim(new.contact));
     if new.contact !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
     if new.source is not null and new.source !~ '^[a-z0-9-]{1,40}$' then raise exception 'bad_source'; end if;
+    new.came_from := case when new.came_from ~ '^[a-z0-9._-]{1,40}$' then new.came_from end;
     perform hit('signup', me, 5, '1 hour'); perform hit('signup', 'site', 300, '1 hour');
     if exists (select 1 from subscribers where contact = new.contact) then return null; end if; -- already signed up
   elsif tg_table_name = 'restock_requests' then
@@ -250,6 +292,8 @@ create trigger guard_visitor before insert on reviews for each row execute funct
 create trigger guard_visitor before insert on subscribers for each row execute function guard_visitor();
 create trigger guard_visitor before insert on restock_requests for each row execute function guard_visitor();
 create trigger guard_visitor before insert on reminders for each row execute function guard_visitor();
+drop trigger if exists guard_visitor on events;
+create trigger guard_visitor before insert on events for each row execute function guard_visitor();
 
 -- ---------- placing an order ----------
 -- The database rebuilds the order from what it knows: each price from the products table, the ritual saving, the
@@ -434,7 +478,8 @@ begin
     'email', em, 'contact', jsonb_build_object('name', trim(c ->> 'name'), 'phone', phone, 'email', em),
     'address', jsonb_build_object('line1', trim(a ->> 'line1'), 'line2', coalesce(a ->> 'line2', ''), 'pin', a ->> 'pin', 'city', trim(a ->> 'city'), 'state', a ->> 'state'),
     'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'pointsUsed', use_pts, 'points', earned, 'ship', ship, 'wrap', wrap, 'cod', cod, 'total', total,
-    'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true', 'card', nullif(card, ''), 'cardOff', card_off, 'ref', ref), st, phone, total, method);
+    'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true', 'card', nullif(card, ''), 'cardOff', card_off, 'ref', ref,
+    'src', case when o ->> 'src' ~ '^[a-z0-9._-]{1,40}$' then o ->> 'src' end), st, phone, total, method);
   perform remember_details(em, trim(c ->> 'name'), phone, case when gift_on then null else a end);
   return new_id;
 end $$;
@@ -828,6 +873,74 @@ end $$;
 drop trigger if exists restock_notes on stock;
 create trigger restock_notes after insert or update of qty on stock for each row execute function restock_notes();
 
+-- a review comes in: remember who wrote it (when signed in), and tell the owner straight away about a 1 or 2 star one,
+-- so it can be put right privately
+create or replace function review_in() returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if customer_email() is not null and not is_owner() then insert into review_authors (review_id, email) values (new.id, customer_email()) on conflict do nothing; end if;
+  if new.rating <= 2 and not new.published then
+    perform queue_note('low_review', 'email', shop_inbox(), 'low_review:' || new.id, null, jsonb_build_object('product', new.product_id, 'name', new.name, 'rating', new.rating, 'body', left(new.body, 500)));
+  end if;
+  return new;
+end $$;
+drop trigger if exists review_in on reviews;
+create trigger review_in after insert on reviews for each row execute function review_in();
+-- a review is published: thank its writer with reviewPoints Bud Points (0, the default, for none), once per review
+create or replace function review_reward() returns trigger language plpgsql security definer set search_path = public as $$
+declare em text := (select email from review_authors where review_id = new.id); n int := greatest(cfg_num('reviewPoints', 0), 0)::int;
+begin
+  if new.published and not old.published and em is not null and n > 0 and not exists (select 1 from points_log where note = 'Review ' || new.id) then
+    insert into points_log (email, delta, note) values (em, least(n, 1000), 'Review ' || new.id);
+  end if;
+  return new;
+end $$;
+drop trigger if exists review_reward on reviews;
+create trigger review_reward after update of published on reviews for each row execute function review_reward();
+
+-- Owner view → Sign-ups → a customer → Delete: everything kept about them goes (sign-ups, reminders, restock requests,
+-- notes, saved details, share link, review authorship). Their orders and invoices stay: they are the shop's records.
+create or replace function forget_customer(contacts text[]) returns void language plpgsql security definer set search_path = public as $$
+declare c text[] := (select array_agg(lower(trim(x))) from unnest(contacts) x);
+begin
+  if not is_owner() then raise exception 'not_allowed'; end if;
+  delete from subscribers where contact = any (c);
+  delete from restock_requests where contact = any (c);
+  delete from reminders where contact = any (c);
+  delete from customer_meta where contact = any (c);
+  delete from referrers where contact = any (c);
+  delete from review_authors where email = any (c);
+  update profiles set name = '', phone = '', addresses = '[]', prefs = '{}', updated_at = now() where email = any (c);
+end $$;
+
+-- Owner view → Analytics: what visitors did over the last `days` days, added up here so the page never has to download
+-- every event. Orders, revenue and customers are worked out on the page from the orders themselves.
+create or replace function event_stats(days int) returns jsonb language plpgsql stable security definer set search_path = public as $$
+declare since timestamptz := now() - make_interval(days => least(greatest(days, 1), 400)); res jsonb;
+begin
+  if not is_owner() then raise exception 'not_allowed'; end if;
+  with e as (select * from events where created_at >= since),
+    s as (select sid, min(src) src, bool_or(name = 'product_view') viewed, bool_or(name in ('add_to_cart', 'ritual_add', 'combo_add')) added,
+      bool_or(name = 'checkout_start') checkout, bool_or(name = 'purchase') bought from e where sid is not null group by sid)
+  select jsonb_build_object(
+    'visitors', (select count(distinct vid) from e), 'sessions', (select count(*) from s),
+    'funnel', (select jsonb_build_object('visits', count(*), 'viewed', count(*) filter (where viewed), 'added', count(*) filter (where added),
+      'checkout', count(*) filter (where checkout), 'bought', count(*) filter (where bought)) from s),
+    'daily', coalesce((select jsonb_agg(jsonb_build_object('d', d, 'visitors', v, 'sessions', n) order by d) from (
+      select (created_at at time zone 'Asia/Kolkata')::date d, count(distinct vid) v, count(distinct sid) n from e group by 1) x), '[]'),
+    'sources', coalesce((select jsonb_agg(jsonb_build_object('src', src, 'sessions', n, 'bought', b) order by n desc) from (
+      select coalesce(src, 'direct') src, count(*) n, count(*) filter (where bought) b from s group by 1) x), '[]'),
+    'names', coalesce((select jsonb_object_agg(name, n) from (select name, count(*) n from e group by name) x), '{}'),
+    'views', coalesce((select jsonb_object_agg(k, n) from (select data ->> 'id' k, count(*) n from e where name = 'product_view' and data ? 'id' group by 1) x), '{}'),
+    'adds', coalesce((select jsonb_object_agg(k, n) from (select data ->> 'sku' k, count(*) n from e where name = 'add_to_cart' and data ? 'sku' group by 1) x), '{}'),
+    'pages', coalesce((select jsonb_object_agg(k, n) from (select coalesce(nullif(page, ''), 'home') k, count(*) n from e where name = 'page_view' group by 1 order by 2 desc limit 30) x), '{}'),
+    'detail', coalesce((select jsonb_object_agg(name, v) from (select name, jsonb_agg(jsonb_build_object('data', data, 'n', n) order by n desc) v from (
+      select name, data, count(*) n, row_number() over (partition by name order by count(*) desc) r from e
+      where name in ('wa_click', 'finder_complete', 'filter', 'house_focus', 'house_mood', 'walk_skip', 'walk_shop', 'share', 'pin_check', 'payment_failed', 'search', 'search_no_results')
+      group by name, data) y where r <= 10 group by name) x), '{}'))
+  into res;
+  return res;
+end $$;
+
 -- the daily run (notify function, action "daily"): queue reminders for saved gift dates coming up in reminderDays days
 -- (7 unless set). Dates repeat every year. Each date is reminded once, however often this runs.
 create or replace function queue_reminders() returns int language plpgsql security definer set search_path = public as $$
@@ -842,6 +955,25 @@ begin
       n := n + 1;
     end if;
   end loop;
+  -- reviewAskDays (7 unless set; 0 for never) after an order was delivered, ask for a review, unless they wrote one
+  if cfg_num('reviewAskDays', 7) > 0 then
+    for r in select d.order_id, d.recipient from notifications d where d.event = 'delivered' and d.channel = 'email' and d.status = 'sent'
+        and d.created_at between now() - make_interval(days => cfg_num('reviewAskDays', 7)::int + 7) and now() - make_interval(days => cfg_num('reviewAskDays', 7)::int)
+        and not exists (select 1 from review_authors a where a.email = d.recipient and a.created_at > d.created_at) loop
+      perform queue_note('review_ask', 'email', r.recipient, r.order_id || ':review_ask', r.order_id, jsonb_build_object('product', (select p.id from orders o, products p, jsonb_array_elements(p.data -> 'variants') v
+        where o.id = r.order_id and v ->> 'sku' = o.data -> 'items' -> 0 ->> 'sku' limit 1))); n := n + 1;
+    end loop;
+  end if;
+  -- every Monday, a summary of the past week to the shop's inbox (setting weeklySummary, on unless switched off)
+  if cfg_on('weeklySummary', true) and extract(isodow from today) = 1 then
+    perform queue_note('weekly', 'email', shop_inbox(), 'weekly:' || today, null, jsonb_build_object(
+      'orders', (select count(*) from orders where created_at >= now() - interval '7 days' and status not in ('Cancelled', 'Awaiting payment')),
+      'revenue', (select coalesce(sum(total), 0) from orders where created_at >= now() - interval '7 days' and status not in ('Cancelled', 'Awaiting payment')),
+      'visitors', (select count(distinct vid) from events where created_at >= now() - interval '7 days'),
+      'signups', (select count(*) from subscribers where created_at >= now() - interval '7 days'),
+      'reviews', (select count(*) from reviews where not published),
+      'lowStock', (select count(*) from stock where qty between 1 and 2)));
+  end if;
   return n;
 end $$;
 
@@ -923,6 +1055,12 @@ revoke execute on function restock_notes() from public, anon, authenticated;
 revoke execute on function queue_reminders() from public, anon, authenticated;
 revoke execute on function claim_notes(int) from public, anon, authenticated;
 revoke execute on function finish_note(uuid, boolean, text, boolean) from public, anon, authenticated;
+revoke execute on function review_in() from public, anon, authenticated;
+revoke execute on function review_reward() from public, anon, authenticated;
+revoke execute on function forget_customer(text[]) from public, anon;
+revoke execute on function event_stats(int) from public, anon;
+grant execute on function forget_customer(text[]) to authenticated;
+grant execute on function event_stats(int) to authenticated;
 grant execute on function queue_reminders() to service_role;
 grant execute on function claim_notes(int) to service_role;
 grant execute on function finish_note(uuid, boolean, text, boolean) to service_role;

@@ -107,6 +107,10 @@
     customer: () => (cust ? cust.email : null),
     // functions only a signed-in customer may call: place_order and my_orders. "sign_in" means the session has ended.
     custRpc: async (fn, args) => { const t = await custToken(); if (!t) { const e = new Error('sign_in'); e.status = 401; throw e; } return req('POST', '/rest/v1/rpc/' + fn, args || {}, null, t); },
+    // a visitor's row sent as the signed-in customer when there is one (so a review can be marked "Verified buyer")
+    custInsert: async (table, row) => { const t = await custToken(); return req('POST', '/rest/v1/' + table, row, { Prefer: 'return=minimal' }, t || key); },
+    // anonymous visit events for Owner view → Analytics; `keepalive` lets the last few go out as the page closes
+    beacon: (rows) => fetch(url + '/rest/v1/events', { method: 'POST', keepalive: true, headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify(rows) }).catch(() => {}),
     custSignOut: () => { const t = cust && cust.access; keepCust(null); if (t) req('POST', '/auth/v1/logout', {}, null, t).catch(() => {}); },
     awaitingCode: () => !!pending,
     signOut: () => { token = null; pending = null; try { sessionStorage.removeItem('bt-owner-token'); } catch (e) { /* ignore */ } }
