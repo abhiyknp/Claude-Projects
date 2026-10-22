@@ -313,6 +313,7 @@ label { font-size: 14px; font-weight: 600; }
 .status { padding: 12px 14px; background: var(--sand2); font-size: 15px; }
 .status.ok { background: var(--ok-bg); }
 .status.err { background: var(--err-bg); color: var(--terra-ink); }
+.status.delayed { background: var(--sand2); border-left: 4px solid var(--terra-ink); }
 
 /* finder */
 .finder { display: flex; flex-wrap: wrap; min-height: 70vh; }
@@ -1068,6 +1069,41 @@ const OCCASIONS = [['birthday', 'Birthday'], ['anniversary', 'Anniversary'], ['h
 // occasions with at least one piece to show, so a chip never leads to an empty shop
 const occLive = () => OCCASIONS.filter(([k]) => P.some((p) => (p.occ || []).includes(k)));
 const STATES = ['Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'];
+// PIN code → state and city. The first digits of a PIN code say which state it is in (kept here so it always works);
+// India Post's public lookup adds the district when it is reachable. Both only fill the boxes: the customer can change them.
+const PIN_STATE = { 11: 'Delhi', 12: 'Haryana', 13: 'Haryana', 14: 'Punjab', 15: 'Punjab', 16: 'Punjab', 160: 'Chandigarh', 17: 'Himachal Pradesh', 18: 'Jammu and Kashmir', 19: 'Jammu and Kashmir', 194: 'Ladakh',
+  20: 'Uttar Pradesh', 21: 'Uttar Pradesh', 22: 'Uttar Pradesh', 23: 'Uttar Pradesh', 24: 'Uttar Pradesh', 244: 'Uttarakhand', 245: 'Uttar Pradesh', 246: 'Uttarakhand', 247: 'Uttarakhand', 248: 'Uttarakhand', 249: 'Uttarakhand', 25: 'Uttar Pradesh', 26: 'Uttar Pradesh', 262: 'Uttarakhand', 263: 'Uttarakhand', 27: 'Uttar Pradesh', 28: 'Uttar Pradesh',
+  30: 'Rajasthan', 31: 'Rajasthan', 32: 'Rajasthan', 33: 'Rajasthan', 34: 'Rajasthan', 36: 'Gujarat', 37: 'Gujarat', 38: 'Gujarat', 39: 'Gujarat', 40: 'Maharashtra', 403: 'Goa', 41: 'Maharashtra', 42: 'Maharashtra', 43: 'Maharashtra', 44: 'Maharashtra',
+  45: 'Madhya Pradesh', 46: 'Madhya Pradesh', 47: 'Madhya Pradesh', 48: 'Madhya Pradesh', 49: 'Chhattisgarh', 50: 'Telangana', 51: 'Andhra Pradesh', 52: 'Andhra Pradesh', 53: 'Andhra Pradesh', 56: 'Karnataka', 57: 'Karnataka', 58: 'Karnataka', 59: 'Karnataka',
+  60: 'Tamil Nadu', 61: 'Tamil Nadu', 62: 'Tamil Nadu', 63: 'Tamil Nadu', 64: 'Tamil Nadu', 605: 'Puducherry', 67: 'Kerala', 68: 'Kerala', 69: 'Kerala', 682: 'Kerala', 70: 'West Bengal', 71: 'West Bengal', 72: 'West Bengal', 73: 'West Bengal', 737: 'Sikkim', 74: 'West Bengal', 744: 'Andaman and Nicobar Islands',
+  75: 'Odisha', 76: 'Odisha', 77: 'Odisha', 78: 'Assam', 790: 'Arunachal Pradesh', 791: 'Arunachal Pradesh', 792: 'Arunachal Pradesh', 793: 'Meghalaya', 794: 'Meghalaya', 795: 'Manipur', 796: 'Mizoram', 797: 'Nagaland', 798: 'Nagaland', 799: 'Tripura',
+  80: 'Bihar', 81: 'Bihar', 814: 'Jharkhand', 815: 'Jharkhand', 816: 'Jharkhand', 82: 'Jharkhand', 821: 'Bihar', 83: 'Jharkhand', 84: 'Bihar', 85: 'Bihar' };
+const pinState = (pin) => PIN_STATE[pin.slice(0, 3)] || PIN_STATE[pin.slice(0, 2)] || '';
+// India Post spells some states differently from our list
+const asState = (n) => { const k = String(n || '').toLowerCase().replace(/&/g, 'and').replace(/\s+/g, ' ').trim(); const alias = { orissa: 'Odisha', uttaranchal: 'Uttarakhand', pondicherry: 'Puducherry', 'dadra and nagar haveli': 'Dadra and Nagar Haveli and Daman and Diu', 'daman and diu': 'Dadra and Nagar Haveli and Daman and Diu', 'nct of delhi': 'Delhi' };
+  return alias[k] || STATES.find((x) => x.toLowerCase() === k) || ''; };
+const pinCache = {};
+async function pinLookup(pin) {
+  if (pinCache[pin]) return pinCache[pin];
+  let r = { state: pinState(pin), city: '' };
+  try {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 4000);
+    const d = await fetch('https://api.postalpincode.in/pincode/' + pin, { signal: ctl.signal }).then((x) => x.json()); clearTimeout(to);
+    const po = d && d[0] && d[0].Status === 'Success' && d[0].PostOffice && d[0].PostOffice[0];
+    if (po) r = { state: asState(po.State) || r.state, city: String(po.District || po.Block || '').replace(/\s+/g, ' ').trim() };
+  } catch (e) { /* offline or blocked: the state from the first digits is still used */ }
+  return (pinCache[pin] = r);
+}
+// fills city and state from a typed PIN code, unless the customer already typed their own
+async function pinAutofill(pinEl, cityId, stateId, noteId) {
+  const pin = pinEl.value.trim(); const note = document.getElementById(noteId); if (note) note.textContent = '';
+  if (!/^[1-9]\d{5}$/.test(pin)) return;
+  const r = await pinLookup(pin); if (pinEl.value.trim() !== pin) return;
+  const city = document.getElementById(cityId), st = document.getElementById(stateId);
+  if (city && r.city && (!city.value.trim() || city.dataset.auto === '1')) { city.value = r.city; city.dataset.auto = '1'; }
+  if (st && r.state && (!st.value || st.dataset.auto === '1')) { st.value = r.state; st.dataset.auto = '1'; }
+  if (note && (r.city || r.state)) note.textContent = 'Filled in from the PIN code: ' + [r.city, r.state].filter(Boolean).join(', ') + '. Change it if it isn’t right.';
+}
 const STATUSES = ['Placed', 'Packed', 'Shipped', 'Delivered'];
 // Brand elements from the identity system: leaf, sun, arch, flow, spark.
 const ICON = {
@@ -1880,7 +1916,8 @@ function viewCheckout() {
       <h2 class="full" style="font-size:24px">${g.on ? 'Their address' : 'Your address'}</h2>
       ${!g.on && UI.prof && UI.prof.addresses.length ? `<div class="full" style="display:flex;gap:8px;flex-wrap:wrap" role="group" aria-label="Saved addresses">${UI.prof.addresses.map((a, i) => `<button class="chip" type="button" data-act="use-addr" data-i="${i}" aria-pressed="${co.address.line1 === a.line1 && co.address.pin === a.pin}">${esc(a.label || (i ? 'Address ' + (i + 1) : 'Home'))} · ${esc(a.pin)}</button>`).join('')}</div>` : ''}
       ${field('line1', 'House, street, area', co.address.line1, { ac: g.on ? 'off' : 'address-line1', full: true })}${field('line2', 'Landmark', co.address.line2, { ac: g.on ? 'off' : 'address-line2', full: true, hint: 'optional' })}${field('pin', 'PIN code', co.address.pin, { mode: 'numeric', ac: g.on ? 'off' : 'postal-code', max: 6 })}${field('city', 'City', co.address.city, { ac: g.on ? 'off' : 'address-level2' })}
-      <span class="field full"><label for="co-state">State</label><select id="co-state" data-co="state" ${err ? 'aria-invalid="true" aria-describedby="co-state-err"' : ''}><option value="">Choose a state</option>${STATES.map((s) => `<option ${co.address.state === s ? 'selected' : ''}>${s}</option>`).join('')}</select>${err ? `<span class="err" id="co-state-err">${esc(err)}</span>` : ''}</span>
+      <span class="field full"><label for="co-state">State</label><select id="co-state" data-co="state" autocomplete="${g.on ? 'off' : 'address-level1'}" ${err ? 'aria-invalid="true" aria-describedby="co-state-err"' : ''}><option value="">Choose a state</option>${STATES.map((s) => `<option ${co.address.state === s ? 'selected' : ''}>${s}</option>`).join('')}</select>${err ? `<span class="err" id="co-state-err">${esc(err)}</span>` : ''}</span>
+      <p class="full muted" id="pin-note" aria-live="polite" style="font-size:14px;margin:0"></p>
       <p class="full muted" style="font-size:14px">Delivery in ${esc(SET.deliveryDays)}.</p>
       <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue to payment</button><button class="btn ghost" type="button" data-act="co-step" data-v="contact">Back</button></span></form>`;
   } else if (co.step === 'pay') {
@@ -1927,13 +1964,13 @@ function payBox(o) {
 }
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound();
-  if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel))) { o.status = d.status; o.parcel = d.parcel; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
+  if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel) || JSON.stringify(d.delay) !== JSON.stringify(o.delay))) { o.status = d.status; o.parcel = d.parcel; o.delay = d.delay; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
   const idx = STATUSES.indexOf(o.status); const cod = o.method === 'Cash on delivery'; const unpaid = o.status === 'Awaiting payment', gone = o.status === 'Cancelled';
   const fresh = UI.justPlaced === id; const wa = waLink('Hello, a question about my order ' + id);
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
-    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
+    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.delay && canDelay(o) ? `<div class="status delayed" role="status"><strong>Running a little late.</strong> ${delayText(o.delay)}. Thank you for waiting; we’ll update this page as soon as it moves.</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
       ${BTDB.on ? '' : '<p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>'}
@@ -2106,12 +2143,34 @@ function viewAdmin() {
 
 // what Shiprocket booked for an order, for the Owner view
 const parcelNote = (o) => { const p = o.parcel; if (!p || !p.awb) return ''; return `<span class="muted" style="display:block;font-size:13px;margin-top:6px">${esc(p.courier || 'Courier')} · AWB <span class="num sel">${esc(p.awb)}</span>${p.status ? ' · ' + esc(p.status) : ''}${p.label ? ` · <a href="${esc(p.label)}" target="_blank" rel="noopener">Print label</a>` : ''}${p.pickupErr ? ` · pickup not booked: ${esc(p.pickupErr)}` : ''}</span>`; };
+// an order running late is a flag on the order (a reason, maybe a new date), not a new step
+const DELAY_REASONS = ['Courier is running late', 'Bad weather', 'Festival rush', 'Your piece is taking longer to make', 'We need to check your address', 'Something else'];
+const canDelay = (o) => ['Placed', 'Packed', 'Shipped'].includes(o.status);
+const delayText = (dl) => `${esc(dl.reason)}${dl.note ? ': ' + esc(dl.note) : ''}${dl.until ? ' · now expected by ' + niceDay(dl.until) : ''}`;
+const delayNote = (o) => (o.delay ? `<span style="display:block;margin-top:6px"><span class="pill out">Delayed</span> <span class="muted" style="font-size:13px">${delayText(o.delay)}</span></span>` : '')
+  + (canDelay(o) ? `<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn small ghost" type="button" data-act="adm-delay-open" data-id="${esc(o.id)}">${o.delay ? 'Change delay' : 'Mark delayed'}</button>${o.delay ? `<button class="btn small ghost" type="button" data-act="adm-delay-clear" data-id="${esc(o.id)}">Clear delay</button>` : ''}</span>` : '');
+function delayForm(list) {
+  const id = UI.adm.delayFor; const o = id && list.find((x) => x.id === id); if (!o) return '';
+  const cur = o.delay || {}; const known = DELAY_REASONS.slice(0, -1).includes(cur.reason); const sel = cur.reason ? (known ? cur.reason : 'Something else') : DELAY_REASONS[0];
+  return `<form data-form="adm-delay" data-id="${esc(o.id)}" class="form adm-card" style="max-width:560px;margin:0 0 24px" novalidate><h2 class="full" style="font-size:24px">Mark ${esc(o.id)} as delayed</h2>
+    <span class="field full"><label for="dl-reason">Reason</label><select id="dl-reason">${DELAY_REASONS.map((r) => `<option ${r === sel ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></span>
+    <span class="field full"><label for="dl-note">Note for the customer <span class="hint">optional, or the reason if you chose “Something else”</span></label><input id="dl-note" maxlength="150" value="${esc(known ? cur.note || '' : cur.reason ? (cur.reason + (cur.note ? ': ' + cur.note : '')) : '')}"></span>
+    <span class="field full"><label for="dl-until">New expected date <span class="hint">optional</span></label><input id="dl-until" type="date" min="${dayISO(new Date())}" value="${esc(cur.until || '')}"></span>
+    <label class="check full"><input id="dl-tell" type="checkbox" ${cur.tell === false ? '' : 'checked'}> Email the customer about the delay</label>
+    ${UI.adm.delayErr ? `<span class="full err" role="alert">${esc(UI.adm.delayErr)}</span>` : ''}
+    <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="submit">Save delay</button><button class="btn small ghost" type="button" data-act="adm-delay-cancel">Cancel</button></span></form>`;
+}
+async function setDelay(o, delay) {
+  if (BTDB.on) await BTDB.rpc('set_delay', { order_id: o.id, d: delay });
+  const mine = S.orders.find((x) => x.id === o.id);
+  [o, mine].forEach((x) => { if (x) { if (delay) x.delay = delay; else delete x.delay; } }); save(); track('order_delay', { order: o.id, set: !!delay });
+}
 function admOrders() {
   const list = admData('orders'); if (!list) return loadingRow;
   const live = list.filter((o) => o.status !== 'Cancelled'); const rev = live.filter((o) => o.status !== 'Awaiting payment').reduce((a, o) => a + (o.total || 0), 0); const open = live.filter((o) => o.status !== 'Delivered').length;
   const low = Object.keys(skuMap).filter((s) => stockOf(s) <= 2).length; const gifts = live.filter((o) => o.gift && o.gift.on && o.status !== 'Delivered').length;
-  return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
-    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Cashfree</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
+  return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Running late</span><strong class="num">${live.filter((o) => o.delay && canDelay(o)).length}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
+    ${delayForm(list)}${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${delayNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Cashfree</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
@@ -2559,11 +2618,11 @@ function profileBox() {
       <div class="full"><strong>Saved addresses</strong>${pf.addresses.length ? `<ul class="order-list" style="margin-top:8px">${pf.addresses.map((a, i) => `<li><span style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:12px 0;border-bottom:1px solid var(--line)"><span style="flex:1 1 240px"><strong>${esc(a.label || (i ? 'Address ' + (i + 1) : 'Home'))}</strong>${i === 0 ? ' <span class="pill">Usual</span>' : ''}<br><span class="muted">${esc(addrLine(a))}, ${esc(a.state)}</span></span>${i ? `<button class="linkbtn" type="button" data-act="addr-first" data-i="${i}">Make usual</button>` : ''}<button class="linkbtn" type="button" data-act="addr-del" data-i="${i}">Remove</button></span></li>`).join('')}</ul>` : '<p class="muted">None yet. They are saved when you order, or add one below.</p>'}</div>
       ${pf.addresses.length < 5 ? `<details class="full"${P.err && P.err.addr ? ' open' : ''}><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center">Add an address</summary><div class="form" style="padding:0">
         <span class="field"><label for="pf-a-label">Label <span class="hint">Home, Work…</span></label><input id="pf-a-label" maxlength="30" value="${esc(P.a_label || '')}"></span>
-        <span class="field"><label for="pf-a-pin">PIN code</label><input id="pf-a-pin" inputmode="numeric" maxlength="6" value="${esc(P.a_pin || '')}"></span>
+        <span class="field"><label for="pf-a-pin">PIN code</label><input id="pf-a-pin" inputmode="numeric" autocomplete="postal-code" maxlength="6" value="${esc(P.a_pin || '')}"></span>
         <span class="field full"><label for="pf-a-line1">House, street, area</label><input id="pf-a-line1" autocomplete="address-line1" value="${esc(P.a_line1 || '')}"></span>
         <span class="field full"><label for="pf-a-line2">Landmark <span class="hint">optional</span></label><input id="pf-a-line2" value="${esc(P.a_line2 || '')}"></span>
         <span class="field"><label for="pf-a-city">City</label><input id="pf-a-city" autocomplete="address-level2" value="${esc(P.a_city || '')}"></span>
-        <span class="field"><label for="pf-a-state">State</label><select id="pf-a-state"><option value="">Choose a state</option>${STATES.map((x) => `<option ${P.a_state === x ? 'selected' : ''}>${x}</option>`).join('')}</select></span></div></details>` : ''}
+        <span class="field"><label for="pf-a-state">State</label><select id="pf-a-state" autocomplete="address-level1"><option value="">Choose a state</option>${STATES.map((x) => `<option ${P.a_state === x ? 'selected' : ''}>${x}</option>`).join('')}</select></span><p class="full muted" id="pin-note" aria-live="polite" style="font-size:14px;margin:0"></p></div></details>` : ''}
       <fieldset class="full" style="border:0;padding:0;margin:0"><legend><strong>How we reach you</strong></legend>
         <p class="muted" style="margin:4px 0 8px">Order updates always go to ${esc(S.account.email)}.${chans.length ? ' You can add:' : ''}</p>
         ${chans.map(([k, l]) => `<label class="check"><input type="checkbox" id="pf-${k}" ${(P.prefs ? P.prefs[k] : pf.prefs[k]) ? 'checked' : ''}> ${l}</label>`).join('')}</fieldset>
@@ -3423,6 +3482,9 @@ document.addEventListener('click', (e) => {
     case 'adm-ship': { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o || A.shipping) break; A.shipping = o.id; render();
       admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
     case 'pay-check': payCheck(d.id); break;
+    case 'adm-delay-open': UI.adm.delayFor = d.id; UI.adm.delayErr = null; render(); $('#dl-reason')?.focus(); break;
+    case 'adm-delay-cancel': UI.adm.delayFor = null; render(); break;
+    case 'adm-delay-clear': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; admDo(async () => { await setDelay(o, null); UI.adm.delayFor = null; render(); }, `Delay cleared on ${d.id}.`); break; }
     case 'adm-cancel': if (!confirm('Cancel order ' + d.id + '? Its pieces go back into stock.')) break; admDo(async () => { const list = admData('orders') || []; const o = list.find((x) => x.id === d.id); if (!o) return;
       if (BTDB.on) { await BTDB.rpc('cancel_order', { order_id: o.id }); loadData(); } else o.items.forEach((l) => { S.stock[l.sku] = stockOf(l.sku) + l.qty; });
       o.status = 'Cancelled'; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = 'Cancelled'; save(); track('order_status', { order: o.id, status: 'Cancelled' }); render(); say(`${o.id} cancelled. Its pieces are back in stock.`); }); break;
@@ -3433,6 +3495,7 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
+  if (t.id === 'co-state' || t.id === 'pf-a-state') t.dataset.auto = '';
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
   if (d.act === 'home-rit') { UI.ritual.homeSel = UI.ritual.homeSel || { a: true, b: true }; UI.ritual.homeSel[d.k] = t.checked; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'ritual-pick') { UI.ritual.pick[UI.ritual.preset][d.i] = t.checked; render(); $('#' + t.id)?.focus(); }
@@ -3444,6 +3507,10 @@ document.addEventListener('change', (e) => {
   if (d.act === 'gift-toggle') { readCo(t.form); render(); $('#co-g-on')?.focus(); }
 });
 document.addEventListener('input', (e) => {
+  const ti = e.target;
+  if (ti.id === 'co-pin') { pinAutofill(ti, 'co-city', 'co-state', 'pin-note'); return; }
+  if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
+  if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
   if (e.target.id === 'tx-q') { UI.adm.q = e.target.value; clearTimeout(document.tq); document.tq = setTimeout(() => { render(); const el = $('#tx-q'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
   if (e.target.id === 'search-q') { UI.searchQ = e.target.value; const q = UI.searchQ.trim().toLowerCase(); const res = q ? P.filter((p) => (p.name + ' ' + p.type + ' ' + (p.notes || []).join(' ') + ' ' + p.line).toLowerCase().includes(q)) : []; $('#search-res').innerHTML = searchResults(q, res); clearTimeout(document.st); document.st = setTimeout(() => { if (q) track(res.length ? 'search' : 'search_no_results', { q }); }, 900); }
 });
@@ -3506,6 +3573,13 @@ document.addEventListener('submit', (e) => {
     return; }
   if (kind === 'owner-code') { const code = $('#own-code').value.replace(/\D/g, ''); if (code.length !== 6) { UI.adm.err = 'Enter the 6 digits from your authenticator app.'; render(); $('#own-code')?.focus(); return; }
     BTDB.verifyCode(code).then(() => { UI.adm.err = null; UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid|expired|code/i.test(err.message) ? 'That code didn’t work. Type the newest code the app shows.' : err.message; render(); $('#own-code')?.focus(); });
+    return; }
+  if (kind === 'adm-delay') { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === f.dataset.id); if (!o) return;
+    const pick = $('#dl-reason').value, note = $('#dl-note').value.trim(), until = $('#dl-until').value, tell = $('#dl-tell').checked;
+    if (pick === 'Something else' && !note) { A.delayErr = 'Say what the reason is in the note box.'; render(); $('#dl-note')?.focus(); return; }
+    if (until && until < dayISO(new Date())) { A.delayErr = 'Choose a date from today onwards.'; render(); return; }
+    const delay = pick === 'Something else' ? { reason: note, note: '' } : { reason: pick, note }; Object.assign(delay, { until: until || '', tell, at: new Date().toISOString() });
+    admDo(async () => { await setDelay(o, delay); A.delayFor = null; A.delayErr = null; render(); }, `${o.id} marked as delayed${tell ? '; the customer would get an email' : ''}.`);
     return; }
   if (kind === 'adm-card-new') { const amt = parseInt($('#gcn-amt').value, 10); const note = $('#gcn-note').value.trim(); const A = UI.adm;
     if (!(amt > 0)) { say('Enter the amount in rupees.'); return; }

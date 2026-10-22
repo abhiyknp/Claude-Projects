@@ -152,6 +152,13 @@ http.createServer((req, res) => {
         const o = T.orders.find((x) => x.id === json().order_id); if (!o || !['Awaiting payment', 'Placed', 'Packed'].includes(o.status)) return fail(res, 400, 'cannot_cancel');
         o.data.items.forEach((it) => { const s = T.stock.find((x) => x.sku === it.sku); if (s) s.qty += it.qty; }); const gc = T.gift_cards.find((x) => x.code === o.data.card); if (gc) gc.balance += o.data.cardOff || 0; o.status = 'Cancelled'; return send(res, 200, null);
       }
+      if (m && m[1] === 'set_delay') {
+        if (!own) return fail(res, 400, 'not_allowed');
+        const a = json(); const o = T.orders.find((x) => x.id === a.order_id); if (!o) return fail(res, 400, 'not_found');
+        if (!a.d) { delete o.data.delay; return send(res, 200, null); }
+        if (!['Placed', 'Packed', 'Shipped'].includes(o.status)) return fail(res, 400, 'cannot_delay');
+        o.data.delay = { reason: String(a.d.reason || '').trim(), note: String(a.d.note || '').trim(), until: a.d.until || '', tell: a.d.tell === true || a.d.tell === 'true', at: new Date().toISOString() }; return send(res, 200, null);
+      }
       if (m && m[1] === 'gift_card_balance') { const gc = T.gift_cards.find((x) => x.code === String(json().card_code).trim().toUpperCase()); return send(res, 200, gc ? String(gc.balance) : 'null', 'application/json'); }
       if (m && m[1] === 'my_referral') { const who = String(json().contact_in).trim().toLowerCase(); let r = T.referrers.find((x) => x.contact === who); if (!r) { r = { id: Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'), contact: who, created_at: new Date().toISOString() }; T.referrers.push(r); } return send(res, 200, JSON.stringify(r.id), 'application/json'); }
       // the pay (Cashfree) and delivery (Shiprocket) functions: paid at once, every PIN reachable, a made-up AWB number

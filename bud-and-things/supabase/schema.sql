@@ -428,6 +428,25 @@ begin
   return (select status from orders where id = order_id);
 end $$;
 
+-- the owner marks an order as running late (or clears it): { reason, note, until (a date or ''), tell (email the customer), at }.
+-- It is a flag on the order, not a new step, so Packed, Shipped and Delivered, Bud Points and tracking carry on as before.
+create or replace function set_delay(order_id text, d jsonb) returns void language plpgsql security definer set search_path = public as $$
+declare cur text;
+begin
+  if not is_owner() then raise exception 'not_allowed'; end if;
+  select status into cur from orders where id = order_id for update;
+  if cur is null then raise exception 'not_found'; end if;
+  if d is null or jsonb_typeof(d) <> 'object' then
+    update orders set data = data - 'delay' where id = order_id;
+    return;
+  end if;
+  if cur not in ('Placed', 'Packed', 'Shipped') then raise exception 'cannot_delay'; end if;
+  if length(coalesce(d ->> 'reason', '')) not between 1 and 120 or length(coalesce(d ->> 'note', '')) > 300
+    or (coalesce(d ->> 'until', '') <> '' and (d ->> 'until') !~ '^\d{4}-\d{2}-\d{2}$') then raise exception 'bad_delay'; end if;
+  update orders set data = data || jsonb_build_object('delay', jsonb_build_object('reason', trim(d ->> 'reason'), 'note', trim(coalesce(d ->> 'note', '')),
+    'until', coalesce(d ->> 'until', ''), 'tell', coalesce(d ->> 'tell', 'false') = 'true', 'at', now())) where id = order_id;
+end $$;
+
 -- a shopper checks a gift card before using it (20 tries an hour per connection, so codes can't be guessed)
 create or replace function gift_card_balance(card_code text) returns int language plpgsql security definer set search_path = public as $$
 begin
@@ -522,7 +541,7 @@ end $$;
 -- The database queues a message when something happens; the notify function sends it (supabase/functions/notify).
 --   welcome      a customer's first sign-in (not for customers who ordered before profiles existed)
 --   confirmed    an order is Placed: paid online, a gift card or points, or cash on delivery (and new_order to the owner)
---   shipped, delivered, cancelled   as the order moves along; refund when a late payment has to go back
+--   shipped, delivered, cancelled   as the order moves along; delayed when the owner marks it running late and ticks "tell the customer"; refund when a late payment has to go back
 --   restock      a piece someone asked about is back in stock
 --   reminder     a week before a saved gift date (reminderDays), from the daily run
 -- Email always goes to the customer's sign-in address. WhatsApp, SMS and app push are added for customers who chose
@@ -555,6 +574,10 @@ begin
   if coalesce((new.data ->> 'refundDue')::boolean, false) and (tg_op = 'INSERT' or not coalesce((old.data ->> 'refundDue')::boolean, false)) then
     perform queue_note('refund_due', 'email', shop_inbox(), new.id || ':refund_due', new.id, '{}');
     perform tell('refund', em, new.phone, new.id || ':refund', new.id, '{}', optin);
+  end if;
+  -- the owner marked the order as running late and asked to tell the customer (once per time it is marked)
+  if tg_op = 'UPDATE' and em is not null and coalesce((new.data -> 'delay' ->> 'tell')::boolean, false) and (new.data -> 'delay' ->> 'at') is distinct from (old.data -> 'delay' ->> 'at') then
+    perform tell('delayed', em, new.phone, new.id || ':delayed:' || (new.data -> 'delay' ->> 'at'), new.id, '{}', optin);
   end if;
   -- a new order only ever says "confirmed" (orders copied in with a later status send nothing)
   if tg_op = 'UPDATE' and new.status is not distinct from old.status or tg_op = 'INSERT' and new.status <> 'Placed' then return new; end if;
@@ -643,6 +666,7 @@ revoke execute on function guard_visitor() from public, anon, authenticated;
 revoke execute on function place_order(jsonb) from public, anon;
 revoke execute on function get_order(text, text) from public;
 revoke execute on function cancel_order(text) from public, anon;
+revoke execute on function set_delay(text, jsonb) from public, anon;
 grant execute on function place_order(jsonb) to authenticated;
 revoke execute on function customer_email() from public, anon, authenticated;
 revoke execute on function points_of(text) from public, anon, authenticated;
@@ -650,6 +674,7 @@ revoke execute on function my_orders() from public, anon;
 grant execute on function my_orders() to authenticated;
 grant execute on function get_order(text, text) to anon, authenticated;
 grant execute on function cancel_order(text) to authenticated;
+grant execute on function set_delay(text, jsonb) to authenticated;
 grant execute on function is_owner() to anon, authenticated;
 revoke execute on function gift_card_balance(text) from public;
 revoke execute on function my_referral(text) from public;
