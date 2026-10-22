@@ -1342,6 +1342,8 @@ const SET_META = [
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
+// settings with their own place in Owner view (the Coupons, Rewards and Invoices tabs)
+const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff'];
 const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
@@ -1405,7 +1407,7 @@ function loadData() {
   }).catch((e) => { DB.state = 'error'; DB.error = e.message; if (route() === 'admin') render(); });
 }
 // the owner's changes: written to the database when connected, otherwise kept in this browser
-function persistLocal() { if (BTDB.on) return; S.db = { products: DATA.products, pairings: DATA.pairings, text: DATA.text, settings: DATA.settings, media: DATA.media, reviews: (S.db && S.db.reviews) || [], people: (S.db && S.db.people) || [] }; save(); }
+function persistLocal() { if (BTDB.on) return; S.db = { ...(S.db || {}), products: DATA.products, pairings: DATA.pairings, text: DATA.text, settings: DATA.settings, media: DATA.media, reviews: (S.db && S.db.reviews) || [], people: (S.db && S.db.people) || [] }; save(); }
 function mergeRows(table, rows) {
   rows.forEach((r) => {
     if (table === 'site_text') DATA.text[r.key] = r.value;
@@ -1569,10 +1571,26 @@ function ritualSaving(lines) {
   return Math.round(s * off / 100);
 }
 const hasBox = (lines) => lines.some((l) => l.p.cat === 'gifts'); // gift boxes come wrapped free
-const codeOk = (c) => !!(c && SET.welcomeCode && String(c).trim().toUpperCase() === String(SET.welcomeCode).toUpperCase());
+// Discount codes are the owner's coupons (Owner view → Coupons). The checkout asks the database whether a code works for
+// this cart (check_coupon), keeps the answer in UI.co.coupon, and place_order works the discount out again itself.
+const codeOk = (c) => !!(c && UI.co.coupon && String(c).trim().toUpperCase() === UI.co.coupon.code);
+const couponOffFor = (c, base) => { if (!c || base < (c.min_order || 0)) return 0; let off = c.kind === 'flat' ? Math.min(c.amount, base) : Math.round(base * c.amount / 100); if (c.max_off > 0) off = Math.min(off, c.max_off); return Math.max(0, off); };
+const COUPON_TAGS = { welcome: 'Welcome', festive: 'Festive', birthday: 'Birthday', thankyou: 'Thank you', referral: 'Referral', other: 'Other' };
+// without a database (the preview) coupons live in this browser; the welcome code from Settings is the first one
+const localCoupons = () => (S.db && S.db.coupons) || (SET.welcomeCode ? [{ code: String(SET.welcomeCode).trim().toUpperCase(), kind: 'percent', amount: +SET.welcomeOff || 0, min_order: 0, max_off: 0, starts_on: '', ends_on: '', max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true }] : []);
+const couponMsg = (m) => /coupon_early/.test(m) ? 'That code isn’t active yet.' : /coupon_ended/.test(m) ? 'That code has expired.' : /coupon_used_up/.test(m) ? 'That code has been used up.' : /coupon_min/.test(m) ? `That code needs at least ${inr((/coupon_min:(\d+)/.exec(m) || [])[1] || 0)} of pieces in your cart.` : /coupon_first/.test(m) ? 'That code is for a first order only.' : /coupon_per_customer/.test(m) ? 'You have already used that code.' : 'That code isn’t valid. Check the spelling, or leave it empty.';
+async function checkCoupon(v, base) {
+  if (BTDB.on) return S.account ? BTDB.custRpc('check_coupon', { code_in: v, base }) : BTDB.rpc('check_coupon', { code_in: v, base });
+  const code = v.trim().toUpperCase(); const c = localCoupons().find((x) => x.code === code); if (!c || !c.active || !(+c.amount > 0)) throw new Error('bad_code');
+  const today = dayISO(new Date()); if (c.starts_on && today < c.starts_on) throw new Error('coupon_early'); if (c.ends_on && today > c.ends_on) throw new Error('coupon_ended');
+  const mine = S.orders.filter((o) => o.status !== 'Cancelled'); if (+c.max_uses > 0 && mine.filter((o) => o.code === c.code).length >= +c.max_uses) throw new Error('coupon_used_up');
+  if (base < (+c.min_order || 0)) throw new Error('coupon_min:' + c.min_order); if (c.first_order_only && mine.length) throw new Error('coupon_first');
+  if (+c.per_customer > 0 && mine.filter((o) => o.code === c.code).length >= +c.per_customer) throw new Error('coupon_per_customer');
+  return { code: c.code, kind: c.kind, amount: +c.amount, min_order: +c.min_order || 0, max_off: +c.max_off || 0 };
+}
 function totals() {
   const lines = cartLines(); const sub = lines.reduce((a, l) => a + l.v.price * l.qty, 0); const ritual = ritualSaving(lines);
-  const code = codeOk(UI.co.code) ? Math.round((sub - ritual) * (+SET.welcomeOff || 0) / 100) : 0;
+  const code = codeOk(UI.co.code) ? couponOffFor(UI.co.coupon, sub - ritual) : 0;
   const ship = sub === 0 ? 0 : (+SET.freeOver && sub >= +SET.freeOver ? 0 : +SET.shipFee || 0);
   const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
   const cod = sub && UI.co.step === 'pay' && UI.co.method === 'cod' ? +SET.codFee || 0 : 0;
@@ -1894,7 +1912,7 @@ function viewCheckout() {
   loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
-  const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> applied</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
+  const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> ${t.code ? 'applied' : `needs ${inr(co.coupon.min_order)} of pieces in your cart`}</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
     + (co.gcard ? `<div class="code-on"><span>Gift card <strong>${esc(co.gcard.code)}</strong> applied</span><button class="linkbtn" type="button" data-act="card-remove">Remove</button></div>` : '')
     + (codeOk(co.code) && co.gcard ? '' : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code or gift card?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit">Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`);
   const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
@@ -2083,7 +2101,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band']] };
@@ -2096,7 +2114,7 @@ const pairRows = () => (DATA.pairings && DATA.pairings.length ? DATA.pairings : 
 const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
-  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
+  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'coupons' ? localCoupons() : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
   if (!UI.adm.rows[k]) { if (UI.adm.loading !== k) setTimeout(() => admLoad(k)); return null; }
   return UI.adm.rows[k];
 }
@@ -2106,6 +2124,7 @@ async function admLoad(k) {
     if (k === 'orders') A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status }));
     if (k === 'reviews') A.rows.reviews = await BTDB.list('reviews', 'order=created_at.desc&limit=300');
     if (k === 'people') { const [a, b, c] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500'), BTDB.list('reminders', 'order=day.asc&limit=1000')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r)), c.map((r) => Object.assign({ table: 'reminders' }, r))); }
+    if (k === 'coupons') { A.rows.coupons = await BTDB.list('coupons', 'order=created_at.desc&limit=500'); if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     if (k === 'cards') { const [a, b] = await Promise.all([BTDB.list('gift_cards', 'order=created_at.desc&limit=500'), BTDB.list('referrers', 'order=created_at.desc&limit=1000')]); A.rows.cards = { cards: a, refs: b }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     A.err = null;
   } catch (e) { A.rows[k] = A.rows[k] || []; A.err = e.message; }
@@ -2137,7 +2156,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, coupons: admCoupons, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
@@ -2286,7 +2305,7 @@ function admSettings() {
       <span class="field full"><label for="set-theme">Theme</label><select id="set-theme" data-act="adm-set" data-k="theme">${Object.entries(SKINS).map(([k, v]) => `<option value="${k}" ${k === skin('site') ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></span>
       <span class="field full"><label for="set-homeStyle">Home page</label><select id="set-homeStyle" data-act="adm-set" data-k="homeStyle">${Object.entries(HOME_STYLES).map(([k, v]) => `<option value="${k}" ${k === (HOME_STYLES[SET.homeStyle] ? SET.homeStyle : 'foyer') ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></span>
       <p class="muted full">${esc(SKINS[skin('site')].use)}</p></div>
-    <div class="form adm-card">${SET_META.filter((m) => !CS_KEYS.includes(m[0]) && !THEME_KEYS.includes(m[0])).map(field).join('')}</div>
+    <div class="form adm-card">${SET_META.filter((m) => !CS_KEYS.includes(m[0]) && !THEME_KEYS.includes(m[0]) && !ELSEWHERE_KEYS.includes(m[0])).map(field).join('')}</div>
     <details class="adm-group"><summary>Product and ritual names to use above</summary><p class="muted num" style="padding:12px 0">${P.map((p) => esc(p.id)).join(', ')}</p><p class="muted num">Rituals: ${PAIRINGS.map((x) => esc(x.id)).join(', ')}</p></details>`;
 }
 function admReviews() {
@@ -2310,6 +2329,59 @@ function admReminders(list) {
   const wa = (r) => /^\d{10}$/.test(r.contact) ? `<a href="https://wa.me/91${r.contact}?text=${encodeURIComponent(`Hi! A gentle reminder from BUD & THINGS: ${r.for_name ? r.for_name + '’s ' : 'the '}${occ(r.occasion).toLowerCase()} is on ${r.next.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}. Here are a few gift ideas: ${location.origin + location.pathname}#gifting`)}" target="_blank" rel="noopener">Message</a>` : esc(r.contact);
   return `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift reminders · ${rows.length}</h2></div><p class="muted">Send each one about a week before. The soonest are at the top.</p>
     ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>In</th><th>Occasion</th><th>Whose</th><th>Date</th><th>Contact</th></tr></thead><tbody>${rows.slice(0, 200).map((r) => `<tr${days(r) <= 7 ? ' style="font-weight:600"' : ''}><td class="num">${days(r)} days</td><td>${esc(occ(r.occasion))}</td><td>${esc(r.for_name || '')}</td><td class="num">${r.next.toLocaleDateString('en-IN')}</td><td>${wa(r)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
+}
+// ---------- coupons ----------
+const couponText = (c) => (c.kind === 'flat' ? inr(c.amount) + ' off' : c.amount + '% off') + (+c.max_off ? ` (up to ${inr(c.max_off)})` : '');
+const couponRules = (c) => [+c.min_order ? 'Over ' + inr(c.min_order) : '', c.first_order_only ? 'First order only' : '', +c.per_customer ? c.per_customer + ' per customer' : ''].filter(Boolean).join(' · ') || 'No rules';
+const couponDates = (c) => (c.starts_on || c.ends_on ? [c.starts_on ? 'from ' + niceDay(c.starts_on) : '', c.ends_on ? 'to ' + niceDay(c.ends_on) : ''].filter(Boolean).join(' ') : 'Always');
+function admCoupons() {
+  const list = admData('coupons'); if (!list) return loadingRow; const A = UI.adm; const orders = admData('orders') || [];
+  const used = (c) => orders.filter((o) => o.code === c.code && o.status !== 'Cancelled');
+  const edit = A.cEdit != null && A.cEdit !== '' ? list.find((c) => c.code === A.cEdit) : null; const e = edit || { kind: 'percent', tag: 'other', active: true };
+  const opt = (v, cur, l) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(l)}</option>`;
+  return `<form data-form="adm-coupon" class="form adm-card" style="max-width:640px;margin-bottom:28px" novalidate><h2 class="full" style="font-size:24px">${edit ? 'Change ' + esc(edit.code) : 'Make a coupon'}</h2>
+      <p class="full muted" style="margin:0">A code customers type at checkout. The <strong>welcome</strong> code you mark “Show on the site” is the one the banners, newsletter message and share page mention.</p>
+      <span class="field"><label for="cp-code">Code <span class="hint">letters and numbers, e.g. DIWALI15</span></label><input id="cp-code" maxlength="24" autocapitalize="characters" autocomplete="off" value="${esc(e.code || '')}" ${edit ? 'readonly' : ''}></span>
+      <span class="field"><label for="cp-tag">What it is for</label><select id="cp-tag">${Object.entries(COUPON_TAGS).map(([k, l]) => opt(k, e.tag, l)).join('')}</select></span>
+      <span class="field"><label for="cp-kind">Takes off</label><select id="cp-kind">${opt('percent', e.kind, 'A percentage (%)')}${opt('flat', e.kind, 'A fixed amount (₹)')}</select></span>
+      <span class="field"><label for="cp-amount">Amount <span class="hint">% or ₹, as chosen</span></label><input id="cp-amount" type="number" min="1" inputmode="numeric" value="${esc(e.amount || '')}"></span>
+      <span class="field"><label for="cp-min">Smallest order (₹) <span class="hint">0 for none</span></label><input id="cp-min" type="number" min="0" inputmode="numeric" value="${esc(e.min_order || 0)}"></span>
+      <span class="field"><label for="cp-max">Most it can take off (₹) <span class="hint">0 for no cap</span></label><input id="cp-max" type="number" min="0" inputmode="numeric" value="${esc(e.max_off || 0)}"></span>
+      <span class="field"><label for="cp-start">Starts <span class="hint">optional</span></label><input id="cp-start" type="date" value="${esc(e.starts_on || '')}"></span>
+      <span class="field"><label for="cp-end">Ends <span class="hint">optional, last day it works</span></label><input id="cp-end" type="date" value="${esc(e.ends_on || '')}"></span>
+      <span class="field"><label for="cp-uses">Times it can be used in all <span class="hint">0 for no limit</span></label><input id="cp-uses" type="number" min="0" inputmode="numeric" value="${esc(e.max_uses || 0)}"></span>
+      <span class="field"><label for="cp-per">Times per customer <span class="hint">0 for no limit</span></label><input id="cp-per" type="number" min="0" inputmode="numeric" value="${esc(e.per_customer || 0)}"></span>
+      <label class="check full"><input id="cp-first" type="checkbox" ${e.first_order_only ? 'checked' : ''}> First order only (customers who have ordered before can’t use it)</label>
+      <label class="check full"><input id="cp-featured" type="checkbox" ${e.featured ? 'checked' : ''}> Show on the site as the welcome offer <span class="hint">needs the Welcome tag and a percentage</span></label>
+      <label class="check full"><input id="cp-active" type="checkbox" ${e.active !== false ? 'checked' : ''}> On (untick to pause it)</label>
+      ${A.cErr ? `<span class="full err" role="alert">${esc(A.cErr)}</span>` : ''}${A.cMsg ? `<span class="full status ok" role="status">${esc(A.cMsg)}</span>` : ''}
+      <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="submit">${edit ? 'Save changes' : 'Make the coupon'}</button>${edit ? '<button class="btn small ghost" type="button" data-act="adm-coupon-edit" data-id="">Cancel</button>' : ''}</span></form>
+    <div class="adm-bar"><h2 style="font-size:24px">Coupons · ${list.length}</h2></div>
+    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Code</th><th>Takes off</th><th>Rules</th><th>When</th><th>Used</th><th>Status</th><th></th></tr></thead><tbody>${list.map((c) => { const u = used(c); const given = u.reduce((a, o) => a + (o.codeOff || 0), 0);
+      return `<tr><td class="num sel"><strong>${esc(c.code)}</strong><br><span class="pill">${esc(COUPON_TAGS[c.tag] || 'Other')}</span>${c.featured ? ' <span class="pill">On the site</span>' : ''}</td><td>${esc(couponText(c))}</td><td>${esc(couponRules(c))}</td><td>${esc(couponDates(c))}</td><td class="num">${u.length}${+c.max_uses ? ' of ' + c.max_uses : ''}${given ? `<br><span class="muted">${inr(given)} given</span>` : ''}</td><td>${pill(c.active !== false, 'On', 'Paused')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-coupon-edit" data-id="${esc(c.code)}">Change</button><button class="btn small ghost" type="button" data-act="adm-coupon-toggle" data-id="${esc(c.code)}">${c.active !== false ? 'Pause' : 'Turn on'}</button><button class="btn small ghost danger" type="button" data-act="adm-coupon-del" data-id="${esc(c.code)}">Delete</button></span></td></tr>`; }).join('')}</tbody></table></div>` : '<p class="muted">No coupons yet. Make one above.</p>'}`;
+}
+// keep the welcome offer shown on the site (banners, newsletter and share text) the same as the coupon marked for it
+async function syncWelcome(list) {
+  const f = list.find((c) => c.featured && c.active !== false && c.kind === 'percent' && c.tag === 'welcome');
+  const want = { welcomeCode: f ? f.code : '', welcomeOff: f ? +f.amount : 0 };
+  for (const k of Object.keys(want)) if (SET[k] !== want[k]) await dbPut('settings', { key: k, value: want[k] });
+  renderChrome();
+}
+async function saveCoupons(rows, del) {
+  const A = UI.adm; let list;
+  if (BTDB.on) {
+    for (const r of rows) {
+      if (r.featured) await BTDB.update('coupons', 'featured=eq.true&code=neq.' + encodeURIComponent(r.code), { featured: false });
+      await BTDB.upsert('coupons', [r]);
+    }
+    if (del) await BTDB.remove('coupons', 'code=eq.' + encodeURIComponent(del));
+    A.rows.coupons = null; list = await BTDB.list('coupons', 'order=created_at.desc&limit=500'); A.rows.coupons = list;
+  } else {
+    list = localCoupons().slice(); rows.forEach((r) => { if (r.featured) list.forEach((c) => { if (c.code !== r.code) c.featured = false; }); const i = list.findIndex((c) => c.code === r.code); if (i >= 0) list[i] = Object.assign({}, list[i], r); else list.unshift(r); });
+    if (del) list = list.filter((c) => c.code !== del);
+    S.db = Object.assign({}, S.db, { coupons: list }); save();
+  }
+  await syncWelcome(list);
 }
 function admCards() {
   const d = admData('cards'); if (!d) return loadingRow; const orders = admData('orders') || []; const A = UI.adm;
@@ -3319,6 +3391,7 @@ async function placeOrder(via) {
       co.placing = false; const m = String(err.message || '');
       if (/sign_in/.test(m)) { S.account = null; save(); UI.acct = { next: 'checkout' }; render(); say('Please sign in again to place your order.'); return; }
       if (/points_changed/.test(m)) { co.usePts = false; co.payErr = 'Your Bud Points balance changed. We’ve taken them off this order; please check the total and pay again.'; loadMine(true); render(); return; }
+      if (/bad_code|coupon_/.test(m)) { const why = couponMsg(m); co.code = ''; co.coupon = null; co.payErr = why + ' We took the code off this order; please check the total and pay again.'; render(); return; }
       if (/bad_card/.test(m)) co.gcard = null;
       co.payErr = /bad_card/.test(m) ? 'That gift card has no balance left, so we took it off. Please check the total and pay again.' : /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
         : /too_many/.test(m) ? 'We’ve had a lot of orders from this connection or number. Please message us on WhatsApp and we’ll place it for you.' : /bad_quantity/.test(m) ? 'That’s more than we can send in one order. Please lower the quantities, or message us for a bulk order.'
@@ -3441,7 +3514,7 @@ document.addEventListener('click', (e) => {
     case 'pts-use': UI.co.usePts = t.checked; render(); break;
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
     case 'card-remove': UI.co.gcard = null; render(); break;
-    case 'code-remove': UI.co.code = ''; UI.co.codeErr = null; render(); break;
+    case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
     case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
@@ -3482,6 +3555,9 @@ document.addEventListener('click', (e) => {
     case 'adm-ship': { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o || A.shipping) break; A.shipping = o.id; render();
       admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
     case 'pay-check': payCheck(d.id); break;
+    case 'adm-coupon-edit': UI.adm.cEdit = d.id || null; UI.adm.cErr = null; UI.adm.cMsg = null; render(); $('#cp-code')?.focus(); break;
+    case 'adm-coupon-toggle': { const c = (admData('coupons') || []).find((x) => x.code === d.id); if (!c) break; admDo(async () => { await saveCoupons([{ code: c.code, active: c.active === false }]); render(); }, c.active === false ? `${c.code} is on.` : `${c.code} is paused. Customers can’t use it.`); break; }
+    case 'adm-coupon-del': { if (!confirm('Delete coupon ' + d.id + '? Orders that used it keep their record.')) break; admDo(async () => { await saveCoupons([], d.id); if (UI.adm.cEdit === d.id) UI.adm.cEdit = null; render(); }, `${d.id} deleted.`); break; }
     case 'adm-delay-open': UI.adm.delayFor = d.id; UI.adm.delayErr = null; render(); $('#dl-reason')?.focus(); break;
     case 'adm-delay-cancel': UI.adm.delayFor = null; render(); break;
     case 'adm-delay-clear': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; admDo(async () => { await setDelay(o, null); UI.adm.delayFor = null; render(); }, `Delay cleared on ${d.id}.`); break; }
@@ -3555,10 +3631,17 @@ document.addEventListener('submit', (e) => {
     visitorSend('reviews', { product_id: id, name: R.name.slice(0, 60), rating: R.rating, body: R.body.slice(0, 1500), published: false }).then(() => { R.sent = true; R.open = false; track('review_sent', { id, rating: R.rating }); render(); }, (err) => { R.err = 'That didn’t go through (' + err.message + '). Please try again.'; render(); });
     return; }
   if (kind === 'code') { const v = $('#co-code').value.trim(); const bad = 'That code isn’t valid. Check the spelling, or leave it empty.'; const done = () => { render(); if (co.codeErr) $('#co-code')?.focus(); };
-    if (codeOk(v)) { co.code = v; co.codeErr = null; track('code_applied', { code: v.toUpperCase() }); say('Code applied.'); done(); return; }
-    if (!v || !BTDB.on) { co.codeErr = v ? bad : 'Enter a code.'; done(); return; }
-    BTDB.rpc('gift_card_balance', { card_code: v }).then((bal) => { if (+bal > 0) { co.gcard = { code: v.toUpperCase(), bal: +bal }; co.codeErr = null; track('gift_card_applied', {}); say('Gift card applied.'); } else co.codeErr = bal === 0 ? 'That gift card has been used up.' : bad; done(); },
-      (err) => { co.codeErr = /too_many/.test(err.message) ? 'Too many tries from this connection. Please wait an hour, or message us.' : 'We couldn’t check that code right now. Please try again.'; done(); });
+    if (!v) { co.codeErr = 'Enter a code.'; done(); return; }
+    const cl = cartLines(); const base = cl.reduce((a, l) => a + l.v.price * l.qty, 0) - ritualSaving(cl);
+    checkCoupon(v, base).then((c) => { co.coupon = c; co.code = c.code; co.codeErr = null; track('code_applied', { code: c.code }); say('Code applied.'); done(); }, (err) => {
+      const m = String(err.message || '');
+      if (/too_many/.test(m)) { co.codeErr = 'Too many tries from this connection. Please wait an hour, or message us.'; done(); return; }
+      if (/coupon_/.test(m)) { co.codeErr = couponMsg(m); done(); return; }
+      // not one of our codes: it may be a gift card
+      if (!BTDB.on) { co.codeErr = bad; done(); return; }
+      BTDB.rpc('gift_card_balance', { card_code: v }).then((bal) => { if (+bal > 0) { co.gcard = { code: v.toUpperCase(), bal: +bal }; co.codeErr = null; track('gift_card_applied', {}); say('Gift card applied.'); } else co.codeErr = bal === 0 ? 'That gift card has been used up.' : bad; done(); },
+        (e2) => { co.codeErr = /too_many/.test(e2.message) ? 'Too many tries from this connection. Please wait an hour, or message us.' : 'We couldn’t check that code right now. Please try again.'; done(); });
+    });
     return; }
   if (kind === 'track') { const id = $('#tr-id').value.trim().toUpperCase(); const ph = asPhone($('#tr-phone').value); UI.track = { id, phone: $('#tr-phone').value.trim() };
     const mine = S.orders.find((o) => o.id === id && o.contact.phone === ph); if (mine) { location.hash = 'order-' + id; return; }
@@ -3573,6 +3656,18 @@ document.addEventListener('submit', (e) => {
     return; }
   if (kind === 'owner-code') { const code = $('#own-code').value.replace(/\D/g, ''); if (code.length !== 6) { UI.adm.err = 'Enter the 6 digits from your authenticator app.'; render(); $('#own-code')?.focus(); return; }
     BTDB.verifyCode(code).then(() => { UI.adm.err = null; UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid|expired|code/i.test(err.message) ? 'That code didn’t work. Type the newest code the app shows.' : err.message; render(); $('#own-code')?.focus(); });
+    return; }
+  if (kind === 'adm-coupon') { const A = UI.adm; const val = (id) => $('#' + id).value.trim(); const n = (id) => Math.max(0, parseInt(val(id), 10) || 0);
+    const code = val('cp-code').toUpperCase(); const kind2 = val('cp-kind'); const row = { code, kind: kind2, amount: n('cp-amount'), min_order: n('cp-min'), max_off: kind2 === 'percent' ? n('cp-max') : 0, starts_on: val('cp-start') || null, ends_on: val('cp-end') || null,
+      max_uses: n('cp-uses'), per_customer: n('cp-per'), first_order_only: $('#cp-first').checked, tag: val('cp-tag'), featured: $('#cp-featured').checked, active: $('#cp-active').checked };
+    const exists = (admData('coupons') || []).some((c) => c.code === code); const editing = A.cEdit != null && A.cEdit !== '';
+    A.cMsg = null;
+    A.cErr = !/^[A-Z0-9][A-Z0-9_-]{1,23}$/.test(code) ? 'Use 2 to 24 letters or numbers for the code, for example DIWALI15.' : !editing && exists ? 'There is already a coupon with that code. Change it, or change the existing one.'
+      : !(row.amount > 0) ? 'Enter how much it takes off.' : kind2 === 'percent' && row.amount > 100 ? 'A percentage can’t be more than 100.' : row.starts_on && row.ends_on && row.ends_on < row.starts_on ? 'The end date is before the start date.'
+      : row.featured && (row.tag !== 'welcome' || kind2 !== 'percent') ? 'To show it on the site as the welcome offer, give it the Welcome tag and make it a percentage.' : null;
+    if (A.cErr) { render(); return; }
+    if (!BTDB.on) { row.starts_on = row.starts_on || ''; row.ends_on = row.ends_on || ''; }
+    admDo(async () => { await saveCoupons([row]); A.cEdit = null; A.cMsg = `${code} is saved.${row.featured ? ' The site now shows it as the welcome offer.' : ''}`; render(); });
     return; }
   if (kind === 'adm-delay') { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === f.dataset.id); if (!o) return;
     const pick = $('#dl-reason').value, note = $('#dl-note').value.trim(), until = $('#dl-until').value, tell = $('#dl-tell').checked;
