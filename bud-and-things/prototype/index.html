@@ -1339,18 +1339,19 @@ const SET_META = [
   ['grievanceName', 'Policies: grievance officer name', 'text'], ['grievancePhone', 'Policies: grievance officer phone', 'text'], ['courtCity', 'Policies: city whose courts have jurisdiction', 'text'], ['policyDate', 'Policies: last updated, e.g. 19 October 2026', 'text'],
   ['pickupPin', 'Pickup PIN code, where the courier collects parcels (turns on the live PIN check)', 'text'], ['shiprocketPickup', 'Shiprocket pickup location name, as in Shiprocket → Settings → Pickup addresses', 'text'], ['parcelKg', 'Usual parcel weight (kg)', 'num'], ['parcelL', 'Usual box length (cm)', 'num'], ['parcelB', 'Usual box width (cm)', 'num'], ['parcelH', 'Usual box height (cm)', 'num'],
   ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['orderAlerts', 'Email that gets a message for every new order (empty: the contact email)', 'text'], ['reminderDays', 'Gift reminders: send this many days before the date', 'num'], ['whatsappOn', 'Messages: send order updates on WhatsApp to customers who ask (turn on once the provider is set up)', 'bool'], ['smsOn', 'Messages: send order updates by SMS to customers who ask (turn on once the provider is set up)', 'bool'], ['pushOn', 'Messages: send notifications to customers who allowed them (turn on once push is set up)', 'bool'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
+  ['gstOn', 'GST: I am registered, make tax invoices', 'bool'], ['gstState', 'GST: my state', 'text'], ['invoicePrefix', 'Invoice number prefix (up to 3 letters, e.g. BT)', 'text'], ['hsnCandles', 'HSN: candles', 'text'], ['gstCandles', 'GST rate: candles (%)', 'num'], ['hsnObjects', 'HSN: Jesmonite objects', 'text'], ['gstObjects', 'GST rate: Jesmonite objects (%)', 'num'], ['hsnGifts', 'HSN: gift boxes', 'text'], ['gstGifts', 'GST rate: gift boxes (%)', 'num'],
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
 // settings with their own place in Owner view (the Coupons, Rewards and Invoices tabs)
-const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct'];
+const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct', 'gstin', 'gstOn', 'gstState', 'invoicePrefix', 'hsnCandles', 'gstCandles', 'hsnObjects', 'gstObjects', 'hsnGifts', 'gstGifts'];
 const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
 const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
-  bizName: '', bizAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
+  bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
@@ -2101,7 +2102,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band']] };
@@ -2114,7 +2115,7 @@ const pairRows = () => (DATA.pairings && DATA.pairings.length ? DATA.pairings : 
 const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
-  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'coupons' ? localCoupons() : k === 'rewards' ? { log: (S.db && S.db.pointsLog) || [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
+  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'invoices' ? ((S.db && S.db.invoices) || []) : k === 'coupons' ? localCoupons() : k === 'rewards' ? { log: (S.db && S.db.pointsLog) || [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
   if (!UI.adm.rows[k]) { if (UI.adm.loading !== k) setTimeout(() => admLoad(k)); return null; }
   return UI.adm.rows[k];
 }
@@ -2122,6 +2123,7 @@ async function admLoad(k) {
   const A = UI.adm; A.loading = k;
   try {
     if (k === 'orders') A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status }));
+    if (k === 'orders' || k === 'invoices') { try { A.rows.invoices = await BTDB.list('invoices', 'order=created_at.desc&limit=500'); } catch (e) { A.rows.invoices = []; } }
     if (k === 'reviews') A.rows.reviews = await BTDB.list('reviews', 'order=created_at.desc&limit=300');
     if (k === 'people') { const [a, b, c] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500'), BTDB.list('reminders', 'order=day.asc&limit=1000')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r)), c.map((r) => Object.assign({ table: 'reminders' }, r))); }
     if (k === 'coupons') { A.rows.coupons = await BTDB.list('coupons', 'order=created_at.desc&limit=500'); if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
@@ -2157,7 +2159,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
@@ -2168,7 +2170,7 @@ const DELAY_REASONS = ['Courier is running late', 'Bad weather', 'Festival rush'
 const canDelay = (o) => ['Placed', 'Packed', 'Shipped'].includes(o.status);
 const delayText = (dl) => `${esc(dl.reason)}${dl.note ? ': ' + esc(dl.note) : ''}${dl.until ? ' · now expected by ' + niceDay(dl.until) : ''}`;
 const delayNote = (o) => (o.delay ? `<span style="display:block;margin-top:6px"><span class="pill out">Delayed</span> <span class="muted" style="font-size:13px">${delayText(o.delay)}</span></span>` : '')
-  + (canDelay(o) ? `<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn small ghost" type="button" data-act="adm-delay-open" data-id="${esc(o.id)}">${o.delay ? 'Change delay' : 'Mark delayed'}</button>${o.delay ? `<button class="btn small ghost" type="button" data-act="adm-delay-clear" data-id="${esc(o.id)}">Clear delay</button>` : ''}</span>` : '');
+  + `<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${canDelay(o) ? `<button class="btn small ghost" type="button" data-act="adm-delay-open" data-id="${esc(o.id)}">${o.delay ? 'Change delay' : 'Mark delayed'}</button>${o.delay ? `<button class="btn small ghost" type="button" data-act="adm-delay-clear" data-id="${esc(o.id)}">Clear delay</button>` : ''}` : ''}${invoiceBtn(o)}</span>`;
 function delayForm(list) {
   const id = UI.adm.delayFor; const o = id && list.find((x) => x.id === id); if (!o) return '';
   const cur = o.delay || {}; const known = DELAY_REASONS.slice(0, -1).includes(cur.reason); const sel = cur.reason ? (known ? cur.reason : 'Something else') : DELAY_REASONS[0];
@@ -2306,6 +2308,14 @@ function admSettings() {
       <span class="field full"><label for="set-theme">Theme</label><select id="set-theme" data-act="adm-set" data-k="theme">${Object.entries(SKINS).map(([k, v]) => `<option value="${k}" ${k === skin('site') ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></span>
       <span class="field full"><label for="set-homeStyle">Home page</label><select id="set-homeStyle" data-act="adm-set" data-k="homeStyle">${Object.entries(HOME_STYLES).map(([k, v]) => `<option value="${k}" ${k === (HOME_STYLES[SET.homeStyle] ? SET.homeStyle : 'foyer') ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></span>
       <p class="muted full">${esc(SKINS[skin('site')].use)}</p></div>
+    <div class="form adm-card"><h2 class="full" style="font-size:24px">GST and invoices</h2>
+      <p class="muted full">Leave this off until you are registered: invoices are then a <strong>bill of supply</strong> with no tax. Once registered, add your details and switch it on; new invoices become <strong>tax invoices</strong> that show the GST split (CGST and SGST in your state, IGST for other states). Prices on the site are treated as including GST. Ask your accountant to confirm the HSN codes and rates before you switch it on.</p>
+      <label class="check full"><input type="checkbox" data-act="adm-set" data-k="gstOn" ${SET.gstOn ? 'checked' : ''}> I am registered for GST: make tax invoices</label>
+      ${field(['gstin', 'Your GSTIN (15 characters)', 'text'])}
+      <span class="field"><label for="set-gstState">Your state <span class="hint">where you are registered</span></label><select id="set-gstState" data-act="adm-set" data-k="gstState"><option value="">Choose a state</option>${STATES.map((x) => `<option ${SET.gstState === x ? 'selected' : ''}>${x}</option>`).join('')}</select></span>
+      ${field(['invoicePrefix', 'Invoice number prefix (up to 3 letters)', 'text'])}
+      ${GST_CATS.map(([l, h, r]) => `${field([h, 'HSN code · ' + l, 'text'])}${field([r, 'GST rate % · ' + l, 'num'])}`).join('')}
+      <p class="muted full" style="margin:0">Your business name and registered address come from the Policies boxes below. Invoice numbers look like ${esc((String(SET.invoicePrefix || 'BT').replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 3) || 'BT'))}/${(() => { const n = new Date(); const y = n.getMonth() >= 3 ? n.getFullYear() : n.getFullYear() - 1; return String(y % 100).padStart(2, '0') + '-' + String((y + 1) % 100).padStart(2, '0'); })()}/0001 and start again each April.</p></div>
     <div class="form adm-card">${SET_META.filter((m) => !CS_KEYS.includes(m[0]) && !THEME_KEYS.includes(m[0]) && !ELSEWHERE_KEYS.includes(m[0])).map(field).join('')}</div>
     <details class="adm-group"><summary>Product and ritual names to use above</summary><p class="muted num" style="padding:12px 0">${P.map((p) => esc(p.id)).join(', ')}</p><p class="muted num">Rituals: ${PAIRINGS.map((x) => esc(x.id)).join(', ')}</p></details>`;
 }
@@ -2331,6 +2341,107 @@ function admReminders(list) {
   return `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift reminders · ${rows.length}</h2></div><p class="muted">Send each one about a week before. The soonest are at the top.</p>
     ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>In</th><th>Occasion</th><th>Whose</th><th>Date</th><th>Contact</th></tr></thead><tbody>${rows.slice(0, 200).map((r) => `<tr${days(r) <= 7 ? ' style="font-weight:600"' : ''}><td class="num">${days(r)} days</td><td>${esc(occ(r.occasion))}</td><td>${esc(r.for_name || '')}</td><td class="num">${r.next.toLocaleDateString('en-IN')}</td><td>${wa(r)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
 }
+// ---------- GST and invoices ----------
+// Invoices are made from Owner view for a paid order. With GST switched off (not registered yet) they are a "Bill of
+// supply" with no tax; with it on they are a "Tax invoice" that splits the GST (prices on the site include GST).
+// Amounts are kept in paise. The number and date are given by the database, in one step (issue_invoice).
+const GST_CATS = [['Candles', 'hsnCandles', 'gstCandles', 'candles'], ['Jesmonite objects', 'hsnObjects', 'gstObjects', 'jesmonite'], ['Gift boxes', 'hsnGifts', 'gstGifts', 'gifts']];
+const gstCatOf = (cat) => GST_CATS.find((c) => c[3] === cat) || GST_CATS[1];
+const rs = (p) => '₹' + (p / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const lineCat = (l) => { const m = skuMap[l.sku]; return m && m.p ? m.p.cat : 'jesmonite'; };
+function invoiceReady(o) {
+  if (!SET.gstOn) return '';
+  if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(String(SET.gstin || '').trim().toUpperCase())) return 'GST is on, but the GSTIN in Settings isn’t a valid 15-character number.';
+  if (!SET.gstState) return 'GST is on: choose your state under Settings → GST and invoices.';
+  if (!SET.bizName || !SET.bizAddress) return 'GST is on: add your business name and registered address under Settings (Policies).';
+  const miss = GST_CATS.find((c) => o.items.some((l) => gstCatOf(lineCat(l)) === c) && !String(SET[c[1]] || '').trim());
+  return miss ? `Add the HSN code for ${miss[0].toLowerCase()} under Settings → GST and invoices.` : '';
+}
+function invoiceSnap(o) {
+  const gst = !!SET.gstOn; const inter = gst && !!o.address.state && o.address.state !== SET.gstState;
+  const lines = o.items.map((l) => { const c = gstCatOf(lineCat(l)); return { name: l.name + (l.label ? ' · ' + l.label : ''), qty: l.qty, hsn: gst ? String(SET[c[1]] || '').trim() : '', rate: gst ? +SET[c[2]] || 0 : 0, gross: Math.round(l.price * l.qty * 100), disc: 0 }; });
+  // the ritual saving, coupon and Bud Points come off the price of the pieces, shared in proportion to their price
+  const disc = Math.round(((o.ritual || 0) + (o.codeOff || 0) + (o.pointsUsed || 0)) * 100); const gsum = lines.reduce((a, l) => a + l.gross, 0) || 1; let left = disc;
+  lines.forEach((l, i) => { l.disc = i === lines.length - 1 ? left : Math.min(left, Math.floor(disc * l.gross / gsum)); left -= l.disc; });
+  const top = Math.max(0, ...lines.map((l) => l.rate));
+  [['Shipping', o.ship], ['Gift wrap', o.wrap], ['Cash on delivery fee', o.cod]].forEach(([name, v]) => { if (+v > 0) lines.push({ name, qty: 1, hsn: '', rate: gst ? top : 0, gross: Math.round(v * 100), disc: 0 }); });
+  const t = { discount: disc, taxable: 0, cgst: 0, sgst: 0, igst: 0, total: 0 };
+  lines.forEach((l) => { l.net = l.gross - l.disc; l.cgst = l.sgst = l.igst = 0;
+    if (gst) { l.taxable = Math.round(l.net * 100 / (100 + l.rate)); const tax = l.net - l.taxable; if (inter) l.igst = tax; else { l.cgst = Math.round(tax / 2); l.sgst = tax - l.cgst; } } else l.taxable = l.net;
+    t.taxable += l.taxable; t.cgst += l.cgst; t.sgst += l.sgst; t.igst += l.igst; t.total += l.net; });
+  const a = o.address || {};
+  return { gst, inter, placeOfSupply: a.state || '', orderId: o.id, orderDate: o.placedAt, method: o.method, lines, totals: t,
+    seller: { name: SET.bizName || 'BUD & THINGS', address: SET.bizAddress ? SET.bizAddress + ', India' : '', gstin: gst ? String(SET.gstin).trim().toUpperCase() : '', email: SET.email || '' },
+    buyer: { name: (o.contact || {}).name || '', phone: (o.contact || {}).phone || '', email: (o.contact || {}).email || '', line1: a.line1 || '', line2: a.line2 || '', city: a.city || '', pin: a.pin || '', state: a.state || '' } };
+}
+const INV_CSS = `.inv{font:14px/1.5 Lato,Arial,sans-serif;color:#2b1d14;background:#fff;max-width:820px;margin:0 auto;padding:28px;box-sizing:border-box;position:relative}.inv *{box-sizing:border-box}.inv h1{font:600 26px/1.2 'Cormorant Garamond',Georgia,serif;margin:0 0 4px}.inv .inv-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid #2b1d14;padding-bottom:14px;margin-bottom:16px}.inv .inv-meta{text-align:right;min-width:200px}.inv .inv-meta div{white-space:nowrap}.inv .inv-cols{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:18px}.inv .inv-cols>div{flex:1 1 240px;min-width:0}.inv h2{font:700 11px/1.4 Lato,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;margin:0 0 4px;color:#7a5a45}.inv .inv-tw{overflow-x:auto}.inv table{width:100%;border-collapse:collapse;font-size:13px}.inv th,.inv td{padding:7px 8px;border-bottom:1px solid #e5d8c8;text-align:right;vertical-align:top}.inv th:first-child,.inv td:first-child{text-align:left}.inv th{background:#f4ebdf;font-weight:700;white-space:nowrap}.inv tfoot td{font-weight:700;border-bottom:0}.inv .inv-sum{margin-left:auto;margin-top:14px;max-width:320px}.inv .inv-sum div{display:flex;justify-content:space-between;gap:16px;padding:3px 0}.inv .inv-sum .grand{border-top:2px solid #2b1d14;font-weight:700;font-size:16px;margin-top:4px;padding-top:6px}.inv .inv-note{margin-top:22px;font-size:12px;color:#5a4636}.inv .inv-sign{margin-top:34px;text-align:right;font-size:13px}.inv .inv-void{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font:700 72px/1 Lato,Arial,sans-serif;color:rgba(163,71,43,.28);border:6px solid rgba(163,71,43,.28);padding:6px 24px;pointer-events:none;letter-spacing:.1em}@media (max-width:560px){.inv{padding:16px}.inv .inv-meta{text-align:left}.inv .inv-void{font-size:44px}}@media print{@page{size:A4;margin:12mm}.inv{padding:0;max-width:none}}`;
+function invoiceHTML(inv) {
+  const d = inv.data, gst = d.gst, cn = inv.kind === 'credit_note', t = d.totals, b = d.buyer, sl = d.seller; const void_ = inv.status === 'Void';
+  const title = cn ? 'Credit note' : gst ? 'Tax invoice' : 'Bill of supply';
+  const head = gst ? ['Item', 'HSN', 'Qty', 'Taxable', 'Rate'].concat(d.inter ? ['IGST'] : ['CGST', 'SGST'], ['Amount']) : ['Item', 'Qty', 'Price', 'Discount', 'Amount'];
+  const row = (l) => '<tr><td>' + esc(l.name) + '</td>' + (gst ? `<td>${esc(l.hsn || '')}</td><td>${l.qty}</td><td>${rs(l.taxable)}</td><td>${l.rate}%</td>${d.inter ? `<td>${rs(l.igst)}</td>` : `<td>${rs(l.cgst)}</td><td>${rs(l.sgst)}</td>`}<td>${rs(l.net)}</td>` : `<td>${l.qty}</td><td>${rs(Math.round(l.gross / l.qty))}</td><td>${l.disc ? '−' + rs(l.disc) : '—'}</td><td>${rs(l.net)}</td>`) + '</tr>';
+  const sum = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
+  return `<style>${INV_CSS}</style><div class="inv" id="inv-sheet">${void_ ? '<div class="inv-void" aria-hidden="true">VOID</div>' : ''}
+    <div class="inv-top"><div><h1>${esc(title)}</h1><strong>${esc(sl.name)}</strong><div>${esc(sl.address)}</div>${sl.gstin ? `<div>GSTIN: ${esc(sl.gstin)}</div>` : ''}${sl.email ? `<div>${esc(sl.email)}</div>` : ''}</div>
+      <div class="inv-meta"><div><strong>No.</strong> ${esc(inv.id)}</div><div><strong>Date</strong> ${new Date(d.date + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div><div><strong>Order</strong> ${esc(d.orderId)}</div>${cn ? `<div><strong>Against</strong> ${esc(inv.against || d.against || '')}</div>` : ''}${gst ? `<div><strong>Place of supply</strong> ${esc(d.placeOfSupply)}</div>` : ''}</div></div>
+    <div class="inv-cols"><div><h2>Billed to</h2><strong>${esc(b.name)}</strong><div>${esc(b.phone)}${b.email ? ' · ' + esc(b.email) : ''}</div></div><div><h2>Delivered to</h2><div>${[b.line1, b.line2, b.city + ' ' + b.pin, b.state].filter((x) => String(x).trim()).map(esc).join(', ')}</div></div></div>
+    <div class="inv-tw"><table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${d.lines.map(row).join('')}</tbody></table></div>
+    <div class="inv-sum">${t.discount && gst ? sum('Discounts already taken off', '−' + rs(t.discount)) : ''}${gst ? sum('Taxable value', rs(t.taxable)) : ''}${gst && !d.inter ? sum('CGST', rs(t.cgst)) + sum('SGST', rs(t.sgst)) : ''}${gst && d.inter ? sum('IGST', rs(t.igst)) : ''}${sum(cn ? 'Total credited' : 'Total', rs(t.total), 'grand')}</div>
+    ${cn ? `<p class="inv-note"><strong>Reason:</strong> ${esc(d.reason || '')}</p>` : ''}${void_ ? `<p class="inv-note"><strong>Cancelled:</strong> ${esc(inv.void_reason || '')}</p>` : ''}
+    <p class="inv-note">${gst ? 'Prices include GST. Tax payable on reverse charge: No.' : 'Issued by a supplier not registered under GST. No tax is charged.'} ${d.method === 'Cash on delivery' ? 'To be paid on delivery.' : ''}</p>
+    <div class="inv-sign">For ${esc(sl.name)}<br><br>Authorised signatory</div></div>`;
+}
+function printInvoice(inv) {
+  const w = window.open('', '_blank'); if (!w) { say('Your browser blocked the print window. Allow pop-ups for this site and try again.'); return; }
+  w.document.write(`<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><title>${esc(inv.id)}</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#fff">${invoiceHTML(inv)}</body></html>`);
+  w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (e) { /* the owner can print from the window */ } }, 500);
+}
+const invMsg = (m) => /not_ready/.test(m) ? 'The order isn’t paid yet, or it was cancelled.' : /already_invoiced/.test(m) ? 'That order already has an invoice.' : /already_credited/.test(m) ? 'That invoice already has a credit note.' : /has_credit_note/.test(m) ? 'That invoice has a credit note, so it can’t be cancelled.'
+  : /no_invoice|not_found/.test(m) ? 'That invoice can’t be found, or it is already void.' : /bad_invoice/.test(m) ? 'Add a reason (up to 200 characters).' : m;
+const invoiceRows = () => admData('invoices') || [];
+const invoiceOf = (orderId) => invoiceRows().find((i) => i.order_id === orderId && i.kind === 'invoice' && i.status === 'Issued');
+const invoiceBtn = (o) => { const i = invoiceOf(o.id); return i ? `<button class="btn small ghost" type="button" data-act="adm-inv-view" data-id="${esc(i.id)}">Invoice</button>` : ['Placed', 'Packed', 'Shipped', 'Delivered'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-inv-make" data-id="${esc(o.id)}">Make invoice</button>` : ''; };
+async function issueInvoice(o, kind, against, reason) {
+  const A = UI.adm; const err = invoiceReady(o); if (err) throw new Error(err);
+  const snap = invoiceSnap(o); if (kind === 'credit_note') { snap.reason = reason; snap.against = against; }
+  let row;
+  if (BTDB.on) row = await BTDB.rpc('issue_invoice', { order_id_in: o.id, kind_in: kind, against_in: against || null, snap });
+  else { // the same rules as issue_invoice() in schema.sql, kept in this browser
+    const list = (S.db && S.db.invoices) || []; const bad = (c) => { throw new Error(c); };
+    if (kind === 'invoice') { if (['Awaiting payment', 'Cancelled'].includes(o.status)) bad('not_ready'); if (list.some((i) => i.order_id === o.id && i.kind === 'invoice' && i.status === 'Issued')) bad('already_invoiced'); }
+    else { if (!list.some((i) => i.id === against && i.kind === 'invoice' && i.status === 'Issued')) bad('no_invoice'); if (!reason) bad('bad_invoice'); if (list.some((i) => i.against === against && i.kind === 'credit_note' && i.status === 'Issued')) bad('already_credited'); }
+    const now = new Date(); const yy = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1; const fy = String(yy % 100).padStart(2, '0') + '-' + String((yy + 1) % 100).padStart(2, '0');
+    const seq = list.filter((i) => i.kind === kind && i.fy === fy).length + 1; const pre = String(SET.invoicePrefix || 'BT').replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 3) || 'BT';
+    const id = kind === 'invoice' ? `${pre}/${fy}/${String(seq).padStart(4, '0')}` : `${pre}CN/${fy}/${String(seq).padStart(4, '0')}`;
+    row = { id, kind, order_id: o.id, fy, seq, against: kind === 'credit_note' ? against : null, status: 'Issued', void_reason: null, data: Object.assign({}, snap, { number: id, date: dayISO(now) }), created_at: now.toISOString() };
+    S.db = Object.assign({}, S.db, { invoices: [row].concat(list) }); save();
+  }
+  if (BTDB.on) A.rows.invoices = [row].concat(A.rows.invoices || []);
+  track('invoice_made', { order: o.id, kind }); return row;
+}
+async function voidInvoice(id, reason) {
+  const A = UI.adm; let row;
+  if (BTDB.on) { row = await BTDB.rpc('void_invoice', { inv_id: id, reason }); A.rows.invoices = (A.rows.invoices || []).map((i) => (i.id === id ? row : i)); }
+  else { const list = (S.db && S.db.invoices) || []; const r = list.find((i) => i.id === id && i.status === 'Issued'); if (!r) throw new Error('not_found'); if (!reason) throw new Error('bad_invoice');
+    if (r.kind === 'invoice' && list.some((i) => i.against === r.id && i.kind === 'credit_note' && i.status === 'Issued')) throw new Error('has_credit_note');
+    Object.assign(r, { status: 'Void', void_reason: reason, voided_at: new Date().toISOString() }); S.db = Object.assign({}, S.db, { invoices: list.slice() }); save(); row = r; }
+  track('invoice_void', { id }); return row;
+}
+function admInvoices() {
+  const list = admData('invoices'); if (!list) return loadingRow; const A = UI.adm;
+  const view = A.invView && list.find((i) => i.id === A.invView); const act = A.invAct && list.find((i) => i.id === A.invAct.id);
+  const banner = SET.gstOn ? `<div class="status ok">GST is <strong>on</strong>: new invoices are tax invoices${SET.gstin ? ' for GSTIN ' + esc(SET.gstin) : ''}. <button class="linkbtn" type="button" data-act="adm-tab" data-v="settings">Change in Settings</button></div>`
+    : `<div class="status">GST is <strong>off</strong>: new invoices are a bill of supply with no tax, as you aren’t registered yet. Once you register, switch it on and add your details in <button class="linkbtn" type="button" data-act="adm-tab" data-v="settings">Settings → GST and invoices</button>.</div>`;
+  const actForm = act ? `<form data-form="adm-inv-act" class="form adm-card" style="max-width:560px;margin:0 0 24px" novalidate><h2 class="full" style="font-size:24px">${A.invAct.kind === 'void' ? 'Cancel' : 'Credit note for'} ${esc(act.id)}</h2>
+    <p class="full muted" style="margin:0">${A.invAct.kind === 'void' ? 'The invoice stays on record marked Void and its number is never reused. Use this only for a mistake, before the sale went ahead. To correct it, cancel it and make a new invoice from the order.' : 'Use this when goods are returned or the money is refunded after the sale: it credits the whole invoice and gets its own number.'}</p>
+    <span class="field full"><label for="ia-reason">Reason</label><input id="ia-reason" maxlength="200" autocomplete="off"></span>${A.invErr ? `<span class="full err" role="alert">${esc(A.invErr)}</span>` : ''}
+    <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="submit">${A.invAct.kind === 'void' ? 'Cancel the invoice' : 'Make the credit note'}</button><button class="btn small ghost" type="button" data-act="adm-inv-close">Back</button></span></form>` : '';
+  const preview = view ? `<div class="adm-card" style="margin:0 0 24px"><div class="adm-bar"><h2 style="font-size:24px">${esc(view.id)}${view.status === 'Void' ? ' · Void' : ''}</h2><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" type="button" data-act="adm-inv-print" data-id="${esc(view.id)}">Print or save as PDF</button>${view.status === 'Issued' ? `<button class="btn small ghost" type="button" data-act="adm-inv-void" data-id="${esc(view.id)}">Cancel invoice</button>${view.kind === 'invoice' ? `<button class="btn small ghost" type="button" data-act="adm-inv-credit" data-id="${esc(view.id)}">Credit note</button>` : ''}` : ''}<button class="btn small ghost" type="button" data-act="adm-inv-close">Close</button></span></div><div style="overflow-x:auto;border:1px solid var(--line)">${invoiceHTML(view)}</div></div>` : '';
+  return `${banner}<div style="height:20px"></div>${actForm}${preview}<div class="adm-bar"><h2 style="font-size:24px">Invoices and credit notes · ${list.length}</h2>${list.length ? '<button class="btn small ghost" type="button" data-act="adm-inv-csv">Download as a spreadsheet</button>' : ''}</div>
+    <p class="muted">Make an invoice from an order in the Orders tab (Make invoice). Numbers run in order each financial year (April to March) and are never reused.</p>
+    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Number</th><th>Date</th><th>Order</th><th>Customer</th><th>Total</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody>${list.map((i) => `<tr><td class="num sel"><strong>${esc(i.id)}</strong></td><td class="num">${new Date(i.data.date + 'T12:00:00').toLocaleDateString('en-IN')}</td><td class="num">${esc(i.order_id)}</td><td>${esc(i.data.buyer.name)}</td><td class="num">${i.kind === 'credit_note' ? '−' : ''}${rs(i.data.totals.total)}</td><td>${i.kind === 'credit_note' ? 'Credit note' : i.data.gst ? 'Tax invoice' : 'Bill of supply'}</td><td>${pill(i.status === 'Issued', 'Issued', 'Void')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-inv-view" data-id="${esc(i.id)}">View</button><button class="btn small ghost" type="button" data-act="adm-inv-print" data-id="${esc(i.id)}">Print</button></span></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No invoices yet.</p>'}`;
+}
+
 // ---------- rewards (Bud Points) ----------
 // Points a customer has: earned on delivered orders, minus what they spent, plus what the owner gave or took back by hand
 function pointsByCustomer(orders, log) {
@@ -3542,7 +3653,7 @@ document.addEventListener('click', (e) => {
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
-    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -3583,6 +3694,13 @@ document.addEventListener('click', (e) => {
       admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
     case 'pay-check': payCheck(d.id); break;
     case 'adm-csv-points': downloadCSV('bud-points', pointsByCustomer(admData('orders') || [], admData('rewards').log).map((r) => ({ email: r.email, name: r.name, orders: r.orders, earned: r.earned, spent: r.used, given_by_owner: r.adj, coming: r.pending, can_spend: r.available })), ['email', 'name', 'orders', 'earned', 'spent', 'given_by_owner', 'coming', 'can_spend']); break;
+    case 'adm-inv-view': UI.adm.tab = 'invoices'; UI.adm.invView = d.id; UI.adm.invAct = null; render(); window.scrollTo({ top: 0 }); break;
+    case 'adm-inv-close': UI.adm.invView = null; UI.adm.invAct = null; UI.adm.invErr = null; render(); break;
+    case 'adm-inv-print': { const i = invoiceRows().find((x) => x.id === d.id); if (i) printInvoice(i); break; }
+    case 'adm-inv-void': case 'adm-inv-credit': UI.adm.invAct = { id: d.id, kind: a === 'adm-inv-void' ? 'void' : 'credit' }; UI.adm.invErr = null; render(); $('#ia-reason')?.focus(); break;
+    case 'adm-inv-make': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const why = invoiceReady(o); if (why) { say(why); break; }
+      admDo(async () => { const row = await issueInvoice(o, 'invoice'); UI.adm.tab = 'invoices'; UI.adm.invView = row.id; UI.adm.invAct = null; render(); window.scrollTo({ top: 0 }); }, 'Invoice made.'); break; }
+    case 'adm-inv-csv': downloadCSV('bud-and-things-invoices', invoiceRows().map((i) => ({ number: i.id, date: i.data.date, type: i.kind === 'credit_note' ? 'Credit note' : i.data.gst ? 'Tax invoice' : 'Bill of supply', order: i.order_id, customer: i.data.buyer.name, state: i.data.placeOfSupply, taxable: (i.data.totals.taxable / 100).toFixed(2), cgst: (i.data.totals.cgst / 100).toFixed(2), sgst: (i.data.totals.sgst / 100).toFixed(2), igst: (i.data.totals.igst / 100).toFixed(2), total: (i.data.totals.total / 100).toFixed(2), status: i.status, against: i.against || '', reason: i.void_reason || '' })), ['number', 'date', 'type', 'order', 'customer', 'state', 'taxable', 'cgst', 'sgst', 'igst', 'total', 'status', 'against', 'reason']); break;
     case 'adm-coupon-edit': UI.adm.cEdit = d.id || null; UI.adm.cErr = null; UI.adm.cMsg = null; render(); $('#cp-code')?.focus(); break;
     case 'adm-coupon-toggle': { const c = (admData('coupons') || []).find((x) => x.code === d.id); if (!c) break; admDo(async () => { await saveCoupons([{ code: c.code, active: c.active === false }]); render(); }, c.active === false ? `${c.code} is on.` : `${c.code} is paused. Customers can’t use it.`); break; }
     case 'adm-coupon-del': { if (!confirm('Delete coupon ' + d.id + '? Orders that used it keep their record.')) break; admDo(async () => { await saveCoupons([], d.id); if (UI.adm.cEdit === d.id) UI.adm.cEdit = null; render(); }, `${d.id} deleted.`); break; }
@@ -3684,6 +3802,12 @@ document.addEventListener('submit', (e) => {
     return; }
   if (kind === 'owner-code') { const code = $('#own-code').value.replace(/\D/g, ''); if (code.length !== 6) { UI.adm.err = 'Enter the 6 digits from your authenticator app.'; render(); $('#own-code')?.focus(); return; }
     BTDB.verifyCode(code).then(() => { UI.adm.err = null; UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid|expired|code/i.test(err.message) ? 'That code didn’t work. Type the newest code the app shows.' : err.message; render(); $('#own-code')?.focus(); });
+    return; }
+  if (kind === 'adm-inv-act') { const A = UI.adm; const reason = $('#ia-reason').value.trim(); const act = A.invAct; if (!act) return; if (!reason) { A.invErr = 'Add a reason, so you remember why.'; render(); $('#ia-reason')?.focus(); return; }
+    admDo(async () => { try {
+      if (act.kind === 'void') { await voidInvoice(act.id, reason); A.invView = act.id; A.invAct = null; A.invErr = null; render(); }
+      else { const inv = invoiceRows().find((i) => i.id === act.id); const o = (admData('orders') || []).find((x) => x.id === inv.order_id); const row = await issueInvoice(o, 'credit_note', act.id, reason); A.invView = row.id; A.invAct = null; A.invErr = null; render(); }
+    } catch (e) { A.invErr = invMsg(String(e.message || e)); render(); throw new Error(A.invErr); } }, act.kind === 'void' ? 'Invoice cancelled. It stays on record as Void.' : 'Credit note made.');
     return; }
   if (kind === 'adm-points') { const A = UI.adm; const email = $('#pt-email').value.trim().toLowerCase(); const n = parseInt($('#pt-n').value, 10); const note = $('#pt-note').value.trim(); A.ptEmail = email; A.ptMsg = null;
     const known = pointsByCustomer(admData('orders') || [], admData('rewards').log).find((r) => r.email === email);

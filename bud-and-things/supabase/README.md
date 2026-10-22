@@ -194,3 +194,8 @@ Sign-in codes stay with Supabase's own email. Email always works. WhatsApp, SMS 
 - *WhatsApp:* a WhatsApp Business API account (through Gupshup, Interakt, Wati or Meta directly). Every business-started message needs a template approved by WhatsApp, which takes a day or two.
 - *SMS:* in India, SMS needs DLT registration (business entity, sender ID and each template) with the operator, then a sender such as MSG91 or Twilio. It takes about a week, so start early if wanted.
 - *Push:* there is no mobile app yet. Web push (browser notifications) needs a service worker and the site installed on the phone, and suits orders least; real app push can come with the app.
+
+
+## Coupons, points, invoices and delayed orders
+
+Run `schema.sql` again in the SQL editor (it is safe to repeat): it adds the `coupons`, `points_log`, `invoices` and `invoice_counters` tables, moves the old welcome code into the first coupon (HELLO10 or whatever Settings had), and adds `check_coupon`, `issue_invoice`, `void_invoice` and `set_delay`. Then redeploy the `notify` function so the "running late" email can be sent. Nothing else changes.
