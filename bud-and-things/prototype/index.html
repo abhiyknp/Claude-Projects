@@ -106,7 +106,7 @@ button, input, select { font: inherit; color: inherit; }
 
 /* header */
 .site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--head-bg); border-bottom: 1px solid var(--line); }
-.site-head .wrap { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.site-head > .wrap { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .logo { font-family: var(--display); font-size: 19px; letter-spacing: .14em; text-decoration: none; white-space: nowrap; }
 .nav { display: flex; gap: 26px; font-size: 15px; font-weight: 500; }
 .nav a { text-decoration: none; padding: 10px 0; border-bottom: 2px solid transparent; }
@@ -115,6 +115,7 @@ button, input, select { font: inherit; color: inherit; }
 .menu-btn { display: none; }
 @media (max-width: 860px) { .nav { display: none; } .menu-btn { display: inline-flex; } }
 .mobile-menu { border-top: 1px solid var(--line); background: var(--ivory); }
+#mobile-menu-inner { display: block; }
 .mobile-menu a { display: flex; align-items: center; min-height: 52px; text-decoration: none; border-bottom: 1px solid var(--linen); font-family: var(--display); font-size: 21px; }
 
 /* app mode */
@@ -453,6 +454,8 @@ body.app .toast { bottom: 96px; }
 .code-form > span { display: flex; gap: 8px; }
 .code-form input { flex: 1 1 auto; min-width: 0; text-transform: uppercase; }
 .code-form .err { color: var(--terra-ink); font-size: 14px; }
+.inv-card { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.inv-card .btn { margin-left: auto; }
 .code-on { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; color: var(--ok); }
 .faq details { border-bottom: 1px solid var(--line); padding: 4px 0; }
 .faq summary { cursor: pointer; font-weight: 600; padding: 14px 0; min-height: 44px; }
@@ -549,12 +552,17 @@ input[type="file"] { padding: 10px 12px; }
 .adm-steps { display: flex; flex-direction: column; gap: 6px; padding-left: 20px; margin: 0; }
 .btn.danger { color: var(--terra-ink); border-color: var(--terra-ink); }
 @media (max-width: 560px) { .adm-var { grid-template-columns: 1fr 1fr; } .adm-var input[name^="v-sku"] { grid-column: 1 / -1; } }
-@media (max-width: 560px) {
-  .toolbar .group:last-child { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 8px; width: 100%; }
-  .toolbar .group:last-child label { grid-row: 1; font-size: 12px; }
-  .toolbar .group:last-child select { grid-row: 2; min-height: 44px; font-size: 15px; padding: 0 6px; width: 100%; min-width: 0; }
-  .toolbar { margin-bottom: 18px; }
+/* shop filters: labels sit beside their menus on wide screens and above them on narrow ones; the menus share the row evenly */
+.toolbar .filters { flex-wrap: wrap; gap: 10px 16px; }
+.toolbar .tf { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.toolbar .tf select { min-width: 0; max-width: 100%; }
+@media (max-width: 900px) {
+  .toolbar .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 12px; width: 100%; }
+  .toolbar .tf { flex-direction: column; align-items: stretch; gap: 4px; }
+  .toolbar .tf label { font-size: 13px; }
+  .toolbar .tf select { width: 100%; min-height: 46px; font-size: 15px; padding: 0 10px; text-overflow: ellipsis; }
 }
+@media (max-width: 560px) { .toolbar .filters { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); } .toolbar .tf select { font-size: 14px; padding: 0 6px; } .toolbar { margin-bottom: 18px; } .toolbar .group:first-child .chip { flex: 1 1 auto; justify-content: center; } }
 /* Coming soon: one quiet page for visitors until launch */
 body.cs .proto, body.cs .site-head, body.cs .site-foot, body.cs .tabbar, body.cs #overlay { display: none !important; }
 body.cs main { padding-bottom: 0; }
@@ -1136,7 +1144,7 @@ if (S.account && window.BTDB && BTDB.on && !BTDB.customer()) S.account = null; /
 S.opening = 'house'; // the other intros (A, B, C) are moved to the web-intros-and-themes repository
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
 const coFresh = (contact, address) => ({ step: 'contact', contact: contact || {}, address: address || {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, gift: { on: false, wrap: false, name: '', phone: '', note: '', date: '' }, code: '', codeErr: null, optin: false });
-const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: coFresh(), toast: null, review: {}, restock: null, orderSync: {}, track: null, adm: { tab: 'orders', rows: {}, edit: null, q: '' }, gh: { cat: 'all', open: false }, na: 'all', acct: {} };
+const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: coFresh(), toast: null, review: {}, restock: null, orderSync: {}, invOf: {}, track: null, adm: { tab: 'orders', rows: {}, edit: null, q: '' }, gh: { cat: 'all', open: false }, na: 'all', acct: {} };
 
 
 // ---------- editable content: site text and settings ----------
@@ -1503,7 +1511,7 @@ function toggleSave(id) { const i = S.saved.indexOf(id); if (i >= 0) { S.saved.s
 
 // ---------- routing ----------
 function route() { const h = (location.hash || '#home').slice(1) || 'home'; return h; }
-window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false; UI.orderSync = {}; render(true); });
+window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false; UI.orderSync = {}; UI.invSync = {}; render(true); });
 
 // ---------- chrome ----------
 const NAV = [['shop', 'Shop'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story']];
@@ -1749,9 +1757,9 @@ function viewShop(cat) {
     <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px"><h1 tabindex="-1">${title}</h1><p class="muted" style="max-width:520px">${blurb}</p></div></div>
     <div class="toolbar"><div class="group" role="group" aria-label="Category">
       ${[['all', 'All', 'shop'], ['candles', 'Candles', 'candles'], ['jesmonite', 'Jesmonite Objects', 'jesmonite'], ['gifts', 'Gift boxes', 'gifts'], ['under-999', 'Under ₹999', 'under-999']].filter((c) => c[0] !== 'gifts' || P.some((p) => p.cat === 'gifts')).map(([k, l, h]) => `<a class="chip" href="#${h}"${sh.cat === k ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</div>
-      <div class="group"><label for="f-type">Type</label><select id="f-type" data-act="shop-filter" data-k="type"><option value="all">All types</option>${types.map((t) => `<option ${sh.type === t ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>
-      <label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${occLive().map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
-      <label for="f-sort">Sort</label><select id="f-sort" data-act="shop-filter" data-k="sort"><option value="featured" ${sh.sort === 'featured' ? 'selected' : ''}>Featured</option><option value="low" ${sh.sort === 'low' ? 'selected' : ''}>Price: low to high</option><option value="high" ${sh.sort === 'high' ? 'selected' : ''}>Price: high to low</option></select></div></div>
+      <div class="group filters"><span class="tf"><label for="f-type">Type</label><select id="f-type" data-act="shop-filter" data-k="type"><option value="all">All types</option>${types.map((t) => `<option ${sh.type === t ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></span>
+      <span class="tf"><label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${occLive().map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
+      <span class="tf"><label for="f-sort">Sort</label><select id="f-sort" data-act="shop-filter" data-k="sort"><option value="featured" ${sh.sort === 'featured' ? 'selected' : ''}>Featured</option><option value="low" ${sh.sort === 'low' ? 'selected' : ''}>Price: low to high</option><option value="high" ${sh.sort === 'high' ? 'selected' : ''}>Price: high to low</option></select></span></div></div>
     ${promoBanners().replace('wrap promos', 'promos slim')}
     <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'piece' : 'pieces'}${+SET.ritualOff ? ` · <span class="save-note">Pair any candle with an object and save ${SET.ritualOff}%</span>` : ''}</p>
     ${list.length ? `<div class="grid" style="padding-bottom:var(--s7)">${cards.join('')}</div>` : `<div class="empty" style="margin-bottom:40px"><strong>Nothing matches these filters yet.</strong><span class="muted">Clear a filter, or try Find Your Feeling for suggestions.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="clear-filters">Clear filters</button><a class="btn small ghost" href="#feeling">Find Your Feeling</a></span></div>`}
@@ -1915,7 +1923,7 @@ function viewCheckout() {
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
   const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> ${t.code ? 'applied' : `needs ${inr(co.coupon.min_order)} of pieces in your cart`}</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
     + (co.gcard ? `<div class="code-on"><span>Gift card <strong>${esc(co.gcard.code)}</strong> applied</span><button class="linkbtn" type="button" data-act="card-remove">Remove</button></div>` : '')
-    + (codeOk(co.code) && co.gcard ? '' : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code or gift card?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit">Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`);
+    + (codeOk(co.code) && co.gcard ? '' : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code or gift card?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${codeOk(co.code) || co.gcard ? 'disabled' : ''} ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit" ${codeOk(co.code) || co.gcard ? 'disabled' : ''}>Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`);
   const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
   let main = '';
   if (co.step === 'contact') {
@@ -1984,12 +1992,15 @@ function payBox(o) {
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound();
   if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel) || JSON.stringify(d.delay) !== JSON.stringify(o.delay))) { o.status = d.status; o.parcel = d.parcel; o.delay = d.delay; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
+  if (BTDB.on && !(UI.invSync || (UI.invSync = {}))[id] && o.status !== 'Awaiting payment' && o.status !== 'Cancelled') { UI.invSync[id] = 1; BTDB.rpc('get_invoice', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.id && !UI.invOf[id]) { UI.invOf[id] = d; if (route() === 'order-' + id) render(); } }).catch(() => { /* no invoice yet: it shows once it is made */ }); }
+  const inv = BTDB.on ? UI.invOf[id] : invoiceOf(id);
   const idx = STATUSES.indexOf(o.status); const cod = o.method === 'Cash on delivery'; const unpaid = o.status === 'Awaiting payment', gone = o.status === 'Cancelled';
   const fresh = UI.justPlaced === id; const wa = waLink('Hello, a question about my order ' + id);
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
     <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.delay && canDelay(o) ? `<div class="status delayed" role="status"><strong>Running a little late.</strong> ${delayText(o.delay)}. Thank you for waiting; we’ll update this page as soon as it moves.</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
+      ${inv ? `<div class="status ok inv-card"><strong>Invoice ${esc(inv.id)}</strong><span>${esc(inv.data.gst ? 'Tax invoice' : 'Bill of supply')} for this order, ${inr(Math.round(inv.data.totals.total / 100))}.</span><button class="btn small ghost" type="button" data-act="inv-print" data-id="${esc(o.id)}">View or print invoice</button></div>` : ''}
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
       ${BTDB.on ? '' : '<p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>'}
@@ -2782,7 +2793,8 @@ function loadMine(force) {
 }
 function ptsBox(t) {
   const p = ptsMine(); if (!+SET.rewardPct || !S.account || !p.available) return '';
-  return `<label class="check pts-use"><input type="checkbox" data-act="pts-use" ${UI.co.usePts ? 'checked' : ''}> <span>Use my Bud Points <span class="hint">(${p.available} points, ${inr(p.available)} off)</span></span></label>`;
+  if (UI.co.usePts) return `<div class="code-on"><span>Bud Points <strong>${t.points} point${t.points === 1 ? "" : "s"}</strong> applied (${inr(t.points)} off)</span><button class="linkbtn" type="button" data-act="pts-remove">Remove</button></div>`;
+  return `<label class="check pts-use"><input type="checkbox" data-act="pts-use" > <span>Use my Bud Points <span class="hint">(${p.available} points, ${inr(p.available)} off)</span></span></label>`;
 }
 function orderRows(list) {
   return list.length ? `<ul class="order-list">${list.map((o) => `<li><a href="#order-${esc(o.id)}"><strong>${esc(o.id)}</strong><span class="muted">${new Date(o.placedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} · ${o.items.length} piece${o.items.length === 1 ? '' : 's'} · <span class="num">${inr(o.total)}</span></span><span class="pill ${esc(String(o.status).split(' ')[0])}">${esc(o.status)}</span></a></li>`).join('')}</ul>` : '<p class="muted">No orders yet.</p>';
@@ -3652,6 +3664,7 @@ document.addEventListener('click', (e) => {
     case 'walk-shop': track('walk_shop', { at: LC.p.toFixed(2) }); break;
     case 'review-open': UI.review[d.id] = { open: true }; render(); setTimeout(() => $('#rv-name')?.focus(), 0); break;
     case 'pts-use': UI.co.usePts = t.checked; render(); break;
+    case 'pts-remove': UI.co.usePts = false; render(); break;
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
@@ -3696,6 +3709,7 @@ document.addEventListener('click', (e) => {
       admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
     case 'pay-check': payCheck(d.id); break;
     case 'adm-csv-points': downloadCSV('bud-points', pointsByCustomer(admData('orders') || [], admData('rewards').log).map((r) => ({ email: r.email, name: r.name, orders: r.orders, earned: r.earned, spent: r.used, given_by_owner: r.adj, coming: r.pending, can_spend: r.available })), ['email', 'name', 'orders', 'earned', 'spent', 'given_by_owner', 'coming', 'can_spend']); break;
+    case 'inv-print': { const iv = BTDB.on ? UI.invOf[d.id] : invoiceOf(d.id); if (iv) printInvoice(iv); break; }
     case 'adm-inv-view': UI.adm.tab = 'invoices'; UI.adm.invView = d.id; UI.adm.invAct = null; render(); window.scrollTo({ top: 0 }); break;
     case 'adm-inv-close': UI.adm.invView = null; UI.adm.invAct = null; UI.adm.invErr = null; render(); break;
     case 'adm-inv-print': { const i = invoiceRows().find((x) => x.id === d.id); if (i) printInvoice(i); break; }
