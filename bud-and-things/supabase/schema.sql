@@ -447,6 +447,14 @@ begin
   return (select data || jsonb_build_object('status', status) from orders where id = upper(trim(order_id)) and phone = phone_no);
 end $$;
 
+-- the customer's own invoice for an order: the order number and the mobile number on it, as for get_order
+create or replace function get_invoice(order_id text, phone_no text) returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  perform hit('lookup', client_key(), 20, '1 hour');
+  return (select to_jsonb(i) from invoices i join orders o on o.id = i.order_id
+    where o.id = upper(trim(get_invoice.order_id)) and o.phone = phone_no and i.kind = 'invoice' and i.status = 'Issued' order by i.created_at desc limit 1);
+end $$;
+
 -- the owner cancels an order that hasn't shipped; its pieces go back into stock
 create or replace function cancel_order(order_id text) returns void language plpgsql security definer set search_path = public as $$
 declare r record; it jsonb;
@@ -876,6 +884,7 @@ revoke execute on function client_key() from public, anon, authenticated;
 revoke execute on function guard_visitor() from public, anon, authenticated;
 revoke execute on function place_order(jsonb) from public, anon;
 revoke execute on function get_order(text, text) from public;
+revoke execute on function get_invoice(text, text) from public;
 revoke execute on function cancel_order(text) from public, anon;
 revoke execute on function set_delay(text, jsonb) from public, anon;
 revoke execute on function coupon_off(text, int, text, boolean) from public, anon, authenticated;
@@ -891,6 +900,7 @@ revoke execute on function points_of(text) from public, anon, authenticated;
 revoke execute on function my_orders() from public, anon;
 grant execute on function my_orders() to authenticated;
 grant execute on function get_order(text, text) to anon, authenticated;
+grant execute on function get_invoice(text, text) to anon, authenticated;
 grant execute on function cancel_order(text) to authenticated;
 grant execute on function set_delay(text, jsonb) to authenticated;
 grant execute on function check_coupon(text, int) to anon, authenticated;

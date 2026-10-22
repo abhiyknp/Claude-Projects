@@ -1,7 +1,6 @@
 # BUD & THINGS: how the prototype is made
 
-This is the end-to-end workflow behind the clickable prototype: how the design was arrived at, how the shop and the
-3D house are built, how to change and test them, and how they are published. Decisions live in
+This is the end-to-end workflow behind the clickable prototype: how the design was arrived at, how the shop is built, how to change and test them, and how they are published. Decisions live in
 [README.md](README.md); this file is the *how*.
 
 - Live preview (public): https://abhiyknp.github.io/Claude-Projects/
@@ -44,7 +43,6 @@ bud-and-things/
   README.md                decisions, stack, catalogue and asset notes
   WORKFLOW.md              this file
   data/catalogue.draft.json
-  3d/
     houselib.py            shared Blender helpers: shapes, UVs, baking, panorama, export
     foyer.py               porch + foyer (Blender script)
     bedroom.py             bedroom (Blender script)
@@ -52,12 +50,9 @@ bud-and-things/
     index.html             the whole shop: one file, no build step
     config.js              where the database is (empty = demo mode)
     db.js                  the database link (window.BTDB): tables, sign-in, file uploads
-    house3d.js             opening D, the house (three.js)
     products3d.js          3D models of the products, shared by C and D
     assets/                brand images, oak texture
-    assets/house/          baked rooms: geometry modules, lightmaps, reflection panoramas
-    assets/house/sm/       half-size lightmaps for phones
-    assets/house/poster*.jpg  the porch, shown while the house loads
+    assets/house/          the two room panoramas used by the sample-room viewer
     vendor/three/          three.js 0.160.0 and the addons the page imports (MIT, see its LICENSE)
   supabase/
     schema.sql             tables, access rules, limits, place_order, get_order and cancel_order
@@ -65,7 +60,6 @@ bud-and-things/
   tools/
     preview.sh             local preview server
     test-flow.js           end-to-end shop test
-    test-house.js          screenshots of the house walk
     mock-supabase.js       in-memory stand-in for Supabase, for testing database mode
 .github/workflows/pages.yml  publishes prototype/ to GitHub Pages
 ```
@@ -113,12 +107,18 @@ bud-and-things/
 
 ---
 
-## 4. The 3D house: Blender to browser
+## 4. The 3D house (moved out)
 
-### 4.1 Pipeline
+The 3D house walk-through was taken off the site in October 2026. The Blender pipeline and the browser
+renderer now live in [abhiyknp/pixelpatra](https://github.com/abhiyknp/pixelpatra/tree/main/House_3D_Prototype);
+this repository's history still has the version that shipped here. The sample-room viewer on product pages
+(`prototype/room3d.js`) is a different feature and stays.
+
+---
+
+## 4.1 Pipeline
 
 ```
-3d/foyer.py, 3d/bedroom.py (+ houselib.py)
    │  build geometry with bmesh: boxes, arched openings cut with booleans, lathed forms
    │  stand-in "proxies" for the products, so their shadows are baked onto the shelves
    │  two UV maps per piece: "tile" (world-space, for repeating textures) and "lightmap" (packed)
@@ -128,7 +128,6 @@ bud-and-things/
    │  equirectangular panorama from inside the room         →  env.jpg / env-bed.jpg
    │  glTF export → converted to a JS module                →  foyer.js / bedroom.js
    ▼
-prototype/assets/house/  →  house3d.js loads it all and renders with three.js
 ```
 
 ### 4.2 Conventions to keep
@@ -154,10 +153,6 @@ prototype/assets/house/  →  house3d.js loads it all and renders with three.js
 Needs Python 3.13 with `pip install bpy opencv-python-headless`. Blender 5.2 runs headless; no GPU is needed.
 
 ```sh
-python3 bud-and-things/3d/foyer.py                        # full quality → prototype/assets/house
-python3 bud-and-things/3d/bedroom.py
-python3 bud-and-things/3d/bedroom.py /tmp/test --fast     # quick, grainy, ~2 min: check layout and errors
-python3 bud-and-things/3d/foyer.py --only=walls,niche     # re-bake just some pieces (UVs stay the same)
 ```
 
 On 4 CPU cores a full room takes about 45–50 minutes, mostly the 2048 px walls (about 8 minutes per state).
@@ -172,8 +167,6 @@ Always do a `--fast` run first. The foyer is about 2 MB of assets and the bedroo
    proxies and candle lights from the same page positions as the pieces. Set a resolution per piece.
 3. **Run it with `--fast`,** look at the panorama, then run it at full quality.
 4. **Add the pieces to `TOUR_ITEMS`** (a new room code, `hp: true` and walk positions as `at`), and add the room
-   to `ROOMS` in `house3d.js` (module, panorama, piece names).
-5. **In `house3d.js`,** add colours for the new pieces to `LOOK`, mood categories if they should recolour,
    camera keyframes to `PATH`, and the room's walk range to `roomAt`.
 6. **In `index.html`,** update the opening's rail, captions and section height, plus the `where` labels in the
    details panel.
@@ -181,7 +174,6 @@ Always do a `--fast` run first. The foyer is about 2 MB of assets and the bedroo
 
 ---
 
-## 5. The house at runtime (`prototype/house3d.js`)
 
 - **Loading:** both rooms' geometry modules, lightmaps and panoramas load behind a quiet "Opening the house…"
   progress line, then fade in. If WebGL or loading fails, the stage says so and shows the error.
@@ -230,7 +222,6 @@ no third-party script runs on the site.
 sh bud-and-things/tools/preview.sh &                        # http://localhost:8765/page.html
 node bud-and-things/tools/mock-supabase.js &                 # optional: a test database on :54321 (see supabase/README.md)
 node bud-and-things/tools/test-flow.js                       # cart → checkout → UPI → order → owner view → finder
-node bud-and-things/tools/test-house.js '[{"p":0.2,"w":1280},{"p":0.6,"w":390,"mood":"festive","focus":"chai-at-four"}]' /tmp
 ```
 
 - Both tests need Playwright with Chromium. WebGL runs on SwiftShader (software rendering), so the house shots
