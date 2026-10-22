@@ -1343,7 +1343,7 @@ const SET_META = [
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
 // settings with their own place in Owner view (the Coupons, Rewards and Invoices tabs)
-const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff'];
+const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct'];
 const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
@@ -2101,7 +2101,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band']] };
@@ -2114,7 +2114,7 @@ const pairRows = () => (DATA.pairings && DATA.pairings.length ? DATA.pairings : 
 const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
-  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'coupons' ? localCoupons() : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
+  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'coupons' ? localCoupons() : k === 'rewards' ? { log: (S.db && S.db.pointsLog) || [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
   if (!UI.adm.rows[k]) { if (UI.adm.loading !== k) setTimeout(() => admLoad(k)); return null; }
   return UI.adm.rows[k];
 }
@@ -2125,6 +2125,7 @@ async function admLoad(k) {
     if (k === 'reviews') A.rows.reviews = await BTDB.list('reviews', 'order=created_at.desc&limit=300');
     if (k === 'people') { const [a, b, c] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500'), BTDB.list('reminders', 'order=day.asc&limit=1000')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r)), c.map((r) => Object.assign({ table: 'reminders' }, r))); }
     if (k === 'coupons') { A.rows.coupons = await BTDB.list('coupons', 'order=created_at.desc&limit=500'); if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
+    if (k === 'rewards') { A.rows.rewards = { log: await BTDB.list('points_log', 'order=created_at.desc&limit=500') }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     if (k === 'cards') { const [a, b] = await Promise.all([BTDB.list('gift_cards', 'order=created_at.desc&limit=500'), BTDB.list('referrers', 'order=created_at.desc&limit=1000')]); A.rows.cards = { cards: a, refs: b }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     A.err = null;
   } catch (e) { A.rows[k] = A.rows[k] || []; A.err = e.message; }
@@ -2156,7 +2157,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, coupons: admCoupons, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
@@ -2330,6 +2331,32 @@ function admReminders(list) {
   return `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift reminders · ${rows.length}</h2></div><p class="muted">Send each one about a week before. The soonest are at the top.</p>
     ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>In</th><th>Occasion</th><th>Whose</th><th>Date</th><th>Contact</th></tr></thead><tbody>${rows.slice(0, 200).map((r) => `<tr${days(r) <= 7 ? ' style="font-weight:600"' : ''}><td class="num">${days(r)} days</td><td>${esc(occ(r.occasion))}</td><td>${esc(r.for_name || '')}</td><td class="num">${r.next.toLocaleDateString('en-IN')}</td><td>${wa(r)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
 }
+// ---------- rewards (Bud Points) ----------
+// Points a customer has: earned on delivered orders, minus what they spent, plus what the owner gave or took back by hand
+function pointsByCustomer(orders, log) {
+  const m = {}; const get = (em, nm) => (m[em] = m[em] || { email: em, name: nm || '', earned: 0, pending: 0, used: 0, adj: 0, orders: 0 });
+  orders.forEach((o) => { const em = String(o.email || (o.contact && o.contact.email) || '').toLowerCase(); if (!em) return; const c = get(em, o.contact && o.contact.name); c.orders++;
+    if (o.status === 'Delivered') c.earned += o.points || 0; if (['Placed', 'Packed', 'Shipped'].includes(o.status)) c.pending += o.points || 0; if (o.status !== 'Cancelled') c.used += o.pointsUsed || 0; });
+  log.forEach((x) => { get(String(x.email).toLowerCase()).adj += x.delta; });
+  return Object.values(m).map((c) => Object.assign(c, { available: Math.max(0, c.earned - c.used + c.adj) })).sort((a, b) => b.available - a.available || b.pending - a.pending);
+}
+function admRewards() {
+  const d = admData('rewards'); if (!d) return loadingRow; const A = UI.adm; const orders = admData('orders') || []; const rows = pointsByCustomer(orders, d.log);
+  return `<div class="form adm-card" style="max-width:640px;margin-bottom:28px"><h2 class="full" style="font-size:24px">Bud Points</h2>
+      <p class="full muted" style="margin:0">Customers earn points on every paid order once it is delivered (1 point is ₹1 off the pieces at checkout). A cancelled order gives back the points it used and earns none.</p>
+      <span class="field"><label for="set-rewardPct">Points given back (% of each order, 0 to switch rewards off)</label><input id="set-rewardPct" data-act="adm-set" data-k="rewardPct" type="number" min="0" max="100" value="${esc(SET.rewardPct)}"></span></div>
+    <form data-form="adm-points" class="form adm-card" style="max-width:640px;margin-bottom:28px" novalidate><h2 class="full" style="font-size:24px">Give or take back points</h2>
+      <p class="full muted" style="margin:0">For a thank-you, an apology or a mistake. Use a minus sign to take points back. Customers see the new balance in their account.</p>
+      <span class="field full"><label for="pt-email">Customer’s email</label><input id="pt-email" type="email" list="pt-list" autocomplete="off" placeholder="name@example.com" value="${esc(A.ptEmail || '')}"><datalist id="pt-list">${rows.map((r) => `<option value="${esc(r.email)}">${esc(r.name)}</option>`).join('')}</datalist></span>
+      <span class="field"><label for="pt-n">Points <span class="hint">e.g. 100 or -50</span></label><input id="pt-n" type="number" inputmode="numeric" step="1"></span>
+      <span class="field"><label for="pt-note">Why</label><input id="pt-note" maxlength="120" placeholder="Thank you for the review"></span>
+      ${A.ptErr ? `<span class="full err" role="alert">${esc(A.ptErr)}</span>` : ''}${A.ptMsg ? `<span class="full status ok" role="status">${esc(A.ptMsg)}</span>` : ''}
+      <span class="full"><button class="btn small" type="submit">Save points</button></span></form>
+    <div class="adm-bar"><h2 style="font-size:24px">Customers with points · ${rows.filter((r) => r.available || r.pending || r.adj).length}</h2>${rows.length ? '<button class="btn small ghost" type="button" data-act="adm-csv-points">Download as a spreadsheet</button>' : ''}</div>
+    ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Orders</th><th>Earned</th><th>Spent</th><th>Given by you</th><th>Coming</th><th>Can spend</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${esc(r.name || '')}<br><span class="muted num">${esc(r.email)}</span></td><td class="num">${r.orders}</td><td class="num">${r.earned}</td><td class="num">${r.used}</td><td class="num">${r.adj > 0 ? '+' : ''}${r.adj}</td><td class="num">${r.pending}</td><td class="num"><strong>${r.available}</strong></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No customers yet.</p>'}
+    ${d.log.length ? `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Points you gave or took back</h2></div><div class="table-wrap"><table><thead><tr><th>When</th><th>Customer</th><th>Points</th><th>Why</th></tr></thead><tbody>${d.log.slice(0, 50).map((x) => `<tr><td class="num">${new Date(x.created_at).toLocaleDateString('en-IN')}</td><td class="num">${esc(x.email)}</td><td class="num">${x.delta > 0 ? '+' : ''}${x.delta}</td><td>${esc(x.note || '')}</td></tr>`).join('')}</tbody></table></div>` : ''}`;
+}
+
 // ---------- coupons ----------
 const couponText = (c) => (c.kind === 'flat' ? inr(c.amount) + ' off' : c.amount + '% off') + (+c.max_off ? ` (up to ${inr(c.max_off)})` : '');
 const couponRules = (c) => [+c.min_order ? 'Over ' + inr(c.min_order) : '', c.first_order_only ? 'First order only' : '', +c.per_customer ? c.per_customer + ' per customer' : ''].filter(Boolean).join(' · ') || 'No rules';
@@ -2352,7 +2379,7 @@ function admCoupons() {
       <span class="field"><label for="cp-uses">Times it can be used in all <span class="hint">0 for no limit</span></label><input id="cp-uses" type="number" min="0" inputmode="numeric" value="${esc(e.max_uses || 0)}"></span>
       <span class="field"><label for="cp-per">Times per customer <span class="hint">0 for no limit</span></label><input id="cp-per" type="number" min="0" inputmode="numeric" value="${esc(e.per_customer || 0)}"></span>
       <label class="check full"><input id="cp-first" type="checkbox" ${e.first_order_only ? 'checked' : ''}> First order only (customers who have ordered before can’t use it)</label>
-      <label class="check full"><input id="cp-featured" type="checkbox" ${e.featured ? 'checked' : ''}> Show on the site as the welcome offer <span class="hint">needs the Welcome tag and a percentage</span></label>
+      <label class="check full"><input id="cp-featured" type="checkbox" ${e.featured ? 'checked' : ''}> <span>Show on the site as the welcome offer <span class="hint">(needs the Welcome tag and a percentage)</span></span></label>
       <label class="check full"><input id="cp-active" type="checkbox" ${e.active !== false ? 'checked' : ''}> On (untick to pause it)</label>
       ${A.cErr ? `<span class="full err" role="alert">${esc(A.cErr)}</span>` : ''}${A.cMsg ? `<span class="full status ok" role="status">${esc(A.cMsg)}</span>` : ''}
       <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="submit">${edit ? 'Save changes' : 'Make the coupon'}</button>${edit ? '<button class="btn small ghost" type="button" data-act="adm-coupon-edit" data-id="">Cancel</button>' : ''}</span></form>
@@ -2419,9 +2446,9 @@ async function admSeed() {
   const st = Object.keys(skuMap).map((sku) => ({ sku, qty: !blank && have[sku] != null ? have[sku] : (base[sku] ?? 0) })); if (st.length) await dbPut('stock', st);
   return prods.length + ' products, ' + pairs.length + ' rituals and ' + st.length + ' stock counts';
 }
-function downloadCSV(name, rows) {
+function downloadCSV(name, rows, columns) {
   const q = (s) => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
-  const cols = ['contact', 'sku', 'source', 'created_at'].filter((c) => rows.some((r) => r[c] != null));
+  const cols = columns || ['contact', 'sku', 'source', 'created_at'].filter((c) => rows.some((r) => r[c] != null));
   const blob = new Blob([[cols.join(',')].concat(rows.map((r) => cols.map((c) => q(r[c])).join(','))).join('\n')], { type: 'text/csv' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name + '.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
@@ -2633,8 +2660,8 @@ function myOrders() {
 function ptsMine() {
   if (!S.account) return { available: 0, pending: 0 };
   if (BTDB.on) return (UI.mine && UI.mine.points) || { available: 0, pending: 0 };
-  const list = myOrders(); const sum = (f) => list.reduce((a, o) => a + f(o), 0);
-  return { available: Math.max(0, sum((o) => (o.status === 'Delivered' ? o.points || 0 : 0)) - sum((o) => (o.status !== 'Cancelled' ? o.pointsUsed || 0 : 0))), pending: sum((o) => (['Placed', 'Packed', 'Shipped'].includes(o.status) ? o.points || 0 : 0)) };
+  const list = myOrders(); const sum = (f) => list.reduce((a, o) => a + f(o), 0); const adj = ((S.db && S.db.pointsLog) || []).filter((x) => x.email === S.account.email).reduce((a, x) => a + x.delta, 0);
+  return { available: Math.max(0, sum((o) => (o.status === 'Delivered' ? o.points || 0 : 0)) - sum((o) => (o.status !== 'Cancelled' ? o.pointsUsed || 0 : 0)) + adj), pending: sum((o) => (['Placed', 'Packed', 'Shipped'].includes(o.status) ? o.points || 0 : 0)) };
 }
 function loadMine(force) {
   if (!BTDB.on || !S.account || (!force && UI.mine && Date.now() - UI.mine.at < 30000) || UI.mineBusy) return;
@@ -3555,6 +3582,7 @@ document.addEventListener('click', (e) => {
     case 'adm-ship': { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o || A.shipping) break; A.shipping = o.id; render();
       admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
     case 'pay-check': payCheck(d.id); break;
+    case 'adm-csv-points': downloadCSV('bud-points', pointsByCustomer(admData('orders') || [], admData('rewards').log).map((r) => ({ email: r.email, name: r.name, orders: r.orders, earned: r.earned, spent: r.used, given_by_owner: r.adj, coming: r.pending, can_spend: r.available })), ['email', 'name', 'orders', 'earned', 'spent', 'given_by_owner', 'coming', 'can_spend']); break;
     case 'adm-coupon-edit': UI.adm.cEdit = d.id || null; UI.adm.cErr = null; UI.adm.cMsg = null; render(); $('#cp-code')?.focus(); break;
     case 'adm-coupon-toggle': { const c = (admData('coupons') || []).find((x) => x.code === d.id); if (!c) break; admDo(async () => { await saveCoupons([{ code: c.code, active: c.active === false }]); render(); }, c.active === false ? `${c.code} is on.` : `${c.code} is paused. Customers can’t use it.`); break; }
     case 'adm-coupon-del': { if (!confirm('Delete coupon ' + d.id + '? Orders that used it keep their record.')) break; admDo(async () => { await saveCoupons([], d.id); if (UI.adm.cEdit === d.id) UI.adm.cEdit = null; render(); }, `${d.id} deleted.`); break; }
@@ -3657,6 +3685,13 @@ document.addEventListener('submit', (e) => {
   if (kind === 'owner-code') { const code = $('#own-code').value.replace(/\D/g, ''); if (code.length !== 6) { UI.adm.err = 'Enter the 6 digits from your authenticator app.'; render(); $('#own-code')?.focus(); return; }
     BTDB.verifyCode(code).then(() => { UI.adm.err = null; UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid|expired|code/i.test(err.message) ? 'That code didn’t work. Type the newest code the app shows.' : err.message; render(); $('#own-code')?.focus(); });
     return; }
+  if (kind === 'adm-points') { const A = UI.adm; const email = $('#pt-email').value.trim().toLowerCase(); const n = parseInt($('#pt-n').value, 10); const note = $('#pt-note').value.trim(); A.ptEmail = email; A.ptMsg = null;
+    const known = pointsByCustomer(admData('orders') || [], admData('rewards').log).find((r) => r.email === email);
+    A.ptErr = !isEmail(email) ? 'Enter the customer’s email, the one they sign in with.' : !n || Math.abs(n) > 100000 ? 'Enter the points as a whole number, such as 100 or -50.' : note.length < 2 ? 'Add a short reason, so you remember why.'
+      : !known ? 'No customer with that email has ordered yet.' : n < 0 && known.available + n < 0 ? `They only have ${known.available} points to take back.` : null;
+    if (A.ptErr) { render(); return; }
+    admDo(async () => { const row = { email, delta: n, note }; if (BTDB.on) { await BTDB.insert('points_log', row); A.rows.rewards = null; } else { S.db = Object.assign({}, S.db, { pointsLog: [Object.assign({ created_at: new Date().toISOString() }, row)].concat((S.db && S.db.pointsLog) || []) }); save(); }
+      A.ptMsg = `${n > 0 ? 'Gave' : 'Took back'} ${Math.abs(n)} points ${n > 0 ? 'to' : 'from'} ${email}.`; A.ptEmail = ''; render(); }); return; }
   if (kind === 'adm-coupon') { const A = UI.adm; const val = (id) => $('#' + id).value.trim(); const n = (id) => Math.max(0, parseInt(val(id), 10) || 0);
     const code = val('cp-code').toUpperCase(); const kind2 = val('cp-kind'); const row = { code, kind: kind2, amount: n('cp-amount'), min_order: n('cp-min'), max_off: kind2 === 'percent' ? n('cp-max') : 0, starts_on: val('cp-start') || null, ends_on: val('cp-end') || null,
       max_uses: n('cp-uses'), per_customer: n('cp-per'), first_order_only: $('#cp-first').checked, tag: val('cp-tag'), featured: $('#cp-featured').checked, active: $('#cp-active').checked };
