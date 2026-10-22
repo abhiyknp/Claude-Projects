@@ -116,8 +116,9 @@ button, input, select { font: inherit; color: inherit; }
 @media (max-width: 860px) { .nav { display: none; } .menu-btn { display: inline-flex; } }
 .mobile-menu { border-top: 1px solid var(--line); background: var(--ivory); max-height: calc(100vh - 72px); max-height: calc(100dvh - 72px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 /* while a menu, the cart or search is open, the page behind stays put; each panel scrolls on its own */
-html.lock, html.lock body { overflow: hidden; }
-.drawer-body, .search-panel { overscroll-behavior: contain; }
+html.lock, html.lock body { overflow: hidden; overscroll-behavior: none; touch-action: none; }
+html.lock .mobile-menu, html.lock .drawer-body, html.lock .search-panel, html.lock .house-list, html.lock .house-panel { touch-action: pan-y; }
+.drawer-body, .search-panel, .house-list, .house-panel { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 #mobile-menu-inner { display: block; }
 .mobile-menu a { display: flex; align-items: center; min-height: 52px; text-decoration: none; border-bottom: 1px solid var(--linen); font-family: var(--display); font-size: 21px; }
 
