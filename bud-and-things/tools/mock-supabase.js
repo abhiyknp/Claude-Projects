@@ -62,6 +62,33 @@ function couponOff(codeIn, base, em) {
   let off = c.kind === 'percent' ? Math.round(base * c.amount / 100) : Math.min(c.amount, base); if (c.max_off > 0) off = Math.min(off, c.max_off);
   return { code: c.code, kind: c.kind, amount: c.amount, min_order: c.min_order, max_off: c.max_off, off };
 }
+// make_invoice() and auto_invoice() in schema.sql, with a plain bill of supply (the real tax maths is tested against Postgres)
+function mockSnap(o) {
+  const d = o.data; const disc = ((d.ritual || 0) + (d.codeOff || 0) + (d.pointsUsed || 0)) * 100; const lines = d.items.map((l) => ({ name: l.name + (l.label ? ' · ' + l.label : ''), qty: l.qty, hsn: '', rate: 0, gross: l.price * l.qty * 100, disc: 0 }));
+  let left = disc; const gsum = lines.reduce((a, l) => a + l.gross, 0) || 1; lines.forEach((l, i) => { l.disc = i === lines.length - 1 ? left : Math.min(left, Math.floor(disc * l.gross / gsum)); left -= l.disc; });
+  [['Shipping', d.ship], ['Gift wrap', d.wrap], ['Cash on delivery fee', d.cod]].forEach(([name, v]) => { if (v > 0) lines.push({ name, qty: 1, hsn: '', rate: 0, gross: v * 100, disc: 0 }); });
+  lines.forEach((l) => { l.net = l.gross - l.disc; l.taxable = l.net; l.cgst = l.sgst = l.igst = 0; });
+  const total = lines.reduce((a, l) => a + l.net, 0); const a = d.address || {}, c = d.contact || {};
+  return { gst: false, inter: false, placeOfSupply: a.state || '', orderId: o.id, orderDate: d.placedAt, method: d.method, lines, totals: { discount: disc, taxable: total, cgst: 0, sgst: 0, igst: 0, total }, seller: { name: 'BUD & THINGS', address: '', gstin: '', email: '' },
+    buyer: { name: c.name || '', phone: c.phone || '', email: c.email || '', line1: a.line1 || '', line2: a.line2 || '', city: a.city || '', pin: a.pin || '', state: a.state || '' } };
+}
+function mkInvoice(o, kind, against, reason) {
+  if (kind === 'invoice') { if (['Awaiting payment', 'Cancelled'].includes(o.status)) throw new Error('not_ready'); if (T.invoices.some((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued')) throw new Error('already_invoiced'); }
+  else { if (!T.invoices.some((x) => x.id === against && x.kind === 'invoice' && x.status === 'Issued')) throw new Error('no_invoice'); if (!reason) throw new Error('bad_invoice'); if (T.invoices.some((x) => x.against === against && x.kind === 'credit_note' && x.status === 'Issued')) throw new Error('already_credited'); }
+  const d = new Date(); const yy = d.getMonth() >= 3 ? d.getFullYear() : d.getFullYear() - 1; const fy = String(yy % 100).padStart(2, '0') + '-' + String((yy + 1) % 100).padStart(2, '0');
+  const seq = T.invoices.filter((x) => x.kind === kind && x.fy === fy).length + 1; const pre = String(setting('invoicePrefix', 'BT')).replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 3) || 'BT';
+  const id = kind === 'invoice' ? pre + '/' + fy + '/' + String(seq).padStart(4, '0') : pre + 'CN/' + fy + '/' + String(seq).padStart(4, '0');
+  const snap = Object.assign(mockSnap(o), kind === 'credit_note' ? { reason, against } : {});
+  const row = { id, kind, order_id: o.id, fy, seq, against: kind === 'credit_note' ? against : null, status: 'Issued', void_reason: null, voided_at: null, data: Object.assign(snap, { number: id, date: d.toISOString().slice(0, 10) }), created_at: d.toISOString() };
+  T.invoices.push(row); return row;
+}
+function autoInvoice(o, was) {
+  if (setting('invoiceAuto', true) === false) return;
+  try {
+    if (['Placed', 'Packed', 'Shipped', 'Delivered'].includes(o.status) && was !== o.status && !T.invoices.some((x) => x.order_id === o.id && x.kind === 'invoice')) mkInvoice(o, 'invoice');
+    else if (o.status === 'Cancelled' && was !== o.status) { const i = T.invoices.find((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued'); if (i) mkInvoice(o, 'credit_note', i.id, 'Order cancelled'); }
+  } catch (e) { /* skipped, as in the database */ }
+}
 function placeOrder(o, em) {
   if (!em) throw new Error('sign_in');
   const c = o.contact || {}, a = o.address || {}, g = o.gift, bad = (w) => { throw new Error('bad_order:' + w); };
@@ -100,7 +127,7 @@ function placeOrder(o, em) {
   const status = o.method === 'Online' ? 'Awaiting payment' : 'Placed';
   const data = { id, placedAt: new Date().toISOString(), method: o.method, items, email: em, contact: { name: c.name, phone: c.phone, email: em }, address: { line1: a.line1, line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state },
     sub, ritual, code, codeOff, pointsUsed: usePts, points: earned, ship, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin, card: card || null, cardOff, ref };
-  T.orders.push({ id, data, status, phone: c.phone, total, method: o.method, created_at: data.placedAt });
+  const row = { id, data, status, phone: c.phone, total, method: o.method, created_at: data.placedAt }; T.orders.push(row); autoInvoice(row, null);
   let pr = T.profiles.find((x) => x.email === em); if (!pr) T.profiles.push(pr = { email: em, name: '', phone: '', addresses: [], prefs: {} });
   if (!pr.name) pr.name = c.name; if (!pr.phone) pr.phone = c.phone;
   if (!(g && g.on) && pr.addresses.length < 5 && !pr.addresses.some((x) => x.line1.toLowerCase() === a.line1.trim().toLowerCase() && x.pin === a.pin)) pr.addresses.push({ label: '', line1: a.line1.trim(), line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state });
@@ -161,19 +188,12 @@ http.createServer((req, res) => {
       if (m && m[1] === 'cancel_order') {
         if (!own) return fail(res, 400, 'not_allowed');
         const o = T.orders.find((x) => x.id === json().order_id); if (!o || !['Awaiting payment', 'Placed', 'Packed'].includes(o.status)) return fail(res, 400, 'cannot_cancel');
-        o.data.items.forEach((it) => { const s = T.stock.find((x) => x.sku === it.sku); if (s) s.qty += it.qty; }); const gc = T.gift_cards.find((x) => x.code === o.data.card); if (gc) gc.balance += o.data.cardOff || 0; o.status = 'Cancelled'; return send(res, 200, null);
+        o.data.items.forEach((it) => { const s = T.stock.find((x) => x.sku === it.sku); if (s) s.qty += it.qty; }); const gc = T.gift_cards.find((x) => x.code === o.data.card); if (gc) gc.balance += o.data.cardOff || 0; ((w) => autoInvoice(Object.assign(o, { status: 'Cancelled' }), w))(o.status); return send(res, 200, null);
       }
       if (m && m[1] === 'check_coupon') { const a = json(); try { return send(res, 200, couponOff(a.code_in, a.base, custOf(auth))); } catch (e) { return fail(res, 400, e.message); } }
       if (m && m[1] === 'issue_invoice') {
         if (!own) return fail(res, 400, 'not_allowed'); const a = json(); const o = T.orders.find((x) => x.id === a.order_id_in); if (!o) return fail(res, 400, 'not_found');
-        if (!Array.isArray((a.snap || {}).lines)) return fail(res, 400, 'bad_invoice');
-        if (a.kind_in === 'invoice') { if (['Awaiting payment', 'Cancelled'].includes(o.status)) return fail(res, 400, 'not_ready'); if (T.invoices.some((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued')) return fail(res, 400, 'already_invoiced'); }
-        else { if (!T.invoices.some((x) => x.id === a.against_in && x.kind === 'invoice' && x.status === 'Issued')) return fail(res, 400, 'no_invoice'); if (!a.snap.reason) return fail(res, 400, 'bad_invoice'); if (T.invoices.some((x) => x.against === a.against_in && x.kind === 'credit_note' && x.status === 'Issued')) return fail(res, 400, 'already_credited'); }
-        const d = new Date(); const yy = d.getMonth() >= 3 ? d.getFullYear() : d.getFullYear() - 1; const fy = String(yy % 100).padStart(2, '0') + '-' + String((yy + 1) % 100).padStart(2, '0');
-        const seq = T.invoices.filter((x) => x.kind === a.kind_in && x.fy === fy).length + 1; const pre = String(setting('invoicePrefix', 'BT')).replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 3) || 'BT';
-        const id = a.kind_in === 'invoice' ? pre + '/' + fy + '/' + String(seq).padStart(4, '0') : pre + 'CN/' + fy + '/' + String(seq).padStart(4, '0');
-        const row = { id, kind: a.kind_in, order_id: o.id, fy, seq, against: a.kind_in === 'credit_note' ? a.against_in : null, status: 'Issued', void_reason: null, voided_at: null, data: Object.assign({}, a.snap, { number: id, date: d.toISOString().slice(0, 10) }), created_at: d.toISOString() };
-        T.invoices.push(row); return send(res, 200, row);
+        try { return send(res, 200, mkInvoice(o, a.kind_in, a.against_in, (a.snap || {}).reason)); } catch (e) { return fail(res, 400, e.message); }
       }
       if (m && m[1] === 'void_invoice') {
         if (!own) return fail(res, 400, 'not_allowed'); const a = json(); const r = T.invoices.find((x) => x.id === a.inv_id && x.status === 'Issued'); if (!r) return fail(res, 400, 'not_found');
@@ -191,7 +211,7 @@ http.createServer((req, res) => {
       if (m && m[1] === 'my_referral') { const who = String(json().contact_in).trim().toLowerCase(); let r = T.referrers.find((x) => x.contact === who); if (!r) { r = { id: Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'), contact: who, created_at: new Date().toISOString() }; T.referrers.push(r); } return send(res, 200, JSON.stringify(r.id), 'application/json'); }
       // the pay (Cashfree) and delivery (Shiprocket) functions: paid at once, every PIN reachable, a made-up AWB number
       if (u.pathname === '/functions/v1/pay') { const b = json(); const o = T.orders.find((x) => x.id === b.order_id); if (!o) return fail(res, 404, 'not_found');
-        if (o.status === 'Awaiting payment') { o.status = 'Placed'; o.data.payment = { by: 'mock' }; } return send(res, 200, { status: o.status, paid: true }); }
+        if (o.status === 'Awaiting payment') { o.status = 'Placed'; o.data.payment = { by: 'mock' }; autoInvoice(o, 'Awaiting payment'); } return send(res, 200, { status: o.status, paid: true }); }
       if (u.pathname === '/functions/v1/delivery') { const b = json();
         if (b.action === 'pin') return send(res, 200, { ok: /^[1-9]\d{5}$/.test(b.pin || ''), days: 4 });
         if (b.action === 'book') { if (!own) return fail(res, 403, 'owner_only'); const o = T.orders.find((x) => x.id === b.order_id); if (!o || !['Placed', 'Packed'].includes(o.status)) return fail(res, 409, 'not_ready');
@@ -213,7 +233,7 @@ http.createServer((req, res) => {
       }
       if (!own) return fail(res, 403, 'permission denied');
       const hit = filter(T[t], q);
-      if (req.method === 'PATCH') { const p = json(); hit.forEach((r) => Object.assign(r, p)); return send(res, 204); }
+      if (req.method === 'PATCH') { const p = json(); hit.forEach((r) => { const was = r.status; Object.assign(r, p); if (t === 'orders') autoInvoice(r, was); }); return send(res, 204); }
       if (req.method === 'DELETE') { T[t] = T[t].filter((r) => !hit.includes(r)); return send(res, 204); }
       fail(res, 405, 'method');
     } catch (e) { fail(res, 500, e.message); }
