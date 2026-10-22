@@ -145,6 +145,25 @@ begin
   insert into hits (bucket, who) values (b, w);
 end $$;
 
+-- Mobile numbers are saved one way everywhere: + country code + number (E.164, what WhatsApp, SMS providers and
+-- spreadsheets expect), such as +919876543210 or +447911123456. Indian numbers are 10 digits starting 6 to 9 and
+-- may be typed as 9876543210, 919876543210 or 09876543210 (no +); a number typed with a + keeps its own country code.
+-- Other countries: 7 to 15 digits in all. Anything else gives null.
+create or replace function norm_phone(p text) returns text language sql immutable as $$
+  select case
+    when trim(coalesce(p, '')) like '+%' then
+      case when raw ~ '^91' then case when raw ~ '^91[6-9][0-9]{9}$' then '+' || raw end
+           when raw ~ '^[1-9][0-9]{6,14}$' then '+' || raw end
+    when local ~ '^[6-9][0-9]{9}$' then '+91' || local
+  end
+  from (select r as raw, regexp_replace(r, '^(91|0)(?=[6-9][0-9]{9}$)', '') as local
+        from (select regexp_replace(coalesce(p, ''), '[^0-9]', '', 'g') r) y) x
+$$;
+-- an email (lower case) or a mobile number (+91…); null when it is neither
+create or replace function norm_contact(c text) returns text language sql immutable as $$
+  select case when lower(trim(coalesce(c, ''))) ~ '^[^\s@]+@[^\s@]+\.[^\s@]+$' then lower(trim(c)) else norm_phone(c) end
+$$;
+
 -- a number or switch from settings, read the way the site reads it (missing: the site's default; not a number: 0)
 create or replace function cfg_num(k text, d numeric) returns numeric language sql stable security definer set search_path = public as $$
   select case when not exists (select 1 from settings where key = k) then d
@@ -263,21 +282,21 @@ begin
     end if;
     perform hit('review', me, 3, '1 hour'); perform hit('review', 'site', 60, '1 hour');
   elsif tg_table_name = 'subscribers' then
-    new.id := gen_random_uuid(); new.contact := lower(trim(new.contact));
-    if new.contact !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
+    new.id := gen_random_uuid(); new.contact := norm_contact(new.contact);
+    if new.contact is null then raise exception 'bad_contact'; end if;
     if new.source is not null and new.source !~ '^[a-z0-9-]{1,40}$' then raise exception 'bad_source'; end if;
     new.came_from := case when new.came_from ~ '^[a-z0-9._-]{1,40}$' then new.came_from end;
     perform hit('signup', me, 5, '1 hour'); perform hit('signup', 'site', 300, '1 hour');
     if exists (select 1 from subscribers where contact = new.contact) then return null; end if; -- already signed up
   elsif tg_table_name = 'restock_requests' then
-    new.id := gen_random_uuid(); new.contact := lower(trim(new.contact));
-    if new.contact !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
+    new.id := gen_random_uuid(); new.contact := norm_contact(new.contact);
+    if new.contact is null then raise exception 'bad_contact'; end if;
     if not exists (select 1 from products p, jsonb_array_elements(p.data -> 'variants') v where p.live and v ->> 'sku' = new.sku) then raise exception 'unknown_item'; end if;
     perform hit('restock', me, 10, '1 hour'); perform hit('restock', 'site', 300, '1 hour');
     if exists (select 1 from restock_requests where sku = new.sku and contact = new.contact) then return null; end if;
   elsif tg_table_name = 'reminders' then
-    new.id := gen_random_uuid(); new.contact := lower(trim(new.contact)); new.for_name := nullif(trim(coalesce(new.for_name, '')), '');
-    if new.contact !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
+    new.id := gen_random_uuid(); new.contact := norm_contact(new.contact); new.for_name := nullif(trim(coalesce(new.for_name, '')), '');
+    if new.contact is null then raise exception 'bad_contact'; end if;
     if new.occasion !~ '^[a-z-]{1,30}$' or new.day < current_date - 1 or new.day > current_date + 400 then raise exception 'bad_reminder'; end if;
     perform hit('reminder', me, 10, '1 hour'); perform hit('reminder', 'site', 300, '1 hour');
     if exists (select 1 from reminders where contact = new.contact and occasion = new.occasion and day = new.day) then return null; end if;
@@ -376,7 +395,7 @@ end $$;
 create or replace function place_order(o jsonb) returns text language plpgsql security definer set search_path = public as $$
 declare
   c jsonb := coalesce(o -> 'contact', '{}'); a jsonb := coalesce(o -> 'address', '{}'); g jsonb := o -> 'gift';
-  method text := o ->> 'method'; phone text := c ->> 'phone';
+  method text := o ->> 'method'; phone text := norm_phone(c ->> 'phone');
   it jsonb; n int; pieces int := 0; price int; cat text; pname text; plabel text;
   items jsonb := '[]'; skus text[] := '{}'; candles int[] := '{}'; objects int[] := '{}';
   sub int := 0; ritual int := 0; code_off int := 0; ship int := 0; wrap int := 0; cod int := 0; total int; code text := '';
@@ -394,7 +413,7 @@ begin
   -- who and where
   if jsonb_typeof(o) <> 'object' or jsonb_typeof(o -> 'items') <> 'array' then raise exception 'bad_order'; end if;
   if length(coalesce(c ->> 'name', '')) not between 1 and 80 then raise exception 'bad_order:name'; end if;
-  if coalesce(phone, '') !~ '^[6-9][0-9]{9}$' then raise exception 'bad_order:phone'; end if;
+  if phone is null then raise exception 'bad_order:phone'; end if;
   if length(coalesce(a ->> 'line1', '')) not between 1 and 200 or length(coalesce(a ->> 'line2', '')) > 200 then raise exception 'bad_order:address'; end if;
   if coalesce(a ->> 'pin', '') !~ '^[1-9][0-9]{5}$' then raise exception 'bad_order:pin'; end if;
   if length(coalesce(a ->> 'city', '')) not between 1 and 80 or length(coalesce(a ->> 'state', '')) not between 1 and 60 then raise exception 'bad_order:address'; end if;
@@ -406,10 +425,10 @@ begin
   if jsonb_typeof(g) = 'object' and coalesce(g ->> 'on', 'false') = 'true' then
     gift_on := true;
     if length(coalesce(g ->> 'name', '')) not between 1 and 80 or length(coalesce(g ->> 'note', '')) > 200
-      or (coalesce(g ->> 'phone', '') <> '' and (g ->> 'phone') !~ '^[6-9][0-9]{9}$')
+      or (coalesce(g ->> 'phone', '') <> '' and norm_phone(g ->> 'phone') is null)
       or (coalesce(g ->> 'date', '') <> '' and (g ->> 'date') !~ '^\d{4}-\d{2}-\d{2}$') then raise exception 'bad_order:gift'; end if;
     gift := jsonb_build_object('on', true, 'wrap', coalesce(g ->> 'wrap', 'false') = 'true', 'name', g ->> 'name',
-      'phone', coalesce(g ->> 'phone', ''), 'note', coalesce(g ->> 'note', ''), 'date', coalesce(g ->> 'date', ''));
+      'phone', coalesce(norm_phone(g ->> 'phone'), ''), 'note', coalesce(g ->> 'note', ''), 'date', coalesce(g ->> 'date', ''));
   end if;
 
   -- what: every price from the products table, a sensible amount of each
@@ -489,7 +508,7 @@ drop function if exists get_order(text, text);
 create function get_order(order_id text, phone_no text) returns jsonb language plpgsql security definer set search_path = public as $$
 begin
   perform hit('lookup', client_key(), 20, '1 hour');
-  return (select data || jsonb_build_object('status', status) from orders where id = upper(trim(order_id)) and phone = phone_no);
+  return (select data || jsonb_build_object('status', status) from orders where id = upper(trim(order_id)) and phone = norm_phone(phone_no));
 end $$;
 
 -- the customer's own invoice for an order: the order number and the mobile number on it, as for get_order
@@ -497,7 +516,7 @@ create or replace function get_invoice(order_id text, phone_no text) returns jso
 begin
   perform hit('lookup', client_key(), 20, '1 hour');
   return (select to_jsonb(i) from invoices i join orders o on o.id = i.order_id
-    where o.id = upper(trim(get_invoice.order_id)) and o.phone = phone_no and i.kind = 'invoice' and i.status = 'Issued' order by i.created_at desc limit 1);
+    where o.id = upper(trim(get_invoice.order_id)) and o.phone = norm_phone(phone_no) and i.kind = 'invoice' and i.status = 'Issued' order by i.created_at desc limit 1);
 end $$;
 
 -- the owner cancels an order that hasn't shipped; its pieces go back into stock
@@ -720,10 +739,10 @@ end $$;
 
 -- a customer asks for their share link; the same mobile or email always gets the same link
 create or replace function my_referral(contact_in text) returns text language plpgsql security definer set search_path = public as $$
-declare who text := lower(trim(contact_in)); rid text;
+declare who text := norm_contact(contact_in); rid text;
 begin
   perform hit('referral', client_key(), 5, '1 hour');
-  if who !~ '^([^\s@]+@[^\s@]+\.[^\s@]+|[6-9][0-9]{9})$' then raise exception 'bad_contact'; end if;
+  if who is null then raise exception 'bad_contact'; end if;
   select id into rid from referrers where contact = who;
   if rid is null then
     loop
@@ -751,7 +770,7 @@ $$;
 -- recipient's address, and never more than 5)
 create or replace function remember_details(em text, nm text, ph text, addr jsonb) returns void language plpgsql security definer set search_path = public as $$
 begin
-  insert into profiles (email, name, phone, addresses) values (em, coalesce(nm, ''), coalesce(ph, ''), case when addr is null then '[]' else jsonb_build_array(clean_address(addr)) end)
+  insert into profiles (email, name, phone, addresses) values (em, coalesce(nm, ''), coalesce(norm_phone(ph), ''), case when addr is null then '[]' else jsonb_build_array(clean_address(addr)) end)
   on conflict (email) do update set
     name = case when profiles.name = '' then excluded.name else profiles.name end,
     phone = case when profiles.phone = '' then excluded.phone else profiles.phone end,
@@ -779,7 +798,7 @@ begin
   if em is null then raise exception 'sign_in'; end if;
   perform hit('profile', em, 120, '1 hour');
   if jsonb_typeof(p) <> 'object' or length(coalesce(p ->> 'name', '')) > 80 then raise exception 'bad_profile:name'; end if;
-  if coalesce(p ->> 'phone', '') !~ '^([6-9][0-9]{9})?$' then raise exception 'bad_profile:phone'; end if;
+  if coalesce(p ->> 'phone', '') <> '' and norm_phone(p ->> 'phone') is null then raise exception 'bad_profile:phone'; end if;
   if jsonb_typeof(coalesce(p -> 'addresses', '[]')) <> 'array' or jsonb_array_length(coalesce(p -> 'addresses', '[]')) > 5 then raise exception 'bad_profile:address'; end if;
   for a in select * from jsonb_array_elements(coalesce(p -> 'addresses', '[]')) loop
     if not ok_address(a) then raise exception 'bad_profile:address'; end if;
@@ -789,7 +808,7 @@ begin
   for k in select jsonb_object_keys(pf) loop
     if k not in ('whatsapp', 'sms', 'push') or jsonb_typeof(pf -> k) <> 'boolean' then raise exception 'bad_profile:prefs'; end if;
   end loop;
-  insert into profiles (email, name, phone, addresses, prefs) values (em, trim(coalesce(p ->> 'name', '')), coalesce(p ->> 'phone', ''), addrs, pf)
+  insert into profiles (email, name, phone, addresses, prefs) values (em, trim(coalesce(p ->> 'name', '')), coalesce(norm_phone(p ->> 'phone'), ''), addrs, pf)
   on conflict (email) do update set name = excluded.name, phone = excluded.phone, addresses = excluded.addresses, prefs = excluded.prefs, updated_at = now();
   return my_profile();
 end $$;
@@ -824,9 +843,9 @@ create or replace function tell(ev text, em text, ph text, rf text, oid text, d 
 declare pf jsonb := coalesce((select prefs from profiles where email = em), '{}');
 begin
   perform queue_note(ev, 'email', em, rf, oid, d);
-  if coalesce(ph, '') ~ '^[6-9][0-9]{9}$' then
-    if cfg_on('whatsappOn', false) and (asked or coalesce((pf ->> 'whatsapp')::boolean, false)) then perform queue_note(ev, 'whatsapp', ph, rf, oid, d); end if;
-    if cfg_on('smsOn', false) and (coalesce((pf ->> 'sms')::boolean, false) or (asked and em is null and not cfg_on('whatsappOn', false))) then perform queue_note(ev, 'sms', ph, rf, oid, d); end if;
+  if norm_phone(ph) is not null then
+    if cfg_on('whatsappOn', false) and (asked or coalesce((pf ->> 'whatsapp')::boolean, false)) then perform queue_note(ev, 'whatsapp', norm_phone(ph), rf, oid, d); end if;
+    if cfg_on('smsOn', false) and (coalesce((pf ->> 'sms')::boolean, false) or (asked and em is null and not cfg_on('whatsappOn', false))) then perform queue_note(ev, 'sms', norm_phone(ph), rf, oid, d); end if;
   end if;
   if em is not null and cfg_on('pushOn', false) and coalesce((pf ->> 'push')::boolean, false) then perform queue_note(ev, 'push', em, rf, oid, d); end if;
 end $$;
@@ -908,7 +927,7 @@ create trigger review_reward after update of published on reviews for each row e
 -- Owner view → Sign-ups → a customer → Delete: everything kept about them goes (sign-ups, reminders, restock requests,
 -- notes, saved details, share link, review authorship). Their orders and invoices stay: they are the shop's records.
 create or replace function forget_customer(contacts text[]) returns void language plpgsql security definer set search_path = public as $$
-declare c text[] := (select array_agg(lower(trim(x))) from unnest(contacts) x);
+declare c text[] := (select array_agg(coalesce(norm_contact(x), lower(trim(x)))) from unnest(contacts) x);
 begin
   if not is_owner() then raise exception 'not_allowed'; end if;
   delete from subscribers where contact = any (c);
@@ -1086,6 +1105,18 @@ drop policy if exists "bt media owner delete" on storage.objects;
 create policy "bt media owner write" on storage.objects for insert to authenticated with check (bucket_id = 'media' and is_owner());
 create policy "bt media owner update" on storage.objects for update to authenticated using (bucket_id = 'media' and is_owner());
 create policy "bt media owner delete" on storage.objects for delete to authenticated using (bucket_id = 'media' and is_owner());
+
+-- ---------- mobile numbers saved before +91 was added ----------
+-- Safe to repeat: a number already in +91 form stays as it is.
+update orders set phone = norm_phone(phone) where phone ~ '^[6-9][0-9]{9}$' or phone ~ '^(91|0)[6-9][0-9]{9}$';
+update orders set data = jsonb_set(data, '{contact,phone}', to_jsonb(norm_phone(data -> 'contact' ->> 'phone'))) where norm_phone(data -> 'contact' ->> 'phone') is not null and data -> 'contact' ->> 'phone' <> norm_phone(data -> 'contact' ->> 'phone');
+update orders set data = jsonb_set(data, '{gift,phone}', to_jsonb(norm_phone(data -> 'gift' ->> 'phone'))) where norm_phone(data -> 'gift' ->> 'phone') is not null and data -> 'gift' ->> 'phone' <> norm_phone(data -> 'gift' ->> 'phone');
+update profiles set phone = norm_phone(phone) where norm_phone(phone) is not null and phone <> norm_phone(phone);
+update subscribers set contact = norm_contact(contact) where norm_contact(contact) is not null and contact <> norm_contact(contact) and not exists (select 1 from subscribers x where x.contact = norm_contact(subscribers.contact));
+update restock_requests set contact = norm_contact(contact) where norm_contact(contact) is not null and contact <> norm_contact(contact);
+update reminders set contact = norm_contact(contact) where norm_contact(contact) is not null and contact <> norm_contact(contact);
+update referrers set contact = norm_contact(contact) where norm_contact(contact) is not null and contact <> norm_contact(contact) and not exists (select 1 from referrers x where x.contact = norm_contact(referrers.contact));
+update customer_meta set contact = norm_contact(contact) where norm_contact(contact) is not null and contact <> norm_contact(contact) and not exists (select 1 from customer_meta x where x.contact = norm_contact(customer_meta.contact));
 
 -- ---------- the owner ----------
 -- Replace with the email Ashi signs in with (the same one created in Authentication → Users).
