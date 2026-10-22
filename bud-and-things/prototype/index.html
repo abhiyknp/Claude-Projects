@@ -313,6 +313,7 @@ label { font-size: 14px; font-weight: 600; }
 .status { padding: 12px 14px; background: var(--sand2); font-size: 15px; }
 .status.ok { background: var(--ok-bg); }
 .status.err { background: var(--err-bg); color: var(--terra-ink); }
+.status.delayed { background: var(--sand2); border-left: 4px solid var(--terra-ink); }
 
 /* finder */
 .finder { display: flex; flex-wrap: wrap; min-height: 70vh; }
@@ -1068,6 +1069,41 @@ const OCCASIONS = [['birthday', 'Birthday'], ['anniversary', 'Anniversary'], ['h
 // occasions with at least one piece to show, so a chip never leads to an empty shop
 const occLive = () => OCCASIONS.filter(([k]) => P.some((p) => (p.occ || []).includes(k)));
 const STATES = ['Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'];
+// PIN code → state and city. The first digits of a PIN code say which state it is in (kept here so it always works);
+// India Post's public lookup adds the district when it is reachable. Both only fill the boxes: the customer can change them.
+const PIN_STATE = { 11: 'Delhi', 12: 'Haryana', 13: 'Haryana', 14: 'Punjab', 15: 'Punjab', 16: 'Punjab', 160: 'Chandigarh', 17: 'Himachal Pradesh', 18: 'Jammu and Kashmir', 19: 'Jammu and Kashmir', 194: 'Ladakh',
+  20: 'Uttar Pradesh', 21: 'Uttar Pradesh', 22: 'Uttar Pradesh', 23: 'Uttar Pradesh', 24: 'Uttar Pradesh', 244: 'Uttarakhand', 245: 'Uttar Pradesh', 246: 'Uttarakhand', 247: 'Uttarakhand', 248: 'Uttarakhand', 249: 'Uttarakhand', 25: 'Uttar Pradesh', 26: 'Uttar Pradesh', 262: 'Uttarakhand', 263: 'Uttarakhand', 27: 'Uttar Pradesh', 28: 'Uttar Pradesh',
+  30: 'Rajasthan', 31: 'Rajasthan', 32: 'Rajasthan', 33: 'Rajasthan', 34: 'Rajasthan', 36: 'Gujarat', 37: 'Gujarat', 38: 'Gujarat', 39: 'Gujarat', 40: 'Maharashtra', 403: 'Goa', 41: 'Maharashtra', 42: 'Maharashtra', 43: 'Maharashtra', 44: 'Maharashtra',
+  45: 'Madhya Pradesh', 46: 'Madhya Pradesh', 47: 'Madhya Pradesh', 48: 'Madhya Pradesh', 49: 'Chhattisgarh', 50: 'Telangana', 51: 'Andhra Pradesh', 52: 'Andhra Pradesh', 53: 'Andhra Pradesh', 56: 'Karnataka', 57: 'Karnataka', 58: 'Karnataka', 59: 'Karnataka',
+  60: 'Tamil Nadu', 61: 'Tamil Nadu', 62: 'Tamil Nadu', 63: 'Tamil Nadu', 64: 'Tamil Nadu', 605: 'Puducherry', 67: 'Kerala', 68: 'Kerala', 69: 'Kerala', 682: 'Kerala', 70: 'West Bengal', 71: 'West Bengal', 72: 'West Bengal', 73: 'West Bengal', 737: 'Sikkim', 74: 'West Bengal', 744: 'Andaman and Nicobar Islands',
+  75: 'Odisha', 76: 'Odisha', 77: 'Odisha', 78: 'Assam', 790: 'Arunachal Pradesh', 791: 'Arunachal Pradesh', 792: 'Arunachal Pradesh', 793: 'Meghalaya', 794: 'Meghalaya', 795: 'Manipur', 796: 'Mizoram', 797: 'Nagaland', 798: 'Nagaland', 799: 'Tripura',
+  80: 'Bihar', 81: 'Bihar', 814: 'Jharkhand', 815: 'Jharkhand', 816: 'Jharkhand', 82: 'Jharkhand', 821: 'Bihar', 83: 'Jharkhand', 84: 'Bihar', 85: 'Bihar' };
+const pinState = (pin) => PIN_STATE[pin.slice(0, 3)] || PIN_STATE[pin.slice(0, 2)] || '';
+// India Post spells some states differently from our list
+const asState = (n) => { const k = String(n || '').toLowerCase().replace(/&/g, 'and').replace(/\s+/g, ' ').trim(); const alias = { orissa: 'Odisha', uttaranchal: 'Uttarakhand', pondicherry: 'Puducherry', 'dadra and nagar haveli': 'Dadra and Nagar Haveli and Daman and Diu', 'daman and diu': 'Dadra and Nagar Haveli and Daman and Diu', 'nct of delhi': 'Delhi' };
+  return alias[k] || STATES.find((x) => x.toLowerCase() === k) || ''; };
+const pinCache = {};
+async function pinLookup(pin) {
+  if (pinCache[pin]) return pinCache[pin];
+  let r = { state: pinState(pin), city: '' };
+  try {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 4000);
+    const d = await fetch('https://api.postalpincode.in/pincode/' + pin, { signal: ctl.signal }).then((x) => x.json()); clearTimeout(to);
+    const po = d && d[0] && d[0].Status === 'Success' && d[0].PostOffice && d[0].PostOffice[0];
+    if (po) r = { state: asState(po.State) || r.state, city: String(po.District || po.Block || '').replace(/\s+/g, ' ').trim() };
+  } catch (e) { /* offline or blocked: the state from the first digits is still used */ }
+  return (pinCache[pin] = r);
+}
+// fills city and state from a typed PIN code, unless the customer already typed their own
+async function pinAutofill(pinEl, cityId, stateId, noteId) {
+  const pin = pinEl.value.trim(); const note = document.getElementById(noteId); if (note) note.textContent = '';
+  if (!/^[1-9]\d{5}$/.test(pin)) return;
+  const r = await pinLookup(pin); if (pinEl.value.trim() !== pin) return;
+  const city = document.getElementById(cityId), st = document.getElementById(stateId);
+  if (city && r.city && (!city.value.trim() || city.dataset.auto === '1')) { city.value = r.city; city.dataset.auto = '1'; }
+  if (st && r.state && (!st.value || st.dataset.auto === '1')) { st.value = r.state; st.dataset.auto = '1'; }
+  if (note && (r.city || r.state)) note.textContent = 'Filled in from the PIN code: ' + [r.city, r.state].filter(Boolean).join(', ') + '. Change it if it isn’t right.';
+}
 const STATUSES = ['Placed', 'Packed', 'Shipped', 'Delivered'];
 // Brand elements from the identity system: leaf, sun, arch, flow, spark.
 const ICON = {
@@ -1303,16 +1339,19 @@ const SET_META = [
   ['grievanceName', 'Policies: grievance officer name', 'text'], ['grievancePhone', 'Policies: grievance officer phone', 'text'], ['courtCity', 'Policies: city whose courts have jurisdiction', 'text'], ['policyDate', 'Policies: last updated, e.g. 19 October 2026', 'text'],
   ['pickupPin', 'Pickup PIN code, where the courier collects parcels (turns on the live PIN check)', 'text'], ['shiprocketPickup', 'Shiprocket pickup location name, as in Shiprocket → Settings → Pickup addresses', 'text'], ['parcelKg', 'Usual parcel weight (kg)', 'num'], ['parcelL', 'Usual box length (cm)', 'num'], ['parcelB', 'Usual box width (cm)', 'num'], ['parcelH', 'Usual box height (cm)', 'num'],
   ['whatsapp', 'WhatsApp number with country code, digits only', 'text'], ['orderAlerts', 'Email that gets a message for every new order (empty: the contact email)', 'text'], ['reminderDays', 'Gift reminders: send this many days before the date', 'num'], ['whatsappOn', 'Messages: send order updates on WhatsApp to customers who ask (turn on once the provider is set up)', 'bool'], ['smsOn', 'Messages: send order updates by SMS to customers who ask (turn on once the provider is set up)', 'bool'], ['pushOn', 'Messages: send notifications to customers who allowed them (turn on once push is set up)', 'bool'], ['giftCards', 'Gift card amounts in ₹, separated by commas (empty to hide gift cards)', 'text'], ['refReward', 'Thank-you gift card for each friend who orders through a share link (₹, 0 for none)', 'num'], ['metaPixel', 'Meta Pixel id, for Instagram and Facebook ads (empty for off)', 'text'], ['gaId', 'Google Analytics id, like G-XXXXXXX (empty for off)', 'text'], ['email', 'Contact email', 'text'], ['instagram', 'Instagram handle', 'text'], ['pinterest', 'Pinterest username', 'text'],
+  ['gstOn', 'GST: I am registered, make tax invoices', 'bool'], ['gstState', 'GST: my state', 'text'], ['invoicePrefix', 'Invoice number prefix (up to 3 letters, e.g. BT)', 'text'], ['hsnCandles', 'HSN: candles', 'text'], ['gstCandles', 'GST rate: candles (%)', 'num'], ['hsnObjects', 'HSN: Jesmonite objects', 'text'], ['gstObjects', 'GST rate: Jesmonite objects (%)', 'num'], ['hsnGifts', 'HSN: gift boxes', 'text'], ['gstGifts', 'GST rate: gift boxes (%)', 'num'],
   ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
 ];
 const CS_KEYS = ['comingSoon', 'previewCode'];
+// settings with their own place in Owner view (the Coupons, Rewards and Invoices tabs)
+const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct', 'gstin', 'gstOn', 'gstState', 'invoicePrefix', 'hsnCandles', 'gstCandles', 'hsnObjects', 'gstObjects', 'hsnGifts', 'gstGifts'];
 const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
 const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
-  bizName: '', bizAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
+  bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
@@ -1369,7 +1408,7 @@ function loadData() {
   }).catch((e) => { DB.state = 'error'; DB.error = e.message; if (route() === 'admin') render(); });
 }
 // the owner's changes: written to the database when connected, otherwise kept in this browser
-function persistLocal() { if (BTDB.on) return; S.db = { products: DATA.products, pairings: DATA.pairings, text: DATA.text, settings: DATA.settings, media: DATA.media, reviews: (S.db && S.db.reviews) || [], people: (S.db && S.db.people) || [] }; save(); }
+function persistLocal() { if (BTDB.on) return; S.db = { ...(S.db || {}), products: DATA.products, pairings: DATA.pairings, text: DATA.text, settings: DATA.settings, media: DATA.media, reviews: (S.db && S.db.reviews) || [], people: (S.db && S.db.people) || [] }; save(); }
 function mergeRows(table, rows) {
   rows.forEach((r) => {
     if (table === 'site_text') DATA.text[r.key] = r.value;
@@ -1533,10 +1572,26 @@ function ritualSaving(lines) {
   return Math.round(s * off / 100);
 }
 const hasBox = (lines) => lines.some((l) => l.p.cat === 'gifts'); // gift boxes come wrapped free
-const codeOk = (c) => !!(c && SET.welcomeCode && String(c).trim().toUpperCase() === String(SET.welcomeCode).toUpperCase());
+// Discount codes are the owner's coupons (Owner view → Coupons). The checkout asks the database whether a code works for
+// this cart (check_coupon), keeps the answer in UI.co.coupon, and place_order works the discount out again itself.
+const codeOk = (c) => !!(c && UI.co.coupon && String(c).trim().toUpperCase() === UI.co.coupon.code);
+const couponOffFor = (c, base) => { if (!c || base < (c.min_order || 0)) return 0; let off = c.kind === 'flat' ? Math.min(c.amount, base) : Math.round(base * c.amount / 100); if (c.max_off > 0) off = Math.min(off, c.max_off); return Math.max(0, off); };
+const COUPON_TAGS = { welcome: 'Welcome', festive: 'Festive', birthday: 'Birthday', thankyou: 'Thank you', referral: 'Referral', other: 'Other' };
+// without a database (the preview) coupons live in this browser; the welcome code from Settings is the first one
+const localCoupons = () => (S.db && S.db.coupons) || (SET.welcomeCode ? [{ code: String(SET.welcomeCode).trim().toUpperCase(), kind: 'percent', amount: +SET.welcomeOff || 0, min_order: 0, max_off: 0, starts_on: '', ends_on: '', max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true }] : []);
+const couponMsg = (m) => /coupon_early/.test(m) ? 'That code isn’t active yet.' : /coupon_ended/.test(m) ? 'That code has expired.' : /coupon_used_up/.test(m) ? 'That code has been used up.' : /coupon_min/.test(m) ? `That code needs at least ${inr((/coupon_min:(\d+)/.exec(m) || [])[1] || 0)} of pieces in your cart.` : /coupon_first/.test(m) ? 'That code is for a first order only.' : /coupon_per_customer/.test(m) ? 'You have already used that code.' : 'That code isn’t valid. Check the spelling, or leave it empty.';
+async function checkCoupon(v, base) {
+  if (BTDB.on) return S.account ? BTDB.custRpc('check_coupon', { code_in: v, base }) : BTDB.rpc('check_coupon', { code_in: v, base });
+  const code = v.trim().toUpperCase(); const c = localCoupons().find((x) => x.code === code); if (!c || !c.active || !(+c.amount > 0)) throw new Error('bad_code');
+  const today = dayISO(new Date()); if (c.starts_on && today < c.starts_on) throw new Error('coupon_early'); if (c.ends_on && today > c.ends_on) throw new Error('coupon_ended');
+  const mine = S.orders.filter((o) => o.status !== 'Cancelled'); if (+c.max_uses > 0 && mine.filter((o) => o.code === c.code).length >= +c.max_uses) throw new Error('coupon_used_up');
+  if (base < (+c.min_order || 0)) throw new Error('coupon_min:' + c.min_order); if (c.first_order_only && mine.length) throw new Error('coupon_first');
+  if (+c.per_customer > 0 && mine.filter((o) => o.code === c.code).length >= +c.per_customer) throw new Error('coupon_per_customer');
+  return { code: c.code, kind: c.kind, amount: +c.amount, min_order: +c.min_order || 0, max_off: +c.max_off || 0 };
+}
 function totals() {
   const lines = cartLines(); const sub = lines.reduce((a, l) => a + l.v.price * l.qty, 0); const ritual = ritualSaving(lines);
-  const code = codeOk(UI.co.code) ? Math.round((sub - ritual) * (+SET.welcomeOff || 0) / 100) : 0;
+  const code = codeOk(UI.co.code) ? couponOffFor(UI.co.coupon, sub - ritual) : 0;
   const ship = sub === 0 ? 0 : (+SET.freeOver && sub >= +SET.freeOver ? 0 : +SET.shipFee || 0);
   const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
   const cod = sub && UI.co.step === 'pay' && UI.co.method === 'cod' ? +SET.codFee || 0 : 0;
@@ -1858,7 +1913,7 @@ function viewCheckout() {
   loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
-  const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> applied</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
+  const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> ${t.code ? 'applied' : `needs ${inr(co.coupon.min_order)} of pieces in your cart`}</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
     + (co.gcard ? `<div class="code-on"><span>Gift card <strong>${esc(co.gcard.code)}</strong> applied</span><button class="linkbtn" type="button" data-act="card-remove">Remove</button></div>` : '')
     + (codeOk(co.code) && co.gcard ? '' : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code or gift card?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit">Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`);
   const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
@@ -1880,7 +1935,8 @@ function viewCheckout() {
       <h2 class="full" style="font-size:24px">${g.on ? 'Their address' : 'Your address'}</h2>
       ${!g.on && UI.prof && UI.prof.addresses.length ? `<div class="full" style="display:flex;gap:8px;flex-wrap:wrap" role="group" aria-label="Saved addresses">${UI.prof.addresses.map((a, i) => `<button class="chip" type="button" data-act="use-addr" data-i="${i}" aria-pressed="${co.address.line1 === a.line1 && co.address.pin === a.pin}">${esc(a.label || (i ? 'Address ' + (i + 1) : 'Home'))} · ${esc(a.pin)}</button>`).join('')}</div>` : ''}
       ${field('line1', 'House, street, area', co.address.line1, { ac: g.on ? 'off' : 'address-line1', full: true })}${field('line2', 'Landmark', co.address.line2, { ac: g.on ? 'off' : 'address-line2', full: true, hint: 'optional' })}${field('pin', 'PIN code', co.address.pin, { mode: 'numeric', ac: g.on ? 'off' : 'postal-code', max: 6 })}${field('city', 'City', co.address.city, { ac: g.on ? 'off' : 'address-level2' })}
-      <span class="field full"><label for="co-state">State</label><select id="co-state" data-co="state" ${err ? 'aria-invalid="true" aria-describedby="co-state-err"' : ''}><option value="">Choose a state</option>${STATES.map((s) => `<option ${co.address.state === s ? 'selected' : ''}>${s}</option>`).join('')}</select>${err ? `<span class="err" id="co-state-err">${esc(err)}</span>` : ''}</span>
+      <span class="field full"><label for="co-state">State</label><select id="co-state" data-co="state" autocomplete="${g.on ? 'off' : 'address-level1'}" ${err ? 'aria-invalid="true" aria-describedby="co-state-err"' : ''}><option value="">Choose a state</option>${STATES.map((s) => `<option ${co.address.state === s ? 'selected' : ''}>${s}</option>`).join('')}</select>${err ? `<span class="err" id="co-state-err">${esc(err)}</span>` : ''}</span>
+      <p class="full muted" id="pin-note" aria-live="polite" style="font-size:14px;margin:0"></p>
       <p class="full muted" style="font-size:14px">Delivery in ${esc(SET.deliveryDays)}.</p>
       <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue to payment</button><button class="btn ghost" type="button" data-act="co-step" data-v="contact">Back</button></span></form>`;
   } else if (co.step === 'pay') {
@@ -1927,13 +1983,13 @@ function payBox(o) {
 }
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound();
-  if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel))) { o.status = d.status; o.parcel = d.parcel; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
+  if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel) || JSON.stringify(d.delay) !== JSON.stringify(o.delay))) { o.status = d.status; o.parcel = d.parcel; o.delay = d.delay; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
   const idx = STATUSES.indexOf(o.status); const cod = o.method === 'Cash on delivery'; const unpaid = o.status === 'Awaiting payment', gone = o.status === 'Cancelled';
   const fresh = UI.justPlaced === id; const wa = waLink('Hello, a question about my order ' + id);
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
-    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
+    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.delay && canDelay(o) ? `<div class="status delayed" role="status"><strong>Running a little late.</strong> ${delayText(o.delay)}. Thank you for waiting; we’ll update this page as soon as it moves.</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
       ${BTDB.on ? '' : '<p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>'}
@@ -2046,7 +2102,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band']] };
@@ -2059,7 +2115,7 @@ const pairRows = () => (DATA.pairings && DATA.pairings.length ? DATA.pairings : 
 const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
-  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
+  if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'invoices' ? ((S.db && S.db.invoices) || []) : k === 'coupons' ? localCoupons() : k === 'rewards' ? { log: (S.db && S.db.pointsLog) || [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
   if (!UI.adm.rows[k]) { if (UI.adm.loading !== k) setTimeout(() => admLoad(k)); return null; }
   return UI.adm.rows[k];
 }
@@ -2067,8 +2123,11 @@ async function admLoad(k) {
   const A = UI.adm; A.loading = k;
   try {
     if (k === 'orders') A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status }));
+    if (k === 'orders' || k === 'invoices') { try { A.rows.invoices = await BTDB.list('invoices', 'order=created_at.desc&limit=500'); } catch (e) { A.rows.invoices = []; } }
     if (k === 'reviews') A.rows.reviews = await BTDB.list('reviews', 'order=created_at.desc&limit=300');
     if (k === 'people') { const [a, b, c] = await Promise.all([BTDB.list('subscribers', 'order=created_at.desc&limit=500'), BTDB.list('restock_requests', 'order=created_at.desc&limit=500'), BTDB.list('reminders', 'order=day.asc&limit=1000')]); A.rows.people = a.map((r) => Object.assign({ table: 'subscribers' }, r)).concat(b.map((r) => Object.assign({ table: 'restock_requests' }, r)), c.map((r) => Object.assign({ table: 'reminders' }, r))); }
+    if (k === 'coupons') { A.rows.coupons = await BTDB.list('coupons', 'order=created_at.desc&limit=500'); if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
+    if (k === 'rewards') { A.rows.rewards = { log: await BTDB.list('points_log', 'order=created_at.desc&limit=500') }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     if (k === 'cards') { const [a, b] = await Promise.all([BTDB.list('gift_cards', 'order=created_at.desc&limit=500'), BTDB.list('referrers', 'order=created_at.desc&limit=1000')]); A.rows.cards = { cards: a, refs: b }; if (!A.rows.orders) A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status })); }
     A.err = null;
   } catch (e) { A.rows[k] = A.rows[k] || []; A.err = e.message; }
@@ -2100,18 +2159,40 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
 // what Shiprocket booked for an order, for the Owner view
 const parcelNote = (o) => { const p = o.parcel; if (!p || !p.awb) return ''; return `<span class="muted" style="display:block;font-size:13px;margin-top:6px">${esc(p.courier || 'Courier')} · AWB <span class="num sel">${esc(p.awb)}</span>${p.status ? ' · ' + esc(p.status) : ''}${p.label ? ` · <a href="${esc(p.label)}" target="_blank" rel="noopener">Print label</a>` : ''}${p.pickupErr ? ` · pickup not booked: ${esc(p.pickupErr)}` : ''}</span>`; };
+// an order running late is a flag on the order (a reason, maybe a new date), not a new step
+const DELAY_REASONS = ['Courier is running late', 'Bad weather', 'Festival rush', 'Your piece is taking longer to make', 'We need to check your address', 'Something else'];
+const canDelay = (o) => ['Placed', 'Packed', 'Shipped'].includes(o.status);
+const delayText = (dl) => `${esc(dl.reason)}${dl.note ? ': ' + esc(dl.note) : ''}${dl.until ? ' · now expected by ' + niceDay(dl.until) : ''}`;
+const delayNote = (o) => (o.delay ? `<span style="display:block;margin-top:6px"><span class="pill out">Delayed</span> <span class="muted" style="font-size:13px">${delayText(o.delay)}</span></span>` : '')
+  + `<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${canDelay(o) ? `<button class="btn small ghost" type="button" data-act="adm-delay-open" data-id="${esc(o.id)}">${o.delay ? 'Change delay' : 'Mark delayed'}</button>${o.delay ? `<button class="btn small ghost" type="button" data-act="adm-delay-clear" data-id="${esc(o.id)}">Clear delay</button>` : ''}` : ''}${invoiceBtn(o)}</span>`;
+function delayForm(list) {
+  const id = UI.adm.delayFor; const o = id && list.find((x) => x.id === id); if (!o) return '';
+  const cur = o.delay || {}; const known = DELAY_REASONS.slice(0, -1).includes(cur.reason); const sel = cur.reason ? (known ? cur.reason : 'Something else') : DELAY_REASONS[0];
+  return `<form data-form="adm-delay" data-id="${esc(o.id)}" class="form adm-card" style="max-width:560px;margin:0 0 24px" novalidate><h2 class="full" style="font-size:24px">Mark ${esc(o.id)} as delayed</h2>
+    <span class="field full"><label for="dl-reason">Reason</label><select id="dl-reason">${DELAY_REASONS.map((r) => `<option ${r === sel ? 'selected' : ''}>${esc(r)}</option>`).join('')}</select></span>
+    <span class="field full"><label for="dl-note">Note for the customer <span class="hint">optional, or the reason if you chose “Something else”</span></label><input id="dl-note" maxlength="150" value="${esc(known ? cur.note || '' : cur.reason ? (cur.reason + (cur.note ? ': ' + cur.note : '')) : '')}"></span>
+    <span class="field full"><label for="dl-until">New expected date <span class="hint">optional</span></label><input id="dl-until" type="date" min="${dayISO(new Date())}" value="${esc(cur.until || '')}"></span>
+    <label class="check full"><input id="dl-tell" type="checkbox" ${cur.tell === false ? '' : 'checked'}> Email the customer about the delay</label>
+    ${UI.adm.delayErr ? `<span class="full err" role="alert">${esc(UI.adm.delayErr)}</span>` : ''}
+    <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="submit">Save delay</button><button class="btn small ghost" type="button" data-act="adm-delay-cancel">Cancel</button></span></form>`;
+}
+async function setDelay(o, delay) {
+  if (BTDB.on) await BTDB.rpc('set_delay', { order_id: o.id, d: delay });
+  const mine = S.orders.find((x) => x.id === o.id);
+  [o, mine].forEach((x) => { if (x) { if (delay) x.delay = delay; else delete x.delay; } }); save(); track('order_delay', { order: o.id, set: !!delay });
+}
 function admOrders() {
   const list = admData('orders'); if (!list) return loadingRow;
   const live = list.filter((o) => o.status !== 'Cancelled'); const rev = live.filter((o) => o.status !== 'Awaiting payment').reduce((a, o) => a + (o.total || 0), 0); const open = live.filter((o) => o.status !== 'Delivered').length;
   const low = Object.keys(skuMap).filter((s) => stockOf(s) <= 2).length; const gifts = live.filter((o) => o.gift && o.gift.on && o.status !== 'Delivered').length;
-  return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
-    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Cashfree</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
+  return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Running late</span><strong class="num">${live.filter((o) => o.delay && canDelay(o)).length}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
+    ${delayForm(list)}${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${delayNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Cashfree</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
@@ -2227,7 +2308,15 @@ function admSettings() {
       <span class="field full"><label for="set-theme">Theme</label><select id="set-theme" data-act="adm-set" data-k="theme">${Object.entries(SKINS).map(([k, v]) => `<option value="${k}" ${k === skin('site') ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></span>
       <span class="field full"><label for="set-homeStyle">Home page</label><select id="set-homeStyle" data-act="adm-set" data-k="homeStyle">${Object.entries(HOME_STYLES).map(([k, v]) => `<option value="${k}" ${k === (HOME_STYLES[SET.homeStyle] ? SET.homeStyle : 'foyer') ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></span>
       <p class="muted full">${esc(SKINS[skin('site')].use)}</p></div>
-    <div class="form adm-card">${SET_META.filter((m) => !CS_KEYS.includes(m[0]) && !THEME_KEYS.includes(m[0])).map(field).join('')}</div>
+    <div class="form adm-card"><h2 class="full" style="font-size:24px">GST and invoices</h2>
+      <p class="muted full">Leave this off until you are registered: invoices are then a <strong>bill of supply</strong> with no tax. Once registered, add your details and switch it on; new invoices become <strong>tax invoices</strong> that show the GST split (CGST and SGST in your state, IGST for other states). Prices on the site are treated as including GST. Ask your accountant to confirm the HSN codes and rates before you switch it on.</p>
+      <label class="check full"><input type="checkbox" data-act="adm-set" data-k="gstOn" ${SET.gstOn ? 'checked' : ''}> I am registered for GST: make tax invoices</label>
+      ${field(['gstin', 'Your GSTIN (15 characters)', 'text'])}
+      <span class="field"><label for="set-gstState">Your state <span class="hint">where you are registered</span></label><select id="set-gstState" data-act="adm-set" data-k="gstState"><option value="">Choose a state</option>${STATES.map((x) => `<option ${SET.gstState === x ? 'selected' : ''}>${x}</option>`).join('')}</select></span>
+      ${field(['invoicePrefix', 'Invoice number prefix (up to 3 letters)', 'text'])}
+      ${GST_CATS.map(([l, h, r]) => `${field([h, 'HSN code · ' + l, 'text'])}${field([r, 'GST rate % · ' + l, 'num'])}`).join('')}
+      <p class="muted full" style="margin:0">Your business name and registered address come from the Policies boxes below. Invoice numbers look like ${esc((String(SET.invoicePrefix || 'BT').replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 3) || 'BT'))}/${(() => { const n = new Date(); const y = n.getMonth() >= 3 ? n.getFullYear() : n.getFullYear() - 1; return String(y % 100).padStart(2, '0') + '-' + String((y + 1) % 100).padStart(2, '0'); })()}/0001 and start again each April.</p></div>
+    <div class="form adm-card">${SET_META.filter((m) => !CS_KEYS.includes(m[0]) && !THEME_KEYS.includes(m[0]) && !ELSEWHERE_KEYS.includes(m[0])).map(field).join('')}</div>
     <details class="adm-group"><summary>Product and ritual names to use above</summary><p class="muted num" style="padding:12px 0">${P.map((p) => esc(p.id)).join(', ')}</p><p class="muted num">Rituals: ${PAIRINGS.map((x) => esc(x.id)).join(', ')}</p></details>`;
 }
 function admReviews() {
@@ -2251,6 +2340,186 @@ function admReminders(list) {
   const wa = (r) => /^\d{10}$/.test(r.contact) ? `<a href="https://wa.me/91${r.contact}?text=${encodeURIComponent(`Hi! A gentle reminder from BUD & THINGS: ${r.for_name ? r.for_name + '’s ' : 'the '}${occ(r.occasion).toLowerCase()} is on ${r.next.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}. Here are a few gift ideas: ${location.origin + location.pathname}#gifting`)}" target="_blank" rel="noopener">Message</a>` : esc(r.contact);
   return `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift reminders · ${rows.length}</h2></div><p class="muted">Send each one about a week before. The soonest are at the top.</p>
     ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>In</th><th>Occasion</th><th>Whose</th><th>Date</th><th>Contact</th></tr></thead><tbody>${rows.slice(0, 200).map((r) => `<tr${days(r) <= 7 ? ' style="font-weight:600"' : ''}><td class="num">${days(r)} days</td><td>${esc(occ(r.occasion))}</td><td>${esc(r.for_name || '')}</td><td class="num">${r.next.toLocaleDateString('en-IN')}</td><td>${wa(r)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
+}
+// ---------- GST and invoices ----------
+// Invoices are made from Owner view for a paid order. With GST switched off (not registered yet) they are a "Bill of
+// supply" with no tax; with it on they are a "Tax invoice" that splits the GST (prices on the site include GST).
+// Amounts are kept in paise. The number and date are given by the database, in one step (issue_invoice).
+const GST_CATS = [['Candles', 'hsnCandles', 'gstCandles', 'candles'], ['Jesmonite objects', 'hsnObjects', 'gstObjects', 'jesmonite'], ['Gift boxes', 'hsnGifts', 'gstGifts', 'gifts']];
+const gstCatOf = (cat) => GST_CATS.find((c) => c[3] === cat) || GST_CATS[1];
+const rs = (p) => '₹' + (p / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const lineCat = (l) => { const m = skuMap[l.sku]; return m && m.p ? m.p.cat : 'jesmonite'; };
+function invoiceReady(o) {
+  if (!SET.gstOn) return '';
+  if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(String(SET.gstin || '').trim().toUpperCase())) return 'GST is on, but the GSTIN in Settings isn’t a valid 15-character number.';
+  if (!SET.gstState) return 'GST is on: choose your state under Settings → GST and invoices.';
+  if (!SET.bizName || !SET.bizAddress) return 'GST is on: add your business name and registered address under Settings (Policies).';
+  const miss = GST_CATS.find((c) => o.items.some((l) => gstCatOf(lineCat(l)) === c) && !String(SET[c[1]] || '').trim());
+  return miss ? `Add the HSN code for ${miss[0].toLowerCase()} under Settings → GST and invoices.` : '';
+}
+function invoiceSnap(o) {
+  const gst = !!SET.gstOn; const inter = gst && !!o.address.state && o.address.state !== SET.gstState;
+  const lines = o.items.map((l) => { const c = gstCatOf(lineCat(l)); return { name: l.name + (l.label ? ' · ' + l.label : ''), qty: l.qty, hsn: gst ? String(SET[c[1]] || '').trim() : '', rate: gst ? +SET[c[2]] || 0 : 0, gross: Math.round(l.price * l.qty * 100), disc: 0 }; });
+  // the ritual saving, coupon and Bud Points come off the price of the pieces, shared in proportion to their price
+  const disc = Math.round(((o.ritual || 0) + (o.codeOff || 0) + (o.pointsUsed || 0)) * 100); const gsum = lines.reduce((a, l) => a + l.gross, 0) || 1; let left = disc;
+  lines.forEach((l, i) => { l.disc = i === lines.length - 1 ? left : Math.min(left, Math.floor(disc * l.gross / gsum)); left -= l.disc; });
+  const top = Math.max(0, ...lines.map((l) => l.rate));
+  [['Shipping', o.ship], ['Gift wrap', o.wrap], ['Cash on delivery fee', o.cod]].forEach(([name, v]) => { if (+v > 0) lines.push({ name, qty: 1, hsn: '', rate: gst ? top : 0, gross: Math.round(v * 100), disc: 0 }); });
+  const t = { discount: disc, taxable: 0, cgst: 0, sgst: 0, igst: 0, total: 0 };
+  lines.forEach((l) => { l.net = l.gross - l.disc; l.cgst = l.sgst = l.igst = 0;
+    if (gst) { l.taxable = Math.round(l.net * 100 / (100 + l.rate)); const tax = l.net - l.taxable; if (inter) l.igst = tax; else { l.cgst = Math.round(tax / 2); l.sgst = tax - l.cgst; } } else l.taxable = l.net;
+    t.taxable += l.taxable; t.cgst += l.cgst; t.sgst += l.sgst; t.igst += l.igst; t.total += l.net; });
+  const a = o.address || {};
+  return { gst, inter, placeOfSupply: a.state || '', orderId: o.id, orderDate: o.placedAt, method: o.method, lines, totals: t,
+    seller: { name: SET.bizName || 'BUD & THINGS', address: SET.bizAddress ? SET.bizAddress + ', India' : '', gstin: gst ? String(SET.gstin).trim().toUpperCase() : '', email: SET.email || '' },
+    buyer: { name: (o.contact || {}).name || '', phone: (o.contact || {}).phone || '', email: (o.contact || {}).email || '', line1: a.line1 || '', line2: a.line2 || '', city: a.city || '', pin: a.pin || '', state: a.state || '' } };
+}
+const INV_CSS = `.inv{font:14px/1.5 Lato,Arial,sans-serif;color:#2b1d14;background:#fff;max-width:820px;margin:0 auto;padding:28px;box-sizing:border-box;position:relative}.inv *{box-sizing:border-box}.inv h1{font:600 26px/1.2 'Cormorant Garamond',Georgia,serif;margin:0 0 4px}.inv .inv-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid #2b1d14;padding-bottom:14px;margin-bottom:16px}.inv .inv-meta{text-align:right;min-width:200px}.inv .inv-meta div{white-space:nowrap}.inv .inv-cols{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:18px}.inv .inv-cols>div{flex:1 1 240px;min-width:0}.inv h2{font:700 11px/1.4 Lato,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;margin:0 0 4px;color:#7a5a45}.inv .inv-tw{overflow-x:auto}.inv table{width:100%;border-collapse:collapse;font-size:13px}.inv th,.inv td{padding:7px 8px;border-bottom:1px solid #e5d8c8;text-align:right;vertical-align:top}.inv th:first-child,.inv td:first-child{text-align:left}.inv th{background:#f4ebdf;font-weight:700;white-space:nowrap}.inv tfoot td{font-weight:700;border-bottom:0}.inv .inv-sum{margin-left:auto;margin-top:14px;max-width:320px}.inv .inv-sum div{display:flex;justify-content:space-between;gap:16px;padding:3px 0}.inv .inv-sum .grand{border-top:2px solid #2b1d14;font-weight:700;font-size:16px;margin-top:4px;padding-top:6px}.inv .inv-note{margin-top:22px;font-size:12px;color:#5a4636}.inv .inv-sign{margin-top:34px;text-align:right;font-size:13px}.inv .inv-void{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font:700 72px/1 Lato,Arial,sans-serif;color:rgba(163,71,43,.28);border:6px solid rgba(163,71,43,.28);padding:6px 24px;pointer-events:none;letter-spacing:.1em}@media (max-width:560px){.inv{padding:16px}.inv .inv-meta{text-align:left}.inv .inv-void{font-size:44px}}@media print{@page{size:A4;margin:12mm}.inv{padding:0;max-width:none}}`;
+function invoiceHTML(inv) {
+  const d = inv.data, gst = d.gst, cn = inv.kind === 'credit_note', t = d.totals, b = d.buyer, sl = d.seller; const void_ = inv.status === 'Void';
+  const title = cn ? 'Credit note' : gst ? 'Tax invoice' : 'Bill of supply';
+  const head = gst ? ['Item', 'HSN', 'Qty', 'Taxable', 'Rate'].concat(d.inter ? ['IGST'] : ['CGST', 'SGST'], ['Amount']) : ['Item', 'Qty', 'Price', 'Discount', 'Amount'];
+  const row = (l) => '<tr><td>' + esc(l.name) + '</td>' + (gst ? `<td>${esc(l.hsn || '')}</td><td>${l.qty}</td><td>${rs(l.taxable)}</td><td>${l.rate}%</td>${d.inter ? `<td>${rs(l.igst)}</td>` : `<td>${rs(l.cgst)}</td><td>${rs(l.sgst)}</td>`}<td>${rs(l.net)}</td>` : `<td>${l.qty}</td><td>${rs(Math.round(l.gross / l.qty))}</td><td>${l.disc ? '−' + rs(l.disc) : '—'}</td><td>${rs(l.net)}</td>`) + '</tr>';
+  const sum = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
+  return `<style>${INV_CSS}</style><div class="inv" id="inv-sheet">${void_ ? '<div class="inv-void" aria-hidden="true">VOID</div>' : ''}
+    <div class="inv-top"><div><h1>${esc(title)}</h1><strong>${esc(sl.name)}</strong><div>${esc(sl.address)}</div>${sl.gstin ? `<div>GSTIN: ${esc(sl.gstin)}</div>` : ''}${sl.email ? `<div>${esc(sl.email)}</div>` : ''}</div>
+      <div class="inv-meta"><div><strong>No.</strong> ${esc(inv.id)}</div><div><strong>Date</strong> ${new Date(d.date + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div><div><strong>Order</strong> ${esc(d.orderId)}</div>${cn ? `<div><strong>Against</strong> ${esc(inv.against || d.against || '')}</div>` : ''}${gst ? `<div><strong>Place of supply</strong> ${esc(d.placeOfSupply)}</div>` : ''}</div></div>
+    <div class="inv-cols"><div><h2>Billed to</h2><strong>${esc(b.name)}</strong><div>${esc(b.phone)}${b.email ? ' · ' + esc(b.email) : ''}</div></div><div><h2>Delivered to</h2><div>${[b.line1, b.line2, b.city + ' ' + b.pin, b.state].filter((x) => String(x).trim()).map(esc).join(', ')}</div></div></div>
+    <div class="inv-tw"><table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${d.lines.map(row).join('')}</tbody></table></div>
+    <div class="inv-sum">${t.discount && gst ? sum('Discounts already taken off', '−' + rs(t.discount)) : ''}${gst ? sum('Taxable value', rs(t.taxable)) : ''}${gst && !d.inter ? sum('CGST', rs(t.cgst)) + sum('SGST', rs(t.sgst)) : ''}${gst && d.inter ? sum('IGST', rs(t.igst)) : ''}${sum(cn ? 'Total credited' : 'Total', rs(t.total), 'grand')}</div>
+    ${cn ? `<p class="inv-note"><strong>Reason:</strong> ${esc(d.reason || '')}</p>` : ''}${void_ ? `<p class="inv-note"><strong>Cancelled:</strong> ${esc(inv.void_reason || '')}</p>` : ''}
+    <p class="inv-note">${gst ? 'Prices include GST. Tax payable on reverse charge: No.' : 'Issued by a supplier not registered under GST. No tax is charged.'} ${d.method === 'Cash on delivery' ? 'To be paid on delivery.' : ''}</p>
+    <div class="inv-sign">For ${esc(sl.name)}<br><br>Authorised signatory</div></div>`;
+}
+function printInvoice(inv) {
+  const w = window.open('', '_blank'); if (!w) { say('Your browser blocked the print window. Allow pop-ups for this site and try again.'); return; }
+  w.document.write(`<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><title>${esc(inv.id)}</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#fff">${invoiceHTML(inv)}</body></html>`);
+  w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (e) { /* the owner can print from the window */ } }, 500);
+}
+const invMsg = (m) => /not_ready/.test(m) ? 'The order isn’t paid yet, or it was cancelled.' : /already_invoiced/.test(m) ? 'That order already has an invoice.' : /already_credited/.test(m) ? 'That invoice already has a credit note.' : /has_credit_note/.test(m) ? 'That invoice has a credit note, so it can’t be cancelled.'
+  : /no_invoice|not_found/.test(m) ? 'That invoice can’t be found, or it is already void.' : /bad_invoice/.test(m) ? 'Add a reason (up to 200 characters).' : m;
+const invoiceRows = () => admData('invoices') || [];
+const invoiceOf = (orderId) => invoiceRows().find((i) => i.order_id === orderId && i.kind === 'invoice' && i.status === 'Issued');
+const invoiceBtn = (o) => { const i = invoiceOf(o.id); return i ? `<button class="btn small ghost" type="button" data-act="adm-inv-view" data-id="${esc(i.id)}">Invoice</button>` : ['Placed', 'Packed', 'Shipped', 'Delivered'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-inv-make" data-id="${esc(o.id)}">Make invoice</button>` : ''; };
+async function issueInvoice(o, kind, against, reason) {
+  const A = UI.adm; const err = invoiceReady(o); if (err) throw new Error(err);
+  const snap = invoiceSnap(o); if (kind === 'credit_note') { snap.reason = reason; snap.against = against; }
+  let row;
+  if (BTDB.on) row = await BTDB.rpc('issue_invoice', { order_id_in: o.id, kind_in: kind, against_in: against || null, snap });
+  else { // the same rules as issue_invoice() in schema.sql, kept in this browser
+    const list = (S.db && S.db.invoices) || []; const bad = (c) => { throw new Error(c); };
+    if (kind === 'invoice') { if (['Awaiting payment', 'Cancelled'].includes(o.status)) bad('not_ready'); if (list.some((i) => i.order_id === o.id && i.kind === 'invoice' && i.status === 'Issued')) bad('already_invoiced'); }
+    else { if (!list.some((i) => i.id === against && i.kind === 'invoice' && i.status === 'Issued')) bad('no_invoice'); if (!reason) bad('bad_invoice'); if (list.some((i) => i.against === against && i.kind === 'credit_note' && i.status === 'Issued')) bad('already_credited'); }
+    const now = new Date(); const yy = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1; const fy = String(yy % 100).padStart(2, '0') + '-' + String((yy + 1) % 100).padStart(2, '0');
+    const seq = list.filter((i) => i.kind === kind && i.fy === fy).length + 1; const pre = String(SET.invoicePrefix || 'BT').replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 3) || 'BT';
+    const id = kind === 'invoice' ? `${pre}/${fy}/${String(seq).padStart(4, '0')}` : `${pre}CN/${fy}/${String(seq).padStart(4, '0')}`;
+    row = { id, kind, order_id: o.id, fy, seq, against: kind === 'credit_note' ? against : null, status: 'Issued', void_reason: null, data: Object.assign({}, snap, { number: id, date: dayISO(now) }), created_at: now.toISOString() };
+    S.db = Object.assign({}, S.db, { invoices: [row].concat(list) }); save();
+  }
+  if (BTDB.on) A.rows.invoices = [row].concat(A.rows.invoices || []);
+  track('invoice_made', { order: o.id, kind }); return row;
+}
+async function voidInvoice(id, reason) {
+  const A = UI.adm; let row;
+  if (BTDB.on) { row = await BTDB.rpc('void_invoice', { inv_id: id, reason }); A.rows.invoices = (A.rows.invoices || []).map((i) => (i.id === id ? row : i)); }
+  else { const list = (S.db && S.db.invoices) || []; const r = list.find((i) => i.id === id && i.status === 'Issued'); if (!r) throw new Error('not_found'); if (!reason) throw new Error('bad_invoice');
+    if (r.kind === 'invoice' && list.some((i) => i.against === r.id && i.kind === 'credit_note' && i.status === 'Issued')) throw new Error('has_credit_note');
+    Object.assign(r, { status: 'Void', void_reason: reason, voided_at: new Date().toISOString() }); S.db = Object.assign({}, S.db, { invoices: list.slice() }); save(); row = r; }
+  track('invoice_void', { id }); return row;
+}
+function admInvoices() {
+  const list = admData('invoices'); if (!list) return loadingRow; const A = UI.adm;
+  const view = A.invView && list.find((i) => i.id === A.invView); const act = A.invAct && list.find((i) => i.id === A.invAct.id);
+  const banner = SET.gstOn ? `<div class="status ok">GST is <strong>on</strong>: new invoices are tax invoices${SET.gstin ? ' for GSTIN ' + esc(SET.gstin) : ''}. <button class="linkbtn" type="button" data-act="adm-tab" data-v="settings">Change in Settings</button></div>`
+    : `<div class="status">GST is <strong>off</strong>: new invoices are a bill of supply with no tax, as you aren’t registered yet. Once you register, switch it on and add your details in <button class="linkbtn" type="button" data-act="adm-tab" data-v="settings">Settings → GST and invoices</button>.</div>`;
+  const actForm = act ? `<form data-form="adm-inv-act" class="form adm-card" style="max-width:560px;margin:0 0 24px" novalidate><h2 class="full" style="font-size:24px">${A.invAct.kind === 'void' ? 'Cancel' : 'Credit note for'} ${esc(act.id)}</h2>
+    <p class="full muted" style="margin:0">${A.invAct.kind === 'void' ? 'The invoice stays on record marked Void and its number is never reused. Use this only for a mistake, before the sale went ahead. To correct it, cancel it and make a new invoice from the order.' : 'Use this when goods are returned or the money is refunded after the sale: it credits the whole invoice and gets its own number.'}</p>
+    <span class="field full"><label for="ia-reason">Reason</label><input id="ia-reason" maxlength="200" autocomplete="off"></span>${A.invErr ? `<span class="full err" role="alert">${esc(A.invErr)}</span>` : ''}
+    <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="submit">${A.invAct.kind === 'void' ? 'Cancel the invoice' : 'Make the credit note'}</button><button class="btn small ghost" type="button" data-act="adm-inv-close">Back</button></span></form>` : '';
+  const preview = view ? `<div class="adm-card" style="margin:0 0 24px"><div class="adm-bar"><h2 style="font-size:24px">${esc(view.id)}${view.status === 'Void' ? ' · Void' : ''}</h2><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" type="button" data-act="adm-inv-print" data-id="${esc(view.id)}">Print or save as PDF</button>${view.status === 'Issued' ? `<button class="btn small ghost" type="button" data-act="adm-inv-void" data-id="${esc(view.id)}">Cancel invoice</button>${view.kind === 'invoice' ? `<button class="btn small ghost" type="button" data-act="adm-inv-credit" data-id="${esc(view.id)}">Credit note</button>` : ''}` : ''}<button class="btn small ghost" type="button" data-act="adm-inv-close">Close</button></span></div><div style="overflow-x:auto;border:1px solid var(--line)">${invoiceHTML(view)}</div></div>` : '';
+  return `${banner}<div style="height:20px"></div>${actForm}${preview}<div class="adm-bar"><h2 style="font-size:24px">Invoices and credit notes · ${list.length}</h2>${list.length ? '<button class="btn small ghost" type="button" data-act="adm-inv-csv">Download as a spreadsheet</button>' : ''}</div>
+    <p class="muted">Make an invoice from an order in the Orders tab (Make invoice). Numbers run in order each financial year (April to March) and are never reused.</p>
+    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Number</th><th>Date</th><th>Order</th><th>Customer</th><th>Total</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody>${list.map((i) => `<tr><td class="num sel"><strong>${esc(i.id)}</strong></td><td class="num">${new Date(i.data.date + 'T12:00:00').toLocaleDateString('en-IN')}</td><td class="num">${esc(i.order_id)}</td><td>${esc(i.data.buyer.name)}</td><td class="num">${i.kind === 'credit_note' ? '−' : ''}${rs(i.data.totals.total)}</td><td>${i.kind === 'credit_note' ? 'Credit note' : i.data.gst ? 'Tax invoice' : 'Bill of supply'}</td><td>${pill(i.status === 'Issued', 'Issued', 'Void')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-inv-view" data-id="${esc(i.id)}">View</button><button class="btn small ghost" type="button" data-act="adm-inv-print" data-id="${esc(i.id)}">Print</button></span></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No invoices yet.</p>'}`;
+}
+
+// ---------- rewards (Bud Points) ----------
+// Points a customer has: earned on delivered orders, minus what they spent, plus what the owner gave or took back by hand
+function pointsByCustomer(orders, log) {
+  const m = {}; const get = (em, nm) => (m[em] = m[em] || { email: em, name: nm || '', earned: 0, pending: 0, used: 0, adj: 0, orders: 0 });
+  orders.forEach((o) => { const em = String(o.email || (o.contact && o.contact.email) || '').toLowerCase(); if (!em) return; const c = get(em, o.contact && o.contact.name); c.orders++;
+    if (o.status === 'Delivered') c.earned += o.points || 0; if (['Placed', 'Packed', 'Shipped'].includes(o.status)) c.pending += o.points || 0; if (o.status !== 'Cancelled') c.used += o.pointsUsed || 0; });
+  log.forEach((x) => { get(String(x.email).toLowerCase()).adj += x.delta; });
+  return Object.values(m).map((c) => Object.assign(c, { available: Math.max(0, c.earned - c.used + c.adj) })).sort((a, b) => b.available - a.available || b.pending - a.pending);
+}
+function admRewards() {
+  const d = admData('rewards'); if (!d) return loadingRow; const A = UI.adm; const orders = admData('orders') || []; const rows = pointsByCustomer(orders, d.log);
+  return `<div class="form adm-card" style="max-width:640px;margin-bottom:28px"><h2 class="full" style="font-size:24px">Bud Points</h2>
+      <p class="full muted" style="margin:0">Customers earn points on every paid order once it is delivered (1 point is ₹1 off the pieces at checkout). A cancelled order gives back the points it used and earns none.</p>
+      <span class="field"><label for="set-rewardPct">Points given back (% of each order, 0 to switch rewards off)</label><input id="set-rewardPct" data-act="adm-set" data-k="rewardPct" type="number" min="0" max="100" value="${esc(SET.rewardPct)}"></span></div>
+    <form data-form="adm-points" class="form adm-card" style="max-width:640px;margin-bottom:28px" novalidate><h2 class="full" style="font-size:24px">Give or take back points</h2>
+      <p class="full muted" style="margin:0">For a thank-you, an apology or a mistake. Use a minus sign to take points back. Customers see the new balance in their account.</p>
+      <span class="field full"><label for="pt-email">Customer’s email</label><input id="pt-email" type="email" list="pt-list" autocomplete="off" placeholder="name@example.com" value="${esc(A.ptEmail || '')}"><datalist id="pt-list">${rows.map((r) => `<option value="${esc(r.email)}">${esc(r.name)}</option>`).join('')}</datalist></span>
+      <span class="field"><label for="pt-n">Points <span class="hint">e.g. 100 or -50</span></label><input id="pt-n" type="number" inputmode="numeric" step="1"></span>
+      <span class="field"><label for="pt-note">Why</label><input id="pt-note" maxlength="120" placeholder="Thank you for the review"></span>
+      ${A.ptErr ? `<span class="full err" role="alert">${esc(A.ptErr)}</span>` : ''}${A.ptMsg ? `<span class="full status ok" role="status">${esc(A.ptMsg)}</span>` : ''}
+      <span class="full"><button class="btn small" type="submit">Save points</button></span></form>
+    <div class="adm-bar"><h2 style="font-size:24px">Customers with points · ${rows.filter((r) => r.available || r.pending || r.adj).length}</h2>${rows.length ? '<button class="btn small ghost" type="button" data-act="adm-csv-points">Download as a spreadsheet</button>' : ''}</div>
+    ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Orders</th><th>Earned</th><th>Spent</th><th>Given by you</th><th>Coming</th><th>Can spend</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${esc(r.name || '')}<br><span class="muted num">${esc(r.email)}</span></td><td class="num">${r.orders}</td><td class="num">${r.earned}</td><td class="num">${r.used}</td><td class="num">${r.adj > 0 ? '+' : ''}${r.adj}</td><td class="num">${r.pending}</td><td class="num"><strong>${r.available}</strong></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No customers yet.</p>'}
+    ${d.log.length ? `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Points you gave or took back</h2></div><div class="table-wrap"><table><thead><tr><th>When</th><th>Customer</th><th>Points</th><th>Why</th></tr></thead><tbody>${d.log.slice(0, 50).map((x) => `<tr><td class="num">${new Date(x.created_at).toLocaleDateString('en-IN')}</td><td class="num">${esc(x.email)}</td><td class="num">${x.delta > 0 ? '+' : ''}${x.delta}</td><td>${esc(x.note || '')}</td></tr>`).join('')}</tbody></table></div>` : ''}`;
+}
+
+// ---------- coupons ----------
+const couponText = (c) => (c.kind === 'flat' ? inr(c.amount) + ' off' : c.amount + '% off') + (+c.max_off ? ` (up to ${inr(c.max_off)})` : '');
+const couponRules = (c) => [+c.min_order ? 'Over ' + inr(c.min_order) : '', c.first_order_only ? 'First order only' : '', +c.per_customer ? c.per_customer + ' per customer' : ''].filter(Boolean).join(' · ') || 'No rules';
+const couponDates = (c) => (c.starts_on || c.ends_on ? [c.starts_on ? 'from ' + niceDay(c.starts_on) : '', c.ends_on ? 'to ' + niceDay(c.ends_on) : ''].filter(Boolean).join(' ') : 'Always');
+function admCoupons() {
+  const list = admData('coupons'); if (!list) return loadingRow; const A = UI.adm; const orders = admData('orders') || [];
+  const used = (c) => orders.filter((o) => o.code === c.code && o.status !== 'Cancelled');
+  const edit = A.cEdit != null && A.cEdit !== '' ? list.find((c) => c.code === A.cEdit) : null; const e = edit || { kind: 'percent', tag: 'other', active: true };
+  const opt = (v, cur, l) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(l)}</option>`;
+  return `<form data-form="adm-coupon" class="form adm-card" style="max-width:640px;margin-bottom:28px" novalidate><h2 class="full" style="font-size:24px">${edit ? 'Change ' + esc(edit.code) : 'Make a coupon'}</h2>
+      <p class="full muted" style="margin:0">A code customers type at checkout. The <strong>welcome</strong> code you mark “Show on the site” is the one the banners, newsletter message and share page mention.</p>
+      <span class="field"><label for="cp-code">Code <span class="hint">letters and numbers, e.g. DIWALI15</span></label><input id="cp-code" maxlength="24" autocapitalize="characters" autocomplete="off" value="${esc(e.code || '')}" ${edit ? 'readonly' : ''}></span>
+      <span class="field"><label for="cp-tag">What it is for</label><select id="cp-tag">${Object.entries(COUPON_TAGS).map(([k, l]) => opt(k, e.tag, l)).join('')}</select></span>
+      <span class="field"><label for="cp-kind">Takes off</label><select id="cp-kind">${opt('percent', e.kind, 'A percentage (%)')}${opt('flat', e.kind, 'A fixed amount (₹)')}</select></span>
+      <span class="field"><label for="cp-amount">Amount <span class="hint">% or ₹, as chosen</span></label><input id="cp-amount" type="number" min="1" inputmode="numeric" value="${esc(e.amount || '')}"></span>
+      <span class="field"><label for="cp-min">Smallest order (₹) <span class="hint">0 for none</span></label><input id="cp-min" type="number" min="0" inputmode="numeric" value="${esc(e.min_order || 0)}"></span>
+      <span class="field"><label for="cp-max">Most it can take off (₹) <span class="hint">0 for no cap</span></label><input id="cp-max" type="number" min="0" inputmode="numeric" value="${esc(e.max_off || 0)}"></span>
+      <span class="field"><label for="cp-start">Starts <span class="hint">optional</span></label><input id="cp-start" type="date" value="${esc(e.starts_on || '')}"></span>
+      <span class="field"><label for="cp-end">Ends <span class="hint">optional, last day it works</span></label><input id="cp-end" type="date" value="${esc(e.ends_on || '')}"></span>
+      <span class="field"><label for="cp-uses">Times it can be used in all <span class="hint">0 for no limit</span></label><input id="cp-uses" type="number" min="0" inputmode="numeric" value="${esc(e.max_uses || 0)}"></span>
+      <span class="field"><label for="cp-per">Times per customer <span class="hint">0 for no limit</span></label><input id="cp-per" type="number" min="0" inputmode="numeric" value="${esc(e.per_customer || 0)}"></span>
+      <label class="check full"><input id="cp-first" type="checkbox" ${e.first_order_only ? 'checked' : ''}> First order only (customers who have ordered before can’t use it)</label>
+      <label class="check full"><input id="cp-featured" type="checkbox" ${e.featured ? 'checked' : ''}> <span>Show on the site as the welcome offer <span class="hint">(needs the Welcome tag and a percentage)</span></span></label>
+      <label class="check full"><input id="cp-active" type="checkbox" ${e.active !== false ? 'checked' : ''}> On (untick to pause it)</label>
+      ${A.cErr ? `<span class="full err" role="alert">${esc(A.cErr)}</span>` : ''}${A.cMsg ? `<span class="full status ok" role="status">${esc(A.cMsg)}</span>` : ''}
+      <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="submit">${edit ? 'Save changes' : 'Make the coupon'}</button>${edit ? '<button class="btn small ghost" type="button" data-act="adm-coupon-edit" data-id="">Cancel</button>' : ''}</span></form>
+    <div class="adm-bar"><h2 style="font-size:24px">Coupons · ${list.length}</h2></div>
+    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Code</th><th>Takes off</th><th>Rules</th><th>When</th><th>Used</th><th>Status</th><th></th></tr></thead><tbody>${list.map((c) => { const u = used(c); const given = u.reduce((a, o) => a + (o.codeOff || 0), 0);
+      return `<tr><td class="num sel"><strong>${esc(c.code)}</strong><br><span class="pill">${esc(COUPON_TAGS[c.tag] || 'Other')}</span>${c.featured ? ' <span class="pill">On the site</span>' : ''}</td><td>${esc(couponText(c))}</td><td>${esc(couponRules(c))}</td><td>${esc(couponDates(c))}</td><td class="num">${u.length}${+c.max_uses ? ' of ' + c.max_uses : ''}${given ? `<br><span class="muted">${inr(given)} given</span>` : ''}</td><td>${pill(c.active !== false, 'On', 'Paused')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-coupon-edit" data-id="${esc(c.code)}">Change</button><button class="btn small ghost" type="button" data-act="adm-coupon-toggle" data-id="${esc(c.code)}">${c.active !== false ? 'Pause' : 'Turn on'}</button><button class="btn small ghost danger" type="button" data-act="adm-coupon-del" data-id="${esc(c.code)}">Delete</button></span></td></tr>`; }).join('')}</tbody></table></div>` : '<p class="muted">No coupons yet. Make one above.</p>'}`;
+}
+// keep the welcome offer shown on the site (banners, newsletter and share text) the same as the coupon marked for it
+async function syncWelcome(list) {
+  const f = list.find((c) => c.featured && c.active !== false && c.kind === 'percent' && c.tag === 'welcome');
+  const want = { welcomeCode: f ? f.code : '', welcomeOff: f ? +f.amount : 0 };
+  for (const k of Object.keys(want)) if (SET[k] !== want[k]) await dbPut('settings', { key: k, value: want[k] });
+  renderChrome();
+}
+async function saveCoupons(rows, del) {
+  const A = UI.adm; let list;
+  if (BTDB.on) {
+    for (const r of rows) {
+      if (r.featured) await BTDB.update('coupons', 'featured=eq.true&code=neq.' + encodeURIComponent(r.code), { featured: false });
+      await BTDB.upsert('coupons', [r]);
+    }
+    if (del) await BTDB.remove('coupons', 'code=eq.' + encodeURIComponent(del));
+    A.rows.coupons = null; list = await BTDB.list('coupons', 'order=created_at.desc&limit=500'); A.rows.coupons = list;
+  } else {
+    list = localCoupons().slice(); rows.forEach((r) => { if (r.featured) list.forEach((c) => { if (c.code !== r.code) c.featured = false; }); const i = list.findIndex((c) => c.code === r.code); if (i >= 0) list[i] = Object.assign({}, list[i], r); else list.unshift(r); });
+    if (del) list = list.filter((c) => c.code !== del);
+    S.db = Object.assign({}, S.db, { coupons: list }); save();
+  }
+  await syncWelcome(list);
 }
 function admCards() {
   const d = admData('cards'); if (!d) return loadingRow; const orders = admData('orders') || []; const A = UI.adm;
@@ -2288,9 +2557,9 @@ async function admSeed() {
   const st = Object.keys(skuMap).map((sku) => ({ sku, qty: !blank && have[sku] != null ? have[sku] : (base[sku] ?? 0) })); if (st.length) await dbPut('stock', st);
   return prods.length + ' products, ' + pairs.length + ' rituals and ' + st.length + ' stock counts';
 }
-function downloadCSV(name, rows) {
+function downloadCSV(name, rows, columns) {
   const q = (s) => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
-  const cols = ['contact', 'sku', 'source', 'created_at'].filter((c) => rows.some((r) => r[c] != null));
+  const cols = columns || ['contact', 'sku', 'source', 'created_at'].filter((c) => rows.some((r) => r[c] != null));
   const blob = new Blob([[cols.join(',')].concat(rows.map((r) => cols.map((c) => q(r[c])).join(','))).join('\n')], { type: 'text/csv' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name + '.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
@@ -2502,8 +2771,8 @@ function myOrders() {
 function ptsMine() {
   if (!S.account) return { available: 0, pending: 0 };
   if (BTDB.on) return (UI.mine && UI.mine.points) || { available: 0, pending: 0 };
-  const list = myOrders(); const sum = (f) => list.reduce((a, o) => a + f(o), 0);
-  return { available: Math.max(0, sum((o) => (o.status === 'Delivered' ? o.points || 0 : 0)) - sum((o) => (o.status !== 'Cancelled' ? o.pointsUsed || 0 : 0))), pending: sum((o) => (['Placed', 'Packed', 'Shipped'].includes(o.status) ? o.points || 0 : 0)) };
+  const list = myOrders(); const sum = (f) => list.reduce((a, o) => a + f(o), 0); const adj = ((S.db && S.db.pointsLog) || []).filter((x) => x.email === S.account.email).reduce((a, x) => a + x.delta, 0);
+  return { available: Math.max(0, sum((o) => (o.status === 'Delivered' ? o.points || 0 : 0)) - sum((o) => (o.status !== 'Cancelled' ? o.pointsUsed || 0 : 0)) + adj), pending: sum((o) => (['Placed', 'Packed', 'Shipped'].includes(o.status) ? o.points || 0 : 0)) };
 }
 function loadMine(force) {
   if (!BTDB.on || !S.account || (!force && UI.mine && Date.now() - UI.mine.at < 30000) || UI.mineBusy) return;
@@ -2559,11 +2828,11 @@ function profileBox() {
       <div class="full"><strong>Saved addresses</strong>${pf.addresses.length ? `<ul class="order-list" style="margin-top:8px">${pf.addresses.map((a, i) => `<li><span style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:12px 0;border-bottom:1px solid var(--line)"><span style="flex:1 1 240px"><strong>${esc(a.label || (i ? 'Address ' + (i + 1) : 'Home'))}</strong>${i === 0 ? ' <span class="pill">Usual</span>' : ''}<br><span class="muted">${esc(addrLine(a))}, ${esc(a.state)}</span></span>${i ? `<button class="linkbtn" type="button" data-act="addr-first" data-i="${i}">Make usual</button>` : ''}<button class="linkbtn" type="button" data-act="addr-del" data-i="${i}">Remove</button></span></li>`).join('')}</ul>` : '<p class="muted">None yet. They are saved when you order, or add one below.</p>'}</div>
       ${pf.addresses.length < 5 ? `<details class="full"${P.err && P.err.addr ? ' open' : ''}><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center">Add an address</summary><div class="form" style="padding:0">
         <span class="field"><label for="pf-a-label">Label <span class="hint">Home, Work…</span></label><input id="pf-a-label" maxlength="30" value="${esc(P.a_label || '')}"></span>
-        <span class="field"><label for="pf-a-pin">PIN code</label><input id="pf-a-pin" inputmode="numeric" maxlength="6" value="${esc(P.a_pin || '')}"></span>
+        <span class="field"><label for="pf-a-pin">PIN code</label><input id="pf-a-pin" inputmode="numeric" autocomplete="postal-code" maxlength="6" value="${esc(P.a_pin || '')}"></span>
         <span class="field full"><label for="pf-a-line1">House, street, area</label><input id="pf-a-line1" autocomplete="address-line1" value="${esc(P.a_line1 || '')}"></span>
         <span class="field full"><label for="pf-a-line2">Landmark <span class="hint">optional</span></label><input id="pf-a-line2" value="${esc(P.a_line2 || '')}"></span>
         <span class="field"><label for="pf-a-city">City</label><input id="pf-a-city" autocomplete="address-level2" value="${esc(P.a_city || '')}"></span>
-        <span class="field"><label for="pf-a-state">State</label><select id="pf-a-state"><option value="">Choose a state</option>${STATES.map((x) => `<option ${P.a_state === x ? 'selected' : ''}>${x}</option>`).join('')}</select></span></div></details>` : ''}
+        <span class="field"><label for="pf-a-state">State</label><select id="pf-a-state" autocomplete="address-level1"><option value="">Choose a state</option>${STATES.map((x) => `<option ${P.a_state === x ? 'selected' : ''}>${x}</option>`).join('')}</select></span><p class="full muted" id="pin-note" aria-live="polite" style="font-size:14px;margin:0"></p></div></details>` : ''}
       <fieldset class="full" style="border:0;padding:0;margin:0"><legend><strong>How we reach you</strong></legend>
         <p class="muted" style="margin:4px 0 8px">Order updates always go to ${esc(S.account.email)}.${chans.length ? ' You can add:' : ''}</p>
         ${chans.map(([k, l]) => `<label class="check"><input type="checkbox" id="pf-${k}" ${(P.prefs ? P.prefs[k] : pf.prefs[k]) ? 'checked' : ''}> ${l}</label>`).join('')}</fieldset>
@@ -3260,6 +3529,7 @@ async function placeOrder(via) {
       co.placing = false; const m = String(err.message || '');
       if (/sign_in/.test(m)) { S.account = null; save(); UI.acct = { next: 'checkout' }; render(); say('Please sign in again to place your order.'); return; }
       if (/points_changed/.test(m)) { co.usePts = false; co.payErr = 'Your Bud Points balance changed. We’ve taken them off this order; please check the total and pay again.'; loadMine(true); render(); return; }
+      if (/bad_code|coupon_/.test(m)) { const why = couponMsg(m); co.code = ''; co.coupon = null; co.payErr = why + ' We took the code off this order; please check the total and pay again.'; render(); return; }
       if (/bad_card/.test(m)) co.gcard = null;
       co.payErr = /bad_card/.test(m) ? 'That gift card has no balance left, so we took it off. Please check the total and pay again.' : /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
         : /too_many/.test(m) ? 'We’ve had a lot of orders from this connection or number. Please message us on WhatsApp and we’ll place it for you.' : /bad_quantity/.test(m) ? 'That’s more than we can send in one order. Please lower the quantities, or message us for a bulk order.'
@@ -3382,8 +3652,8 @@ document.addEventListener('click', (e) => {
     case 'pts-use': UI.co.usePts = t.checked; render(); break;
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
     case 'card-remove': UI.co.gcard = null; render(); break;
-    case 'code-remove': UI.co.code = ''; UI.co.codeErr = null; render(); break;
-    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
+    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -3423,6 +3693,20 @@ document.addEventListener('click', (e) => {
     case 'adm-ship': { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o || A.shipping) break; A.shipping = o.id; render();
       admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
     case 'pay-check': payCheck(d.id); break;
+    case 'adm-csv-points': downloadCSV('bud-points', pointsByCustomer(admData('orders') || [], admData('rewards').log).map((r) => ({ email: r.email, name: r.name, orders: r.orders, earned: r.earned, spent: r.used, given_by_owner: r.adj, coming: r.pending, can_spend: r.available })), ['email', 'name', 'orders', 'earned', 'spent', 'given_by_owner', 'coming', 'can_spend']); break;
+    case 'adm-inv-view': UI.adm.tab = 'invoices'; UI.adm.invView = d.id; UI.adm.invAct = null; render(); window.scrollTo({ top: 0 }); break;
+    case 'adm-inv-close': UI.adm.invView = null; UI.adm.invAct = null; UI.adm.invErr = null; render(); break;
+    case 'adm-inv-print': { const i = invoiceRows().find((x) => x.id === d.id); if (i) printInvoice(i); break; }
+    case 'adm-inv-void': case 'adm-inv-credit': UI.adm.invAct = { id: d.id, kind: a === 'adm-inv-void' ? 'void' : 'credit' }; UI.adm.invErr = null; render(); $('#ia-reason')?.focus(); break;
+    case 'adm-inv-make': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const why = invoiceReady(o); if (why) { say(why); break; }
+      admDo(async () => { const row = await issueInvoice(o, 'invoice'); UI.adm.tab = 'invoices'; UI.adm.invView = row.id; UI.adm.invAct = null; render(); window.scrollTo({ top: 0 }); }, 'Invoice made.'); break; }
+    case 'adm-inv-csv': downloadCSV('bud-and-things-invoices', invoiceRows().map((i) => ({ number: i.id, date: i.data.date, type: i.kind === 'credit_note' ? 'Credit note' : i.data.gst ? 'Tax invoice' : 'Bill of supply', order: i.order_id, customer: i.data.buyer.name, state: i.data.placeOfSupply, taxable: (i.data.totals.taxable / 100).toFixed(2), cgst: (i.data.totals.cgst / 100).toFixed(2), sgst: (i.data.totals.sgst / 100).toFixed(2), igst: (i.data.totals.igst / 100).toFixed(2), total: (i.data.totals.total / 100).toFixed(2), status: i.status, against: i.against || '', reason: i.void_reason || '' })), ['number', 'date', 'type', 'order', 'customer', 'state', 'taxable', 'cgst', 'sgst', 'igst', 'total', 'status', 'against', 'reason']); break;
+    case 'adm-coupon-edit': UI.adm.cEdit = d.id || null; UI.adm.cErr = null; UI.adm.cMsg = null; render(); $('#cp-code')?.focus(); break;
+    case 'adm-coupon-toggle': { const c = (admData('coupons') || []).find((x) => x.code === d.id); if (!c) break; admDo(async () => { await saveCoupons([{ code: c.code, active: c.active === false }]); render(); }, c.active === false ? `${c.code} is on.` : `${c.code} is paused. Customers can’t use it.`); break; }
+    case 'adm-coupon-del': { if (!confirm('Delete coupon ' + d.id + '? Orders that used it keep their record.')) break; admDo(async () => { await saveCoupons([], d.id); if (UI.adm.cEdit === d.id) UI.adm.cEdit = null; render(); }, `${d.id} deleted.`); break; }
+    case 'adm-delay-open': UI.adm.delayFor = d.id; UI.adm.delayErr = null; render(); $('#dl-reason')?.focus(); break;
+    case 'adm-delay-cancel': UI.adm.delayFor = null; render(); break;
+    case 'adm-delay-clear': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; admDo(async () => { await setDelay(o, null); UI.adm.delayFor = null; render(); }, `Delay cleared on ${d.id}.`); break; }
     case 'adm-cancel': if (!confirm('Cancel order ' + d.id + '? Its pieces go back into stock.')) break; admDo(async () => { const list = admData('orders') || []; const o = list.find((x) => x.id === d.id); if (!o) return;
       if (BTDB.on) { await BTDB.rpc('cancel_order', { order_id: o.id }); loadData(); } else o.items.forEach((l) => { S.stock[l.sku] = stockOf(l.sku) + l.qty; });
       o.status = 'Cancelled'; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = 'Cancelled'; save(); track('order_status', { order: o.id, status: 'Cancelled' }); render(); say(`${o.id} cancelled. Its pieces are back in stock.`); }); break;
@@ -3433,6 +3717,7 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
+  if (t.id === 'co-state' || t.id === 'pf-a-state') t.dataset.auto = '';
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
   if (d.act === 'home-rit') { UI.ritual.homeSel = UI.ritual.homeSel || { a: true, b: true }; UI.ritual.homeSel[d.k] = t.checked; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'ritual-pick') { UI.ritual.pick[UI.ritual.preset][d.i] = t.checked; render(); $('#' + t.id)?.focus(); }
@@ -3444,6 +3729,10 @@ document.addEventListener('change', (e) => {
   if (d.act === 'gift-toggle') { readCo(t.form); render(); $('#co-g-on')?.focus(); }
 });
 document.addEventListener('input', (e) => {
+  const ti = e.target;
+  if (ti.id === 'co-pin') { pinAutofill(ti, 'co-city', 'co-state', 'pin-note'); return; }
+  if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
+  if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
   if (e.target.id === 'tx-q') { UI.adm.q = e.target.value; clearTimeout(document.tq); document.tq = setTimeout(() => { render(); const el = $('#tx-q'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
   if (e.target.id === 'search-q') { UI.searchQ = e.target.value; const q = UI.searchQ.trim().toLowerCase(); const res = q ? P.filter((p) => (p.name + ' ' + p.type + ' ' + (p.notes || []).join(' ') + ' ' + p.line).toLowerCase().includes(q)) : []; $('#search-res').innerHTML = searchResults(q, res); clearTimeout(document.st); document.st = setTimeout(() => { if (q) track(res.length ? 'search' : 'search_no_results', { q }); }, 900); }
 });
@@ -3488,10 +3777,17 @@ document.addEventListener('submit', (e) => {
     visitorSend('reviews', { product_id: id, name: R.name.slice(0, 60), rating: R.rating, body: R.body.slice(0, 1500), published: false }).then(() => { R.sent = true; R.open = false; track('review_sent', { id, rating: R.rating }); render(); }, (err) => { R.err = 'That didn’t go through (' + err.message + '). Please try again.'; render(); });
     return; }
   if (kind === 'code') { const v = $('#co-code').value.trim(); const bad = 'That code isn’t valid. Check the spelling, or leave it empty.'; const done = () => { render(); if (co.codeErr) $('#co-code')?.focus(); };
-    if (codeOk(v)) { co.code = v; co.codeErr = null; track('code_applied', { code: v.toUpperCase() }); say('Code applied.'); done(); return; }
-    if (!v || !BTDB.on) { co.codeErr = v ? bad : 'Enter a code.'; done(); return; }
-    BTDB.rpc('gift_card_balance', { card_code: v }).then((bal) => { if (+bal > 0) { co.gcard = { code: v.toUpperCase(), bal: +bal }; co.codeErr = null; track('gift_card_applied', {}); say('Gift card applied.'); } else co.codeErr = bal === 0 ? 'That gift card has been used up.' : bad; done(); },
-      (err) => { co.codeErr = /too_many/.test(err.message) ? 'Too many tries from this connection. Please wait an hour, or message us.' : 'We couldn’t check that code right now. Please try again.'; done(); });
+    if (!v) { co.codeErr = 'Enter a code.'; done(); return; }
+    const cl = cartLines(); const base = cl.reduce((a, l) => a + l.v.price * l.qty, 0) - ritualSaving(cl);
+    checkCoupon(v, base).then((c) => { co.coupon = c; co.code = c.code; co.codeErr = null; track('code_applied', { code: c.code }); say('Code applied.'); done(); }, (err) => {
+      const m = String(err.message || '');
+      if (/too_many/.test(m)) { co.codeErr = 'Too many tries from this connection. Please wait an hour, or message us.'; done(); return; }
+      if (/coupon_/.test(m)) { co.codeErr = couponMsg(m); done(); return; }
+      // not one of our codes: it may be a gift card
+      if (!BTDB.on) { co.codeErr = bad; done(); return; }
+      BTDB.rpc('gift_card_balance', { card_code: v }).then((bal) => { if (+bal > 0) { co.gcard = { code: v.toUpperCase(), bal: +bal }; co.codeErr = null; track('gift_card_applied', {}); say('Gift card applied.'); } else co.codeErr = bal === 0 ? 'That gift card has been used up.' : bad; done(); },
+        (e2) => { co.codeErr = /too_many/.test(e2.message) ? 'Too many tries from this connection. Please wait an hour, or message us.' : 'We couldn’t check that code right now. Please try again.'; done(); });
+    });
     return; }
   if (kind === 'track') { const id = $('#tr-id').value.trim().toUpperCase(); const ph = asPhone($('#tr-phone').value); UI.track = { id, phone: $('#tr-phone').value.trim() };
     const mine = S.orders.find((o) => o.id === id && o.contact.phone === ph); if (mine) { location.hash = 'order-' + id; return; }
@@ -3506,6 +3802,38 @@ document.addEventListener('submit', (e) => {
     return; }
   if (kind === 'owner-code') { const code = $('#own-code').value.replace(/\D/g, ''); if (code.length !== 6) { UI.adm.err = 'Enter the 6 digits from your authenticator app.'; render(); $('#own-code')?.focus(); return; }
     BTDB.verifyCode(code).then(() => { UI.adm.err = null; UI.adm.mfa = null; UI.adm.rows = {}; loadData(); render(); say('Signed in.'); }, (err) => { UI.adm.err = /invalid|expired|code/i.test(err.message) ? 'That code didn’t work. Type the newest code the app shows.' : err.message; render(); $('#own-code')?.focus(); });
+    return; }
+  if (kind === 'adm-inv-act') { const A = UI.adm; const reason = $('#ia-reason').value.trim(); const act = A.invAct; if (!act) return; if (!reason) { A.invErr = 'Add a reason, so you remember why.'; render(); $('#ia-reason')?.focus(); return; }
+    admDo(async () => { try {
+      if (act.kind === 'void') { await voidInvoice(act.id, reason); A.invView = act.id; A.invAct = null; A.invErr = null; render(); }
+      else { const inv = invoiceRows().find((i) => i.id === act.id); const o = (admData('orders') || []).find((x) => x.id === inv.order_id); const row = await issueInvoice(o, 'credit_note', act.id, reason); A.invView = row.id; A.invAct = null; A.invErr = null; render(); }
+    } catch (e) { A.invErr = invMsg(String(e.message || e)); render(); throw new Error(A.invErr); } }, act.kind === 'void' ? 'Invoice cancelled. It stays on record as Void.' : 'Credit note made.');
+    return; }
+  if (kind === 'adm-points') { const A = UI.adm; const email = $('#pt-email').value.trim().toLowerCase(); const n = parseInt($('#pt-n').value, 10); const note = $('#pt-note').value.trim(); A.ptEmail = email; A.ptMsg = null;
+    const known = pointsByCustomer(admData('orders') || [], admData('rewards').log).find((r) => r.email === email);
+    A.ptErr = !isEmail(email) ? 'Enter the customer’s email, the one they sign in with.' : !n || Math.abs(n) > 100000 ? 'Enter the points as a whole number, such as 100 or -50.' : note.length < 2 ? 'Add a short reason, so you remember why.'
+      : !known ? 'No customer with that email has ordered yet.' : n < 0 && known.available + n < 0 ? `They only have ${known.available} points to take back.` : null;
+    if (A.ptErr) { render(); return; }
+    admDo(async () => { const row = { email, delta: n, note }; if (BTDB.on) { await BTDB.insert('points_log', row); A.rows.rewards = null; } else { S.db = Object.assign({}, S.db, { pointsLog: [Object.assign({ created_at: new Date().toISOString() }, row)].concat((S.db && S.db.pointsLog) || []) }); save(); }
+      A.ptMsg = `${n > 0 ? 'Gave' : 'Took back'} ${Math.abs(n)} points ${n > 0 ? 'to' : 'from'} ${email}.`; A.ptEmail = ''; render(); }); return; }
+  if (kind === 'adm-coupon') { const A = UI.adm; const val = (id) => $('#' + id).value.trim(); const n = (id) => Math.max(0, parseInt(val(id), 10) || 0);
+    const code = val('cp-code').toUpperCase(); const kind2 = val('cp-kind'); const row = { code, kind: kind2, amount: n('cp-amount'), min_order: n('cp-min'), max_off: kind2 === 'percent' ? n('cp-max') : 0, starts_on: val('cp-start') || null, ends_on: val('cp-end') || null,
+      max_uses: n('cp-uses'), per_customer: n('cp-per'), first_order_only: $('#cp-first').checked, tag: val('cp-tag'), featured: $('#cp-featured').checked, active: $('#cp-active').checked };
+    const exists = (admData('coupons') || []).some((c) => c.code === code); const editing = A.cEdit != null && A.cEdit !== '';
+    A.cMsg = null;
+    A.cErr = !/^[A-Z0-9][A-Z0-9_-]{1,23}$/.test(code) ? 'Use 2 to 24 letters or numbers for the code, for example DIWALI15.' : !editing && exists ? 'There is already a coupon with that code. Change it, or change the existing one.'
+      : !(row.amount > 0) ? 'Enter how much it takes off.' : kind2 === 'percent' && row.amount > 100 ? 'A percentage can’t be more than 100.' : row.starts_on && row.ends_on && row.ends_on < row.starts_on ? 'The end date is before the start date.'
+      : row.featured && (row.tag !== 'welcome' || kind2 !== 'percent') ? 'To show it on the site as the welcome offer, give it the Welcome tag and make it a percentage.' : null;
+    if (A.cErr) { render(); return; }
+    if (!BTDB.on) { row.starts_on = row.starts_on || ''; row.ends_on = row.ends_on || ''; }
+    admDo(async () => { await saveCoupons([row]); A.cEdit = null; A.cMsg = `${code} is saved.${row.featured ? ' The site now shows it as the welcome offer.' : ''}`; render(); });
+    return; }
+  if (kind === 'adm-delay') { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === f.dataset.id); if (!o) return;
+    const pick = $('#dl-reason').value, note = $('#dl-note').value.trim(), until = $('#dl-until').value, tell = $('#dl-tell').checked;
+    if (pick === 'Something else' && !note) { A.delayErr = 'Say what the reason is in the note box.'; render(); $('#dl-note')?.focus(); return; }
+    if (until && until < dayISO(new Date())) { A.delayErr = 'Choose a date from today onwards.'; render(); return; }
+    const delay = pick === 'Something else' ? { reason: note, note: '' } : { reason: pick, note }; Object.assign(delay, { until: until || '', tell, at: new Date().toISOString() });
+    admDo(async () => { await setDelay(o, delay); A.delayFor = null; A.delayErr = null; render(); }, `${o.id} marked as delayed${tell ? '; the customer would get an email' : ''}.`);
     return; }
   if (kind === 'adm-card-new') { const amt = parseInt($('#gcn-amt').value, 10); const note = $('#gcn-note').value.trim(); const A = UI.adm;
     if (!(amt > 0)) { say('Enter the amount in rupees.'); return; }

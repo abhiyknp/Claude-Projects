@@ -17,15 +17,15 @@ const custOf = (auth) => { try { const p = JSON.parse(Buffer.from(auth.replace(/
 const CUST_CODE = '111111';
 const custSession = (email) => ({ access_token: custJwt(email), refresh_token: 'r.' + Buffer.from(email).toString('base64url'), expires_in: 3600, token_type: 'bearer', user: { email } });
 const TWO_STEP = process.env.TWO_STEP === '1'; // matches ownerTwoStep in config.js; off until launch
-const KEYS = { site_text: 'key', settings: 'key', stock: 'sku' };
-const T = { products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], profiles: [] };
+const KEYS = { site_text: 'key', settings: 'key', stock: 'sku', coupons: 'code', invoices: 'id' };
+const T = { coupons: [{ code: 'HELLO10', kind: 'percent', amount: 10, min_order: 0, max_off: 0, starts_on: null, ends_on: null, max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true, created_at: new Date().toISOString() }], invoices: [], points_log: [], products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], profiles: [] };
 const FILES = {};
 let orderNo = 1001;
 const uuid = () => 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
 
 // what a visitor (not signed in) may read and write, as in schema.sql
 const canRead = (t, r, own) => own || ({ products: r.live, pairings: r.live, media: r.published, reviews: r.published, site_text: true, settings: true, stock: true }[t] || false);
-const canInsert = (t, r, own) => own || (t === 'reviews' && !r.published) || t === 'subscribers' || t === 'restock_requests' || t === 'reminders';
+const canInsert = (t, r, own) => (own && t !== 'invoices') || (t === 'reviews' && !r.published) || t === 'subscribers' || t === 'restock_requests' || t === 'reminders';
 
 function filter(rows, q) {
   for (const [k, v] of q) {
@@ -48,8 +48,19 @@ const num = (k, d) => { const v = setting(k, d); return /^\s*-?\d+(\.\d+)?\s*$/.
 // Bud Points, as points_of() in schema.sql
 function pointsOf(em) {
   const mine = T.orders.filter((x) => x.data.email === em); const sum = (f) => mine.reduce((a, x) => a + f(x), 0);
-  return { available: Math.max(0, sum((x) => (x.status === 'Delivered' ? x.data.points || 0 : 0)) - sum((x) => (x.status !== 'Cancelled' ? x.data.pointsUsed || 0 : 0))),
+  const adj = T.points_log.filter((x) => x.email === em).reduce((a, x) => a + x.delta, 0);
+  return { available: Math.max(0, sum((x) => (x.status === 'Delivered' ? x.data.points || 0 : 0)) - sum((x) => (x.status !== 'Cancelled' ? x.data.pointsUsed || 0 : 0)) + adj),
     pending: sum((x) => (['Placed', 'Packed', 'Shipped'].includes(x.status) ? x.data.points || 0 : 0)) };
+}
+// coupon_off() in schema.sql: what a code takes off, or the reason it can't be used
+function couponOff(codeIn, base, em) {
+  const code = String(codeIn || '').trim().toUpperCase(); const c = T.coupons.find((x) => x.code === code); if (!c || !c.active) throw new Error('bad_code');
+  const today = new Date().toISOString().slice(0, 10); if (c.starts_on && today < c.starts_on) throw new Error('coupon_early'); if (c.ends_on && today > c.ends_on) throw new Error('coupon_ended');
+  const used = T.orders.filter((x) => x.data.code === c.code && x.status !== 'Cancelled'); if (c.max_uses > 0 && used.length >= c.max_uses) throw new Error('coupon_used_up');
+  if (base < c.min_order) throw new Error('coupon_min:' + c.min_order);
+  if (em) { const mine = T.orders.filter((x) => x.data.email === em && x.status !== 'Cancelled'); if (c.first_order_only && mine.length) throw new Error('coupon_first'); if (c.per_customer > 0 && mine.filter((x) => x.data.code === c.code).length >= c.per_customer) throw new Error('coupon_per_customer'); }
+  let off = c.kind === 'percent' ? Math.round(base * c.amount / 100) : Math.min(c.amount, base); if (c.max_off > 0) off = Math.min(off, c.max_off);
+  return { code: c.code, kind: c.kind, amount: c.amount, min_order: c.min_order, max_off: c.max_off, off };
 }
 function placeOrder(o, em) {
   if (!em) throw new Error('sign_in');
@@ -71,7 +82,7 @@ function placeOrder(o, em) {
   if (pieces > num('maxPieces', 10)) throw new Error('bad_quantity');
   candles.sort((x, y) => y - x); objects.sort((x, y) => y - x); let pair = 0; for (let i = 0; i < Math.min(candles.length, objects.length); i++) pair += candles[i] + objects[i];
   const ritual = Math.round(pair * num('ritualOff', 10) / 100); let code = '', codeOff = 0;
-  if (o.code) { if (String(o.code).trim().toUpperCase() !== String(setting('welcomeCode', 'HELLO10')).trim().toUpperCase()) throw new Error('price_changed'); code = String(o.code).trim().toUpperCase(); codeOff = Math.round((sub - ritual) * num('welcomeOff', 10) / 100); }
+  if (o.code) { const cp = couponOff(o.code, sub - ritual, em); code = cp.code; codeOff = cp.off; }
   const giftOn = !!(g && g.on); const ship = num('freeOver', 1999) > 0 && sub >= num('freeOver', 1999) ? 0 : Math.round(num('shipFee', 99));
   const wrap = giftOn && g.wrap ? Math.round(num('wrapFee', 99)) : 0; const cod = o.method === 'Cash on delivery' ? Math.round(num('codFee', 49)) : 0;
   if (!/^\d{1,6}$/.test(String(o.usePoints == null ? 0 : o.usePoints))) bad('points'); const usePts = +(o.usePoints || 0);
@@ -151,6 +162,30 @@ http.createServer((req, res) => {
         if (!own) return fail(res, 400, 'not_allowed');
         const o = T.orders.find((x) => x.id === json().order_id); if (!o || !['Awaiting payment', 'Placed', 'Packed'].includes(o.status)) return fail(res, 400, 'cannot_cancel');
         o.data.items.forEach((it) => { const s = T.stock.find((x) => x.sku === it.sku); if (s) s.qty += it.qty; }); const gc = T.gift_cards.find((x) => x.code === o.data.card); if (gc) gc.balance += o.data.cardOff || 0; o.status = 'Cancelled'; return send(res, 200, null);
+      }
+      if (m && m[1] === 'check_coupon') { const a = json(); try { return send(res, 200, couponOff(a.code_in, a.base, custOf(auth))); } catch (e) { return fail(res, 400, e.message); } }
+      if (m && m[1] === 'issue_invoice') {
+        if (!own) return fail(res, 400, 'not_allowed'); const a = json(); const o = T.orders.find((x) => x.id === a.order_id_in); if (!o) return fail(res, 400, 'not_found');
+        if (!Array.isArray((a.snap || {}).lines)) return fail(res, 400, 'bad_invoice');
+        if (a.kind_in === 'invoice') { if (['Awaiting payment', 'Cancelled'].includes(o.status)) return fail(res, 400, 'not_ready'); if (T.invoices.some((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued')) return fail(res, 400, 'already_invoiced'); }
+        else { if (!T.invoices.some((x) => x.id === a.against_in && x.kind === 'invoice' && x.status === 'Issued')) return fail(res, 400, 'no_invoice'); if (!a.snap.reason) return fail(res, 400, 'bad_invoice'); if (T.invoices.some((x) => x.against === a.against_in && x.kind === 'credit_note' && x.status === 'Issued')) return fail(res, 400, 'already_credited'); }
+        const d = new Date(); const yy = d.getMonth() >= 3 ? d.getFullYear() : d.getFullYear() - 1; const fy = String(yy % 100).padStart(2, '0') + '-' + String((yy + 1) % 100).padStart(2, '0');
+        const seq = T.invoices.filter((x) => x.kind === a.kind_in && x.fy === fy).length + 1; const pre = String(setting('invoicePrefix', 'BT')).replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 3) || 'BT';
+        const id = a.kind_in === 'invoice' ? pre + '/' + fy + '/' + String(seq).padStart(4, '0') : pre + 'CN/' + fy + '/' + String(seq).padStart(4, '0');
+        const row = { id, kind: a.kind_in, order_id: o.id, fy, seq, against: a.kind_in === 'credit_note' ? a.against_in : null, status: 'Issued', void_reason: null, voided_at: null, data: Object.assign({}, a.snap, { number: id, date: d.toISOString().slice(0, 10) }), created_at: d.toISOString() };
+        T.invoices.push(row); return send(res, 200, row);
+      }
+      if (m && m[1] === 'void_invoice') {
+        if (!own) return fail(res, 400, 'not_allowed'); const a = json(); const r = T.invoices.find((x) => x.id === a.inv_id && x.status === 'Issued'); if (!r) return fail(res, 400, 'not_found');
+        if (!a.reason) return fail(res, 400, 'bad_invoice'); if (r.kind === 'invoice' && T.invoices.some((x) => x.against === r.id && x.kind === 'credit_note' && x.status === 'Issued')) return fail(res, 400, 'has_credit_note');
+        r.status = 'Void'; r.void_reason = a.reason; r.voided_at = new Date().toISOString(); return send(res, 200, r);
+      }
+      if (m && m[1] === 'set_delay') {
+        if (!own) return fail(res, 400, 'not_allowed');
+        const a = json(); const o = T.orders.find((x) => x.id === a.order_id); if (!o) return fail(res, 400, 'not_found');
+        if (!a.d) { delete o.data.delay; return send(res, 200, null); }
+        if (!['Placed', 'Packed', 'Shipped'].includes(o.status)) return fail(res, 400, 'cannot_delay');
+        o.data.delay = { reason: String(a.d.reason || '').trim(), note: String(a.d.note || '').trim(), until: a.d.until || '', tell: a.d.tell === true || a.d.tell === 'true', at: new Date().toISOString() }; return send(res, 200, null);
       }
       if (m && m[1] === 'gift_card_balance') { const gc = T.gift_cards.find((x) => x.code === String(json().card_code).trim().toUpperCase()); return send(res, 200, gc ? String(gc.balance) : 'null', 'application/json'); }
       if (m && m[1] === 'my_referral') { const who = String(json().contact_in).trim().toLowerCase(); let r = T.referrers.find((x) => x.contact === who); if (!r) { r = { id: Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'), contact: who, created_at: new Date().toISOString() }; T.referrers.push(r); } return send(res, 200, JSON.stringify(r.id), 'application/json'); }

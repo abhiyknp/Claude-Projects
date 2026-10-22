@@ -47,6 +47,42 @@ create table if not exists restock_requests (id uuid primary key default gen_ran
 create table if not exists reminders (id uuid primary key default gen_random_uuid(), contact text not null, occasion text not null, for_name text, day date not null, created_at timestamptz not null default now());
 -- gift cards the owner issues after a card is paid for (or as a thank-you); spent at checkout until the balance is 0
 create table if not exists gift_cards (code text primary key, amount int not null check (amount > 0), balance int not null check (balance >= 0), note text, created_at timestamptz not null default now());
+-- discount codes the owner makes and manages in Owner view → Coupons. A customer can't read this table: they check a code
+-- with check_coupon() and place_order() works the discount out itself. How often a code was used is counted from the
+-- orders that carry it (cancelled ones don't count), so cancelling an order gives its use back.
+create table if not exists coupons (
+  code text primary key check (code ~ '^[A-Z0-9][A-Z0-9_-]{1,23}$'),
+  kind text not null default 'percent' check (kind in ('percent', 'flat')),
+  amount int not null check (amount > 0 and (kind = 'flat' or amount <= 100)),
+  min_order int not null default 0 check (min_order >= 0),   -- pieces after the ritual saving must reach this (₹)
+  max_off int not null default 0 check (max_off >= 0),       -- cap on the discount (₹, 0 for none)
+  starts_on date, ends_on date,
+  max_uses int not null default 0 check (max_uses >= 0),     -- in total (0 for no limit)
+  per_customer int not null default 0 check (per_customer >= 0),
+  first_order_only boolean not null default false,
+  tag text not null default 'other' check (tag in ('welcome', 'festive', 'birthday', 'thankyou', 'referral', 'other')),
+  featured boolean not null default false,                   -- the welcome code the site's banners and messages show
+  active boolean not null default true,
+  created_at timestamptz not null default now());
+-- points the owner gives or takes back by hand (a thank-you, an apology, a mistake): added to what a customer can spend
+create table if not exists points_log (id uuid primary key default gen_random_uuid(), email text not null, delta int not null check (delta <> 0 and abs(delta) <= 100000),
+  note text not null default '', created_at timestamptz not null default now());
+create index if not exists points_log_email on points_log (email);
+-- invoices and credit notes. Numbers run one after the other within a financial year (April to March) and are never
+-- reused: a cancelled invoice stays here marked Void. Made only by issue_invoice() and void_invoice() below.
+create table if not exists invoice_counters (fy text not null, kind text not null, last int not null default 0, primary key (fy, kind));
+create table if not exists invoices (
+  id text primary key,
+  kind text not null default 'invoice' check (kind in ('invoice', 'credit_note')),
+  order_id text not null, fy text not null, seq int not null,
+  against text,
+  status text not null default 'Issued' check (status in ('Issued', 'Void')),
+  void_reason text, voided_at timestamptz,
+  data jsonb not null,
+  created_at timestamptz not null default now(),
+  unique (kind, fy, seq));
+create index if not exists invoices_order on invoices (order_id);
+
 -- a customer's share link (?ref=ABC123): orders placed through it are credited to them, and the owner sends the thank-you
 create table if not exists referrers (id text primary key, contact text not null unique, created_at timestamptz not null default now());
 -- a signed-in customer's saved details: name, mobile, up to 5 delivery addresses (the first is the usual one) and the
@@ -100,6 +136,12 @@ create or replace function cfg_text(k text, d text) returns text language sql st
   select coalesce((select value #>> '{}' from settings where key = k), d);
 $$;
 
+-- the code that was set in Settings before coupons existed becomes the first coupon (once)
+insert into coupons (code, kind, amount, tag, featured)
+  select upper(trim(cfg_text('welcomeCode', 'HELLO10'))), 'percent', least(greatest(round(cfg_num('welcomeOff', 10))::int, 1), 100), 'welcome', true
+  where upper(trim(cfg_text('welcomeCode', 'HELLO10'))) ~ '^[A-Z0-9][A-Z0-9_-]{1,23}$' and cfg_num('welcomeOff', 10) > 0
+  on conflict do nothing;
+
 -- ---------- rules ----------
 alter table owners enable row level security;
 alter table products enable row level security;
@@ -116,15 +158,21 @@ alter table reminders enable row level security;
 alter table gift_cards enable row level security;
 alter table referrers enable row level security;
 alter table profiles enable row level security;
+alter table coupons enable row level security;
+alter table points_log enable row level security;
+alter table invoice_counters enable row level security; -- no rules on purpose: only issue_invoice() uses it
+alter table invoices enable row level security;
 alter table notifications enable row level security;
 alter table hits enable row level security; -- no rules on purpose: only the functions here read or write it
 revoke all on hits from anon, authenticated;
+revoke all on invoice_counters from anon, authenticated;
+revoke insert, update, delete on invoices from anon, authenticated;
 
 do $$
 declare t text;
 begin
   -- drop and recreate so the file can be run again
-  for t in select unnest(array['products','pairings','site_text','settings','stock','media','orders','reviews','subscribers','restock_requests','reminders','gift_cards','referrers','profiles','notifications','owners']) loop
+  for t in select unnest(array['products','pairings','site_text','settings','stock','media','orders','reviews','subscribers','restock_requests','reminders','gift_cards','referrers','profiles','notifications','owners','coupons','points_log','invoices']) loop
     execute format('drop policy if exists "read" on %I', t);
     execute format('drop policy if exists "owner" on %I', t);
     execute format('drop policy if exists "visitor" on %I', t);
@@ -153,6 +201,9 @@ create policy "owner" on reminders for all using (is_owner()) with check (is_own
 create policy "owner" on gift_cards for all using (is_owner()) with check (is_owner());
 create policy "owner" on referrers for all using (is_owner()) with check (is_owner());
 create policy "owner" on profiles for select using (is_owner());
+create policy "owner" on coupons for all using (is_owner()) with check (is_owner());
+create policy "owner" on points_log for all using (is_owner()) with check (is_owner());
+create policy "owner" on invoices for select using (is_owner());
 create policy "owner" on notifications for select using (is_owner());
 -- visitors may send a review (held until the owner publishes it), sign up, or ask to hear about a restock
 create policy "visitor" on reviews for insert with check (not published and length(name) between 1 and 60 and length(body) between 1 and 1500 and length(product_id) < 60);
@@ -235,7 +286,8 @@ create index if not exists orders_email on orders ((data ->> 'email'));
 create or replace function points_of(em text) returns jsonb language sql stable security definer set search_path = public as $$
   select jsonb_build_object(
     'available', greatest(0, coalesce(sum(case when status = 'Delivered' then coalesce((data ->> 'points')::int, 0) else 0 end), 0)
-      - coalesce(sum(case when status <> 'Cancelled' then coalesce((data ->> 'pointsUsed')::int, 0) else 0 end), 0))::int,
+      - coalesce(sum(case when status <> 'Cancelled' then coalesce((data ->> 'pointsUsed')::int, 0) else 0 end), 0)
+      + coalesce((select sum(delta) from points_log where email = em), 0))::int,
     'pending', coalesce(sum(case when status in ('Placed', 'Packed', 'Shipped') then coalesce((data ->> 'points')::int, 0) else 0 end), 0)::int)
   from orders where data ->> 'email' = em
 $$;
@@ -249,6 +301,34 @@ begin
     select data || jsonb_build_object('status', status) d, created_at from orders where data ->> 'email' = em order by created_at desc limit 50) x), '[]'::jsonb));
 end $$;
 
+-- what a code takes off `base` rupees (the pieces after the ritual saving) for this customer, or an exception that says
+-- why not: bad_code, coupon_early, coupon_ended, coupon_used_up, coupon_min:<₹>, coupon_first, coupon_per_customer.
+-- With lock_row the coupon row is held until the order is saved, so the last use can't be taken twice.
+create or replace function coupon_off(code_in text, base int, em text, lock_row boolean default false) returns jsonb language plpgsql security definer set search_path = public as $$
+declare c coupons%rowtype; today date := (now() at time zone 'Asia/Kolkata')::date; off int;
+begin
+  code_in := upper(trim(coalesce(code_in, '')));
+  if lock_row then select * into c from coupons where code = code_in for update; else select * into c from coupons where code = code_in; end if;
+  if c.code is null or not c.active then raise exception 'bad_code'; end if;
+  if c.starts_on is not null and today < c.starts_on then raise exception 'coupon_early'; end if;
+  if c.ends_on is not null and today > c.ends_on then raise exception 'coupon_ended'; end if;
+  if c.max_uses > 0 and (select count(*) from orders where data ->> 'code' = c.code and status <> 'Cancelled') >= c.max_uses then raise exception 'coupon_used_up'; end if;
+  if base < c.min_order then raise exception 'coupon_min:%', c.min_order; end if;
+  if em is not null then
+    if c.first_order_only and exists (select 1 from orders where data ->> 'email' = em and status <> 'Cancelled') then raise exception 'coupon_first'; end if;
+    if c.per_customer > 0 and (select count(*) from orders where data ->> 'email' = em and data ->> 'code' = c.code and status <> 'Cancelled') >= c.per_customer then raise exception 'coupon_per_customer'; end if;
+  end if;
+  off := case c.kind when 'percent' then round(base * c.amount / 100.0) else least(c.amount, base) end;
+  if c.max_off > 0 then off := least(off, c.max_off); end if;
+  return jsonb_build_object('code', c.code, 'kind', c.kind, 'amount', c.amount, 'min_order', c.min_order, 'max_off', c.max_off, 'off', off);
+end $$;
+-- the checkout asks whether a code works for this cart (20 tries an hour per connection, so codes can't be guessed)
+create or replace function check_coupon(code_in text, base int) returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  perform hit('coupon', client_key(), 20, '1 hour');
+  return coupon_off(code_in, base, customer_email(), false);
+end $$;
+
 create or replace function place_order(o jsonb) returns text language plpgsql security definer set search_path = public as $$
 declare
   c jsonb := coalesce(o -> 'contact', '{}'); a jsonb := coalesce(o -> 'address', '{}'); g jsonb := o -> 'gift';
@@ -258,7 +338,7 @@ declare
   sub int := 0; ritual int := 0; code_off int := 0; ship int := 0; wrap int := 0; cod int := 0; total int; code text := '';
   gift_on boolean := false; gift jsonb := null; new_id text; st text;
   em text := customer_email(); use_pts int := 0; earned int := 0;
-  card text := upper(trim(coalesce(o ->> 'card', ''))); card_off int := 0; bal int; ref text := null;
+  card text := upper(trim(coalesce(o ->> 'card', ''))); card_off int := 0; bal int; ref text := null; cp jsonb;
 begin
   -- no guest orders: the customer signs in first
   if em is null then raise exception 'sign_in'; end if;
@@ -316,9 +396,8 @@ begin
     ritual := round(ritual * cfg_num('ritualOff', 10) / 100);
   end if;
   if coalesce(o ->> 'code', '') <> '' then
-    if cfg_text('welcomeCode', 'HELLO10') = '' or upper(trim(o ->> 'code')) <> upper(trim(cfg_text('welcomeCode', 'HELLO10'))) then raise exception 'price_changed'; end if;
-    code := upper(trim(o ->> 'code'));
-    code_off := round((sub - ritual) * cfg_num('welcomeOff', 10) / 100);
+    cp := coupon_off(o ->> 'code', sub - ritual, em, true);
+    code := cp ->> 'code'; code_off := (cp ->> 'off')::int;
   end if;
   ship := case when sub = 0 then 0 when cfg_num('freeOver', 1999) > 0 and sub >= cfg_num('freeOver', 1999) then 0 else round(cfg_num('shipFee', 99)) end;
   if gift_on and (gift ->> 'wrap')::boolean then wrap := round(cfg_num('wrapFee', 99)); end if;
@@ -428,6 +507,69 @@ begin
   return (select status from orders where id = order_id);
 end $$;
 
+-- the owner marks an order as running late (or clears it): { reason, note, until (a date or ''), tell (email the customer), at }.
+-- It is a flag on the order, not a new step, so Packed, Shipped and Delivered, Bud Points and tracking carry on as before.
+create or replace function set_delay(order_id text, d jsonb) returns void language plpgsql security definer set search_path = public as $$
+declare cur text;
+begin
+  if not is_owner() then raise exception 'not_allowed'; end if;
+  select status into cur from orders where id = order_id for update;
+  if cur is null then raise exception 'not_found'; end if;
+  if d is null or jsonb_typeof(d) <> 'object' then
+    update orders set data = data - 'delay' where id = order_id;
+    return;
+  end if;
+  if cur not in ('Placed', 'Packed', 'Shipped') then raise exception 'cannot_delay'; end if;
+  if length(coalesce(d ->> 'reason', '')) not between 1 and 120 or length(coalesce(d ->> 'note', '')) > 300
+    or (coalesce(d ->> 'until', '') <> '' and (d ->> 'until') !~ '^\d{4}-\d{2}-\d{2}$') then raise exception 'bad_delay'; end if;
+  update orders set data = data || jsonb_build_object('delay', jsonb_build_object('reason', trim(d ->> 'reason'), 'note', trim(coalesce(d ->> 'note', '')),
+    'until', coalesce(d ->> 'until', ''), 'tell', coalesce(d ->> 'tell', 'false') = 'true', 'at', now())) where id = order_id;
+end $$;
+
+-- ---------- invoices ----------
+-- The owner makes an invoice for a paid order from Owner view. The browser sends the lines and tax worked out from the order
+-- and the GST settings; the number and date are given here, in one step, so numbers can't skip or repeat.
+-- Numbers look like BT/26-27/0001 (credit notes BTCN/26-27/0001): at most 16 characters, restarting each 1 April.
+create or replace function issue_invoice(order_id_in text, kind_in text, against_in text, snap jsonb) returns jsonb language plpgsql security definer set search_path = public as $$
+declare ord record; orig invoices%rowtype; row invoices%rowtype; fy text; yy int; n int; num text; today date := (now() at time zone 'Asia/Kolkata')::date;
+  pre text := left(upper(regexp_replace(coalesce(nullif(trim(cfg_text('invoicePrefix', 'BT')), ''), 'BT'), '[^A-Za-z0-9]', '', 'g')), 3);
+begin
+  if not is_owner() then raise exception 'not_allowed'; end if;
+  if kind_in not in ('invoice', 'credit_note') or jsonb_typeof(snap) <> 'object' or jsonb_typeof(snap -> 'lines') <> 'array' then raise exception 'bad_invoice'; end if;
+  if pre = '' then pre := 'BT'; end if;
+  select id, status into ord from orders where id = order_id_in for update;
+  if ord.id is null then raise exception 'not_found'; end if;
+  if kind_in = 'invoice' then
+    if ord.status in ('Awaiting payment', 'Cancelled') then raise exception 'not_ready'; end if;
+    if exists (select 1 from invoices where order_id = order_id_in and kind = 'invoice' and status = 'Issued') then raise exception 'already_invoiced'; end if;
+  else
+    select * into orig from invoices where id = against_in and kind = 'invoice' and status = 'Issued' for update;
+    if orig.id is null then raise exception 'no_invoice'; end if;
+    if length(coalesce(snap ->> 'reason', '')) not between 1 and 200 then raise exception 'bad_invoice'; end if;
+    if exists (select 1 from invoices where against = against_in and kind = 'credit_note' and status = 'Issued') then raise exception 'already_credited'; end if;
+  end if;
+  yy := case when extract(month from today) >= 4 then extract(year from today)::int else extract(year from today)::int - 1 end;
+  fy := lpad((yy % 100)::text, 2, '0') || '-' || lpad(((yy + 1) % 100)::text, 2, '0');
+  insert into invoice_counters (fy, kind, last) values (fy, kind_in, 1) on conflict (fy, kind) do update set last = invoice_counters.last + 1 returning last into n;
+  num := case kind_in when 'invoice' then pre || '/' || fy || '/' || lpad(n::text, 4, '0') else pre || 'CN/' || fy || '/' || lpad(n::text, 4, '0') end;
+  if length(num) > 16 then raise exception 'bad_invoice'; end if;
+  insert into invoices (id, kind, order_id, fy, seq, against, data) values (num, kind_in, order_id_in, fy, n, case when kind_in = 'credit_note' then against_in end,
+    snap || jsonb_build_object('number', num, 'date', today)) returning * into row;
+  return to_jsonb(row);
+end $$;
+-- cancelling an invoice keeps it on record, marked Void with the reason. An invoice that already has a credit note stays as it is.
+create or replace function void_invoice(inv_id text, reason text) returns jsonb language plpgsql security definer set search_path = public as $$
+declare row invoices%rowtype;
+begin
+  if not is_owner() then raise exception 'not_allowed'; end if;
+  if length(coalesce(reason, '')) not between 1 and 200 then raise exception 'bad_invoice'; end if;
+  select * into row from invoices where id = inv_id for update;
+  if row.id is null or row.status <> 'Issued' then raise exception 'not_found'; end if;
+  if row.kind = 'invoice' and exists (select 1 from invoices where against = row.id and kind = 'credit_note' and status = 'Issued') then raise exception 'has_credit_note'; end if;
+  update invoices set status = 'Void', void_reason = trim(reason), voided_at = now() where id = inv_id returning * into row;
+  return to_jsonb(row);
+end $$;
+
 -- a shopper checks a gift card before using it (20 tries an hour per connection, so codes can't be guessed)
 create or replace function gift_card_balance(card_code text) returns int language plpgsql security definer set search_path = public as $$
 begin
@@ -522,7 +664,7 @@ end $$;
 -- The database queues a message when something happens; the notify function sends it (supabase/functions/notify).
 --   welcome      a customer's first sign-in (not for customers who ordered before profiles existed)
 --   confirmed    an order is Placed: paid online, a gift card or points, or cash on delivery (and new_order to the owner)
---   shipped, delivered, cancelled   as the order moves along; refund when a late payment has to go back
+--   shipped, delivered, cancelled   as the order moves along; delayed when the owner marks it running late and ticks "tell the customer"; refund when a late payment has to go back
 --   restock      a piece someone asked about is back in stock
 --   reminder     a week before a saved gift date (reminderDays), from the daily run
 -- Email always goes to the customer's sign-in address. WhatsApp, SMS and app push are added for customers who chose
@@ -555,6 +697,10 @@ begin
   if coalesce((new.data ->> 'refundDue')::boolean, false) and (tg_op = 'INSERT' or not coalesce((old.data ->> 'refundDue')::boolean, false)) then
     perform queue_note('refund_due', 'email', shop_inbox(), new.id || ':refund_due', new.id, '{}');
     perform tell('refund', em, new.phone, new.id || ':refund', new.id, '{}', optin);
+  end if;
+  -- the owner marked the order as running late and asked to tell the customer (once per time it is marked)
+  if tg_op = 'UPDATE' and em is not null and coalesce((new.data -> 'delay' ->> 'tell')::boolean, false) and (new.data -> 'delay' ->> 'at') is distinct from (old.data -> 'delay' ->> 'at') then
+    perform tell('delayed', em, new.phone, new.id || ':delayed:' || (new.data -> 'delay' ->> 'at'), new.id, '{}', optin);
   end if;
   -- a new order only ever says "confirmed" (orders copied in with a later status send nothing)
   if tg_op = 'UPDATE' and new.status is not distinct from old.status or tg_op = 'INSERT' and new.status <> 'Placed' then return new; end if;
@@ -643,6 +789,11 @@ revoke execute on function guard_visitor() from public, anon, authenticated;
 revoke execute on function place_order(jsonb) from public, anon;
 revoke execute on function get_order(text, text) from public;
 revoke execute on function cancel_order(text) from public, anon;
+revoke execute on function set_delay(text, jsonb) from public, anon;
+revoke execute on function coupon_off(text, int, text, boolean) from public, anon, authenticated;
+revoke execute on function check_coupon(text, int) from public;
+revoke execute on function issue_invoice(text, text, text, jsonb) from public, anon;
+revoke execute on function void_invoice(text, text) from public, anon;
 grant execute on function place_order(jsonb) to authenticated;
 revoke execute on function customer_email() from public, anon, authenticated;
 revoke execute on function points_of(text) from public, anon, authenticated;
@@ -650,6 +801,10 @@ revoke execute on function my_orders() from public, anon;
 grant execute on function my_orders() to authenticated;
 grant execute on function get_order(text, text) to anon, authenticated;
 grant execute on function cancel_order(text) to authenticated;
+grant execute on function set_delay(text, jsonb) to authenticated;
+grant execute on function check_coupon(text, int) to anon, authenticated;
+grant execute on function issue_invoice(text, text, text, jsonb) to authenticated;
+grant execute on function void_invoice(text, text) to authenticated;
 grant execute on function is_owner() to anon, authenticated;
 revoke execute on function gift_card_balance(text) from public;
 revoke execute on function my_referral(text) from public;
