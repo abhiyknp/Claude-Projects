@@ -456,8 +456,9 @@ input[type="file"] { padding: 10px 12px; }
 .adm-thumb img, .adm-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .adm-review p { margin: 0; }
 .pfx { display: flex; align-items: stretch; }
-.pfx-c { display: inline-flex; align-items: center; padding: 0 12px; min-height: 48px; border: 1px solid var(--line2); border-right: 0; background: var(--linen); font-weight: 600; font-size: 15px; color: var(--choc2); }
+.pfx-c { display: inline-flex; align-items: center; gap: 2px; padding: 0 10px; min-height: 48px; border: 1px solid var(--line2); border-right: 0; background: var(--linen); font-weight: 600; font-size: 15px; color: var(--choc2); }
 .pfx input { flex: 1; min-width: 0; }
+.pfx-c input { flex: none; width: 3.2ch; min-width: 0; min-height: 0; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; }
 .adm-filters { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .adm-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 18px; }
 .rv-reply { background: var(--linen); padding: 12px 14px; border-left: 3px solid var(--olive); font-size: 15px; }
@@ -1784,9 +1785,8 @@ function viewCart() {
 }
 
 function field(id, label, val, opts) {
-  opts = opts || {}; const err = UI.co.errors[id]; const tel = opts.type === 'tel'; if (tel) val = ten(val);
-  const box = (h) => (tel ? pfx(h) : h);
-  return `<span class="field${opts.full ? ' full' : ''}"><label for="co-${id}">${label}${opts.hint ? ` <span class="hint">${opts.hint}</span>` : ''}</label>${box(`<input id="co-${id}" data-co="${id}" ${opts.type ? `type="${opts.type}"` : ''} ${opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts.ac ? `autocomplete="${opts.ac}"` : ''} ${opts.max ? `maxlength="${opts.max}"` : ''} ${opts.min ? `min="${opts.min}"` : ''} value="${esc(val || '')}" ${err ? `aria-invalid="true" aria-describedby="co-${id}-err"` : ''}>`)}${err ? `<span class="err" id="co-${id}-err">${esc(err)}</span>` : ''}</span>`;
+  opts = opts || {}; const err = UI.co.errors[id]; const tel = opts.type === 'tel';
+  return `<span class="field${opts.full ? ' full' : ''}"><label for="co-${id}">${label}${opts.hint ? ` <span class="hint">${opts.hint}</span>` : ''}</label>${tel ? pfx('co-'+id, `data-co="${id}" ${opts.ac ? `autocomplete="${opts.ac}"` : ''} ${err ? `aria-invalid="true" aria-describedby="co-${id}-err"` : ''}`, val) : `<input id="co-${id}" data-co="${id}" ${opts.type ? `type="${opts.type}"` : ''} ${opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts.ac ? `autocomplete="${opts.ac}"` : ''} ${opts.max ? `maxlength="${opts.max}"` : ''} ${opts.min ? `min="${opts.min}"` : ''} value="${esc(val || '')}" ${err ? `aria-invalid="true" aria-describedby="co-${id}-err"` : ''}>`}${err ? `<span class="err" id="co-${id}-err">${esc(err)}</span>` : ''}</span>`;
 }
 const dayISO = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 const earliestDay = () => { const d = new Date(); d.setDate(d.getDate() + (parseInt(SET.deliveryDays, 10) || 4)); return dayISO(d); };
@@ -1969,14 +1969,14 @@ function viewFaq() {
 function viewBulk() {
   const b = UI.bulk = UI.bulk || {}; const list = (k) => Tx(k).split('|').map((x) => x.trim()).filter(Boolean);
   const boxes = P.filter((p) => p.cat === 'gifts').sort((a, c) => minPrice(a) - minPrice(c));
-  const inp = (id, label, opts) => { const tel = opts && opts.type === 'tel'; const box = `<input id="bk-${id}" ${opts && opts.type ? `type="${opts.type}"` : ''} ${opts && opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts && opts.ac ? `autocomplete="${opts.ac}"` : ''} ${tel ? 'maxlength="20"' : ''} value="${esc(tel ? ten(b[id]) : b[id] || '')}">`; return `<span class="field${opts && opts.full ? ' full' : ''}"><label for="bk-${id}">${label}</label>${tel ? pfx(box) : box}</span>`; };
+  const inp = (id, label, opts) => { const tel = opts && opts.type === 'tel'; const box = `<input id="bk-${id}" ${opts && opts.type ? `type="${opts.type}"` : ''} ${opts && opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts && opts.ac ? `autocomplete="${opts.ac}"` : ''} value="${esc(b[id] || '')}">`; return `<span class="field${opts && opts.full ? ' full' : ''}"><label for="bk-${id}">${label}</label>${tel ? pfx('bk-' + id, `${opts.ac ? `autocomplete="${opts.ac}"` : ''}`, b[id]) : box}</span>`; };
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">${T('bulk.eyebrow')}</span><h1 tabindex="-1">${T('bulk.title')}</h1><p class="muted" style="max-width:640px">${T('bulk.sub')}</p></div>
     <div class="split" style="margin-bottom:40px;align-items:start"><div style="display:flex;flex-direction:column;gap:18px">
       <ul class="trust">${list('bulk.perks').map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
       <div><strong>Good for</strong><div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">${list('bulk.uses').map((x) => `<span class="chip">${esc(x)}</span>`).join('')}</div></div>
       ${boxes.length ? `<div><strong>Start from a gift box</strong><ul class="trust" style="margin-top:10px">${boxes.map((p) => `<li><a href="#p-${p.id}">${esc(p.name)}</a> · from ${inr(minPrice(p))} each</li>`).join('')}</ul></div>` : ''}</div>
     <form data-form="bulk" class="form adm-card" novalidate><strong style="font-size:20px">${T('bulk.formTitle')}</strong>
-      ${inp('name', 'Your name', { ac: 'name' })}${inp('company', 'Company or occasion', { ac: 'organization' })}${inp('phone', 'Phone or WhatsApp (10 digits)', { type: 'tel', mode: 'tel', ac: 'tel' })}
+      ${inp('name', 'Your name', { ac: 'name' })}${inp('company', 'Company or occasion', { ac: 'organization' })}${inp('phone', 'Phone or WhatsApp', { type: 'tel', mode: 'tel', ac: 'tel' })}
       ${inp('qty', 'How many gifts', { mode: 'numeric' })}${inp('budget', 'Budget per gift (₹)', { mode: 'numeric' })}${inp('date', 'Needed by', { type: 'date' })}
       <span class="field full"><label for="bk-msg">Anything else (logo, scents, delivery addresses)</label><textarea id="bk-msg" rows="3">${esc(b.msg || '')}</textarea></span>
       ${b.err ? `<p class="err full" role="alert" style="color:var(--terra-ink);font-weight:500">${esc(b.err)}</p>` : ''}${b.sent ? `<div class="status ok full" role="status">${T('bulk.done')}</div>` : ''}
@@ -2268,7 +2268,7 @@ function admReviews() {
       <div><strong>Pieces with no published review · ${none.length}</strong><span class="muted">${none.length ? esc(none.slice(0, 12).map((p) => p.name).join(', ')) + (none.length > 12 ? '…' : '') : 'None: every piece has one.'}</span></div></div>`;
 }
 // ---------- customers: one row per person, joined up by email and mobile ----------
-const normPhone = (p) => { const d = String(p || '').replace(/\D/g, ''); return d.length === 12 && d.startsWith('91') ? d.slice(2) : d.length === 10 ? d : ''; };
+const normPhone = (p) => (asPhone(p) || '').slice(1);
 const ckey = (c) => { const v = String(c || '').trim().toLowerCase(); if (/@/.test(v)) return 'e:' + v; const p = normPhone(v); return p ? 'p:' + p : ''; };
 const okOrder = (o) => o.status !== 'Cancelled' && o.status !== 'Awaiting payment';
 const dayMs = 864e5; const ago = (d) => Math.floor((Date.now() - new Date(d)) / dayMs);
@@ -2301,7 +2301,7 @@ function customers() {
   c.meta.forEach((m) => { const k = ckey(m.contact); if (k) { const b = P_(k); if (!b.meta || ckey(m.contact) === b.id) b.meta = m; } });
   const refOrders = {}; c.orders.forEach((o) => { if (o.ref && okOrder(o)) refOrders[o.ref] = (refOrders[o.ref] || 0) + 1; });
   return Object.values(by).map((b) => {
-    const emails = [...b.keys].filter((k) => k[0] === 'e').map((k) => k.slice(2)), phones = [...b.keys].filter((k) => k[0] === 'p').map((k) => '+91' + k.slice(2));
+    const emails = [...b.keys].filter((k) => k[0] === 'e').map((k) => k.slice(2)), phones = [...b.keys].filter((k) => k[0] === 'p').map((k) => '+' + k.slice(2));
     const ords = b.orders.slice().sort((x, y) => new Date(y.placedAt) - new Date(x.placedAt)); const good = ords.filter(okOrder);
     const spent = good.reduce((a, o) => a + (o.total || 0) + (o.cardOff || 0), 0); const last = good[0], first = good[good.length - 1];
     const pr = b.profile || {}; const addr = (ords.find((o) => o.address && o.address.city && !(o.gift && o.gift.on)) || ords[0] || {}).address || {};
@@ -2336,7 +2336,7 @@ function admPeople() {
       ${top.length ? `<p class="muted">Most asked for: ${top.slice(0, 5).map(([s, n]) => `${esc(skuMap[s] ? skuMap[s].p.name + ' · ' + skuMap[s].v.label : s)} (${n})`).join(', ')}</p>` : ''}${tbl(rs, [['Email or WhatsApp', (r) => r.contact], ['Piece', (r) => skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku], ['Asked', when], ['Told', (r) => r.notified_at ? new Date(r.notified_at).toLocaleDateString('en-IN') : '']])}`;
   }
   const all = customers(); if (!all) return nav + loadingRow;
-  if (A.cust) { const c = all.find((x) => x.id === A.cust || x.emails.some((e) => 'e:' + e === A.cust) || x.phones.some((p) => 'p:' + p.slice(3) === A.cust)); if (c) return nav + admCustomer(c); A.cust = null; }
+  if (A.cust) { const c = all.find((x) => x.id === A.cust || x.emails.some((e) => 'e:' + e === A.cust) || x.phones.some((p) => 'p:' + p.slice(1) === A.cust)); if (c) return nav + admCustomer(c); A.cust = null; }
   const f = A.cf = A.cf || { q: '', seg: '', src: '', city: '', wa: false, soon: false, sort: 'recent' };
   const q = f.q.trim().toLowerCase();
   let rows = all.filter((c) => (!q || [c.name, ...c.emails, ...c.phones, ...c.orders.map((o) => o.id)].join(' ').toLowerCase().includes(q))
@@ -2960,7 +2960,7 @@ function orderRows(list) {
 function viewTrack() {
   const tr = UI.track || {}; loadMine();
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Orders</span><h1 tabindex="-1">${T('track.title')}</h1><p class="muted" style="max-width:620px">${T('track.sub')}</p></div>
-    <form data-form="track" class="track-form" novalidate><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label>${pfx(`<input id="tr-phone" type="tel" inputmode="tel" maxlength="20" value="${esc(ten(tr.phone))}" autocomplete="tel-national">`)}</span><button class="btn" type="submit">Track order</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
+    <form data-form="track" class="track-form" novalidate><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label>${pfx('tr-phone', '', tr.phone)}</span><button class="btn" type="submit">Track order</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
     ${S.account ? `<h2 style="font-size:28px;margin-bottom:14px">Your orders</h2>${orderRows(myOrders())}` : `<p class="muted"><a href="#account">Sign in</a> to see all your orders here.</p>`}
     <ol class="track-steps">${[['box', 'Placed', 'We have your order and payment.'], ['gift', 'Packed', 'Wrapped by hand, usually within 1 to 3 working days.'], ['truck', 'Shipped', 'We email the courier tracking link.'], ['home', 'Delivered', 'Usually ' + SET.deliveryDays + ' after it ships.']].map(([i, h, t]) => `<li>${hl(i, 26)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></div>`;
 }
@@ -2994,7 +2994,7 @@ function profileBox() {
   return `<h2 style="font-size:28px;margin:36px 0 14px">Your details</h2>
     <form data-form="profile" class="form" novalidate>
       <span class="field"><label for="pf-name">Full name</label><input id="pf-name" autocomplete="name" maxlength="80" value="${esc(P.name ?? pf.name)}"></span>
-      <span class="field"><label for="pf-phone">Mobile number <span class="hint">for delivery</span></label>${pfx(`<input id="pf-phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" value="${esc(ten(P.phone ?? pf.phone))}" ${P.err && P.err.phone ? 'aria-invalid="true"' : ''}>`)}</span>
+      <span class="field"><label for="pf-phone">Mobile number <span class="hint">for delivery</span></label>${pfx('pf-phone', P.err && P.err.phone ? 'aria-invalid="true"' : '', P.phone ?? pf.phone)}</span>
       <span class="field full"><label>Email</label><input value="${esc(S.account.email)}" disabled></span>
       <div class="full"><strong>Saved addresses</strong>${pf.addresses.length ? `<ul class="order-list" style="margin-top:8px">${pf.addresses.map((a, i) => `<li><span style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:12px 0;border-bottom:1px solid var(--line)"><span style="flex:1 1 240px"><strong>${esc(a.label || (i ? 'Address ' + (i + 1) : 'Home'))}</strong>${i === 0 ? ' <span class="pill">Usual</span>' : ''}<br><span class="muted">${esc(addrLine(a))}, ${esc(a.state)}</span></span>${i ? `<button class="linkbtn" type="button" data-act="addr-first" data-i="${i}">Make usual</button>` : ''}<button class="linkbtn" type="button" data-act="addr-del" data-i="${i}">Remove</button></span></li>`).join('')}</ul>` : '<p class="muted">None yet. They are saved when you order, or add one below.</p>'}</div>
       ${pf.addresses.length < 5 ? `<details class="full"${P.err && P.err.addr ? ' open' : ''}><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center">Add an address</summary><div class="form" style="padding:0">
@@ -3549,14 +3549,24 @@ async function payCheck(id) {
 
 // ---------- validation ----------
 function luhn(num) { let s = 0, alt = false; for (let i = num.length - 1; i >= 0; i--) { let d = +num[i]; if (alt) { d *= 2; if (d > 9) d -= 9; } s += d; alt = !alt; } return s % 10 === 0; }
-function readCo(form) { form.querySelectorAll('[data-co]').forEach((el) => { const k = el.dataset.co; const v = el.type === 'checkbox' ? el.checked : el.value.trim(); if (k === 'optin') UI.co.optin = v; else if (k.startsWith('g-')) UI.co.gift[k.slice(2)] = v; else if (['name', 'phone', 'email'].includes(k)) UI.co.contact[k] = v; else if (['line1', 'line2', 'pin', 'city', 'state'].includes(k)) UI.co.address[k] = v; else if (k === 'upi') UI.co.upi = v; else UI.co.card[k] = v; }); }
+function readCo(form) { form.querySelectorAll('[data-co]').forEach((el) => { const k = el.dataset.co; const v = el.type === 'checkbox' ? el.checked : rd(el); if (k === 'optin') UI.co.optin = v; else if (k.startsWith('g-')) UI.co.gift[k.slice(2)] = v; else if (['name', 'phone', 'email'].includes(k)) UI.co.contact[k] = v; else if (['line1', 'line2', 'pin', 'city', 'state'].includes(k)) UI.co.address[k] = v; else if (k === 'upi') UI.co.upi = v; else UI.co.card[k] = v; }); }
 const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 // Mobile numbers are kept as +91 and 10 digits (+919876543210) everywhere: in the database, in exports and in analysis.
 // Forms show a fixed "+91" and take the 10 digits; anything typed with 91, 0 or +91 in front is accepted too.
-const asPhone = (v) => { const d = String(v).replace(/\D/g, '').replace(/^(91|0)(?=[6-9]\d{9}$)/, ''); return /^[6-9]\d{9}$/.test(d) ? '+91' + d : null; };
-// the 10 digits of a saved number, for a form box that has +91 printed beside it
-const ten = (v) => { const d = String(v || '').replace(/\D/g, ''); return d.length > 10 ? d.slice(-10) : d; };
-const pfx = (box) => `<span class="pfx"><span class="pfx-c" aria-hidden="true">+91</span>${box}</span>`;
+// Phone numbers are saved as +<country code><number> (E.164), so exports and analysis can group by country.
+// India (+91) is exactly 10 digits starting 6 to 9; any other country takes 6 to 12 digits.
+const CCODES = new Set(['1', '7', '20', '27', '31', '32', '33', '34', '39', '41', '44', '46', '47', '49', '52', '55', '60', '61', '62', '63', '64', '65', '66', '81', '82', '84', '86', '90', '91', '92', '93', '94', '95', '98', '212', '234', '254', '880', '961', '965', '966', '968', '971', '972', '973', '974', '977']);
+const okPhone = (cc, n) => (cc === '91' ? /^[6-9]\d{9}$/.test(n) : /^[1-9]\d{0,2}$/.test(cc) && /^\d{6,12}$/.test(n));
+// split "+44 7911123456" (typed) or "+447911123456" (saved) into code and number
+const splitPhone = (v) => { const s = String(v || '').trim(); const d = s.replace(/\D/g, ''); const sp = s.match(/^\+\s*(\d{1,3})\s+(\d.*)$/);
+  if (sp) return { cc: sp[1], num: sp[2].replace(/\D/g, '').replace(/^0+/, '') };
+  if (s.startsWith('+')) { const cc = [3, 2, 1].map((n) => d.slice(0, n)).find((c) => CCODES.has(c)) || d.slice(0, 2); return { cc, num: d.slice(cc.length) }; }
+  return { cc: '91', num: d.replace(/^(91|0)(?=[6-9]\d{9}$)/, '') }; };
+const asPhone = (v) => { const { cc, num } = splitPhone(v); return okPhone(cc, num) ? '+' + cc + num : null; };
+// number box with an editable country code (default 91) beside it; `val` is a saved or typed number
+const pfx = (id, attrs, val) => { const p = splitPhone(val); return `<span class="pfx"><span class="pfx-c">+<input id="${id}-cc" inputmode="numeric" maxlength="3" size="3" aria-label="Country code" autocomplete="tel-country-code" value="${esc(p.cc)}"></span><input id="${id}" type="tel" inputmode="tel" maxlength="20" ${attrs} value="${esc(p.num)}"></span>`; };
+// read an input; a number box also returns its country code ("+44 7911123456")
+const rd = (el) => { const v = el.value.trim(); const c = el.closest('.pfx'); const cc = c && c.querySelector('.pfx-c input'); return cc ? (v ? '+' + (cc.value.replace(/\D/g, '') || '91') + ' ' + v : '') : v; };
 const contactOf = (v) => (isEmail(v) ? v.toLowerCase() : asPhone(v));
 function focusFirstError() { const el = document.querySelector('[aria-invalid="true"]'); if (el) el.focus(); }
 
@@ -3749,8 +3759,8 @@ document.addEventListener('submit', (e) => {
     if (!BTDB.on) { sh.err = 'Share links work once the shop is connected to its database.'; render(); return; }
     BTDB.rpc('my_referral', { contact_in: c }).then((id) => { sh.ref = id; sh.err = null; track('share_link', {}); render(); say('Your link is ready.'); }, (err) => { sh.err = /too_many/.test(err.message) ? 'Too many tries. Please wait an hour.' : 'We couldn’t make your link right now. Please try again.'; render(); });
     return; }
-  if (kind === 'bulk') { const b = UI.bulk = UI.bulk || {}; ['name', 'company', 'phone', 'qty', 'budget', 'date'].forEach((k) => { b[k] = $('#bk-' + k).value.trim(); }); b.msg = $('#bk-msg').value.trim();
-    b.err = !b.name ? 'Add your name.' : !asPhone(b.phone) ? 'Add a 10-digit mobile or WhatsApp number.' : !(+b.qty > 0) ? 'Add roughly how many gifts you need.' : null;
+  if (kind === 'bulk') { const b = UI.bulk = UI.bulk || {}; ['name', 'company', 'phone', 'qty', 'budget', 'date'].forEach((k) => { b[k] = rd($('#bk-' + k)); }); b.msg = $('#bk-msg').value.trim();
+    b.err = !b.name ? 'Add your name.' : !asPhone(b.phone) ? 'Add a mobile or WhatsApp number (10 digits for +91).' : !(+b.qty > 0) ? 'Add roughly how many gifts you need.' : null;
     if (b.err) { b.sent = false; render(); return; }
     const text = `Bulk gift enquiry\nName: ${b.name}\nCompany or occasion: ${b.company || '-'}\nPhone: ${asPhone(b.phone)}\nHow many: ${b.qty}\nBudget per gift: ${b.budget ? '₹' + b.budget : '-'}\nNeeded by: ${b.date || '-'}\n${b.msg}`;
     const url = waLink(text) || `mailto:${SET.email}?subject=${encodeURIComponent('Bulk gift enquiry')}&body=${encodeURIComponent(text)}`;
@@ -3779,7 +3789,7 @@ document.addEventListener('submit', (e) => {
         (e2) => { co.codeErr = /too_many/.test(e2.message) ? 'Too many tries from this connection. Please wait an hour, or message us.' : 'We couldn’t check that code right now. Please try again.'; done(); });
     });
     return; }
-  if (kind === 'track') { const id = $('#tr-id').value.trim().toUpperCase(); const ph = asPhone($('#tr-phone').value); UI.track = { id, phone: $('#tr-phone').value.trim() };
+  if (kind === 'track') { const id = $('#tr-id').value.trim().toUpperCase(); const ph = asPhone(rd($('#tr-phone'))); UI.track = { id, phone: rd($('#tr-phone')) };
     const mine = S.orders.find((o) => o.id === id && asPhone(o.contact.phone) === ph); if (mine) { location.hash = 'order-' + id; return; }
     if (!id || !ph) { UI.track.msg = 'Enter your order number and the mobile number you ordered with.'; render(); return; }
     if (!BTDB.on) { UI.track.msg = 'We couldn’t find that order in this browser.'; render(); return; }
@@ -3876,9 +3886,9 @@ document.addEventListener('submit', (e) => {
       render(); })();
     return; }
   if (kind === 'profile') {
-    const pf = UI.prof || emptyProf(), v = (id) => (($('#pf-' + id) || {}).value || '').trim(), c = (k) => !!($('#pf-' + k) || {}).checked;
+    const pf = UI.prof || emptyProf(), v = (id) => ($('#pf-' + id) ? rd($('#pf-' + id)) : ''), c = (k) => !!($('#pf-' + k) || {}).checked;
     const P = UI.profForm = { name: v('name'), phone: v('phone'), a_label: v('a-label'), a_pin: v('a-pin'), a_line1: v('a-line1'), a_line2: v('a-line2'), a_city: v('a-city'), a_state: v('a-state'), err: {}, busy: true };
-    const ph = P.phone ? asPhone(P.phone) : ''; if (P.phone && !ph) { P.err.phone = 1; P.err.msg = 'Enter a 10-digit mobile number starting with 6, 7, 8 or 9.'; }
+    const ph = P.phone ? asPhone(P.phone) : ''; if (P.phone && !ph) { P.err.phone = 1; P.err.msg = 'Check the country code and number. For +91, enter 10 digits starting with 6, 7, 8 or 9.'; }
     const adding = P.a_line1 || P.a_pin || P.a_city || P.a_state;
     if (adding && !P.err.msg && (!P.a_line1 || !/^[1-9]\d{5}$/.test(P.a_pin) || !P.a_city || !P.a_state)) { P.err.addr = 1; P.err.msg = 'To add an address, fill in the street, PIN code (6 digits), city and state.'; }
     if (P.err.msg) { P.busy = false; render(); return; }
@@ -3903,7 +3913,7 @@ document.addEventListener('submit', (e) => {
   readCo(f); co.errors = {};
   if (kind === 'contact') {
     const c = co.contact; if (!c.name) co.errors.name = 'Enter your name so we know who the parcel is for.';
-    const ph = asPhone(c.phone || ''); if (!ph) co.errors.phone = 'Enter a 10-digit mobile number starting with 6, 7, 8 or 9 (the +91 is already there).'; else c.phone = ph;
+    const ph = asPhone(c.phone || ''); if (!ph) co.errors.phone = 'Check the country code and number. For +91, enter 10 digits starting with 6, 7, 8 or 9.'; else c.phone = ph;
     c.email = S.account ? S.account.email : c.email; if (!c.name && S.account && S.account.name) c.name = S.account.name;
     if (Object.keys(co.errors).length) { render(); focusFirstError(); return; }
     co.step = 'address'; track('checkout_step', { step: 'delivery' }); render(true); return;

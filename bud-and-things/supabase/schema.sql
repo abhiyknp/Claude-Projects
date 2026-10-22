@@ -145,12 +145,19 @@ begin
   insert into hits (bucket, who) values (b, w);
 end $$;
 
--- Mobile numbers are saved one way everywhere: +91 and the 10 digits, such as +919876543210 (E.164, what WhatsApp, SMS
--- providers and spreadsheets expect). A visitor may type 9876543210, 919876543210, 09876543210 or +91 98765 43210; all
--- become the same. Anything that isn't an Indian mobile number gives null.
+-- Mobile numbers are saved one way everywhere: + country code + number (E.164, what WhatsApp, SMS providers and
+-- spreadsheets expect), such as +919876543210 or +447911123456. Indian numbers are 10 digits starting 6 to 9 and
+-- may be typed as 9876543210, 919876543210 or 09876543210 (no +); a number typed with a + keeps its own country code.
+-- Other countries: 7 to 15 digits in all. Anything else gives null.
 create or replace function norm_phone(p text) returns text language sql immutable as $$
-  select case when d ~ '^[6-9][0-9]{9}$' then '+91' || d end
-  from (select regexp_replace(regexp_replace(coalesce(p, ''), '[^0-9]', '', 'g'), '^(91|0)(?=[6-9][0-9]{9}$)', '') d) x
+  select case
+    when trim(coalesce(p, '')) like '+%' then
+      case when raw ~ '^91' then case when raw ~ '^91[6-9][0-9]{9}$' then '+' || raw end
+           when raw ~ '^[1-9][0-9]{6,14}$' then '+' || raw end
+    when local ~ '^[6-9][0-9]{9}$' then '+91' || local
+  end
+  from (select r as raw, regexp_replace(r, '^(91|0)(?=[6-9][0-9]{9}$)', '') as local
+        from (select regexp_replace(coalesce(p, ''), '[^0-9]', '', 'g') r) y) x
 $$;
 -- an email (lower case) or a mobile number (+91…); null when it is neither
 create or replace function norm_contact(c text) returns text language sql immutable as $$

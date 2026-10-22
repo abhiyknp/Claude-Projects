@@ -10,6 +10,9 @@
 // Set up: see "Delivery (Shiprocket)" in supabase/README.md.
 import { env, dbReady, db, getOrder, setting, allowed, isOwner, same, reply, cors, ORDER_ID } from '../_shared/util.ts';
 
+// Shiprocket wants the 10 digits for an Indian number (saved as +91…) and the plain digits for any other country
+const shipPhone = (v: unknown) => { const d = String(v || '').replace(/\D/g, ''); return d.startsWith('91') && d.length === 12 ? d.slice(2) : d; };
+
 const API = 'https://apiv2.shiprocket.in/v1/external';
 let token = '', tokenAt = 0;
 async function sr(path: string, body?: unknown, again = true): Promise<any> {
@@ -92,7 +95,7 @@ export async function handle(req: Request) {
           order_id: id, order_date: ist.slice(0, 10) + ' ' + ist.slice(11, 16), pickup_location: String(await setting('shiprocketPickup', 'Primary')),
           billing_customer_name: sp > 0 ? who.slice(0, sp) : who, billing_last_name: sp > 0 ? who.slice(sp + 1) : '',
           billing_address: d.address.line1, billing_address_2: d.address.line2 || '', billing_city: d.address.city, billing_pincode: d.address.pin,
-          billing_state: d.address.state, billing_country: 'India', billing_email: d.contact.email || '', billing_phone: String((gift && d.gift.phone) || d.contact.phone || '').replace(/\D/g, '').slice(-10),
+          billing_state: d.address.state, billing_country: 'India', billing_email: d.contact.email || '', billing_phone: shipPhone((gift && d.gift.phone) || d.contact.phone),
           shipping_is_billing: true,
           order_items: d.items.map((l: any) => ({ name: l.name + (l.label ? ' · ' + l.label : ''), sku: l.sku, units: l.qty, selling_price: l.price })),
           payment_method: o.method === 'Cash on delivery' ? 'COD' : 'Prepaid',

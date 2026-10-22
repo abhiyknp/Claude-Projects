@@ -42,7 +42,7 @@ function send(res, code, body, type) {
   res.end(body === undefined ? '' : Buffer.isBuffer(body) ? body : typeof body === 'string' && type ? body : JSON.stringify(body));
 }
 // norm_phone() in schema.sql: +91 and 10 digits
-const normPhone = (p) => { const d = String(p || '').replace(/\D/g, '').replace(/^(91|0)(?=[6-9]\d{9}$)/, ''); return /^[6-9]\d{9}$/.test(d) ? '+91' + d : null; };
+const normPhone = (p) => { const t = String(p || '').trim(); const d = t.replace(/\D/g, ''); if (t.startsWith('+')) return d.startsWith('91') ? (/^91[6-9]\d{9}$/.test(d) ? '+' + d : null) : /^[1-9]\d{6,14}$/.test(d) ? '+' + d : null; const n = d.replace(/^(91|0)(?=[6-9]\d{9}$)/, ''); return /^[6-9]\d{9}$/.test(n) ? '+91' + n : null; };
 const normContact = (c) => { const v = String(c || '').trim().toLowerCase(); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? v : normPhone(c); };
 const fail = (res, code, message) => send(res, code, { message });
 
