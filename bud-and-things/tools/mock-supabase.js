@@ -41,6 +41,9 @@ function send(res, code, body, type) {
   res.writeHead(code, { 'Content-Type': type || 'application/json', 'Access-Control-Allow-Origin': '*' });
   res.end(body === undefined ? '' : Buffer.isBuffer(body) ? body : typeof body === 'string' && type ? body : JSON.stringify(body));
 }
+// norm_phone() in schema.sql: +91 and 10 digits
+const normPhone = (p) => { const d = String(p || '').replace(/\D/g, '').replace(/^(91|0)(?=[6-9]\d{9}$)/, ''); return /^[6-9]\d{9}$/.test(d) ? '+91' + d : null; };
+const normContact = (c) => { const v = String(c || '').trim().toLowerCase(); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? v : normPhone(c); };
 const fail = (res, code, message) => send(res, code, { message });
 
 // place_order, as in schema.sql: the order is rebuilt from the products and settings, so the browser can't set prices
@@ -93,7 +96,7 @@ function autoInvoice(o, was) {
 function placeOrder(o, em) {
   if (!em) throw new Error('sign_in');
   const c = o.contact || {}, a = o.address || {}, g = o.gift, bad = (w) => { throw new Error('bad_order:' + w); };
-  if (!c.name || c.name.length > 80) bad('name'); if (!/^[6-9]\d{9}$/.test(c.phone || '')) bad('phone');
+  if (!c.name || c.name.length > 80) bad('name'); if (!normPhone(c.phone)) bad('phone'); c.phone = normPhone(c.phone);
   if (!a.line1 || !/^[1-9]\d{5}$/.test(a.pin || '') || !a.city || !a.state) bad('address');
   if (!['Online', 'Gift card or points', 'Cash on delivery'].includes(o.method)) bad('method');
   if (o.method === 'Cash on delivery' && !setting('codOn', false)) bad('cod_off');
@@ -189,7 +192,7 @@ http.createServer((req, res) => {
         if (m[1] === 'save_profile') {
           const b = json().p, bad = (w) => { throw new Error('bad_profile:' + w); };
           try {
-            if (String(b.name || '').length > 80) bad('name'); if (!/^([6-9]\d{9})?$/.test(b.phone || '')) bad('phone');
+            if (String(b.name || '').length > 80) bad('name'); if (b.phone && !normPhone(b.phone)) bad('phone'); b.phone = b.phone ? normPhone(b.phone) : '';
             if (!Array.isArray(b.addresses || []) || (b.addresses || []).length > 5) bad('address');
             (b.addresses || []).forEach((a) => { if (!a.line1 || !/^[1-9]\d{5}$/.test(a.pin || '') || !a.city || !a.state) bad('address'); });
             Object.keys(b.prefs || {}).forEach((k) => { if (!['whatsapp', 'sms', 'push'].includes(k) || typeof b.prefs[k] !== 'boolean') bad('prefs'); });
@@ -205,8 +208,8 @@ http.createServer((req, res) => {
         ['subscribers', 'restock_requests', 'reminders', 'customer_meta', 'referrers'].forEach((t) => { T[t] = T[t].filter((r) => !c.includes(r.contact)); }); T.review_authors = T.review_authors.filter((r) => !c.includes(r.email));
         T.profiles.filter((p) => c.includes(p.email)).forEach((p) => Object.assign(p, { name: '', phone: '', addresses: [], prefs: {} })); return send(res, 200, null);
       }
-      if (m && m[1] === 'get_invoice') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === a.phone_no); return send(res, 200, (o && T.invoices.find((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued')) || null); }
-      if (m && m[1] === 'get_order') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === a.phone_no); return send(res, 200, o ? Object.assign({}, o.data, { status: o.status }) : null); }
+      if (m && m[1] === 'get_invoice') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === normPhone(a.phone_no)); return send(res, 200, (o && T.invoices.find((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued')) || null); }
+      if (m && m[1] === 'get_order') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === normPhone(a.phone_no)); return send(res, 200, o ? Object.assign({}, o.data, { status: o.status }) : null); }
       if (m && m[1] === 'cancel_order') {
         if (!own) return fail(res, 400, 'not_allowed');
         const o = T.orders.find((x) => x.id === json().order_id); if (!o || !['Awaiting payment', 'Placed', 'Packed'].includes(o.status)) return fail(res, 400, 'cannot_cancel');
@@ -246,6 +249,7 @@ http.createServer((req, res) => {
         const rows = [].concat(json()); const upsert = /merge-duplicates/.test(req.headers.prefer || '');
         for (const r of rows) {
           if (!canInsert(t, r, own)) return fail(res, 403, 'new row violates row-level security policy for table "' + t + '"');
+          if (!own && ['subscribers', 'restock_requests', 'reminders'].includes(t)) { r.contact = normContact(r.contact); if (!r.contact) return fail(res, 400, 'bad_contact'); }
           if (key === 'id' && !r.id) r.id = uuid();
           if (!own && t === 'reviews') {
             const em = custOf(auth); Object.assign(r, { published: false, verified: false, reply: null, featured: false, source: 'site' });

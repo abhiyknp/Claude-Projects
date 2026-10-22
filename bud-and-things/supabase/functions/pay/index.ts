@@ -60,7 +60,7 @@ export async function handle(req: Request) {
 
     if (b.action === 'start') {
       // the order number and the mobile it was placed with, like the order lookup
-      if (!o || o.phone !== String(b.phone || '')) return reply(req, 404, { error: 'not_found' });
+      if (!o || String(o.phone || '').slice(-10) !== String(b.phone || '').replace(/\D/g, '').slice(-10)) return reply(req, 404, { error: 'not_found' });
       if (o.status !== 'Awaiting payment') return reply(req, 409, { error: 'not_awaiting', status: o.status });
       let cfo = await cf('/orders/' + encodeURIComponent(id));
       if (cfo && cfo.order_status === 'PAID') return reply(req, 200, { status: await settle(o, cfo) });
@@ -71,7 +71,7 @@ export async function handle(req: Request) {
         const site = env('SITE_URL').replace(/\/+$/, '');
         const c = o.data?.contact || {};
         cfo = await cf('/orders', { order_id: id, order_amount: o.total, order_currency: 'INR',
-          customer_details: { customer_id: 'c' + o.phone, customer_phone: o.phone, customer_name: String(c.name || '').slice(0, 80) || undefined, customer_email: c.email || undefined },
+          customer_details: { customer_id: 'c' + String(o.phone).replace(/\D/g, '').slice(-10), customer_phone: String(o.phone).replace(/\D/g, '').slice(-10), customer_name: String(c.name || '').slice(0, 80) || undefined, customer_email: c.email || undefined },
           order_meta: { return_url: site ? site + '/?paid={order_id}#order-' + id : undefined, notify_url: env('SUPABASE_URL') + '/functions/v1/pay' },
           order_expiry_time: until.toISOString(), order_note: 'BUD & THINGS order ' + id });
       }

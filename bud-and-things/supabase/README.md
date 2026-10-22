@@ -209,3 +209,7 @@ Run `schema.sql` again in the SQL Editor to add them. It is safe to re-run.
 - **Reviews.** Waiting / Published tabs, star and piece filters, bulk actions, replies, Featured (shown first on the home page), reviews added by hand, a Verified buyer tick for signed-in customers who received the piece, one review per piece per customer, email alerts for 1 and 2 stars, a review request email `reviewAskDays` after delivery, and `reviewPoints` Bud Points for published reviews. Product pages carry star markup for Google.
 - **WhatsApp.** A 10-digit number in Settings gets `91` added. Real WhatsApp alerts still need a Business API provider (not connected yet).
 - **Site text.** About 30 more labels (festive banner, offer banners, house walk labels, home links) are now editable. The festive banner has an on/off switch in Settings.
+
+## Mobile numbers (October 2026)
+
+Every mobile number is saved as `+91` and the 10 digits, such as `+919876543210`, in orders, saved accounts, gift recipients, sign-ups, restock requests, gift reminders and share links. Forms show a fixed "+91" beside a 10-digit box; `9876543210`, `919876543210`, `09876543210` and `+91 98765 43210` are all accepted and saved the same way. The database does the conversion (`norm_phone()` in `schema.sql`), so it holds whatever the page sends. Run `schema.sql` again to convert numbers saved earlier. Exports and the Customers list show the `+91` form, ready for WhatsApp providers and spreadsheets. Cashfree and Shiprocket still receive the plain 10 digits they expect.

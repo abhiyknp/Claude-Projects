@@ -455,6 +455,9 @@ input[type="file"] { padding: 10px 12px; }
 .adm-thumb { aspect-ratio: 4 / 3; background: var(--linen); display: block; overflow: hidden; }
 .adm-thumb img, .adm-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .adm-review p { margin: 0; }
+.pfx { display: flex; align-items: stretch; }
+.pfx-c { display: inline-flex; align-items: center; padding: 0 12px; min-height: 48px; border: 1px solid var(--line2); border-right: 0; background: var(--linen); font-weight: 600; font-size: 15px; color: var(--choc2); }
+.pfx input { flex: 1; min-width: 0; }
 .adm-filters { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .adm-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 18px; }
 .rv-reply { background: var(--linen); padding: 12px 14px; border-left: 3px solid var(--olive); font-size: 15px; }
@@ -1781,8 +1784,9 @@ function viewCart() {
 }
 
 function field(id, label, val, opts) {
-  opts = opts || {}; const err = UI.co.errors[id];
-  return `<span class="field${opts.full ? ' full' : ''}"><label for="co-${id}">${label}${opts.hint ? ` <span class="hint">${opts.hint}</span>` : ''}</label><input id="co-${id}" data-co="${id}" ${opts.type ? `type="${opts.type}"` : ''} ${opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts.ac ? `autocomplete="${opts.ac}"` : ''} ${opts.max ? `maxlength="${opts.max}"` : ''} ${opts.min ? `min="${opts.min}"` : ''} value="${esc(val || '')}" ${err ? `aria-invalid="true" aria-describedby="co-${id}-err"` : ''}>${err ? `<span class="err" id="co-${id}-err">${esc(err)}</span>` : ''}</span>`;
+  opts = opts || {}; const err = UI.co.errors[id]; const tel = opts.type === 'tel'; if (tel) val = ten(val);
+  const box = (h) => (tel ? pfx(h) : h);
+  return `<span class="field${opts.full ? ' full' : ''}"><label for="co-${id}">${label}${opts.hint ? ` <span class="hint">${opts.hint}</span>` : ''}</label>${box(`<input id="co-${id}" data-co="${id}" ${opts.type ? `type="${opts.type}"` : ''} ${opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts.ac ? `autocomplete="${opts.ac}"` : ''} ${opts.max ? `maxlength="${opts.max}"` : ''} ${opts.min ? `min="${opts.min}"` : ''} value="${esc(val || '')}" ${err ? `aria-invalid="true" aria-describedby="co-${id}-err"` : ''}>`)}${err ? `<span class="err" id="co-${id}-err">${esc(err)}</span>` : ''}</span>`;
 }
 const dayISO = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 const earliestDay = () => { const d = new Date(); d.setDate(d.getDate() + (parseInt(SET.deliveryDays, 10) || 4)); return dayISO(d); };
@@ -1805,7 +1809,7 @@ function viewCheckout() {
   let main = '';
   if (co.step === 'contact') {
     main = `<h1 tabindex="-1" style="font-size:40px">Contact</h1><p class="muted">Signed in as <strong>${esc(S.account.email)}</strong>. We use these only for your delivery and order updates.</p>
-      <form data-form="contact" class="form" novalidate>${field('name', 'Full name', co.contact.name || (S.account && S.account.name) || '', { ac: 'name', full: true })}${field('phone', 'Mobile number', co.contact.phone, { type: 'tel', mode: 'tel', ac: 'tel-national', max: 16, hint: '10 digits, for delivery and WhatsApp updates' })}
+      <form data-form="contact" class="form" novalidate>${field('name', 'Full name', co.contact.name || (S.account && S.account.name) || '', { ac: 'name', full: true })}${field('phone', 'Mobile number', co.contact.phone, { type: 'tel', mode: 'tel', ac: 'tel-national', max: 20, hint: '10 digits, for delivery and WhatsApp updates' })}
       <label class="check full"><input type="checkbox" data-co="optin" ${co.optin ? 'checked' : ''}> ${T('co.optin')}</label>
       <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue to delivery</button><a class="btn ghost" href="#cart">Back to cart</a></span></form>`;
   } else if (co.step === 'address') {
@@ -1813,7 +1817,7 @@ function viewCheckout() {
     main = `<h1 tabindex="-1" style="font-size:40px">Delivery</h1>
       <form data-form="address" class="form" novalidate>
       <div class="gift-box full"><label class="check"><input type="checkbox" id="co-g-on" data-co="g-on" data-act="gift-toggle" ${g.on ? 'checked' : ''}> <strong>${T('co.giftTitle')}</strong></label>
-        ${g.on ? `<p class="muted" style="font-size:14px">${T('co.giftNote')}</p><div class="form" style="padding:0">${field('g-name', 'Their name', g.name, { ac: 'off' })}${field('g-phone', 'Their mobile', g.phone, { type: 'tel', mode: 'tel', ac: 'off', max: 16, hint: 'optional, for the courier' })}
+        ${g.on ? `<p class="muted" style="font-size:14px">${T('co.giftNote')}</p><div class="form" style="padding:0">${field('g-name', 'Their name', g.name, { ac: 'off' })}${field('g-phone', 'Their mobile', g.phone, { type: 'tel', mode: 'tel', ac: 'off', max: 20, hint: 'optional, for the courier' })}
           <span class="field full"><label for="co-g-note">Note for the card <span class="hint">up to 200 characters</span></label><textarea id="co-g-note" data-co="g-note" rows="3" maxlength="200" ${co.errors['g-note'] ? 'aria-invalid="true"' : ''}>${esc(g.note || '')}</textarea></span>
           ${+SET.wrapFee >= 0 ? `<label class="check"><input type="checkbox" data-co="g-wrap" ${g.wrap ? 'checked' : ''}> Gift wrap it${hasBox(lines) ? ' · free with your gift box' : +SET.wrapFee ? ' · <span class="num">' + inr(SET.wrapFee) + '</span>' : ''}</label>` : ''}
           ${field('g-date', 'Arrive by', g.date, { type: 'date', min: earliestDay(), hint: 'optional, earliest ' + niceDay(earliestDay()) })}</div>` : ''}</div>
@@ -1944,7 +1948,7 @@ function reminderForm() {
       <span class="field"><label for="rem-occ">Occasion</label><select id="rem-occ">${occ.map(([k, l]) => `<option value="${k}" ${r.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
       <span class="field"><label for="rem-name">Whose? <span class="hint">optional</span></label><input id="rem-name" autocomplete="off" maxlength="60" value="${esc(r.name || '')}"></span>
       <span class="field"><label for="rem-day">Date</label><input id="rem-day" type="date" value="${esc(r.day || '')}"></span>
-      <span class="field"><label for="rem-contact">Your WhatsApp number or email</label><input id="rem-contact" autocomplete="tel" value="${esc(r.contact || '')}"></span>
+      <span class="field"><label for="rem-contact">Your email, or WhatsApp number (10 digits, +91 added)</label><input id="rem-contact" autocomplete="tel" value="${esc(r.contact || '')}"></span>
       ${r.err ? `<span class="err full" role="alert">${esc(r.err)}</span>` : ''}<span class="full"><button class="btn ghost" type="submit">Remind me</button></span></form>`}</section>`;
 }
 function viewShare() {
@@ -1965,14 +1969,14 @@ function viewFaq() {
 function viewBulk() {
   const b = UI.bulk = UI.bulk || {}; const list = (k) => Tx(k).split('|').map((x) => x.trim()).filter(Boolean);
   const boxes = P.filter((p) => p.cat === 'gifts').sort((a, c) => minPrice(a) - minPrice(c));
-  const inp = (id, label, opts) => `<span class="field${opts && opts.full ? ' full' : ''}"><label for="bk-${id}">${label}</label><input id="bk-${id}" ${opts && opts.type ? `type="${opts.type}"` : ''} ${opts && opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts && opts.ac ? `autocomplete="${opts.ac}"` : ''} value="${esc(b[id] || '')}"></span>`;
+  const inp = (id, label, opts) => { const tel = opts && opts.type === 'tel'; const box = `<input id="bk-${id}" ${opts && opts.type ? `type="${opts.type}"` : ''} ${opts && opts.mode ? `inputmode="${opts.mode}"` : ''} ${opts && opts.ac ? `autocomplete="${opts.ac}"` : ''} ${tel ? 'maxlength="20"' : ''} value="${esc(tel ? ten(b[id]) : b[id] || '')}">`; return `<span class="field${opts && opts.full ? ' full' : ''}"><label for="bk-${id}">${label}</label>${tel ? pfx(box) : box}</span>`; };
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">${T('bulk.eyebrow')}</span><h1 tabindex="-1">${T('bulk.title')}</h1><p class="muted" style="max-width:640px">${T('bulk.sub')}</p></div>
     <div class="split" style="margin-bottom:40px;align-items:start"><div style="display:flex;flex-direction:column;gap:18px">
       <ul class="trust">${list('bulk.perks').map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
       <div><strong>Good for</strong><div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">${list('bulk.uses').map((x) => `<span class="chip">${esc(x)}</span>`).join('')}</div></div>
       ${boxes.length ? `<div><strong>Start from a gift box</strong><ul class="trust" style="margin-top:10px">${boxes.map((p) => `<li><a href="#p-${p.id}">${esc(p.name)}</a> · from ${inr(minPrice(p))} each</li>`).join('')}</ul></div>` : ''}</div>
     <form data-form="bulk" class="form adm-card" novalidate><strong style="font-size:20px">${T('bulk.formTitle')}</strong>
-      ${inp('name', 'Your name', { ac: 'name' })}${inp('company', 'Company or occasion', { ac: 'organization' })}${inp('phone', 'Phone or WhatsApp', { type: 'tel', mode: 'tel', ac: 'tel' })}
+      ${inp('name', 'Your name', { ac: 'name' })}${inp('company', 'Company or occasion', { ac: 'organization' })}${inp('phone', 'Phone or WhatsApp (10 digits)', { type: 'tel', mode: 'tel', ac: 'tel' })}
       ${inp('qty', 'How many gifts', { mode: 'numeric' })}${inp('budget', 'Budget per gift (₹)', { mode: 'numeric' })}${inp('date', 'Needed by', { type: 'date' })}
       <span class="field full"><label for="bk-msg">Anything else (logo, scents, delivery addresses)</label><textarea id="bk-msg" rows="3">${esc(b.msg || '')}</textarea></span>
       ${b.err ? `<p class="err full" role="alert" style="color:var(--terra-ink);font-weight:500">${esc(b.err)}</p>` : ''}${b.sent ? `<div class="status ok full" role="status">${T('bulk.done')}</div>` : ''}
@@ -2297,7 +2301,7 @@ function customers() {
   c.meta.forEach((m) => { const k = ckey(m.contact); if (k) { const b = P_(k); if (!b.meta || ckey(m.contact) === b.id) b.meta = m; } });
   const refOrders = {}; c.orders.forEach((o) => { if (o.ref && okOrder(o)) refOrders[o.ref] = (refOrders[o.ref] || 0) + 1; });
   return Object.values(by).map((b) => {
-    const emails = [...b.keys].filter((k) => k[0] === 'e').map((k) => k.slice(2)), phones = [...b.keys].filter((k) => k[0] === 'p').map((k) => k.slice(2));
+    const emails = [...b.keys].filter((k) => k[0] === 'e').map((k) => k.slice(2)), phones = [...b.keys].filter((k) => k[0] === 'p').map((k) => '+91' + k.slice(2));
     const ords = b.orders.slice().sort((x, y) => new Date(y.placedAt) - new Date(x.placedAt)); const good = ords.filter(okOrder);
     const spent = good.reduce((a, o) => a + (o.total || 0) + (o.cardOff || 0), 0); const last = good[0], first = good[good.length - 1];
     const pr = b.profile || {}; const addr = (ords.find((o) => o.address && o.address.city && !(o.gift && o.gift.on)) || ords[0] || {}).address || {};
@@ -2332,7 +2336,7 @@ function admPeople() {
       ${top.length ? `<p class="muted">Most asked for: ${top.slice(0, 5).map(([s, n]) => `${esc(skuMap[s] ? skuMap[s].p.name + ' · ' + skuMap[s].v.label : s)} (${n})`).join(', ')}</p>` : ''}${tbl(rs, [['Email or WhatsApp', (r) => r.contact], ['Piece', (r) => skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku], ['Asked', when], ['Told', (r) => r.notified_at ? new Date(r.notified_at).toLocaleDateString('en-IN') : '']])}`;
   }
   const all = customers(); if (!all) return nav + loadingRow;
-  if (A.cust) { const c = all.find((x) => x.id === A.cust || x.emails.some((e) => 'e:' + e === A.cust) || x.phones.some((p) => 'p:' + p === A.cust)); if (c) return nav + admCustomer(c); A.cust = null; }
+  if (A.cust) { const c = all.find((x) => x.id === A.cust || x.emails.some((e) => 'e:' + e === A.cust) || x.phones.some((p) => 'p:' + p.slice(3) === A.cust)); if (c) return nav + admCustomer(c); A.cust = null; }
   const f = A.cf = A.cf || { q: '', seg: '', src: '', city: '', wa: false, soon: false, sort: 'recent' };
   const q = f.q.trim().toLowerCase();
   let rows = all.filter((c) => (!q || [c.name, ...c.emails, ...c.phones, ...c.orders.map((o) => o.id)].join(' ').toLowerCase().includes(q))
@@ -2393,7 +2397,7 @@ const nextDay = (iso) => { const d = new Date(iso + 'T00:00:00'), t = new Date()
 function admReminders(list) {
   const rows = list.filter((r) => r.table === 'reminders').map((r) => Object.assign({ next: nextDay(r.day) }, r)).sort((a, b) => a.next - b.next);
   const days = (r) => Math.round((r.next - new Date().setHours(0, 0, 0, 0)) / 864e5); const occ = (k) => (OCCASIONS.find((x) => x[0] === k) || [k, k])[1];
-  const wa = (r) => /^\d{10}$/.test(r.contact) ? `<a href="https://wa.me/91${r.contact}?text=${encodeURIComponent(`Hi! A gentle reminder from BUD & THINGS: ${r.for_name ? r.for_name + '’s ' : 'the '}${occ(r.occasion).toLowerCase()} is on ${r.next.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}. Here are a few gift ideas: ${location.origin + location.pathname}#gifting`)}" target="_blank" rel="noopener">Message</a>` : esc(r.contact);
+  const wa = (r) => normPhone(r.contact) ? `<a href="https://wa.me/${waNumber(r.contact)}?text=${encodeURIComponent(`Hi! A gentle reminder from BUD & THINGS: ${r.for_name ? r.for_name + '’s ' : 'the '}${occ(r.occasion).toLowerCase()} is on ${r.next.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })}. Here are a few gift ideas: ${location.origin + location.pathname}#gifting`)}" target="_blank" rel="noopener">Message</a>` : esc(r.contact);
   return `<div class="adm-bar" style="margin-top:28px"><h2 style="font-size:24px">Gift reminders · ${rows.length}</h2></div><p class="muted">Send each one about a week before. The soonest are at the top.</p>
     ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>In</th><th>Occasion</th><th>Whose</th><th>Date</th><th>Contact</th></tr></thead><tbody>${rows.slice(0, 200).map((r) => `<tr${days(r) <= 7 ? ' style="font-weight:600"' : ''}><td class="num">${days(r)} days</td><td>${esc(occ(r.occasion))}</td><td>${esc(r.for_name || '')}</td><td class="num">${r.next.toLocaleDateString('en-IN')}</td><td>${wa(r)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None yet.</p>'}`;
 }
@@ -2956,7 +2960,7 @@ function orderRows(list) {
 function viewTrack() {
   const tr = UI.track || {}; loadMine();
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Orders</span><h1 tabindex="-1">${T('track.title')}</h1><p class="muted" style="max-width:620px">${T('track.sub')}</p></div>
-    <form data-form="track" class="track-form" novalidate><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label><input id="tr-phone" type="tel" inputmode="tel" maxlength="16" value="${esc(tr.phone || '')}" autocomplete="tel-national"></span><button class="btn" type="submit">Track order</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
+    <form data-form="track" class="track-form" novalidate><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label>${pfx(`<input id="tr-phone" type="tel" inputmode="tel" maxlength="20" value="${esc(ten(tr.phone))}" autocomplete="tel-national">`)}</span><button class="btn" type="submit">Track order</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
     ${S.account ? `<h2 style="font-size:28px;margin-bottom:14px">Your orders</h2>${orderRows(myOrders())}` : `<p class="muted"><a href="#account">Sign in</a> to see all your orders here.</p>`}
     <ol class="track-steps">${[['box', 'Placed', 'We have your order and payment.'], ['gift', 'Packed', 'Wrapped by hand, usually within 1 to 3 working days.'], ['truck', 'Shipped', 'We email the courier tracking link.'], ['home', 'Delivered', 'Usually ' + SET.deliveryDays + ' after it ships.']].map(([i, h, t]) => `<li>${hl(i, 26)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></div>`;
 }
@@ -2990,7 +2994,7 @@ function profileBox() {
   return `<h2 style="font-size:28px;margin:36px 0 14px">Your details</h2>
     <form data-form="profile" class="form" novalidate>
       <span class="field"><label for="pf-name">Full name</label><input id="pf-name" autocomplete="name" maxlength="80" value="${esc(P.name ?? pf.name)}"></span>
-      <span class="field"><label for="pf-phone">Mobile number <span class="hint">for delivery</span></label><input id="pf-phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" value="${esc(P.phone ?? pf.phone)}" ${P.err && P.err.phone ? 'aria-invalid="true"' : ''}></span>
+      <span class="field"><label for="pf-phone">Mobile number <span class="hint">for delivery</span></label>${pfx(`<input id="pf-phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" value="${esc(ten(P.phone ?? pf.phone))}" ${P.err && P.err.phone ? 'aria-invalid="true"' : ''}>`)}</span>
       <span class="field full"><label>Email</label><input value="${esc(S.account.email)}" disabled></span>
       <div class="full"><strong>Saved addresses</strong>${pf.addresses.length ? `<ul class="order-list" style="margin-top:8px">${pf.addresses.map((a, i) => `<li><span style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:12px 0;border-bottom:1px solid var(--line)"><span style="flex:1 1 240px"><strong>${esc(a.label || (i ? 'Address ' + (i + 1) : 'Home'))}</strong>${i === 0 ? ' <span class="pill">Usual</span>' : ''}<br><span class="muted">${esc(addrLine(a))}, ${esc(a.state)}</span></span>${i ? `<button class="linkbtn" type="button" data-act="addr-first" data-i="${i}">Make usual</button>` : ''}<button class="linkbtn" type="button" data-act="addr-del" data-i="${i}">Remove</button></span></li>`).join('')}</ul>` : '<p class="muted">None yet. They are saved when you order, or add one below.</p>'}</div>
       ${pf.addresses.length < 5 ? `<details class="full"${P.err && P.err.addr ? ' open' : ''}><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center">Add an address</summary><div class="form" style="padding:0">
@@ -3547,7 +3551,12 @@ async function payCheck(id) {
 function luhn(num) { let s = 0, alt = false; for (let i = num.length - 1; i >= 0; i--) { let d = +num[i]; if (alt) { d *= 2; if (d > 9) d -= 9; } s += d; alt = !alt; } return s % 10 === 0; }
 function readCo(form) { form.querySelectorAll('[data-co]').forEach((el) => { const k = el.dataset.co; const v = el.type === 'checkbox' ? el.checked : el.value.trim(); if (k === 'optin') UI.co.optin = v; else if (k.startsWith('g-')) UI.co.gift[k.slice(2)] = v; else if (['name', 'phone', 'email'].includes(k)) UI.co.contact[k] = v; else if (['line1', 'line2', 'pin', 'city', 'state'].includes(k)) UI.co.address[k] = v; else if (k === 'upi') UI.co.upi = v; else UI.co.card[k] = v; }); }
 const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const asPhone = (v) => { const d = String(v).replace(/\D/g, '').replace(/^(91|0)(?=[6-9]\d{9}$)/, ''); return /^[6-9]\d{9}$/.test(d) ? d : null; };
+// Mobile numbers are kept as +91 and 10 digits (+919876543210) everywhere: in the database, in exports and in analysis.
+// Forms show a fixed "+91" and take the 10 digits; anything typed with 91, 0 or +91 in front is accepted too.
+const asPhone = (v) => { const d = String(v).replace(/\D/g, '').replace(/^(91|0)(?=[6-9]\d{9}$)/, ''); return /^[6-9]\d{9}$/.test(d) ? '+91' + d : null; };
+// the 10 digits of a saved number, for a form box that has +91 printed beside it
+const ten = (v) => { const d = String(v || '').replace(/\D/g, ''); return d.length > 10 ? d.slice(-10) : d; };
+const pfx = (box) => `<span class="pfx"><span class="pfx-c" aria-hidden="true">+91</span>${box}</span>`;
 const contactOf = (v) => (isEmail(v) ? v.toLowerCase() : asPhone(v));
 function focusFirstError() { const el = document.querySelector('[aria-invalid="true"]'); if (el) el.focus(); }
 
@@ -3741,9 +3750,9 @@ document.addEventListener('submit', (e) => {
     BTDB.rpc('my_referral', { contact_in: c }).then((id) => { sh.ref = id; sh.err = null; track('share_link', {}); render(); say('Your link is ready.'); }, (err) => { sh.err = /too_many/.test(err.message) ? 'Too many tries. Please wait an hour.' : 'We couldn’t make your link right now. Please try again.'; render(); });
     return; }
   if (kind === 'bulk') { const b = UI.bulk = UI.bulk || {}; ['name', 'company', 'phone', 'qty', 'budget', 'date'].forEach((k) => { b[k] = $('#bk-' + k).value.trim(); }); b.msg = $('#bk-msg').value.trim();
-    b.err = !b.name ? 'Add your name.' : !/\d{10}/.test(b.phone.replace(/\D/g, '')) ? 'Add a 10-digit phone or WhatsApp number.' : !(+b.qty > 0) ? 'Add roughly how many gifts you need.' : null;
+    b.err = !b.name ? 'Add your name.' : !asPhone(b.phone) ? 'Add a 10-digit mobile or WhatsApp number.' : !(+b.qty > 0) ? 'Add roughly how many gifts you need.' : null;
     if (b.err) { b.sent = false; render(); return; }
-    const text = `Bulk gift enquiry\nName: ${b.name}\nCompany or occasion: ${b.company || '-'}\nPhone: ${b.phone}\nHow many: ${b.qty}\nBudget per gift: ${b.budget ? '₹' + b.budget : '-'}\nNeeded by: ${b.date || '-'}\n${b.msg}`;
+    const text = `Bulk gift enquiry\nName: ${b.name}\nCompany or occasion: ${b.company || '-'}\nPhone: ${asPhone(b.phone)}\nHow many: ${b.qty}\nBudget per gift: ${b.budget ? '₹' + b.budget : '-'}\nNeeded by: ${b.date || '-'}\n${b.msg}`;
     const url = waLink(text) || `mailto:${SET.email}?subject=${encodeURIComponent('Bulk gift enquiry')}&body=${encodeURIComponent(text)}`;
     track('bulk_enquiry', { qty: +b.qty }); b.sent = true; render(); if (SET.whatsapp) window.open(url, '_blank', 'noopener'); else location.href = url;
     return; }
@@ -3771,7 +3780,7 @@ document.addEventListener('submit', (e) => {
     });
     return; }
   if (kind === 'track') { const id = $('#tr-id').value.trim().toUpperCase(); const ph = asPhone($('#tr-phone').value); UI.track = { id, phone: $('#tr-phone').value.trim() };
-    const mine = S.orders.find((o) => o.id === id && o.contact.phone === ph); if (mine) { location.hash = 'order-' + id; return; }
+    const mine = S.orders.find((o) => o.id === id && asPhone(o.contact.phone) === ph); if (mine) { location.hash = 'order-' + id; return; }
     if (!id || !ph) { UI.track.msg = 'Enter your order number and the mobile number you ordered with.'; render(); return; }
     if (!BTDB.on) { UI.track.msg = 'We couldn’t find that order in this browser.'; render(); return; }
     BTDB.rpc('get_order', { order_id: id, phone_no: ph }).then((o) => { if (!o) { UI.track.msg = 'We couldn’t find an order with that number and mobile.'; render(); return; } S.orders.unshift(Object.assign({ contact: {}, address: {}, items: [] }, o, { id })); save(); location.hash = 'order-' + id; }, (err) => { UI.track.msg = 'We couldn’t check right now (' + err.message + ').'; render(); });
@@ -3894,7 +3903,7 @@ document.addEventListener('submit', (e) => {
   readCo(f); co.errors = {};
   if (kind === 'contact') {
     const c = co.contact; if (!c.name) co.errors.name = 'Enter your name so we know who the parcel is for.';
-    const ph = asPhone(c.phone || ''); if (!ph) co.errors.phone = 'Enter a 10-digit mobile number starting with 6, 7, 8 or 9.'; else c.phone = ph;
+    const ph = asPhone(c.phone || ''); if (!ph) co.errors.phone = 'Enter a 10-digit mobile number starting with 6, 7, 8 or 9 (the +91 is already there).'; else c.phone = ph;
     c.email = S.account ? S.account.email : c.email; if (!c.name && S.account && S.account.name) c.name = S.account.name;
     if (Object.keys(co.errors).length) { render(); focusFirstError(); return; }
     co.step = 'address'; track('checkout_step', { step: 'delivery' }); render(true); return;

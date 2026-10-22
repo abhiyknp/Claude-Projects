@@ -92,7 +92,7 @@ export async function handle(req: Request) {
           order_id: id, order_date: ist.slice(0, 10) + ' ' + ist.slice(11, 16), pickup_location: String(await setting('shiprocketPickup', 'Primary')),
           billing_customer_name: sp > 0 ? who.slice(0, sp) : who, billing_last_name: sp > 0 ? who.slice(sp + 1) : '',
           billing_address: d.address.line1, billing_address_2: d.address.line2 || '', billing_city: d.address.city, billing_pincode: d.address.pin,
-          billing_state: d.address.state, billing_country: 'India', billing_email: d.contact.email || '', billing_phone: (gift && d.gift.phone) || d.contact.phone,
+          billing_state: d.address.state, billing_country: 'India', billing_email: d.contact.email || '', billing_phone: String((gift && d.gift.phone) || d.contact.phone || '').replace(/\D/g, '').slice(-10),
           shipping_is_billing: true,
           order_items: d.items.map((l: any) => ({ name: l.name + (l.label ? ' · ' + l.label : ''), sku: l.sku, units: l.qty, selling_price: l.price })),
           payment_method: o.method === 'Cash on delivery' ? 'COD' : 'Prepaid',
