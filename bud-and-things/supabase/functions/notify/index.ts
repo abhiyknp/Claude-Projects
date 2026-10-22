@@ -16,7 +16,7 @@ const inr = (n: unknown) => '₹' + Number(n || 0).toLocaleString('en-IN');
 const OCC: Record<string, string> = { birthday: 'birthday', anniversary: 'anniversary', housewarming: 'housewarming', wedding: 'wedding', 'new-baby': 'new baby', 'thank-you': 'thank you', festive: 'festive gift', milestone: 'milestone', 'self-care': 'self-care gift', 'just-because': 'gift' };
 
 type Note = { id: string; event: string; channel: string; recipient: string; order_id: string | null; data: any; order: any; name: string | null };
-type Msg = { subject: string; lines: string[]; button?: [string, string]; short: string };
+type Msg = { subject: string; lines: string[]; button?: [string, string]; short: string; extra?: string; attach?: { filename: string; content: string } };
 
 // what each happening says; `short` is the one-line version for SMS, WhatsApp and push
 function compose(n: Note, site: string, shop: string): Msg | null {
@@ -43,19 +43,44 @@ function compose(n: Note, site: string, shop: string): Msg | null {
   return null;
 }
 
+
+// the invoice made for an order (amounts are in paise); null when there is none, so the email just goes without it
+const rs = (p: unknown) => '₹' + (Number(p || 0) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+async function invoiceFor(orderId: string) {
+  const r = await db('/rest/v1/invoices?select=id,kind,data&status=eq.Issued&kind=eq.invoice&order_id=eq.' + encodeURIComponent(orderId) + '&limit=1');
+  return r && r[0] ? r[0] : null;
+}
+// one table that reads in any inbox; the same markup is the attached file
+function invoiceTable(inv: any) {
+  const d = inv.data, gst = d.gst, t = d.totals, sl = d.seller, b = d.buyer, td = 'padding:6px 8px;border-bottom:1px solid #e6dccb;font-size:13px';
+  const head = gst ? ['Item', 'HSN', 'Qty', 'Taxable', 'Rate'].concat(d.inter ? ['IGST'] : ['CGST', 'SGST'], ['Amount']) : ['Item', 'Qty', 'Price', 'Discount', 'Amount'];
+  const row = (l: any) => '<tr>' + (gst
+    ? [l.name, l.hsn || '', l.qty, rs(l.taxable), l.rate + '%'].concat(d.inter ? [rs(l.igst)] : [rs(l.cgst), rs(l.sgst)], [rs(l.net)])
+    : [l.name, l.qty, rs(Math.round(l.gross / l.qty)), l.disc ? '−' + rs(l.disc) : '—', rs(l.net)]).map((c, i) => `<td style="${td};${i ? 'text-align:right' : ''}">${esc(c)}</td>`).join('') + '</tr>';
+  const sum = (a: string, v: string, bold = false) => `<tr><td colspan="${head.length - 1}" style="${td};text-align:right${bold ? ';font-weight:bold' : ''}">${a}</td><td style="${td};text-align:right${bold ? ';font-weight:bold' : ''}">${v}</td></tr>`;
+  const date = d.date ? new Date(d.date + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  return `<p style="margin:0 0 4px;font-size:16px"><strong>${gst ? 'Tax invoice' : 'Bill of supply'} ${esc(inv.id)}</strong></p>
+<p style="margin:0 0 12px;font-size:13px;line-height:1.5">${esc(sl.name)}${sl.address ? ', ' + esc(sl.address) : ''}${sl.gstin ? '<br>GSTIN: ' + esc(sl.gstin) : ''}<br>Date: ${esc(date)} · Order ${esc(d.orderId)}<br>Billed to: ${esc(b.name)}</p>
+<div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%"><thead><tr>${head.map((h, i) => `<th style="${td};text-align:${i ? 'right' : 'left'}">${h}</th>`).join('')}</tr></thead><tbody>${d.lines.map(row).join('')}
+${gst ? sum('Taxable value', rs(t.taxable)) + (d.inter ? sum('IGST', rs(t.igst)) : sum('CGST', rs(t.cgst)) + sum('SGST', rs(t.sgst))) : ''}${sum('Total', rs(t.total), true)}</tbody></table></div>
+<p style="margin:10px 0 0;font-size:12px;color:#6B705C">${gst ? 'Prices include GST.' : 'Issued by a supplier not registered under GST. No tax is charged.'}</p>`;
+}
+const attachment = (inv: any) => ({ filename: String(inv.id).replace(/[^A-Za-z0-9-]/g, '-') + '.html',
+  content: btoa(String.fromCharCode(...new TextEncoder().encode(`<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(inv.id)}</title></head><body style="margin:0;padding:24px;font-family:Arial,sans-serif;color:#2b1d14;max-width:820px">${invoiceTable(inv)}</body></html>`))) });
+
 // the page: ivory paper, chocolate text, terracotta button (the brand palette), plain enough for any inbox
 function html(m: Msg, site: string, tail: string) {
   const body = m.lines.filter(Boolean).map((l, i) => `<p style="margin:0 0 14px;font-size:${i ? 15 : 17}px;line-height:1.6">${esc(l)}</p>`).join('');
   const btn = m.button ? `<p style="margin:24px 0"><a href="${esc(m.button[1])}" style="background:#A55B3F;color:#F8F0E4;text-decoration:none;padding:12px 22px;display:inline-block;font-size:14px;letter-spacing:.04em">${esc(m.button[0])}</a></p>` : '';
   return `<div style="background:#F8F0E4;padding:28px 12px"><div style="max-width:520px;margin:0 auto;background:#fff;padding:32px 28px;font-family:Georgia,'Times New Roman',serif;color:#3D281E">
-<p style="margin:0 0 22px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#6B705C">BUD &amp; THINGS</p>${body}${btn}
+<p style="margin:0 0 22px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#6B705C">BUD &amp; THINGS</p>${body}${m.extra ? `<div style="margin:20px 0 0;border-top:1px solid #e6dccb;padding-top:16px">${m.extra}</div>` : ''}${btn}
 <p style="margin:28px 0 0;font-size:12px;color:#6B705C;line-height:1.5">${esc(tail)}${site ? ` <a href="${esc(site)}" style="color:#6B705C">${esc(site.replace(/^https?:\/\//, ''))}</a>` : ''}</p></div></div>`;
 }
 
 async function sendEmail(to: string, m: Msg, site: string, from: string, replyTo: string, tail: string) {
   if (!env('RESEND_API_KEY')) throw new Error('no_provider:email');
   const r = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: 'Bearer ' + env('RESEND_API_KEY'), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from, to: [to], reply_to: replyTo, subject: m.subject, html: html(m, site, tail), text: m.lines.filter(Boolean).join('\n\n') + (m.button ? '\n\n' + m.button[1] : '') }) });
+    body: JSON.stringify({ from, to: [to], reply_to: replyTo, subject: m.subject, html: html(m, site, tail), ...(m.attach ? { attachments: [m.attach] } : {}), text: m.lines.filter(Boolean).join('\n\n') + (m.button ? '\n\n' + m.button[1] : '') }) });
   if (!r.ok) throw new Error('resend ' + r.status + ' ' + (await r.text()).slice(0, 300));
 }
 // SMS, WhatsApp and push: one JSON call to whatever the provider adapter is (a small function or the provider's own
@@ -77,6 +102,9 @@ export async function sendQueued(limit = 30) {
     let err = '', giveUp = false;
     try {
       const m = compose(n, site, shop);
+      if (m && n.event === 'confirmed' && n.channel === 'email' && n.order_id && (await setting('invoiceEmail', true)) !== false) {
+        try { const inv = await invoiceFor(n.order_id); if (inv) { m.extra = invoiceTable(inv); m.attach = attachment(inv); m.lines.push('Your invoice ' + inv.id + ' is below and attached.'); } } catch (e) { console.error('invoice_email', e); }
+      }
       if (!m) { err = 'unknown_event'; giveUp = true; } else if (n.channel === 'email') await sendEmail(n.recipient, m, site, from, shop, tail); else await sendOther(n, m);
     } catch (e) { err = String((e as Error).message || e); giveUp = /^no_provider/.test(err) || /resend 4(00|01|03|22)/.test(err); }
     await db('/rest/v1/rpc/finish_note', { note_id: n.id, ok: !err, err, give_up: giveUp });
