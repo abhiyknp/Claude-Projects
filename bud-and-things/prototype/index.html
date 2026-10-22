@@ -980,10 +980,6 @@ body.app .why-band { padding-bottom: 96px; }
         <button type="button" data-act="mode" data-v="web" id="mode-web">Website</button>
         <button type="button" data-act="mode" data-v="app" id="mode-app">Installed app</button>
       </span>
-      <span class="seg" role="group" aria-label="Home page">
-        <button type="button" data-act="home-style" data-v="foyer" id="home-foyer">Foyer</button>
-        <button type="button" data-act="home-style" data-v="gift" id="home-gift">Gift shop</button>
-      </span>
       <a href="#admin">Owner view</a>
       <button type="button" data-act="reset">Reset demo</button>
     </span>
@@ -1358,13 +1354,13 @@ const CS_KEYS = ['comingSoon', 'previewCode'];
 // settings with their own place in Owner view (the Coupons, Rewards and Invoices tabs)
 const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct', 'gstin', 'gstOn', 'gstState', 'invoicePrefix', 'invoiceAuto', 'hsnCandles', 'gstCandles', 'hsnObjects', 'gstObjects', 'hsnGifts', 'gstGifts'];
 const THEME_KEYS = ['theme', 'homeStyle'];
-const HOME_STYLES = { foyer: 'Foyer: the 3D house walk', gift: 'Gift shop: products and gifts first' };
+const HOME_STYLES = { gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
-const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'foyer'; };
+const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'gift'; };
 const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
-  theme: 'signature', homeStyle: 'foyer', comingSoon: true, previewCode: 'budpreview' };
+  theme: 'signature', homeStyle: 'gift', comingSoon: true, previewCode: 'budpreview' };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
 const LEGAL_KEYS = ['bizName', 'bizAddress', 'gstin', 'grievanceName', 'grievancePhone', 'courtCity', 'policyDate'];
@@ -1535,7 +1531,7 @@ function renderChrome() {
   const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = cs || r === 'home' ? '' : offersBar(); $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
-  $('#home-foyer').setAttribute('aria-pressed', String(homeStyle() === 'foyer')); $('#home-gift').setAttribute('aria-pressed', String(homeStyle() === 'gift'));
+  
   const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite', 'collection'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
   $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
     + tab('shop', 'Shop', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>')
