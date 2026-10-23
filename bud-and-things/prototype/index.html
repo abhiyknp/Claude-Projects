@@ -1431,14 +1431,27 @@ function mergeRows(table, rows) {
 }
 const baseRow = (p, i) => { const d = Object.assign({}, p); delete d.id; return { id: p.id, data: d, sort: i * 10, live: true }; };
 const pairRow = (x, i) => ({ id: x.id, data: { name: x.name, why: x.why, items: x.items }, sort: i * 10, live: true });
+// change history: what a save replaced, so the owner can put it back (Owner view → History). Best effort: a failure never blocks the save.
+const LOGGED = { site_text: 'key', settings: 'key', products: 'id', pairings: 'id' };
+function snapOld(table, key) {
+  if (table === 'site_text') return key in (DATA.text || {}) ? { key, value: DATA.text[key] } : null;
+  if (table === 'settings') return key in (DATA.settings || {}) ? { key, value: DATA.settings[key] } : null;
+  const r = (DATA[table] || []).find((x) => x.id === key); return r ? JSON.parse(JSON.stringify(r)) : null;
+}
+async function logChange(table, entries) {
+  const rows = entries.filter((e) => JSON.stringify(e.old) !== JSON.stringify(e.new)).map((e) => ({ tbl: table, key: e.key, old: e.old, new: e.new })); if (!rows.length) return;
+  try { if (BTDB.on) await BTDB.insert('change_log', rows); else { S.db = S.db || {}; S.db.log = rows.map((r) => Object.assign({ id: 'L' + Date.now() + r.key, at: new Date().toISOString() }, r)).concat(S.db.log || []).slice(0, 200); save(); } } catch (e) { /* history table not set up yet */ }
+}
 async function dbPut(table, rows) {
   rows = [].concat(rows);
+  if (LOGGED[table]) { const col = LOGGED[table]; await logChange(table, rows.map((r) => ({ key: r[col], old: snapOld(table, r[col]), new: r }))); }
   // the first edit to products or rituals also saves the built-in ones, so nothing disappears from the site
   if ((table === 'products' || table === 'pairings') && !(DATA[table] && DATA[table].length)) { const base = table === 'products' ? BASE_P.map(baseRow) : BASE_PAIRINGS.map(pairRow); rows = base.filter((b) => !rows.some((r) => r.id === b.id)).concat(rows); }
   if (BTDB.on) await BTDB.upsert(table, rows); else if (table === 'stock') { rows.forEach((r) => { S.stock[r.sku] = r.qty; }); save(); }
   mergeRows(table, rows); persistLocal(); applyData();
 }
 async function dbDel(table, col, val) {
+  if (LOGGED[table] && LOGGED[table] === col) await logChange(table, [{ key: val, old: snapOld(table, val), new: null }]);
   if (BTDB.on) await BTDB.remove(table, col + '=eq.' + encodeURIComponent(val));
   if (table === 'site_text') delete DATA.text[val]; else if (table === 'settings') delete DATA.settings[val];
   else if (DATA[table]) DATA[table] = DATA[table].filter((r) => r[col] !== val);
@@ -2191,7 +2204,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2204,6 +2217,7 @@ const pairRows = () => (DATA.pairings && DATA.pairings.length ? DATA.pairings : 
 const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
+  if (k === 'history' && !BTDB.on) return (S.db && S.db.log) || [];
   if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'invoices' ? ((S.db && S.db.invoices) || []) : k === 'coupons' ? localCoupons() : k === 'rewards' ? { log: (S.db && S.db.pointsLog) || [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
   if (!UI.adm.rows[k]) { const f = UI.adm.inflight = UI.adm.inflight || {}; if (!f[k]) { f[k] = true; setTimeout(() => admLoad(k)); } return null; }
   return UI.adm.rows[k];
@@ -2212,6 +2226,7 @@ async function admLoad(k) {
   const A = UI.adm; A.loading = k;
   try {
     if (k === 'orders') A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status }));
+    if (k === 'history') A.rows.history = await BTDB.list('change_log', 'order=at.desc&limit=200').catch(() => null) || [];
     if (k === 'orders' || k === 'invoices') { try { A.rows.invoices = await BTDB.list('invoices', 'order=created_at.desc&limit=500'); } catch (e) { A.rows.invoices = []; } }
     if (k === 'reviews') { const [a, b] = await Promise.all([BTDB.list('reviews', 'order=created_at.desc&limit=1000'), BTDB.list('review_authors', 'limit=1000').catch(() => [])]); A.rows.reviews = a; A.rows.revAuthors = b; }
     if (k === 'people') {
@@ -2254,7 +2269,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
@@ -2539,6 +2554,17 @@ function admHome() {
     ${Array.isArray(SET.homeOrder) || hide.length ? '<p><button class="linkbtn" type="button" data-act="adm-home-reset">Put back the original order</button></p>' : ''}`;
 }
 const saveHome = (order, hide) => { SET.homeOrder = order; SET.homeHide = hide; return Promise.all([dbPut('settings', { key: 'homeOrder', value: order }), dbPut('settings', { key: 'homeHide', value: hide })]); };
+function admHistory() {
+  const rows = admData('history'); if (!rows) return '<p class="muted">Loading…</p>';
+  const nice = { site_text: 'Site text', settings: 'Setting', products: 'Product', pairings: 'Ritual' };
+  const show = (v, tbl) => { if (v == null) return '(nothing)'; const x = tbl === 'products' || tbl === 'pairings' ? ((v.data && v.data.name) || v.id) + (v.live === false ? ' (draft)' : '') : typeof v.value === 'string' ? v.value : JSON.stringify(v.value); const t = String(x); return t.length > 90 ? t.slice(0, 90) + '…' : t; };
+  return `<p class="muted">The last 200 changes to site text, settings, products and rituals. Press Put this back to undo one; the undo is itself saved here.${BTDB.on ? ' If this stays empty after you have saved changes, run schema.sql again in Supabase.' : ''}</p>
+    ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>When</th><th>What</th><th>Before</th><th>After</th><th></th></tr></thead><tbody>${rows.map((r, i) => `<tr><td class="num">${esc(new Date(r.at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}</td><td>${esc(nice[r.tbl] || r.tbl)}<br><span class="muted num">${esc(r.key)}</span></td><td>${esc(show(r.old, r.tbl))}</td><td>${esc(show(r.new, r.tbl))}</td><td><button class="btn small ghost" type="button" data-act="adm-undo" data-i="${i}">Put this back</button></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Nothing yet. Changes you save from now on appear here.</p>'}`;
+}
+function admGuide() {
+  const rows = [['Change a word on the site', 'Preview bar → Edit text on page, then click the word. Or Site text.'], ['Menu, footer links, FAQ', 'Menus & FAQ'], ['Add a product', 'Products → Add a product. Save as draft, add photos under Photos and videos, then Publish.'], ['Change stock', 'Stock. Counts are per option, grouped by product.'], ['Prices, shipping fee, delivery time, gift wrap', 'Settings'], ['Change a photo, logo or banner', 'Photos & videos. Pick the product, or Brand for logo, packaging and gift photos.'], ['Privacy, terms, shipping and replacement policy', 'Policy pages. Fill from a Word or text file, or type.'], ['Stories', 'Journal'], ['Feelings, rooms, occasions and quiz questions', 'Filters & quiz'], ['Which home page sections show, and in what order', 'Home page'], ['Search and sharing text, favicon', 'Site text → Search & sharing (SEO); Photos & videos → Brand'], ['Undo a change', 'History → Put this back'], ['Go live', 'Settings → Coming soon page: switch it off when everything is ready'], ['Orders, invoices, coupons, rewards, gift cards', 'Their own tabs']];
+  return `<p class="muted">Where to change what. Nothing on the site needs a developer.</p><div class="table-wrap"><table><thead><tr><th>I want to…</th><th>Go to</th></tr></thead><tbody>${rows.map(([a, b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join('')}</tbody></table></div>`;
+}
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
   return `<div class="adm-bar"><p class="muted">Edit any line, then click outside the box to save. A new line breaks the line; *words between stars* are set in italics. Words in {braces} come from Settings.</p><span class="field"><label for="tx-q">Find</label><input id="tx-q" data-act="adm-q" value="${esc(UI.adm.q || '')}" placeholder="delivery, gift, hero…"></span></div>
@@ -3963,6 +3989,7 @@ document.addEventListener('click', (e) => {
     case 'adm-quiz-reset': admDo(async () => { await dbDel('settings', 'key', 'quizQ'); delete SET.quizQ; applyQuizQ(); render(); }, 'Back to the original.'); break;
     case 'adm-home-move': { const o = homeOrder(true); const i = o.indexOf(d.id), to = i + (+d.v); if (to < 0 || to >= o.length) break; o.splice(i, 1); o.splice(to, 0, d.id); admDo(async () => { await saveHome(o, SET.homeHide || []); render(); }, 'Saved.'); break; }
     case 'adm-home-reset': admDo(async () => { await dbDel('settings', 'key', 'homeOrder'); await dbDel('settings', 'key', 'homeHide'); delete SET.homeOrder; delete SET.homeHide; render(); }, 'Back to the original.'); break;
+    case 'adm-undo': { const r = (admData('history') || [])[+d.i]; if (!r) break; const col = LOGGED[r.tbl]; admDo(async () => { if (r.old == null) await dbDel(r.tbl, col, r.key); else await dbPut(r.tbl, r.old); if (BTDB.on) UI.adm.rows.history = null; render(); renderChrome(); }, 'Put back.'); break; }
     case 'adm-list-add': case 'adm-list-del': case 'adm-list-move': listAction(d); break;
     case 'adm-list-reset': admDo(async () => { if (UI.adm.draft) delete UI.adm.draft[d.k]; await dbDel('settings', 'key', d.k); renderChrome(); render(); }, 'Back to the original.'); break;
     case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
