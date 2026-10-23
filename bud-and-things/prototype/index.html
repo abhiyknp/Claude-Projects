@@ -837,11 +837,12 @@ body.app .why-band { padding-bottom: 96px; }
 .best-item .name { font-family: var(--display); font-size: 22px; text-decoration: none; line-height: 1.1; }
 @media (max-width: 400px) { .combo-tiles .tile { width: 78px; height: 92px; } }
 .pay-badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.pay-badges li { display: inline-flex; align-items: center; justify-content: center; gap: 0; min-width: 64px; height: 30px; padding: 0 10px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
+.pay-badges li { display: inline-flex; align-items: center; justify-content: center; gap: 0; min-width: 64px; height: 38px; padding: 0 10px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
 .pay-badges b { font-weight: 800; font-size: 13px; letter-spacing: 0; }
 .pay-badges i + i { margin-left: -5px; }
 .pay-badges i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
 .pay-badges svg { width: 14px; height: 14px; }
+.pay-badges svg.pay-logo { width: auto; height: 22px; }
 /* footer */
 .site-foot { position: relative; overflow: hidden; }
 .site-foot a { text-decoration: none; }
@@ -851,7 +852,7 @@ body.app .why-band { padding-bottom: 96px; }
 .site-foot .cols { grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr)); }
 .foot-brand { display: flex; flex-direction: column; gap: 12px; }
 .foot-brand .mark.lockup { max-width: 100%; }
-.foot-pay { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 32px; padding-block: 20px; border-top: 1px solid var(--line); font-size: 14px; }
+.foot-pay { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px 32px; padding-block: 20px; border-top: 1px solid var(--line); font-size: 14px; }
 .foot-pay > div:first-child { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .foot-pay > div:first-child > strong { font-family: var(--body); font-size: 15px; font-weight: 700; letter-spacing: .04em; color: #FBE9C2; }
 .foot-assure-row { border-top: 1px solid rgba(214,163,74,.35); padding-block: 22px; }
@@ -860,7 +861,7 @@ body.app .why-band { padding-bottom: 96px; }
 .foot-assure svg { width: 22px; height: 22px; flex: none; color: var(--caramel); }
 @media (max-width: 700px) { .foot-assure { grid-template-columns: 1fr; } }
 .foot-base { background: var(--choc); color: #FBE9C2; font-size: 14px; }
-.foot-base .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 20px; padding-block: 14px; }
+.foot-base .wrap { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 6px; padding-block: 16px; }
 #foot-made { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--caramel); }
 @media (max-width: 1000px) { .site-foot .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-brand { grid-column: 1 / -1; } }
 /* story page */
@@ -1010,7 +1011,7 @@ body.app .why-band { padding-bottom: 96px; }
     <div id="foot-cols" style="display:contents"></div>
   </div>
   <div class="wrap foot-assure-row"><ul class="foot-assure" id="foot-also"></ul></div>
-  <div class="wrap foot-pay"><div><strong>We accept</strong><span id="foot-pay"></span></div></div>
+  <div class="wrap foot-pay"><div><span id="foot-pay"></span></div></div>
   <div class="foot-base"><div class="wrap"><span id="foot-copy"></span><span id="foot-made"></span></div></div>
 </footer>
 
@@ -3610,8 +3611,15 @@ function similar(p) {
 }
 const PAY_ICONS = ['UPI', 'Visa', 'Mastercard', 'RuPay', 'Net banking', 'Wallets'];
 function payBadges() {
-  const b = { UPI: '<b style="color:#097939">U</b><b style="color:#B8500F">P</b><b style="color:#097939">I</b>', Visa: '<b style="color:#1A1F71;font-style:italic;letter-spacing:.02em">VISA</b>', Mastercard: '<i style="background:#EB001B"></i><i style="background:#F79E1B;margin-left:-7px;opacity:.9"></i>', RuPay: '<b style="color:#1B3F8B">Ru</b><b style="color:#B8500F">Pay</b>', 'Net banking': hl('card', 16) + '<span>Net banking</span>', Wallets: hl('tag', 16) + '<span>Wallets</span>' };
-  return `<ul class="pay-badges" aria-label="We accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
+  const svg = (w, body) => `<svg class="pay-logo" viewBox="0 0 ${w} 24" width="${w}" height="24" aria-hidden="true" focusable="false">${body}</svg>`;
+  // redrawn marks in the brand colours; swap in the official files from each brand's logo page before launch
+  const b = {
+    UPI: svg(54, '<text x="0" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-style="italic" font-size="18" fill="#3C3C3B">UPI</text><polygon points="38,3 46,12 38,21 34,21 41,12 34,3" fill="#097939"/><polygon points="46,3 54,12 46,21 42,21 49,12 42,3" fill="#F37021"/>'),
+    Visa: svg(48, '<text x="0" y="19" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-style="italic" font-size="20" letter-spacing="-.5" fill="#1A1F71">VISA</text>'),
+    Mastercard: svg(40, '<circle cx="14" cy="12" r="10" fill="#EB001B"/><circle cx="26" cy="12" r="10" fill="#F79E1B"/><path d="M20 4.2a10 10 0 0 1 0 15.6 10 10 0 0 1 0-15.6z" fill="#FF5F00"/>'),
+    RuPay: svg(60, '<text x="0" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#1B3F8B">Ru</text><text x="21" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#F58220">Pay</text><polygon points="55,6 60,12 55,18" fill="#097939"/>'),
+    'Net banking': hl('card', 16) + '<span>Net banking</span>', Wallets: hl('tag', 16) + '<span>Wallets</span>' };
+  return `<ul class="pay-badges" aria-label="Payment methods we accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
 }
 
 function viewNotFound() { return `<div class="wrap" style="padding-block:var(--section) calc(var(--section) + 20px)"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
