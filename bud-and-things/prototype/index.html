@@ -33,6 +33,12 @@
 /* Velvet silk: a soft grain, long folds and a travelling sheen over every maroon surface. The colour underneath is unchanged, so text contrast is the same. */
 :root[data-skin="silk"] .band, :root[data-skin="silk"] .dark-band, :root[data-skin="silk"] .gh-strip, :root[data-skin="silk"] .foot-base, :root[data-skin="silk"] .note-card, :root[data-skin="silk"] .finder-side, :root[data-skin="silk"] .paths a.feel, :root[data-skin="silk"] .promo-choc, :root[data-skin="silk"] .promo-terra, :root[data-skin="silk"] .pv-bar, :root[data-skin="silk"] .proto { background-image: var(--velvet); background-size: 1024px 768px; }
 :root[data-skin="silk"] .mobile-menu { background-image: var(--velvet); }
+:root[data-skin="silk"] .band, :root[data-skin="silk"] .dark-band, :root[data-skin="silk"] .gh-strip, :root[data-skin="silk"] .foot-base { animation: silk-drift 70s linear infinite; }
+:root[data-skin="silk"] .site-head, :root[data-skin="silk"] .site-foot { animation: silk-drift2 70s linear infinite; }
+@keyframes silk-drift { to { background-position: 1024px 768px; } }
+@keyframes silk-drift2 { to { background-position: 1024px 768px, 0 0; } }
+@media (prefers-reduced-motion: reduce) { :root[data-skin="silk"] .band, :root[data-skin="silk"] .dark-band, :root[data-skin="silk"] .gh-strip, :root[data-skin="silk"] .foot-base, :root[data-skin="silk"] .site-head, :root[data-skin="silk"] .site-foot { animation: none; } }
+
 :root[data-skin="silk"] .site-head { color: #F3D79B; border-bottom-color: rgba(214,163,74,.55); background: var(--velvet), linear-gradient(90deg, #210309, #3A0610); background-size: 1024px 768px, auto; }
 :root[data-skin="silk"] .site-head .icon-btn, :root[data-skin="silk"] .site-head .nav a { color: #FBE9C2; }
 :root[data-skin="silk"] .site-head .nav a[aria-current="page"] { border-bottom-color: #D6A34A; }
