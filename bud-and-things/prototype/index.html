@@ -17,8 +17,8 @@
   /* spacing scale (4px base) and fluid layout rhythm: the same steps everywhere, scaled by screen width */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 80px;
   --gutter: clamp(20px, 4vw, 40px);
-  --section: clamp(48px, 7vw, 80px);
-  --section-sm: clamp(36px, 5vw, 56px);
+  --section: clamp(20px, 2.4vw, 28px);
+  --section-sm: clamp(28px, 3.4vw, 40px);
   --fs-h1: clamp(36px, 5vw, 60px);
   --fs-h2: clamp(28px, 3.2vw, 40px);
   color-scheme: light;
@@ -109,6 +109,13 @@ body.editing .proto #edit-btn { background: #D6A34A; color: #210309; }
 .lcol > .lhead { padding: 12px 18px; background: var(--linen); display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
 @media (max-width: 640px) { .lrow { grid-template-columns: 1fr; } }
 .adm-prodrow th { text-align: left; background: var(--linen); padding: 10px 12px; }
+.dirty { outline: 2px solid var(--caramel); outline-offset: 1px; }
+#save-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 60; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 24px); padding: 10px 14px; background: #2a0510; color: #FBE9C2; border: 1px solid #D6A34A; border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.35); font-size: 15px; }
+#save-bar strong { color: #fff; }
+body:has(#save-bar) { padding-bottom: 96px; }
+@media (max-width: 700px) { #save-bar { left: 0; right: 0; bottom: 0; transform: none; max-width: none; border-radius: 0; border-width: 1px 0 0; flex-wrap: nowrap; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); } #save-bar span { flex: 1 1 auto; font-size: 14px; } #save-bar .btn { padding-inline: 14px; } }
+#save-bar .btn { min-height: 44px; }
+#save-bar .btn.ghost { color: #FBE9C2; border-color: #D6A34A; background: transparent; }
 .adm-ovpage { padding: 12px 18px 4px; background: var(--linen); border-bottom: 1px solid var(--line); }
 .skip-link { position: absolute; left: 12px; top: -80px; z-index: 100; padding: 12px 18px; background: var(--cta); color: var(--on-cta); font-weight: 700; text-decoration: none; }
 .skip-link:focus { top: 12px; }
@@ -515,6 +522,14 @@ input[type="file"] { padding: 10px 12px; }
 .ch .ch-t { font-size: 12px; fill: var(--choc2); font-family: var(--sans, inherit); }
 .ch .ch-col:hover rect { fill: var(--linen); }
 .ch details { margin-top: 8px; font-size: 14px; }
+.stat .spark { margin-top: 6px; display: block; }
+.spark-line { fill: none; stroke: var(--maroon, #8B1A3A); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.spark-fill { fill: rgba(214,163,74,.28); }
+.donut { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.donut ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; flex: 1 1 160px; font-size: 14px; }
+.donut li { display: grid; grid-template-columns: 12px 1fr auto auto; gap: 8px; align-items: center; }
+.donut li i { width: 12px; height: 12px; border-radius: 3px; }
+.donut-t { font: 700 15px var(--body); fill: var(--choc); }
 .hb { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
 .hb li { display: grid; grid-template-columns: minmax(90px, 1fr) 2fr auto; gap: 10px; align-items: center; }
 .hb-bar { height: 10px; background: var(--linen); display: block; }
@@ -603,14 +618,14 @@ body.cs main { padding-bottom: 0; }
 .gh-hero .gh-cta .btn { flex: 1 1 200px; }
 .gh-badge { position: absolute; left: 12px; top: 12px; background: var(--card); color: var(--terra-ink); font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; }
 .gh-badge svg { transform-origin: 50% 90%; animation: gh-flick 1.6s ease-in-out infinite; }
-@media (min-width: 900px) { .gh-hero { grid-template-columns: 1.1fr 1fr; align-items: center; gap: 56px; padding-block: 40px 64px; } }
+@media (min-width: 900px) { .gh-hero { grid-template-columns: 1.1fr 1fr; align-items: center; gap: 56px; padding-block: 32px 40px; } }
 .gh-rise { animation: gh-rise .7s cubic-bezier(.2,.8,.2,1) both; } .gh-rise.d1 { animation-delay: .12s; } .gh-rise.d2 { animation-delay: .24s; }
 .gh-shine { position: relative; overflow: hidden; }
 .gh-shine::after { content: ""; position: absolute; inset: 0 auto 0 -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.4), transparent); animation: gh-shine 3.4s 1.2s infinite; pointer-events: none; }
 .gh-chips { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
 .gh-chips::-webkit-scrollbar { display: none; }
 .gh-chips .chip { flex: none; transition: transform .2s ease, box-shadow .2s ease; }
-.gh-chips .chip[aria-pressed="true"] { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(75,46,30,.2); }
+.gh-chips .chip[aria-pressed="true"] { box-shadow: none; }
 .gh-unwrap { width: 100%; min-height: 112px; display: flex; align-items: center; gap: 16px; padding: 18px; border: 2px dashed var(--caramel); background: var(--plaster); color: var(--choc); text-align: left; cursor: pointer; font: inherit; }
 .gh-unwrap .gh-box { flex: none; width: 60px; height: 60px; background: var(--cta); display: flex; align-items: center; justify-content: center; animation: gh-wob 2.8s ease-in-out infinite; }
 .gh-unwrap strong, .gh-won strong { font-family: var(--display); font-size: 26px; line-height: 1.05; display: block; }
@@ -706,7 +721,8 @@ body.app .why-band { padding-bottom: 96px; }
 .festive .btn.light { color: var(--choc); }
 @media (max-width: 760px) { .festive { grid-template-columns: 1fr; } .festive img { aspect-ratio: 16 / 10; height: auto; } .festive-copy { padding: 26px 22px; } }
 .spot { background: var(--linen); }
-.spot-ph { aspect-ratio: 1; height: auto; max-height: 560px; width: 100%; }
+.spot > .wrap.section { padding-block: 24px 40px; }
+.spot-ph { aspect-ratio: 1; height: auto; max-height: 460px; width: 100%; }
 .spot-quote { font-family: var(--display); font-style: italic; font-size: 24px; line-height: 1.3; color: var(--terra-ink); }
 .hl-row { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 .hl-row li { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; line-height: 1.3; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); }
@@ -821,9 +837,12 @@ body.app .why-band { padding-bottom: 96px; }
 .best-item .name { font-family: var(--display); font-size: 22px; text-decoration: none; line-height: 1.1; }
 @media (max-width: 400px) { .combo-tiles .tile { width: 78px; height: 92px; } }
 .pay-badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.pay-badges li { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--choc); }
-.pay-badges b { font-weight: 800; font-size: 14px; }
-.pay-badges i { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+.pay-badges li { display: inline-flex; align-items: center; justify-content: center; gap: 0; min-width: 48px; height: 28px; padding: 0 8px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
+.pay-badges b { font-weight: 800; font-size: 13px; letter-spacing: 0; }
+.pay-badges i + i { margin-left: -5px; }
+.pay-badges i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+.pay-badges svg { width: 14px; height: 14px; }
+.pay-badges svg.pay-logo { width: auto; height: 14px; }
 /* footer */
 .site-foot { position: relative; overflow: hidden; }
 .site-foot a { text-decoration: none; }
@@ -833,10 +852,16 @@ body.app .why-band { padding-bottom: 96px; }
 .site-foot .cols { grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr)); }
 .foot-brand { display: flex; flex-direction: column; gap: 12px; }
 .foot-brand .mark.lockup { max-width: 100%; }
-.foot-pay { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 28px; padding-block: 22px; border-top: 1px solid var(--line); font-size: 14px; }
-.foot-pay > div:first-child { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.foot-base { background: var(--choc); color: var(--ivory); font-size: 13px; }
-.foot-base .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; padding-block: 14px; }
+.foot-pay { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px 32px; padding-block: 20px; border-top: 1px solid var(--line); font-size: 14px; }
+.foot-pay > div:first-child { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.foot-pay > div:first-child > strong { font-family: var(--body); font-size: 15px; font-weight: 700; letter-spacing: .04em; color: #FBE9C2; }
+.foot-assure-row { border-top: 1px solid rgba(214,163,74,.35); padding-block: 22px; }
+.foot-assure { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 28px; list-style: none; margin: 0; padding: 0; font-size: 15px; }
+.foot-assure li { display: flex; align-items: center; gap: 12px; }
+.foot-assure svg { width: 22px; height: 22px; flex: none; color: var(--caramel); }
+@media (max-width: 700px) { .foot-assure { grid-template-columns: 1fr; } }
+.foot-base { background: var(--choc); color: #FBE9C2; font-size: 14px; }
+.foot-base .wrap { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 6px; padding-block: 16px; }
 @media (max-width: 1000px) { .site-foot .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-brand { grid-column: 1 / -1; } }
 /* story page */
 .story-top { background: var(--choc); color: var(--ivory); overflow: hidden; position: relative; }
@@ -984,8 +1009,9 @@ body.app .why-band { padding-bottom: 96px; }
     </div>
     <div id="foot-cols" style="display:contents"></div>
   </div>
-  <div class="wrap foot-pay"><div><strong>We accept</strong><span id="foot-pay"></span></div><div class="muted" id="foot-also">Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.</div></div>
-  <div class="foot-base"><div class="wrap"><span id="foot-copy">© BUD &amp; THINGS by Ashi. All rights reserved.</span><span id="foot-made">Hand-made in India</span></div></div>
+  <div class="wrap foot-assure-row"><ul class="foot-assure" id="foot-also"></ul></div>
+  <div class="wrap foot-pay"><div><span id="foot-pay"></span></div></div>
+  <div class="foot-base"><div class="wrap"><span id="foot-copy"></span></div></div>
 </footer>
 
 <nav class="tabbar" aria-label="App" id="tabbar"></nav>
@@ -1177,12 +1203,12 @@ const TEXT = {
   'acct.sub': ['We send a code to your email. No password to remember. Signing in keeps your orders, tracking and Bud Points in one place.', 'Account: sign-in text'],
   'track.title': ['Track your order', 'Track order: heading'],
   'track.sub': ['Enter the order number from your confirmation email and the mobile number you ordered with.', 'Track order: text'],
-  'foot.copy': ['© {year} BUD & THINGS by Ashi. All rights reserved.', 'Footer: copyright line'],
-  'foot.made': ['Hand-made in India', 'Footer: made in line'],
+  'foot.copy': ['© {year} BUD & THINGS by Ashi. Made in small batches, never in a hurry. India.', 'Footer: copyright line'],
+  'foot.made': ['Thought. Object. Feeling. Memory.', 'Footer: made in line'],
   'legal.note': ['This page is a template written for BUD & THINGS. Have it checked by a legal adviser, and fill in the business details in Owner view → Settings, before launch. Clear this note once that is done.', 'Policies: review note (empty to hide)'],
   'legal.biz': ['{bizName}, {bizAddress}, India. GSTIN: {gstin}. Email: {email}.', 'Policies: business details'],
   'legal.grievance': ['Grievance officer: {grievanceName}, {email}, {grievancePhone}. We acknowledge complaints within 48 hours and resolve them within 30 days.', 'Policies: grievance officer'],
-  'legal.privacy': ['## Who we are\nBUD & THINGS ("we", "us") sells hand-made candles and Jesmonite objects through budandthings.com. This policy explains what personal data we collect, why, and the choices you have, in line with the Digital Personal Data Protection Act, 2023 and the Information Technology Act, 2000.\n\n## What we collect\nWhen you sign in or order: your name, email, mobile number and delivery address. If you send a gift: the name, mobile number and address of the person receiving it. When you pay: the payment gateway processes your card or UPI details; we never see or store full card numbers. When you browse: the pages you visit and items you add to your cart, kept to improve the shop.\n\n## Why we use it\nTo deliver your order and keep you updated about it, to answer your questions, to run Bud Points, to prevent fraud, and to keep accounts and tax records. We send offers and newsletters only if you sign up for them, and every email has a way to leave.\n\n## Who we share it with\nOnly with the services needed to run the shop: our payment gateway, courier partners, our database and email provider. Each is bound to use your data only for the work they do for us. We never sell your data.\n\n## How long we keep it\nOrder records are kept for 8 years, as Indian tax law requires. Newsletter sign-ups are kept until you leave the list. You can ask us to delete your account at any time.\n\n## Your rights\nYou can ask to see, correct or delete your data, withdraw consent for marketing, or name someone to act for you. Write to {email} and we will reply within 30 days.\n\n## Cookies and storage\nWe keep your cart, saved items and sign-in in your browser’s storage so the shop works. We do not use advertising cookies.\n\n## Changes\nIf we change this policy we will update the date below and, for important changes, tell you by email. Last updated: {policyDate}.', 'Policies: privacy policy (## starts a heading)'],
+  'legal.privacy': ['## Who we are\nBUD & THINGS (“we”, “us”) sells hand-made candles and Jesmonite objects through budandthings.com. This policy explains what personal data we collect, why, and the choices you have, in line with the Digital Personal Data Protection Act, 2023 and the Information Technology Act, 2000.\n\n## What we collect\nWhen you sign in or order: your name, email, mobile number and delivery address. If you send a gift: the name, mobile number and address of the person receiving it. When you pay: the payment gateway processes your card or UPI details; we never see or store full card numbers. When you browse: the pages you visit and items you add to your cart, kept to improve the shop.\n\n## Why we use it\nTo deliver your order and keep you updated about it, to answer your questions, to run Bud Points, to prevent fraud, and to keep accounts and tax records. We send offers and newsletters only if you sign up for them, and every email has a way to leave.\n\n## Who we share it with\nOnly with the services needed to run the shop: our payment gateway, courier partners, our database and email provider. Each is bound to use your data only for the work they do for us. We never sell your data.\n\n## How long we keep it\nOrder records are kept for 8 years, as Indian tax law requires. Newsletter sign-ups are kept until you leave the list. You can ask us to delete your account at any time.\n\n## Your rights\nYou can ask to see, correct or delete your data, withdraw consent for marketing, or name someone to act for you. Write to {email} and we will reply within 30 days.\n\n## Cookies and storage\nWe keep your cart, saved items and sign-in in your browser’s storage so the shop works. We do not use advertising cookies.\n\n## Changes\nIf we change this policy we will update the date below and, for important changes, tell you by email. Last updated: {policyDate}.', 'Policies: privacy policy (## starts a heading)'],
   'legal.terms': ['## About these terms\nThese terms apply when you browse budandthings.com or buy from us. By placing an order you agree to them. The shop is run by the business named below.\n\n## Your account\nYou sign in with a one-time code sent to your email. Keep access to that email secure; orders placed from your account are treated as yours. You must be 18 or older, or ordering with a parent or guardian.\n\n## Products\nOur pieces are hand-made, so colour, swirl, speckle and size vary slightly from piece to piece and from the photos. These variations are part of each piece and are not defects. Scent strength depends on the room and how the candle is burned.\n\n## Prices and payment\nPrices are in Indian rupees and include GST. Shipping is shown before you pay. Payment is taken in advance through our payment gateway (UPI, cards, net banking). An order is confirmed only once payment is received.\n\n## Offers, codes and Bud Points\nCodes and offers cannot be exchanged for cash and may be withdrawn at any time. Bud Points are earned on paid orders, have no cash value, and expire 12 months after they are earned.\n\n## Delivery\nDelivery times are estimates. See our Shipping and delivery policy for details.\n\n## Cancellations, damage and refunds\nSee our Cancellations and refunds policy.\n\n## Candle safety\nNever leave a burning candle unattended, keep it away from children, pets, curtains and anything that can catch fire, and follow the care card in the box. We are not responsible for damage caused by unsafe use.\n\n## Intellectual property\nThe BUD & THINGS name, logo, photos, designs and text on this site belong to us and may not be copied without permission.\n\n## Liability\nTo the extent the law allows, our liability for any order is limited to the amount you paid for it.\n\n## Law and disputes\nThese terms are governed by the laws of India. Courts in {courtCity} have jurisdiction. For any complaint, please contact our grievance officer first.', 'Policies: terms and conditions (## starts a heading)'],
   'legal.shipping': ['## Where we deliver\nWe deliver across India through trusted courier partners. Check your PIN code on any product page to see if we reach you and when.\n\n## Shipping charges\nShipping is {shipFee} per order, and free on orders over {freeOver}.\n\n## When it is sent\nEvery piece is made in small batches, so orders are packed and handed to the courier within 1 to 3 working days of payment. Prepaid orders are packed first.\n\n## How long it takes\nMost orders arrive in {deliveryDays} from the day they are sent. Metro cities are usually faster; remote areas, the North-East and islands can take longer.\n\n## Tracking\nOnce your order is sent we email you the courier name and tracking link. You can also follow it under Track your order with your order number and mobile number.\n\n## Gifts\nGift orders can go straight to the person, with your note hand-written on our card and no prices in the parcel. Pick an arrive-by date at checkout and we plan around it.\n\n## Festive deadlines\nAround Diwali and other festivals couriers get busy. Order early; we show the last order date for festive delivery on the site.\n\n## Address problems\nPlease check the address and mobile number carefully. If a parcel comes back because of a wrong address or no one to receive it, we can send it again for the shipping charge.', 'Policies: shipping and delivery (## starts a heading)'],
   'legal.refunds': ['## Cancelling an order\nYou can cancel any time before your order is packed: write to {email} with your order number and we refund the full amount. Once packed, it can no longer be cancelled.\n\n## Damaged or wrong items\nCandles and Jesmonite are fragile. If anything arrives broken, damaged or is not what you ordered, send us a photo or your unboxing video within {exchangeDays} days of delivery. We send a free replacement. Only if we can’t replace it (for example, it has sold out) do we refund it.\n\n## Returns\nBecause candles are a personal-care item and each piece is made by hand, we do not accept returns of undamaged pieces, and we do not offer exchanges or refunds for change of mind.\n\n## How refunds are paid\nRefunds go back to the payment method you used, through our payment gateway, within 5 to 7 working days of approval. Your bank may take a few more days to show it.\n\n## Codes and Bud Points\nIf an order with a code or Bud Points is refunded, the code or points are returned to your account where possible.', 'Policies: cancellations and replacements (## starts a heading)'],
@@ -1262,7 +1288,7 @@ const TEXT = {
   'help.exchanges': ['If something arrives damaged, message us within {exchangeDays} days of delivery with a photo or your unboxing video and we’ll send a replacement free. We don’t offer refunds.', 'Help: replacements'],
   'help.privacy': ['We use your details only to deliver your order and, if you ask, to send updates. We never sell them.', 'Help: privacy'],
   'foot.tagline': ['Made with thought. Given with feeling.', 'Footer: tagline'],
-  'foot.also': ['Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.', 'Footer: small print'],
+  'foot.also': ['Every swirl is one of a kind|Breaks on the way? We make it again, free|Every gift carries a hand-written note', 'Footer: three short promises under the payment badges (separate with |)'],
   'share.eyebrow': ['Share the joy', 'Share page: small line above the heading'],
   'share.title': ['Give a friend *{welcomeOff}% off*', 'Share page: heading'],
   'share.sub': ['Know someone who would love a hand-poured candle? Send them our shop. They get {welcomeOff}% off their first order with {welcomeCode}.', 'Share page: line under the heading'],
@@ -1310,7 +1336,9 @@ const TEXT = {
   'soon.eyebrow': ['Coming soon', 'Coming soon: small line above the heading'],
   'soon.title': ['Something small\n*is beginning to grow.*', 'Coming soon: heading'],
   'soon.text': ['Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving. Leave your email and we’ll tell you the day we open.', 'Coming soon: text'],
-  'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button']
+  'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button'],
+  'soon.pageTitle': ['{section}\n*is coming soon.*', 'Coming soon for one section: heading ({section} is its name)'],
+  'soon.pageText': ['We are still putting the finishing touches on this. Leave your email and we’ll tell you the day it opens.', 'Coming soon for one section: text']
 };
 // Search and sharing: the title and description of each page. Owner view → Site text → Search & sharing.
 // The live site also bakes the site-wide ones into the page head every day, so Google and link previews see them.
@@ -1334,9 +1362,9 @@ const SET_META = [
   ['gstOn', 'GST: I am registered, make tax invoices', 'bool'], ['gstState', 'GST: my state', 'text'], ['invoicePrefix', 'Invoice number prefix (up to 3 letters, e.g. BT)', 'text'], ['invoiceAuto', 'Make the invoice automatically when an order is paid', 'bool'], ['hsnCandles', 'HSN: candles', 'text'], ['gstCandles', 'GST rate: candles (%)', 'num'], ['hsnObjects', 'HSN: Jesmonite objects', 'text'], ['gstObjects', 'GST rate: Jesmonite objects (%)', 'num'], ['hsnGifts', 'HSN: gift boxes', 'text'], ['gstGifts', 'GST rate: gift boxes (%)', 'num'],
   ['reviewAskDays', 'Ask for a review this many days after delivery (0 for never)', 'num'], ['reviewPoints', 'Bud Points for each published review by a signed-in customer (0 for none)', 'num'],
   ['monthlyGoal', 'Monthly sales goal (₹, 0 to hide)', 'num'], ['weeklySummary', 'Email me a summary every Monday', 'bool'], ['festiveOn', 'Home page: show the festive banner (needs at least one gift box)', 'bool'],
-  ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
+  ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool']
 ];
-const CS_KEYS = ['comingSoon', 'previewCode'];
+const CS_KEYS = ['comingSoon'];
 // settings with their own place in Owner view (the Coupons, Rewards and Invoices tabs)
 const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct', 'gstin', 'gstOn', 'gstState', 'invoicePrefix', 'invoiceAuto', 'hsnCandles', 'gstCandles', 'hsnObjects', 'gstObjects', 'hsnGifts', 'gstGifts', 'reviewAskDays', 'reviewPoints', 'monthlyGoal', 'weeklySummary'];
 const THEME_KEYS = ['theme', 'homeStyle'];
@@ -1347,7 +1375,7 @@ const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
-  theme: 'silk', homeStyle: 'gift', comingSoon: true, previewCode: '' };
+  theme: 'silk', homeStyle: 'gift', comingSoon: true, previewHash: '', soonPages: [], newSections: [] };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
 const LEGAL_KEYS = ['bizName', 'bizAddress', 'gstin', 'grievanceName', 'grievancePhone', 'courtCity', 'policyDate'];
@@ -1383,8 +1411,28 @@ const VISIT = (() => {
   return v;
 })();
 const REF = (() => { const q = (new URLSearchParams(location.search).get('ref') || '').toUpperCase(); try { if (/^[A-Z0-9]{6}$/.test(q)) { localStorage.setItem('bt-ref', q); return q; } return localStorage.getItem('bt-ref') || ''; } catch (e) { return /^[A-Z0-9]{6}$/.test(q) ? q : ''; } })();
-const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !BTDB.owner() && !(SET.previewCode && PREVIEW === String(SET.previewCode));
-const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(SET.previewCode || '');
+// The page data is public, so the site keeps only a SHA-256 of the preview code. The check runs in the browser: the
+// code in the link is hashed and compared. An old readable previewCode still works until a new code is made.
+let PV_OK = false;
+const sha256 = async (t) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t))), (b) => b.toString(16).padStart(2, '0')).join('');
+async function pvCheck() {
+  let ok = false;
+  if (PREVIEW) { try { ok = !!SET.previewHash && (await sha256(String(PREVIEW))) === SET.previewHash; } catch (e) { ok = false; } if (!ok && SET.previewCode) ok = PREVIEW === String(SET.previewCode); }
+  if (ok !== PV_OK) { PV_OK = ok; if (typeof render === 'function' && !UI.adm.pending) render(); }
+}
+const pvSeesAll = () => !!BTDB.owner() || PV_OK;
+const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !pvSeesAll();
+// the preview code is shown once, when it is made; this browser keeps it so the owner can copy the link again here
+const pvCode = () => { try { return localStorage.getItem('bt-preview-code') || ''; } catch (e) { return ''; } };
+const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(pvCode());
+// Coming soon for single sections: pages the owner marks in Settings show a small Coming soon page instead
+const SOON_OPTS = [['shop', 'Shop (all products)'], ['candles', 'Candles'], ['jesmonite', 'Jesmonite objects'], ['gifts', 'Gift boxes'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['bulk', 'Corporate and bulk gifts'], ['giftcard', 'Gift cards'], ['journal', 'Journal'], ['share', 'Share with a friend'], ['story', 'Our Story'], ['why', 'Why buy from us']];
+// New sections the owner adds later (a new kind of product): a name, one line, and open or still Coming soon
+const newSections = () => (Array.isArray(SET.newSections) ? SET.newSections : []).filter((x) => x && x.id && x.name);
+const secSlug = (t) => String(t).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30);
+const soonFor = (r) => {
+  if (r.startsWith('s-')) { const x = newSections().find((y) => 's-' + y.id === r); return x && !x.live && !pvSeesAll() ? [x.id, x.name] : null; }
+  const k = r.startsWith('journal-') ? 'journal' : r; if (!Array.isArray(SET.soonPages) || !SET.soonPages.includes(k) || pvSeesAll()) return null; return SOON_OPTS.find((o) => o[0] === k) || [k, k]; };
 
 // ---------- the data: built in, from this browser (demo), or from the database ----------
 // DATA holds what the owner can change. Empty products or pairings fall back to the built-in draft range.
@@ -1406,6 +1454,7 @@ function applyData() {
   Object.keys(PIMG).forEach((k) => delete PIMG[k]); // drawings follow edited colours
   const seed = BTDB.on ? {} : defaults().stock; Object.keys(skuMap).forEach((sku) => { if (S.stock[sku] == null) S.stock[sku] = seed[sku] || 0; });
   S.cart = S.cart.filter((l) => skuMap[l.sku]); S.saved = S.saved.filter((id) => byId[id]);
+  if (typeof pvCheck === 'function') pvCheck();
 }
 function useRows(d) {
   DATA.products = d.products; DATA.pairings = d.pairings; DATA.text = Object.fromEntries((d.text || []).map((r) => [r.key, r.value]));
@@ -1689,8 +1738,8 @@ function renderChrome() {
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
   $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
-  $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also'); $('#foot-social').innerHTML = socialLinks();
-  $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-made').innerHTML = T('foot.made'); $('#foot-pay').innerHTML = payBadges();
+  $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = Tx('foot.also').split('|').map((x) => x.trim()).filter(Boolean).map((x, i) => `<li>${hl(['spark', 'shield', 'note', 'gift'][i] || 'spark', 22)}<span>${esc(x)}</span></li>`).join(''); $('#foot-social').innerHTML = socialLinks();
+  $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-pay').innerHTML = payBadges();
   const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
@@ -1824,6 +1873,19 @@ function viewComingSoon() {
   return `<section class="soon" aria-labelledby="soon-h"><span class="mark lockup" role="img" aria-label="BUD &amp; THINGS by Ashi"></span><span class="eyebrow">${T('soon.eyebrow')}</span><h1 id="soon-h" tabindex="-1">${T('soon.title')}</h1><p class="muted">${T('soon.text')}</p>
     <form data-form="news" data-src="coming-soon" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 220px;min-width:0"><button class="btn" type="submit">${T('soon.cta')}</button><span id="news-msg" style="flex:1 1 100%"></span></form>
     ${socialLinks()}</section>`;
+}
+
+function viewSoonSection(o) {
+  return `<section class="soon" aria-labelledby="soon-h"><span class="eyebrow">${T('soon.eyebrow')}</span><h1 id="soon-h" tabindex="-1">${esc(Tx('soon.pageTitle').replace('{section}', o[1])).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>')}</h1><p class="muted">${T('soon.pageText')}</p>
+    <form data-form="news" data-src="soon-${esc(o[0])}" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 220px;min-width:0"><button class="btn" type="submit">${T('soon.cta')}</button><span id="news-msg" style="flex:1 1 100%"></span></form>
+    <p style="margin-top:18px"><a href="#home" style="font-weight:600">Back to the shop</a></p></section>`;
+}
+
+function viewNewSection(r) {
+  const x = newSections().find((y) => 's-' + y.id === r); if (!x) return viewNotFound();
+  const list = P.filter((p) => p.sec === x.id);
+  return `<section class="page-head wrap" style="padding-block:var(--s6) var(--s4)"><span class="eyebrow">New</span><h1 tabindex="-1">${esc(x.name)}</h1>${x.line ? `<p class="muted">${esc(x.line)}</p>` : ''}${x.live ? '' : '<div class="status" role="note">Visitors still see Coming soon here. Only you and the preview link see this page.</div>'}</section>
+    <section class="wrap" style="padding-bottom:var(--section)"><div class="grid">${list.length ? list.map(card).join('') : '<p class="muted">Nothing here yet. In Products, set a product’s “New section” to ' + esc(x.name) + '.</p>'}</div></section>`;
 }
 
 function viewShop(cat) {
@@ -2335,6 +2397,7 @@ function admProductForm(r) {
     ${r ? '' : f('id', 'Web address name', '', { hint: 'lowercase words and dashes, for example rose-and-oud; it can’t change later', req: true })}
     ${f('name', 'Name', d.name, { req: true })}
     <span class="field"><label for="ap-cat">Category</label><select id="ap-cat" name="cat"><option value="candles" ${d.cat === 'candles' ? 'selected' : ''}>Candles</option><option value="jesmonite" ${d.cat !== 'candles' && d.cat !== 'gifts' ? 'selected' : ''}>Jesmonite objects</option><option value="gifts" ${d.cat === 'gifts' ? 'selected' : ''}>Gift boxes</option></select></span>
+    ${newSections().length ? `<span class="field"><label for="ap-sec">New section (optional)</label><select id="ap-sec" name="sec"><option value="">None</option>${newSections().map((x) => `<option value="${esc(x.id)}" ${d.sec === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span>` : ''}
     ${f('type', 'Type', d.type, { hint: 'for example Scented candle, Tray' })}${f('line', 'One-line description', d.line, { full: true })}
     <fieldset class="field full adm-vars"><legend>Options, prices and SKUs <span class="hint">clear an SKU to remove that option; fill the empty row to add one</span></legend>
       ${vs.map((v, i) => `<span class="adm-var"><label class="sr" for="ap-vs${i}">SKU ${i + 1}</label><input id="ap-vs${i}" name="v-sku-${i}" placeholder="SKU, for example BT-CN-RO-220" value="${esc(v.sku)}"><label class="sr" for="ap-vl${i}">Option name ${i + 1}</label><input id="ap-vl${i}" name="v-label-${i}" placeholder="Option, for example 220 g" value="${esc(v.label)}"><label class="sr" for="ap-vp${i}">Price ${i + 1}</label><input id="ap-vp${i}" name="v-price-${i}" type="number" min="0" placeholder="Price ₹" value="${esc(v.price)}">${v.sku && S.stock[v.sku] != null ? `<span class="muted num" style="align-self:center">${stockOf(v.sku)} in stock</span>` : `<label class="sr" for="ap-vq${i}">Opening stock ${i + 1}</label><input id="ap-vq${i}" name="v-qty-${i}" type="number" min="0" max="9999" placeholder="Stock now" value=""></span>`}`).join('')}</fieldset>
@@ -2356,6 +2419,7 @@ function readProductForm(form, live) {
   const all = (n) => [...form.querySelectorAll(`[name="${n}"]:checked`)].map((x) => x.value);
   const variants = []; for (let i = 0; form.elements['v-sku-' + i]; i++) { const sku = v('v-sku-' + i).toUpperCase(); if (sku) variants.push({ sku, label: v('v-label-' + i), price: Math.round(+v('v-price-' + i)) }); }
   const d = { name: v('name'), cat: v('cat'), type: v('type'), line: v('line'), variants, size: v('size'), material: v('material'), care: lineList(v('care')), mood: all('mood'), space: all('space'), occ: all('occ'), gift: form.elements.gift.checked, art: v('art'), c: v('c') };
+  if (v('sec')) d.sec = v('sec');
   if (d.cat === 'gifts') { const old = form.dataset.id && byId[form.dataset.id]; d.img = (old && old.img) || IMG.box; if (old && old.popular) d.popular = true; }
   if (v('notes')) d.notes = csvList(v('notes'));
   if (v('smellsLike')) d.smellsLike = v('smellsLike');
@@ -2435,7 +2499,7 @@ function admLists() {
   const qs = draft('faqList') || faqRaw();
   const faq = `<div class="adm-card"><h2 style="font-size:22px">Questions and answers (FAQ)</h2><p class="muted">Add as many as you like. *Stars* make italics. Words in {braces} come from Settings, for example {deliveryDays}.</p><div id="ls-faqList">${qs.map((x, i) => `<div class="lrow faq"><span class="field"><label for="l-faq-${i}-q">Question ${i + 1}</label><input id="l-faq-${i}-q" class="l-q" data-act="adm-list" data-k="faqList" value="${esc(x.q)}"></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="-1" aria-label="Move question ${i + 1} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="1" aria-label="Move question ${i + 1} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="faqList" data-c="0" data-i="${i}" aria-label="Remove question ${i + 1}">Remove</button></span><span class="field full"><label for="l-faq-${i}-a">Answer ${i + 1}</label><textarea id="l-faq-${i}-a" class="l-a" rows="3" data-act="adm-list" data-k="faqList">${esc(x.a)}</textarea></span></div>`).join('')}</div>
     <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-list-add" data-k="faqList" data-c="0">Add a question</button>${Array.isArray(SET.faqList) ? '<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="faqList">Put back the original</button>' : ''}</p></div>`;
-  return `<p class="muted">Edit a box, then click outside it to save. Changes show on the site at once.</p><datalist id="route-hints">${ROUTE_HINTS.map((x) => `<option value="${esc(x)}"></option>`).join('')}</datalist>
+  return `<p class="muted">Edit a box, then click outside it to save. Changes show on the site at once.</p><datalist id="route-hints">${ROUTE_HINTS.concat(newSections().map((x) => 's-' + x.id)).map((x) => `<option value="${esc(x)}"></option>`).join('')}</datalist>
     ${simple('navList', 'Top menu', 'The links across the top of the site on a laptop.')}${simple('menuList', 'Phone menu', 'The list that opens from the menu button on a phone. “Sign in / Your account” is always added at the end.')}${foot}${faq}`;
 }
 // read a list back from the boxes on screen (so typed-but-unsaved edits are kept when you add, move or remove)
@@ -2596,7 +2660,7 @@ function launchItems() {
     ['Content', 'FAQ has at least 5 questions', faqItems().length >= 5, 'lists', ''],
     ['Content', 'Search and sharing description changed from the draft', 'seo.desc' in TXT, 'text', 'Site text → Search & sharing'],
     ['Safety', 'Database connected', BTDB.on, 'setup', 'Setup'],
-    ['Safety', 'Preview code is long (10+ characters) or empty', !SET.previewCode || String(SET.previewCode).length >= 10 && !/^budpreview$/i.test(SET.previewCode), 'settings', ''],
+    ['Safety', 'Preview code is hidden (no old readable code left)', !SET.previewCode, 'settings', ''],
     ['Safety', 'Owner sign-in asks for a second step', !!(window.BT_CONFIG && BT_CONFIG.ownerTwoStep), 'setup', 'Setup → two-step sign-in'],
     ['Open the shop', 'Coming soon page switched off', SET.comingSoon === false, 'settings', 'Do this last']
   ];
@@ -2641,9 +2705,14 @@ function admStock() {
 function admSettings() {
   const field = setField;
   return `<p class="muted">Each change saves when you leave the box and shows on the site at once.</p>
-    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon page</h2><p class="muted full">While it is on, visitors see only the Coming soon page and its sign-up form${BTDB.on ? '' : ' (once the database is connected)'}. You see the whole site while signed in, and so does anyone who opens the preview link. To launch, switch it off. The preview code is not a lock: anyone who can read the page data can read it, so use it only to keep casual visitors out, and never rely on it for anything secret.</p>
-      ${!SET.previewCode || /^budpreview$/i.test(SET.previewCode) || String(SET.previewCode).length < 10 ? '<div class="status full" role="note">The preview code is empty, the old default or short. Use at least 10 random letters and numbers, so it cannot be guessed.</div>' : ''}
-      ${SET_META.filter((m) => CS_KEYS.includes(m[0])).map(field).join('')}<span class="field full"><label for="cs-link">Preview link for testers</label><span style="display:flex;flex-wrap:wrap;gap:8px"><input id="cs-link" readonly value="${SET.previewCode ? esc(previewLink()) : ''}" placeholder="Make a preview code first, the link appears here" style="flex:1 1 260px;min-width:0">${SET.previewCode ? '<button class="btn small ghost" type="button" data-act="cs-copy">Copy link</button>' : ''}<button class="btn small" type="button" data-act="cs-make">${SET.previewCode ? 'Make a new code' : 'Make a preview code'}</button></span>${SET.previewCode ? '' : '<span class="hint">With no code, no link can open the shop while Coming soon is on. That is why every link shows Coming soon.</span>'}</span></div>
+    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon page</h2><p class="muted full">While it is on, visitors see only the Coming soon page and its sign-up form${BTDB.on ? '' : ' (once the database is connected)'}. You see the whole site while signed in, and so does anyone who opens the preview link. To launch, switch it off. Only a scrambled copy of the preview code is stored, so nobody can read it from the page data. The code is shown once when you make it, so copy the link then.</p>
+      ${SET.previewCode ? '<div class="status full" role="note">An old readable preview code is still stored. Press “Make a new code” to replace it with a hidden one.</div>' : !SET.previewHash ? '<div class="status full" role="note">No preview code yet. Press “Make a preview code” to get a link for testers.</div>' : ''}
+      ${SET_META.filter((m) => CS_KEYS.includes(m[0])).map(field).join('')}<span class="field full"><label for="cs-link">Preview link for testers</label><span style="display:flex;flex-wrap:wrap;gap:8px"><input id="cs-link" readonly value="${pvCode() ? esc(previewLink()) : ''}" placeholder="${SET.previewHash ? 'The link was shown when the code was made. Make a new code for a new link.' : 'Make a preview code first, the link appears here'}" style="flex:1 1 260px;min-width:0">${pvCode() ? '<button class="btn small ghost" type="button" data-act="cs-copy">Copy link</button>' : ''}<button class="btn small" type="button" data-act="cs-make">${SET.previewHash ? 'Make a new code' : 'Make a preview code'}</button></span>${SET.previewHash ? '' : '<span class="hint">With no code, no link can open the shop while Coming soon is on. That is why every link shows Coming soon.</span>'}</span></div>
+    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon for single sections</h2><p class="muted full">Tick a section to show visitors a small Coming soon page for it, while the rest of the shop stays open. You and anyone with the preview link still see the real page. Untick it when the section is ready. New products stay hidden until you publish them, so you do not need this for those.</p>
+      <fieldset class="full" style="border:0;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 16px"><legend class="sr">Sections that show Coming soon</legend>${SOON_OPTS.map(([k, l]) => `<label class="chk" style="display:flex;align-items:center;gap:10px;min-height:44px"><input type="checkbox" data-act="adm-soon" data-k="${k}" ${(SET.soonPages || []).includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</fieldset></div>
+    <div class="form adm-card" id="ns-card"><h2 class="full" style="font-size:24px">New sections</h2><p class="muted full">Launching a new kind of product? Add a section here. It gets its own page and stays on Coming soon until you tick “Open to visitors”. Then add it to the menu in Menus &amp; FAQ (choose the page named s-…), and put products in it with the “New section” choice on the product form.</p>
+      ${((UI.adm.draftNs || newSections()).map((x, i) => `<div class="lrow" style="grid-column:1/-1"><span class="field"><label for="ns-${i}-n">Section name</label><input id="ns-${i}-n" class="ns-n" data-act="adm-ns" value="${esc(x.name)}"></span><span class="field"><label for="ns-${i}-l">One line about it</label><input id="ns-${i}-l" class="ns-l" data-act="adm-ns" value="${esc(x.line || '')}"></span><label class="chk" style="display:flex;align-items:center;gap:10px;min-height:44px"><input id="ns-${i}-o" class="ns-o" type="checkbox" data-act="adm-ns" ${x.live ? 'checked' : ''}> Open to visitors</label><span class="muted" style="font-size:13px">${x.id ? 'Page: <code>s-' + esc(x.id) + '</code>' : 'Page name is made when you save'}</span><button class="btn small ghost" type="button" data-act="adm-ns-del" data-i="${i}">Remove</button></div>`).join(''))}
+      <div class="full"><button class="btn small" type="button" data-act="adm-ns-add">Add a section</button></div></div>
     <div class="form adm-card"><h2 class="full" style="font-size:24px">Site theme</h2><p class="muted full">The colours every visitor sees. Choosing a mood in the house still recolours the site for that visitor while they browse.</p>
       <span class="field full"><label for="set-theme">Theme</label><select id="set-theme" data-act="adm-set" data-k="theme">${Object.entries(SKINS).map(([k, v]) => `<option value="${k}" ${k === skin('site') ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></span>
       <p class="muted full">${esc(SKINS[skin('site')].use)}</p></div>
@@ -3055,6 +3124,22 @@ function colChart(points, fmt, label) {
   return `<figure class="ch"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}" preserveAspectRatio="none"><line x1="${pad}" x2="${W}" y1="${H - pad}" y2="${H - pad}" class="ch-axis"/><text x="0" y="12" class="ch-t">${esc(fmt(max))}</text>${bars}${ticks}</svg>
     <details><summary class="muted">See the numbers</summary><div class="table-wrap"><table><tbody>${points.filter((p) => p.v).map((p) => `<tr><td class="num">${esc(p.label)}</td><td class="num">${esc(fmt(p.v))}${p.tip ? ' · ' + esc(p.tip) : ''}</td></tr>`).join('') || '<tr><td class="muted">Nothing in this period.</td></tr>'}</tbody></table></div></details></figure>`;
 }
+// small line under a number: the last days at a glance (decorative; the numbers are in the chart below)
+function spark(vals) {
+  if (!vals || vals.length < 2 || !vals.some((v) => v > 0)) return '';
+  const W = 120, H = 32, max = Math.max(...vals), step = W / (vals.length - 1);
+  const pts = vals.map((v, i) => [Math.round(i * step), Math.round(H - 3 - (H - 6) * v / max)]); const line = pts.map((p) => p.join(',')).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false"><polygon points="0,${H} ${line} ${W},${H}" class="spark-fill"/><polyline points="${line}" class="spark-line"/></svg>`;
+}
+// a ring for shares of a whole, with the numbers beside it
+const DONUT = ['#8B1A3A', '#D6A34A', '#B8500F', '#5E6B3A', '#3A0610', '#9A8A6A'];
+function donut(rows, fmt, centre, ctr) {
+  const tot = rows.reduce((a, r) => a + r[1], 0); if (!tot) return '';
+  let off = 0; const R = 46, C = 2 * Math.PI * R;
+  const arcs = rows.map((r, i) => { const len = C * r[1] / tot; const a = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${DONUT[i % DONUT.length]}" stroke-width="13" stroke-dasharray="${len.toFixed(2)} ${(C - len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 60 60)"/>`; off += len; return a; }).join('');
+  return `<div class="donut"><svg viewBox="0 0 120 120" width="132" height="132" role="img" aria-label="${esc(centre)}: ${esc(rows.map((r) => r[0] + ' ' + fmt(r[1])).join(', '))}">${arcs}<text x="60" y="64" text-anchor="middle" class="donut-t">${esc(ctr ? ctr(tot) : fmt(tot))}</text></svg>
+    <ul>${rows.map((r, i) => `<li><i style="background:${DONUT[i % DONUT.length]}"></i><span>${esc(r[0])}</span><b class="num">${esc(fmt(r[1]))}</b><span class="muted">${pct(r[1], tot)}</span></li>`).join('')}</ul></div>`;
+}
 // horizontal bars for shares of a whole: funnel steps, sources, categories
 const hbars = (rows, fmt) => `<ul class="hb">${rows.map(([l, v, max, note]) => `<li><span>${esc(l)}</span><span class="hb-bar" aria-hidden="true"><span style="width:${max ? Math.max(v ? 2 : 0, Math.round(v / max * 100)) : 0}%"></span></span><span class="num">${fmt ? fmt(v) : v}${note ? ` <span class="muted">${esc(note)}</span>` : ''}</span></li>`).join('')}</ul>`;
 const pct = (a, b) => (b ? Math.round(a / b * 100) + '%' : '—');
@@ -3069,7 +3154,7 @@ function admEvents() {
   const revCur = rev(cur), revPrev = rev(prev); const items = cur.reduce((a, o) => a + (o.items || []).reduce((b, l) => b + l.qty, 0), 0);
   const change = (a, b) => (b ? `${a >= b ? '▲' : '▼'} ${Math.abs(Math.round((a - b) / b * 100))}% on the ${days} days before` : 'nothing to compare yet');
   const goal = +SET.monthlyGoal || 0; const mStart = new Date(); mStart.setDate(1); mStart.setHours(0, 0, 0, 0); const revMonth = rev(good.filter((o) => new Date(o.placedAt) >= mStart));
-  const tile = (l, v, sub) => `<div class="stat"><span class="muted">${l}</span><strong class="num">${v}</strong>${sub ? `<span class="muted" style="font-size:13px">${sub}</span>` : ''}</div>`;
+  const tile = (l, v, sub, sp) => `<div class="stat"><span class="muted">${l}</span><strong class="num">${v}</strong>${sub ? `<span class="muted" style="font-size:13px">${sub}</span>` : ''}${sp || ''}</div>`;
   // revenue per day (per week for a year)
   const step = days > 120 ? 7 : 1; const pts = []; for (let t = since; t < now; t += step * dayMs) { const e = t + step * dayMs; const l = good.filter((o) => { const d = +new Date(o.placedAt); return d >= t && d < e; }); const d = new Date(t); pts.push({ label: (step > 1 ? 'Week of ' : '') + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), short: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), v: rev(l), tip: l.length + ' order' + (l.length === 1 ? '' : 's') }); }
   // products
@@ -3107,8 +3192,8 @@ function admEvents() {
   const small = (rows, head) => rows.length ? `<div class="table-wrap"><table>${head ? `<thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead>` : ''}<tbody>${rows.map((r) => `<tr>${r.map((c, i) => `<td${i ? ' class="num"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="muted">Nothing yet.</p>';
   const setF = (k) => { const m = SET_META.find((x) => x[0] === k); return m ? setField(m) : ''; };
   return `<div class="adm-bar"><div class="gh-chips" role="group" aria-label="Period">${[[7, '7 days'], [30, '30 days'], [90, '90 days'], [365, '12 months']].map(([d, l]) => `<button type="button" class="chip" data-act="adm-days" data-v="${d}" aria-pressed="${days === d}">${l}</button>`).join('')}</div>${BTDB.on ? '' : '<span class="muted">Demo mode: visits counted in this browser only.</span>'}</div>
-    <div class="owner-grid">${tile('Sales', inr(revCur), change(revCur, revPrev))}${tile('Orders', cur.length, change(cur.length, prev.length))}${tile('Average order', cur.length ? inr(Math.round(revCur / cur.length)) : '—', cur.length ? (items / cur.length).toFixed(1) + ' pieces per order' : '')}
-      ${tile('Visitors', st.visitors || 0, (st.sessions || 0) + ' visits')}${tile('Visits that bought', pct(fu.bought || 0, fu.visits || 0), '')}${goal ? tile('This month’s goal', pct(revMonth, goal), `${inr(revMonth)} of ${inr(goal)}<span class="hb-bar" aria-hidden="true" style="display:block;margin-top:6px"><span style="width:${Math.min(100, Math.round(revMonth / goal * 100))}%"></span></span>`) : ''}</div>
+    <div class="owner-grid">${tile('Sales', inr(revCur), change(revCur, revPrev), spark(pts.map((p) => p.v)))}${tile('Orders', cur.length, change(cur.length, prev.length))}${tile('Average order', cur.length ? inr(Math.round(revCur / cur.length)) : '—', cur.length ? (items / cur.length).toFixed(1) + ' pieces per order' : '')}
+      ${tile('Visitors', st.visitors || 0, (st.sessions || 0) + ' visits', spark((st.daily || []).map((x) => x.visitors)))}${tile('Visits that bought', pct(fu.bought || 0, fu.visits || 0), '')}${goal ? tile('This month’s goal', pct(revMonth, goal), `${inr(revMonth)} of ${inr(goal)}<span class="hb-bar" aria-hidden="true" style="display:block;margin-top:6px"><span style="width:${Math.min(100, Math.round(revMonth / goal * 100))}%"></span></span>`) : ''}</div>
     ${box(`Sales ${step > 1 ? 'by week' : 'by day'}`, colChart(pts, inr, 'Sales by ' + (step > 1 ? 'week' : 'day')), 'Paid and cash on delivery orders, not cancelled. Gift card payments count as sales.')}
     <div class="adm-cols">
     ${box('From visit to order', hbars([['Visits', fu.visits || 0, fMax], ['Looked at a piece', fu.viewed || 0, fMax, pct(fu.viewed, fMax)], ['Added to cart', fu.added || 0, fMax, pct(fu.added, fMax)], ['Started checkout', fu.checkout || 0, fMax, pct(fu.checkout, fMax)], ['Ordered', fu.bought || 0, fMax, pct(fu.bought, fMax)]]), fu.checkout > fu.bought ? `${fu.checkout - fu.bought} visit${fu.checkout - fu.bought === 1 ? '' : 's'} started checkout and stopped.` : '')}
@@ -3116,9 +3201,9 @@ function admEvents() {
     </div>
     ${box('Pieces', small(prows.map(([id, r]) => [esc((byId[id] || { name: id }).name), r.views, r.adds, r.sold, r.rev ? inr(r.rev) : '', r.views ? pct(r.sold, r.views) : '']), ['Piece', 'Views', 'Added to cart', 'Sold', 'Sales', 'Views that sold']))}
     <div class="adm-cols">
-    ${box('By category', Object.keys(cat).length ? hbars(Object.entries(cat).sort((a, b) => b[1] - a[1]).map(([k, v]) => [k, v, catMax, pct(v, revCur)]), inr) : '<p class="muted">No sales in this period.</p>')}
+    ${box('By category', Object.keys(cat).length ? donut(Object.entries(cat).sort((a, b) => b[1] - a[1]), inr, 'Sales by category') : '<p class="muted">No sales in this period.</p>')}
     ${box('Customers', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${newC} new · ${cur.length - newC} returning</strong><span class="muted">orders in this period</span></div><div><strong class="num">${pct(repeaters.length, Object.keys(byWho).length)}</strong><span class="muted">of customers have ordered more than once</span></div><div><strong class="num">${gaps.length ? Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length) + ' days' : '—'}</strong><span class="muted">between a customer’s orders, on average</span></div></div>`)}
-    ${box('How people paid', small(Object.entries(pay).map(([k, v]) => [esc(k), v[0], inr(v[1])]), ['', 'Orders', 'Value']) + (dl('payment_failed', (d) => d.method).length ? `<p class="muted" style="margin:0">Payments that failed: ${dl('payment_failed', (d) => d.method).map(([m, n]) => esc(m) + ' ' + n).join(', ')}</p>` : ''))}
+    ${box('How people paid', donut(Object.entries(pay).map(([k, v]) => [k, v[0]]), (n) => n + (n === 1 ? ' order' : ' orders'), 'Orders by payment', (n) => String(n)) + small(Object.entries(pay).map(([k, v]) => [esc(k), v[0], inr(v[1])]), ['', 'Orders', 'Value']) + (dl('payment_failed', (d) => d.method).length ? `<p class="muted" style="margin:0">Payments that failed: ${dl('payment_failed', (d) => d.method).map(([m, n]) => esc(m) + ' ' + n).join(', ')}</p>` : ''))}
     ${box('Codes', small(Object.entries(coup).sort((a, b) => b[1][0] - a[1][0]).map(([k, v]) => [esc(k), v[0], inr(v[1]), inr(v[2])]), ['Code', 'Used', 'Taken off', 'Orders worth']))}
     ${box('Bud Points and gift cards', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${ptsIssued}</strong><span class="muted">points given</span></div><div><strong class="num">${ptsUsed}</strong><span class="muted">points spent</span></div><div><strong class="num">${inr(gcUsed)}</strong><span class="muted">paid with gift cards</span></div><div><strong class="num">${inr(gcLeft)}</strong><span class="muted">left on all gift cards</span></div></div>`)}
     ${box('Share links', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${refO.length}</strong><span class="muted">orders from a friend’s link, worth ${inr(rev(refO))}</span></div><div><strong class="num">${(nm.share || 0) + (nm.share_link || 0) + (nm.house_share || 0) + (nm.room_share || 0)}</strong><span class="muted">times the shop was shared</span></div></div>`)}
@@ -3525,8 +3610,15 @@ function similar(p) {
 }
 const PAY_ICONS = ['UPI', 'Visa', 'Mastercard', 'RuPay', 'Net banking', 'Wallets'];
 function payBadges() {
-  const b = { UPI: '<b style="color:#097939">U</b><b style="color:#B8500F">P</b><b style="color:#097939">I</b>', Visa: '<b style="color:#1A1F71;font-style:italic;letter-spacing:.02em">VISA</b>', Mastercard: '<i style="background:#EB001B"></i><i style="background:#F79E1B;margin-left:-7px;opacity:.9"></i>', RuPay: '<b style="color:#1B3F8B">Ru</b><b style="color:#B8500F">Pay</b>', 'Net banking': hl('card', 16) + '<span>Net banking</span>', Wallets: hl('tag', 16) + '<span>Wallets</span>' };
-  return `<ul class="pay-badges" aria-label="We accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
+  const svg = (w, body) => `<svg class="pay-logo" viewBox="0 0 ${w} 24" width="${w}" height="24" aria-hidden="true" focusable="false">${body}</svg>`;
+  // redrawn marks in the brand colours; swap in the official files from each brand's logo page before launch
+  const b = {
+    UPI: svg(54, '<text x="0" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-style="italic" font-size="18" fill="#3C3C3B">UPI</text><polygon points="38,3 46,12 38,21 34,21 41,12 34,3" fill="#097939"/><polygon points="46,3 54,12 46,21 42,21 49,12 42,3" fill="#F37021"/>'),
+    Visa: svg(48, '<text x="0" y="19" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-style="italic" font-size="20" letter-spacing="-.5" fill="#1A1F71">VISA</text>'),
+    Mastercard: svg(40, '<circle cx="14" cy="12" r="10" fill="#EB001B"/><circle cx="26" cy="12" r="10" fill="#F79E1B"/><path d="M20 4.2a10 10 0 0 1 0 15.6 10 10 0 0 1 0-15.6z" fill="#FF5F00"/>'),
+    RuPay: svg(60, '<text x="0" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#1B3F8B">Ru</text><text x="21" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#F58220">Pay</text><polygon points="55,6 60,12 55,18" fill="#097939"/>'),
+    'Net banking': hl('card', 16) + '<span>Net banking</span>', Wallets: hl('tag', 16) + '<span>Wallets</span>' };
+  return `<ul class="pay-badges" aria-label="Payment methods we accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
 }
 
 function viewNotFound() { return `<div class="wrap" style="padding-block:var(--section) calc(var(--section) + 20px)"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
@@ -3715,6 +3807,8 @@ function viewGiftHome() {
 function viewFor(r, cs) {
   let html;
   if (cs) html = viewComingSoon();
+  else if (soonFor(r)) html = viewSoonSection(soonFor(r));
+  else if (r.startsWith('s-')) html = viewNewSection(r);
   else if (r === 'home' && homeStyle() === 'gift') html = viewGiftHome();
   else if (r === 'shop') html = viewShop('all');
   else if (r === 'candles') html = viewShop('candles');
@@ -3755,6 +3849,7 @@ function render(nav) {
   const banner = !cs && !/^(admin|checkout|cart|order-|account|track|saved)/.test(r) && app.querySelector('.gh-hero, .page-head, .article-head');
   if (banner) banner.insertAdjacentHTML('afterend', offersBar()); // pages with no banner have no strip
   renderChrome(); renderOverlay();
+  if (r === 'admin') reapplyHeld(); else saveBar();
   if (r !== 'admin') { applyText(app, r); ['.site-head', '.site-foot', '#mobile-menu', '#offers-slot'].forEach((q) => applyText($(q), 'every page')); }
   if (!cs) adsLoad();
   if (cs) { if (nav) window.scrollTo(0, 0); return; }
@@ -4030,7 +4125,17 @@ document.addEventListener('mousemove', (e) => {
 document.addEventListener('click', (e) => {
   const wl = e.target.closest('a[href^="https://wa.me/"]'); if (wl && !/wa\.me\/\?/.test(wl.href) && route() !== 'admin') track('wa_click', { where: pageName(route()) });
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act; const d = t.dataset;
+  const held = UI.adm && UI.adm.pending && UI.adm.pending.size;
+  if (held) {
+    if (['adm-tab', 'adm-goto', 'adm-find-go', 'adm-edit', 'adm-media-for'].includes(a) && !confirm('You have unsaved changes. Leave without saving them?')) return;
+    if (['adm-tab', 'adm-goto', 'adm-find-go', 'adm-edit', 'adm-media-for'].includes(a)) UI.adm.pending = new Map();
+    else if (/^(adm-list-|adm-jr-|adm-tags-|adm-pol-add|adm-pol-del|adm-home-|adm-undo|cs-make|adm-text-reset|adm-ov-reset|adm-quiz-reset)/.test(a)) flushHeld();
+  }
   switch (a) {
+    case 'adm-save-all': { const n = flushHeld(); if (n) say('Saving ' + n + (n === 1 ? ' change…' : ' changes…')); break; }
+    case 'adm-ns-add': { const cur = readNs(); cur.push({ id: '', name: '', line: '', live: false }); UI.adm.draftNs = cur; UI.adm.pending = new Map(); render(); $('#ns-' + (cur.length - 1) + '-n')?.focus(); break; }
+    case 'adm-ns-del': { const keep = readNs(+d.i); admDo(async () => { SET.newSections = keep; UI.adm.draftNs = null; UI.adm.pending = new Map(); await dbPut('settings', { key: 'newSections', value: keep }); renderChrome(); render(); }, 'Removed.'); break; }
+    case 'adm-discard': UI.adm.pending = new Map(); render(); break;
     case 'edit-mode': UI.edit = !UI.edit; document.body.classList.toggle('editing', UI.edit); t.setAttribute('aria-pressed', String(UI.edit)); t.textContent = UI.edit ? 'Stop editing text' : 'Edit text on page'; say(UI.edit ? 'Click any word on the page to change it.' : 'Editing off.'); break;
     case 'ov-close': UI.ov = null; renderOverlay(); break;
     case 'ov-save': ovSave($('#ov-text').value); break;
@@ -4138,7 +4243,7 @@ document.addEventListener('click', (e) => {
         UI.adm.cust = null; if (BTDB.on) UI.adm.rows = {}; render(); }, 'Their details are deleted.'); break; }
     case 'adm-review-del': if (confirm('Delete this review?')) admDo(async () => { if (BTDB.on) await BTDB.remove('reviews', 'id=eq.' + encodeURIComponent(d.id)); const list = admData('reviews') || []; const i = list.findIndex((x) => String(x.id) === d.id); if (i >= 0) list.splice(i, 1); save(); DATA.reviews = list.filter((x) => x.published); render(); }, 'Review deleted.'); break;
     case 'adm-csv': downloadCSV(d.v === 'subscribers' ? 'bud-and-things-sign-ups' : 'bud-and-things-restock-requests', (admData('people') || []).filter((r) => r.table === d.v)); break;
-    case 'cs-make': { const code = Array.from(crypto.getRandomValues(new Uint32Array(16)), (x) => 'abcdefghjkmnpqrstuvwxyz23456789'[x % 31]).join(''); admDo(async () => { await dbPut('settings', { key: 'previewCode', value: code }); render(); }, 'New preview code saved. Old links stop working. Copy the new link.'); break; }
+    case 'cs-make': { const code = Array.from(crypto.getRandomValues(new Uint32Array(16)), (x) => 'abcdefghjkmnpqrstuvwxyz23456789'[x % 31]).join(''); admDo(async () => { await dbPut('settings', { key: 'previewHash', value: await sha256(code) }); if ('previewCode' in (DATA.settings || {})) await dbDel('settings', 'key', 'previewCode'); try { localStorage.setItem('bt-preview-code', code); } catch (e) { /* link not kept */ } render(); }, 'New preview code saved. Old links stop working. Copy the new link now.'); break; }
     case 'cs-copy': { const l = $('#cs-link'); l.select(); (navigator.clipboard ? navigator.clipboard.writeText(l.value) : Promise.reject()).then(() => say('Preview link copied.'), () => say('Select the link and copy it.')); break; }
     case 'adm-seed':admDo(async () => { const msg = await admSeed(); say('Copied ' + msg + '.'); render(); }); break;
     case 'adm-signout': BTDB.signOut(); UI.adm.mfa = null; UI.adm.err = null; UI.adm.rows = {}; loadData(); render(); say('Signed out.'); break;
@@ -4202,14 +4307,51 @@ document.addEventListener('drop', (e) => {
   const same = DATA.media.filter((x) => x.product_id === a.product_id && x.role === a.role).sort((x, y) => (x.sort || 0) - (y.sort || 0)); same.splice(same.indexOf(a), 1); same.splice(same.indexOf(b) + (same.length && (b.sort || 0) > (a.sort || 0) ? 1 : 0), 0, a);
   admDo(async () => { await dbPut('media', same.map((m, i) => Object.assign({}, m, { sort: i * 10 }))); render(); }, 'Order saved.');
 });
+// ---------- Owner view: edits wait for the Save button ----------
+const HOLD = new Set(['adm-ns', 'adm-set', 'adm-text', 'adm-ov', 'adm-list', 'adm-pol', 'adm-jr', 'adm-tags', 'adm-quiz', 'stock']);
+const WHOLE = { 'adm-ns': () => '', 'adm-list': (d) => d.k, 'adm-tags': (d) => d.k, 'adm-pol': (d) => d.id, 'adm-jr': () => '', 'adm-quiz': () => '' };
+const heldKey = (t) => t.id || (t.dataset.act + '|' + (t.dataset.k || ''));
+const heldFind = (key) => document.getElementById(key) || (key.includes('|') ? document.querySelector(`[data-act="${key.split('|')[0]}"][data-k="${key.split('|')[1]}"]`) : null);
+const heldVal = (t) => (t.type === 'checkbox' ? t.checked : t.value);
+function holdChange(t) {
+  const A = UI.adm; A.pending = A.pending || new Map(); A.pending.set(heldKey(t), heldVal(t)); t.classList.add('dirty'); saveBar();
+}
+function saveBar() {
+  const n = UI.adm.pending ? UI.adm.pending.size : 0; let bar = document.getElementById('save-bar');
+  if (!n || route() !== 'admin') { if (bar) bar.remove(); return; }
+  if (!bar) { bar = document.createElement('div'); bar.id = 'save-bar'; bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Unsaved changes'); document.body.appendChild(bar); }
+  if (bar.dataset.n === String(n)) return; bar.dataset.n = n;
+  bar.innerHTML = `<span><strong>${n}</strong> unsaved ${n === 1 ? 'change' : 'changes'}</span><button class="btn" type="button" data-act="adm-save-all">Save changes</button><button class="btn ghost" type="button" data-act="adm-discard">Discard</button>`;
+}
+function reapplyHeld() {
+  const m = UI.adm.pending; if (!m || !m.size) { saveBar(); return; }
+  m.forEach((v, key) => { const el = heldFind(key); if (!el) return; if (el.type === 'checkbox') el.checked = !!v; else el.value = v; el.classList.add('dirty'); }); saveBar();
+}
+function flushHeld() {
+  const m = UI.adm.pending; if (!m || !m.size) return 0; const n = m.size; const done = new Set();
+  m.forEach((v, key) => { const el = heldFind(key); if (!el) return; const w = WHOLE[el.dataset.act]; if (w) { const g = el.dataset.act + '|' + w(el.dataset); if (done.has(g)) return; done.add(g); }
+    el.dataset.flush = '1'; el.dispatchEvent(new Event('change', { bubbles: true })); delete el.dataset.flush; });
+  UI.adm.pending = new Map(); document.querySelectorAll('.dirty').forEach((x) => x.classList.remove('dirty')); saveBar(); return n;
+}
+window.addEventListener('beforeunload', (e) => { if (UI.adm && UI.adm.pending && UI.adm.pending.size) { e.preventDefault(); e.returnValue = ''; } });
+function readNs(skip) {
+  const base = UI.adm.draftNs || newSections(); const out = []; const used = new Set(base.map((x) => x.id).filter(Boolean));
+  document.querySelectorAll('#ns-card .ns-n').forEach((el, i) => { if (i === skip) return; const name = el.value.trim(); if (!name) return; const prev = base[i] || {}; let id = prev.id;
+    if (!id) { const b = secSlug(name) || 'section'; id = b; let k = 2; while (used.has(id)) id = b + '-' + k++; used.add(id); }
+    out.push({ id, name, line: $('#ns-' + i + '-l').value.trim(), live: $('#ns-' + i + '-o').checked }); });
+  return out;
+}
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
+  if (HOLD.has(d.act) && route() === 'admin' && !d.flush) { holdChange(t); return; }
   if (t.id === 'co-state' || t.id === 'pf-a-state') t.dataset.auto = '';
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
   if (d.act === 'home-rit') { UI.ritual.homeSel = UI.ritual.homeSel || { a: true, b: true }; UI.ritual.homeSel[d.k] = t.checked; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'ritual-pick') { UI.ritual.pick[UI.ritual.preset][d.i] = t.checked; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'ritual-custom') { UI.ritual.custom[d.k] = t.value; UI.ritual.pick.custom = { 0: true, 1: true }; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
+  if (d.act === 'adm-ns') { const v = readNs(); admDo(async () => { SET.newSections = v; UI.adm.draftNs = null; await dbPut('settings', { key: 'newSections', value: v }); renderChrome(); render(); }, 'Saved.'); }
+  if (d.act === 'adm-soon') { const v = [...document.querySelectorAll('[data-act=adm-soon]')].filter((x) => x.checked).map((x) => x.dataset.k); admDo(async () => { SET.soonPages = v; await dbPut('settings', { key: 'soonPages', value: v }); render(); }, v.length ? 'Saved. These sections show Coming soon.' : 'Saved. No section shows Coming soon.'); }
   if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); if (d.k === 'theme') render(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
   if (d.act === 'adm-pol') { const id = d.id; const box = t.closest('[data-pol]'); const body = box.querySelector('.pol-body').value; const ti = box.querySelector('.pol-title');
     admDo(async () => { if (ti) { const list = (SET.policyPages || []).map((x) => (x.id === id ? { id, title: ti.value.trim() || x.title, body } : x)); await savePolicies(list); } else { const k = 'legal.' + id; if (body === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: body }); } renderChrome(); }, 'Saved.'); }
@@ -4232,6 +4374,7 @@ document.addEventListener('change', (e) => {
 });
 document.addEventListener('input', (e) => {
   const ti = e.target;
+  if (ti.dataset && HOLD.has(ti.dataset.act) && route() === 'admin') { holdChange(ti); return; }
   if (ti.id === 'co-pin') { pinAutofill(ti, 'co-city', 'co-state', 'pin-note'); return; }
   if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
   if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
