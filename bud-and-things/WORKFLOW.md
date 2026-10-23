@@ -24,7 +24,7 @@ The work moved in stages, each reviewed before the next:
 | Catalogue | A draft range of 6 candles and 6 Jesmonite objects (`data/catalogue.draft.json`), every name and price marked as a proposal | Agreed as a draft |
 | Prototype | The whole shop as a clickable prototype, with the full checkout and an owner view | Approved as the base |
 | Openings A and B | 2D canvas scroll scenes: *Through the Arches*, *The Pour* | Moved to the web-intros-and-themes repository (Oct 2026) |
-| Themes | Four themes: Signature, Monsoon, Silk · Maroon & Gold, Evening | Chosen by the owner in Owner view → Settings. Everyday, Festive and Gifting were removed from this site and are kept in abhiyknp/pixelpatra, kits/theme-kit |
+| Themes | Four themes: Silk · Maroon & Gold (default), Signature, Monsoon, Evening | Chosen by the owner in Owner view → Settings. Everyday, Festive and Gifting were removed from this site and are kept in abhiyknp/pixelpatra, kits/theme-kit |
 | Page titles, descriptions, link preview | Every page has a title and description; the site-wide ones, tab icon and link picture are also written into the page head | Owner view → Site text → Search & sharing; logo, tab icon and link picture under Photos & videos → Brand. In the browser it shows at once; for Google and link previews it is written in by the daily site build, or run the Pages workflow by hand. |
 | Brand assets | Logo, monogram, leaf mark and packaging photos cut from the master PDF | In use; replace with originals before launch |
 | Opening C | A drawn first-person home tour, then a three.js 3D tour | Superseded: "looks like a cartoon"; kept in the web-intros-and-themes repository |
