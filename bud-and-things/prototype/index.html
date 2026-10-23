@@ -2191,7 +2191,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2254,7 +2254,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
@@ -2530,6 +2530,15 @@ function admFilters() {
 function readTags(k) { const box = document.getElementById('tg-' + k); return box ? [...box.querySelectorAll('.f-label')].map((i) => [i.dataset.key, i.value.trim()]).filter((x) => x[1]) : TAG_LISTS[k][0].map((x) => x.slice()); }
 const tagKey = (label, list) => { let b = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30) || 'choice'; let k = b, n = 2; while (list.some((x) => x[0] === k)) k = b + '-' + n++; return k; };
 const saveTags = (k, v) => { SET[k] = v; applyTagLists(); return dbPut('settings', { key: k, value: v }); };
+
+// Home page: show, hide and reorder the sections of the home page
+function admHome() {
+  const hide = Array.isArray(SET.homeHide) ? SET.homeHide : []; const name = Object.fromEntries(HOME_SECTIONS);
+  return `<p class="muted">Tick a section to show it on the home page. Use the arrows to change the order. The opening banner always shows. Changes save at once.</p>
+    <div class="adm-card" id="ls-home">${homeOrder(true).map((id, i, all) => `<div class="lrow" style="grid-template-columns:1fr auto" data-sec="${id}"><label class="check"><input type="checkbox" data-act="adm-home" data-id="${id}" ${hide.includes(id) && id !== 'hero' ? '' : 'checked'} ${id === 'hero' ? 'disabled' : ''}> ${esc(name[id])}</label><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-home-move" data-id="${id}" data-v="-1" aria-label="Move ${esc(name[id])} up" ${i === 0 ? 'disabled' : ''}>↑</button><button class="btn small ghost" type="button" data-act="adm-home-move" data-id="${id}" data-v="1" aria-label="Move ${esc(name[id])} down" ${i === all.length - 1 ? 'disabled' : ''}>↓</button></span></div>`).join('')}</div>
+    ${Array.isArray(SET.homeOrder) || hide.length ? '<p><button class="linkbtn" type="button" data-act="adm-home-reset">Put back the original order</button></p>' : ''}`;
+}
+const saveHome = (order, hide) => { SET.homeOrder = order; SET.homeHide = hide; return Promise.all([dbPut('settings', { key: 'homeOrder', value: order }), dbPut('settings', { key: 'homeHide', value: hide })]); };
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
   return `<div class="adm-bar"><p class="muted">Edit any line, then click outside the box to save. A new line breaks the line; *words between stars* are set in italics. Words in {braces} come from Settings.</p><span class="field"><label for="tx-q">Find</label><input id="tx-q" data-act="adm-q" value="${esc(UI.adm.q || '')}" placeholder="delivery, gift, hero…"></span></div>
@@ -3560,6 +3569,9 @@ function giftBoxesHTML(id) {
 }
 
 // the gift-first home page: products, gifts and reasons to buy first, and no scroll intro
+// order and visibility of the home page sections: the owner's list in Owner view → Home page, else this order
+const HOME_SECTIONS = [['hero', 'Opening banner'], ['welcome', 'Welcome gift'], ['cats', 'Categories'], ['boxes', 'Gift boxes'], ['new', 'New arrivals'], ['promos', 'Offer banners'], ['best', 'Best sellers'], ['feel', 'Find Your Feeling'], ['occasions', 'Moments (occasions)'], ['rituals', 'Rituals'], ['spotlight', 'Spotlight product'], ['reviews', 'Reviews'], ['packaging', 'How it arrives'], ['story', 'Our story band'], ['journal', 'Journal stories'], ['discover', 'More to explore'], ['festive', 'Festive banner'], ['news', 'Newsletter sign-up']];
+function homeOrder(all) { const known = HOME_SECTIONS.map((x) => x[0]); const v = Array.isArray(SET.homeOrder) ? SET.homeOrder.filter((x) => known.includes(x)) : []; const order = v.concat(known.filter((x) => !v.includes(x))); const hide = Array.isArray(SET.homeHide) ? SET.homeHide : []; return all ? order : order.filter((x) => !hide.includes(x) || x === 'hero'); }
 function viewGiftHome() {
   const G = UI.gh; const t = totals(); const sub = t.sub || 0; const free = +SET.freeOver || 0;
   const feat = idList('featured').map((id) => byId[id]);
@@ -3569,8 +3581,8 @@ function viewGiftHome() {
   const pairs = PAIRINGS.filter((fo) => fo.items.every(([pid, vi]) => byId[pid] && byId[pid].variants[vi])).slice(0, 3);
   const hero = mediaFor('brand', { kind: 'photo', role: ['gift', 'packaging', 'lifestyle'] })[0];
   const pack = brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set: candles in a ribbon-tied box.', 'Gift set box'], [IMG.tag, 'Rustic hang tag with the logo and olive leaf.', 'Hang tag'], [IMG.card, 'Candle care tag with burn instructions.', 'Care tag'], [IMG.seal, 'BUD & THINGS wax seals in brand colours.', 'Wax seals']]);
-  return `
-  <section class="wrap gh-hero" aria-labelledby="gh-h">
+  const BLOCKS = {
+    hero: () => `  <section class="wrap gh-hero" aria-labelledby="gh-h">
     <div class="gh-ph"><img src="${esc(hero ? mUrl(hero) : IMG.box)}" alt="${esc(hero ? hero.alt : 'The BUD & THINGS gift set: candles in a ribbon-tied box.')}">
       <span class="gh-badge"><svg width="14" height="18" viewBox="0 0 14 18" aria-hidden="true"><path d="M7 1C9 5 13 7 13 11.5A6 6 0 0 1 1 11.5C1 8 4 7 4 4c1.5 1 2 2.5 2 4C7 6 7 3 7 1z" fill="#C9A227"/></svg>${T('ghome.badge')}</span></div>
     <div style="display:flex;flex-direction:column;gap:16px">
@@ -3579,47 +3591,39 @@ function viewGiftHome() {
       <div class="gh-cta gh-rise d2"><a class="btn gh-shine" href="#gifting">${T('ghome.cta1')}</a><a class="btn ghost" href="#feeling">${T('ghome.cta2')}</a></div>
       ${free ? `<div class="gh-ship"><span>${sub >= free ? T('cart.freeShipDone') : sub ? T('cart.freeShip').replace('{gap}', `<strong class="num">${inr(free - sub)}</strong>`) : T('ghome.ship')}</span><span class="bar" aria-hidden="true"><span style="width:${Math.min(100, Math.round(sub / free * 100))}%"></span></span></div>` : ''}
     </div>
-  </section>
-
-  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--s7)" aria-label="Your welcome gift">${G.open
+  </section>`,
+    welcome: () => `  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--s7)" aria-label="Your welcome gift">${G.open
     ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">${T('ghome.wonEyebrow')}</span><strong>${T('ghome.wonTitle')}</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
-    : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}
-
-  ${catTiles('gh-cats')}
-  ${giftBoxesHTML('gh-boxes-h')}
-  ${newArrivals('gh-new')}
-  ${promoBanners()}
-
-  <section class="wrap" aria-labelledby="gh-best" style="padding-block:var(--s5) var(--section)">
+    : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}`,
+    cats: () => catTiles('gh-cats'),
+    boxes: () => giftBoxesHTML('gh-boxes-h'),
+    new: () => newArrivals('gh-new'),
+    promos: () => promoBanners(),
+    best: () => `  <section class="wrap" aria-labelledby="gh-best" style="padding-block:var(--s5) var(--section)">
     <div class="section-head"><h2 id="gh-best">${esc(cats.find((c) => c[0] === G.cat)[1])}</h2><a href="#shop" style="font-weight:600">${T('home.seeAll').replace('{count}', P.length)}</a></div>
     <div class="gh-chips" role="group" aria-label="Show">${cats.map(([k, l]) => `<button type="button" class="chip" data-act="gh-cat" data-v="${k}" aria-pressed="${G.cat === k}">${l}</button>`).join('')}</div>
     <div class="grid" style="margin-top:16px">${list.length ? list.map(card).join('') : '<p class="muted">Nothing here yet.</p>'}</div>
-  </section>
-
-  <section class="band" aria-labelledby="gh-feel"><div class="wrap"><div style="flex:1 1 360px"><span class="eyebrow">${T('home.feelEyebrow')}</span><h2 id="gh-feel">${T('home.feel')}</h2></div>
-    <div class="opts" role="group" aria-label="Choose a feeling">${MOODS.map(([k, l]) => `<button type="button" data-act="home-mood" data-v="${k}">${ICON[MOOD_ICON[k]]}<span>${l}</span></button>`).join('')}</div></div></section>
-
-  <section class="section wrap" aria-labelledby="gh-occ"><div class="section-head"><h2 id="gh-occ">${T('home.moment')}</h2></div>
-    <div class="gh-chips">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
-
-  ${pairs.length ? `<section style="background:var(--linen)" aria-labelledby="gh-pairs"><div class="wrap section"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="gh-pairs">${T('ghome.pairs')}</h2><span class="muted">${T('ghome.pairsSub')}</span></div><a href="#ritual" style="font-weight:600">Make your own →</a></div>
+  </section>`,
+    feel: () => `  <section class="band" aria-labelledby="gh-feel"><div class="wrap"><div style="flex:1 1 360px"><span class="eyebrow">${T('home.feelEyebrow')}</span><h2 id="gh-feel">${T('home.feel')}</h2></div>
+    <div class="opts" role="group" aria-label="Choose a feeling">${MOODS.map(([k, l]) => `<button type="button" data-act="home-mood" data-v="${k}">${ICON[MOOD_ICON[k]]}<span>${l}</span></button>`).join('')}</div></div></section>`,
+    occasions: () => `  <section class="section wrap" aria-labelledby="gh-occ"><div class="section-head"><h2 id="gh-occ">${T('home.moment')}</h2></div>
+    <div class="gh-chips">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>`,
+    rituals: () => `  ${pairs.length ? `<section style="background:var(--linen)" aria-labelledby="gh-pairs"><div class="wrap section"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="gh-pairs">${T('ghome.pairs')}</h2><span class="muted">${T('ghome.pairsSub')}</span></div><a href="#ritual" style="font-weight:600">Make your own →</a></div>
     <div class="gh-pairs">${pairs.map((fo) => { const rp = ritualPrice(fo.items.map(([pid, vi]) => [byId[pid], vi])); return `<div class="gh-pair"><span class="tiles">${fo.items.map(([pid, vi]) => `<span class="tile">${tileArt(byId[pid], vi, .7)}</span>`).join('')}</span>
       <span style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0"><strong style="font-family:var(--display);font-size:22px;line-height:1.05">${esc(fo.name)}</strong><span class="muted" style="font-size:13px">${fo.items.map(([pid]) => esc(byId[pid].name)).join(' + ')}</span>
-      <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="num" style="font-weight:600">${rp.save ? `<s class="muted">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span><button class="btn small" type="button" data-act="gh-pair" data-v="${fo.id}">Add the pair</button></span></span></div>`; }).join('')}</div></div></section>` : ''}
-
-  ${spotlight('gh-spot')}
-  ${homeReviews('gh-rev')}
-
-  <section class="wrap" aria-labelledby="gh-arrive" style="padding-bottom:var(--section)"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.arriveEyebrow')}</span><h2 id="gh-arrive">${T('home.arrive')}</h2></div></div>
-    <div class="pack-grid">${pack.slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>
-
-  ${storyBand('gh-story')}
-  ${homeJournal('gh-jr')}
-  ${discover('gh-disc')}
-  ${festiveBanner()}
-
-  <section class="section wrap" aria-labelledby="gh-news"><div class="intro" style="gap:14px"><h2 id="gh-news" style="font-size:40px">${T('home.news')}</h2><p class="muted" style="font-family:var(--body);font-size:16px">${T('home.newsText')}</p>
-    <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 240px"><button class="btn" type="submit">Join the list</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`;
+      <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="num" style="font-weight:600">${rp.save ? `<s class="muted">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span><button class="btn small" type="button" data-act="gh-pair" data-v="${fo.id}">Add the pair</button></span></span></div>`; }).join('')}</div></div></section>` : ''}`,
+    spotlight: () => spotlight('gh-spot'),
+    reviews: () => homeReviews('gh-rev'),
+    packaging: () => `  <section class="wrap" aria-labelledby="gh-arrive" style="padding-bottom:var(--section)"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.arriveEyebrow')}</span><h2 id="gh-arrive">${T('home.arrive')}</h2></div></div>
+    <div class="pack-grid">${pack.slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>`,
+    story: () => storyBand('gh-story'),
+    journal: () => homeJournal('gh-jr'),
+    discover: () => discover('gh-disc'),
+    festive: () => festiveBanner(),
+    news: () => `  <section class="section wrap" aria-labelledby="gh-news"><div class="intro" style="gap:14px"><h2 id="gh-news" style="font-size:40px">${T('home.news')}</h2><p class="muted" style="font-family:var(--body);font-size:16px">${T('home.newsText')}</p>
+    <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 240px"><button class="btn" type="submit">Join the list</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`
+  };
+  return homeOrder().map((id) => (BLOCKS[id] ? BLOCKS[id]() : '')).join('\n');
 }
 
 function viewFor(r, cs) {
@@ -3957,6 +3961,8 @@ document.addEventListener('click', (e) => {
     case 'adm-tags-move': { const v = readTags(d.k); const i = +d.i, to = i + (+d.v); if (to < 0 || to >= v.length) break; const [m] = v.splice(i, 1); v.splice(to, 0, m); admDo(async () => { await saveTags(d.k, v); render(); }, 'Saved.'); break; }
     case 'adm-tags-reset': admDo(async () => { await dbDel('settings', 'key', d.k); delete SET[d.k]; applyTagLists(); render(); }, 'Back to the original.'); break;
     case 'adm-quiz-reset': admDo(async () => { await dbDel('settings', 'key', 'quizQ'); delete SET.quizQ; applyQuizQ(); render(); }, 'Back to the original.'); break;
+    case 'adm-home-move': { const o = homeOrder(true); const i = o.indexOf(d.id), to = i + (+d.v); if (to < 0 || to >= o.length) break; o.splice(i, 1); o.splice(to, 0, d.id); admDo(async () => { await saveHome(o, SET.homeHide || []); render(); }, 'Saved.'); break; }
+    case 'adm-home-reset': admDo(async () => { await dbDel('settings', 'key', 'homeOrder'); await dbDel('settings', 'key', 'homeHide'); delete SET.homeOrder; delete SET.homeHide; render(); }, 'Back to the original.'); break;
     case 'adm-list-add': case 'adm-list-del': case 'adm-list-move': listAction(d); break;
     case 'adm-list-reset': admDo(async () => { if (UI.adm.draft) delete UI.adm.draft[d.k]; await dbDel('settings', 'key', d.k); renderChrome(); render(); }, 'Back to the original.'); break;
     case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
@@ -4114,6 +4120,7 @@ document.addEventListener('change', (e) => {
     fileToPolicyText(file).then((txt) => { if (!txt) throw new Error('The file has no text.'); ta.value = txt; ta.dispatchEvent(new Event('change', { bubbles: true })); }).catch((err) => say('Couldn’t read the file: ' + err.message)); t.value = ''; }
   if (d.act === 'adm-tags') { const k = d.k; admDo(async () => { await saveTags(k, readTags(k)); }, 'Saved.'); }
   if (d.act === 'adm-quiz') { const v = [...document.querySelectorAll('#tg-quiz .q-text')].map((i) => i.value.trim()); admDo(async () => { SET.quizQ = v; applyQuizQ(); await dbPut('settings', { key: 'quizQ', value: v }); }, 'Saved.'); }
+  if (d.act === 'adm-home') { const hide = (SET.homeHide || []).filter((x) => x !== d.id); if (!t.checked) hide.push(d.id); admDo(async () => { await saveHome(homeOrder(true), hide); render(); }, 'Saved.'); }
   if (d.act === 'adm-list') { const key = d.k; admDo(async () => { await saveList(key, readList(key)); renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-ov') { const k = d.k; admDo(async () => { if (!t.value.trim() || t.value === SEEN[k].d) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); UI.adm.open = 'x.'; renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-text') { const k = d.k; admDo(async () => { if (t.value === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); renderChrome(); }, 'Saved.'); }
