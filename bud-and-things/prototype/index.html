@@ -29,18 +29,22 @@
 
 /* Silk · Maroon & Gold: deep wine header, hero and footer over cream shop pages. Every text pair is at least 4.5:1. Gold is only ever used on maroon; on cream, labels use dark gold. The shiny logos replace the flat marks. */
 :root[data-skin="silk"] { --ivory: #F8F0E4; --plaster: #F1E4D0; --linen: #F1E4D0; --sand: #EEDFC4; --sand2: #F3E8D2; --card: #FFFFFF; --caramel: #D6A34A; --terra: #8F1834; --terra-ink: #7A1229; --olive: #7A1229; --choc: #3A0610; --choc2: #5C1F2B; --line: #E0CBB0; --line2: #C9A56F; --glow: #D6A34A; --cta: #8F1834; --on-cta: #F8F0E4; --ok: #3F5A2A; --ok-bg: #E6EBD2; --err-bg: #F5D9D9; --head-bg: #210309; --sk-ink: #3A0610; --sk-ink2: #5C1F2B; --sk-accent: #8F1834; --sk-light: #F3D79B; --sk-dark: #3A0610; --sk-glow: #D6A34A; --sk-cta: #D6A34A; --sk-on-cta: #210309; --sk-chip: rgba(248,240,228,.95); }
-:root[data-skin="silk"] .site-head { color: #F3D79B; border-bottom-color: rgba(214,163,74,.55); background: linear-gradient(90deg, #210309, #3A0610); }
+:root[data-skin="silk"] { --velvet: url(assets/silk/velvet.webp); }
+/* Velvet silk: a soft grain, long folds and a travelling sheen over every maroon surface. The colour underneath is unchanged, so text contrast is the same. */
+:root[data-skin="silk"] .band, :root[data-skin="silk"] .dark-band, :root[data-skin="silk"] .gh-strip, :root[data-skin="silk"] .foot-base, :root[data-skin="silk"] .note-card, :root[data-skin="silk"] .finder-side, :root[data-skin="silk"] .paths a.feel, :root[data-skin="silk"] .promo-choc, :root[data-skin="silk"] .promo-terra, :root[data-skin="silk"] .pv-bar, :root[data-skin="silk"] .proto { background-image: var(--velvet); background-size: 1024px 768px; }
+:root[data-skin="silk"] .mobile-menu { background-image: var(--velvet); }
+:root[data-skin="silk"] .site-head { color: #F3D79B; border-bottom-color: rgba(214,163,74,.55); background: var(--velvet), linear-gradient(90deg, #210309, #3A0610); background-size: 1024px 768px, auto; }
 :root[data-skin="silk"] .site-head .icon-btn, :root[data-skin="silk"] .site-head .nav a { color: #FBE9C2; }
 :root[data-skin="silk"] .site-head .nav a[aria-current="page"] { border-bottom-color: #D6A34A; }
 :root[data-skin="silk"] .site-head .icon-btn .count { background: #D6A34A; color: #210309; }
 :root[data-skin="silk"] .mobile-menu { background: #210309; border-top-color: rgba(214,163,74,.4); }
 :root[data-skin="silk"] .mobile-menu a { color: #FBE9C2; border-bottom-color: rgba(214,163,74,.25); }
-:root[data-skin="silk"] .logo .mark.wordmark { -webkit-mask-image: none; mask-image: none; background: url(assets/silk/logo-horizontal.webp) center / contain no-repeat; width: 172px; aspect-ratio: 1200 / 440; }
+:root[data-skin="silk"] .logo .mark.wordmark { -webkit-mask-image: none; mask-image: none; background: url(assets/silk/logo-horizontal.webp) center / contain no-repeat; width: 300px; aspect-ratio: 1400 / 320; }
 :root[data-skin="silk"] .logo .mark.monogram { background-image: url(assets/silk/leaf.webp); width: 54px; aspect-ratio: 500 / 479; }
-:root[data-skin="silk"] .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); aspect-ratio: 1000 / 795; }
+:root[data-skin="silk"] .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); aspect-ratio: 1240 / 944; }
 :root[data-skin="silk"] .ink-light .mark.lockup, :root[data-skin="silk"] .dark-band .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); }
 :root[data-skin="silk"] .mark.monogram { background-image: url(assets/silk/leaf.webp); aspect-ratio: 500 / 479; }
-:root[data-skin="silk"] .site-foot { background: radial-gradient(ellipse at 85% 10%, #4a0b1c, #3A0610 55%, #210309); color: #FBE9C2; border-top: 1px solid rgba(214,163,74,.55); }
+:root[data-skin="silk"] .site-foot { background: var(--velvet), radial-gradient(ellipse at 85% 10%, #4a0b1c, #3A0610 55%, #210309); background-size: 1024px 768px, auto; color: #FBE9C2; border-top: 1px solid rgba(214,163,74,.55); }
 :root[data-skin="silk"] .site-foot a, :root[data-skin="silk"] .site-foot .muted, :root[data-skin="silk"] .site-foot small { color: #FBE9C2; }
 :root[data-skin="silk"] .site-foot strong { color: #D6A34A; font-family: var(--display); letter-spacing: .06em; }
 :root[data-skin="silk"] .btn:not(.ghost):not(.light) { box-shadow: 0 4px 12px rgba(58,6,16,.22); }
@@ -425,6 +429,7 @@ body.app .toast { bottom: 96px; }
 .suggest .eyebrow { font-size: 12px; color: var(--ok); }
 .code-form { display: flex; flex-direction: column; gap: 6px; }
 .code-form > span { display: flex; gap: 8px; }
+input:disabled { background: var(--sand); color: var(--ink-2, #5b4a46); opacity: .75; cursor: not-allowed; border-style: dashed; }
 .code-form input { flex: 1 1 auto; min-width: 0; text-transform: uppercase; }
 .code-form .err { color: var(--terra-ink); font-size: 14px; }
 .inv-card { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
@@ -626,7 +631,7 @@ body.cs main { padding-bottom: 0; }
 /* the gift-first home page (Owner view → Settings → Home page, or the Preview bar) */
 .gh-strip { background: var(--choc); color: var(--ivory); font-size: 12px; font-weight: 700; letter-spacing: .06em; overflow: hidden; white-space: nowrap; }
 .gh-strip .gh-marq { display: inline-flex; gap: 48px; padding: 9px 0; animation: gh-marq 26s linear infinite; }
-.gh-hero { display: grid; gap: 22px; padding-block: 20px 40px; }
+.gh-hero { display: grid; gap: 22px; padding-block: 20px 0; }
 .gh-hero .gh-ph { overflow: hidden; aspect-ratio: 4 / 3; background: var(--sand); position: relative; }
 .gh-hero .gh-ph img { width: 100%; height: 100%; object-fit: cover; display: block; animation: gh-kb 16s ease-in-out infinite alternate; }
 .gh-hero h1 { font-size: clamp(38px, 5.4vw, 64px); line-height: 1.02; margin: 0; }
@@ -634,7 +639,7 @@ body.cs main { padding-bottom: 0; }
 .gh-hero .gh-cta .btn { flex: 1 1 200px; }
 .gh-badge { position: absolute; left: 12px; top: 12px; background: var(--card); color: var(--terra-ink); font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; }
 .gh-badge svg { transform-origin: 50% 90%; animation: gh-flick 1.6s ease-in-out infinite; }
-@media (min-width: 900px) { .gh-hero { grid-template-columns: 1.1fr 1fr; align-items: center; gap: 56px; padding-block: 32px 40px; } }
+@media (min-width: 900px) { .gh-hero { grid-template-columns: 1.1fr 1fr; align-items: center; gap: 56px; padding-block: 32px 0; } }
 .gh-rise { animation: gh-rise .7s cubic-bezier(.2,.8,.2,1) both; } .gh-rise.d1 { animation-delay: .12s; } .gh-rise.d2 { animation-delay: .24s; }
 .gh-shine { position: relative; overflow: hidden; }
 .gh-shine::after { content: ""; position: absolute; inset: 0 auto 0 -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.4), transparent); animation: gh-shine 3.4s 1.2s infinite; pointer-events: none; }
@@ -686,7 +691,9 @@ body.cs main { padding-bottom: 0; }
 @keyframes gh-flip { from { transform: rotateX(90deg); opacity: 0; } to { transform: none; opacity: 1; } }
 /* ---------- review round: offers, why band, categories, banners, reviews, journal, policies, account, product page parts ---------- */
 .gh-strip.offers { background: var(--choc); }
-#app .gh-strip.offers { margin-block: var(--s5); }
+#app .gh-strip.offers { margin-block: var(--section); }
+/* one rhythm: plain sections that follow each other share a single gap, not two paddings added together */
+#app > .wrap:not(.gh-hero):not(.page-head):not(.article-head) + .wrap { padding-top: 0; }
 .gh-strip.offers .gh-marq span { display: inline-flex; align-items: center; gap: 8px; }
 .gh-strip.offers svg { color: var(--glow); }
 .why-band { background: var(--plaster); border-top: 1px solid var(--line); padding-block: var(--section-sm); }
@@ -737,7 +744,7 @@ body.app .why-band { padding-bottom: 96px; }
 .festive .btn.light { color: var(--choc); }
 @media (max-width: 760px) { .festive { grid-template-columns: 1fr; } .festive img { aspect-ratio: 16 / 10; height: auto; } .festive-copy { padding: 26px 22px; } }
 .spot { background: var(--linen); }
-.spot > .wrap.section { padding-block: 24px 40px; }
+.spot > .wrap.section { padding-block: var(--section); }
 .spot-ph { aspect-ratio: 1; height: auto; max-height: 460px; width: 100%; }
 .spot-quote { font-family: var(--display); font-style: italic; font-size: 24px; line-height: 1.3; color: var(--terra-ink); }
 .hl-row { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
@@ -1165,7 +1172,7 @@ const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat
 // in the database (or in this browser in demo mode) and the default here shows until then.
 // In a text, a new line breaks the line and *words between stars* are set in italics. {braces} are filled in from settings.
 const TEXT = {
-  'bar.offers': ['Use {welcomeCode} for {welcomeOff}% off your first order|Free shipping on orders over {freeOver}|Pair a candle with an object and save {ritualOff}%|Earn {rewardPct}% back in Bud Points on every order|Diwali gift boxes are here, wrapped free', 'Offers bar at the top of every page (separate offers with |)'],
+  'bar.offers': ['Use {welcomeCode} for {welcomeOff}% off your first order|Pair a candle with an object and save {ritualOff}%|Earn {rewardPct}% back in Bud Points on every order|Diwali gift boxes are here, wrapped free', 'Offers bar at the top of every page (separate offers with |)'],
   'home.newEyebrow': ['Just poured', 'Home: new arrivals small line'],
   'home.new': ['New arrivals', 'Home: new arrivals heading'],
   'home.catsSub': ['Candles, objects and ready-to-give boxes, all made by hand in small batches.', 'Home: category text'],
@@ -3342,6 +3349,7 @@ const HL_ICON = {
   shield: '<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
   card: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/>',
   ruler: '<path d="M3 16L16 3l5 5L8 21z"/><path d="M7 12l2 2M10 9l2 2M13 6l2 2"/>',
+  wallet: '<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H18v3"/><path d="M3 7.5V18a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H5.5A2.5 2.5 0 0 1 3 7.5z"/><path d="M16 14h4v3h-4a1.5 1.5 0 0 1 0-3z"/>',
   tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.4"/>',
   star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8z"/>',
   pin: '<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
@@ -3698,7 +3706,7 @@ function payBadges() {
     Visa: svg(48, '<text x="0" y="19" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-style="italic" font-size="20" letter-spacing="-.5" fill="#1A1F71">VISA</text>'),
     Mastercard: svg(40, '<circle cx="14" cy="12" r="10" fill="#EB001B"/><circle cx="26" cy="12" r="10" fill="#F79E1B"/><path d="M20 4.2a10 10 0 0 1 0 15.6 10 10 0 0 1 0-15.6z" fill="#FF5F00"/>'),
     RuPay: svg(60, '<text x="0" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#1B3F8B">Ru</text><text x="21" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#F58220">Pay</text><polygon points="55,6 60,12 55,18" fill="#097939"/>'),
-    'Net banking': hl('card', 16) + '<span>Net banking</span>', Wallets: hl('tag', 16) + '<span>Wallets</span>' };
+    'Net banking': hl('card', 16) + '<span>Net banking</span>', Wallets: hl('wallet', 16) + '<span>Wallets</span>' };
   return `<ul class="pay-badges" aria-label="Payment methods we accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
 }
 
@@ -3852,17 +3860,16 @@ function viewGiftHome() {
       <h1 id="gh-h" class="gh-rise">${T('ghome.title')}</h1>
       <p class="muted gh-rise d1" style="font-size:17px;max-width:520px">${T('ghome.sub')}</p>
       <div class="gh-cta gh-rise d2"><a class="btn gh-shine" href="#gifting">${T('ghome.cta1')}</a><a class="btn ghost" href="#feeling">${T('ghome.cta2')}</a></div>
-      ${free ? `<div class="gh-ship"><span>${sub >= free ? T('cart.freeShipDone') : sub ? T('cart.freeShip').replace('{gap}', `<strong class="num">${inr(free - sub)}</strong>`) : T('ghome.ship')}</span><span class="bar" aria-hidden="true"><span style="width:${Math.min(100, Math.round(sub / free * 100))}%"></span></span></div>` : ''}
     </div>
   </section>`,
-    welcome: () => `  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--s7)" aria-label="Your welcome gift">${G.open
+    welcome: () => `  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--section)" aria-label="Your welcome gift">${G.open
     ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">${T('ghome.wonEyebrow')}</span><strong>${T('ghome.wonTitle')}</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
     : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}`,
     cats: () => catTiles('gh-cats'),
     boxes: () => giftBoxesHTML('gh-boxes-h'),
     new: () => newArrivals('gh-new'),
     promos: () => promoBanners(),
-    best: () => `  <section class="wrap" aria-labelledby="gh-best" style="padding-block:var(--s5) var(--section)">
+    best: () => `  <section class="wrap" aria-labelledby="gh-best" style="padding-bottom:var(--section)">
     <div class="section-head"><h2 id="gh-best">${esc(cats.find((c) => c[0] === G.cat)[1])}</h2><a href="#shop" style="font-weight:600">${T('home.seeAll').replace('{count}', P.length)}</a></div>
     <div class="gh-chips" role="group" aria-label="Show">${cats.map(([k, l]) => `<button type="button" class="chip" data-act="gh-cat" data-v="${k}" aria-pressed="${G.cat === k}">${l}</button>`).join('')}</div>
     <div class="grid" style="margin-top:16px">${list.length ? list.map(card).join('') : '<p class="muted">Nothing here yet.</p>'}</div>
