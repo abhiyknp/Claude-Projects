@@ -2183,7 +2183,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2246,7 +2246,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
@@ -2440,6 +2440,45 @@ function listAction(d) {
     if (to < 0 || to >= arr.length) return; const [m] = arr.splice(from, 1); arr.splice(to, 0, m);
   }
   admDo(async () => { await saveList(key, v); UI.adm.tab = 'lists'; renderChrome(); render(); }, 'Saved.');
+}
+
+// Policy pages: the four built-in ones keep their text in Site text; extra pages are saved in Settings. A Word or text file can fill the box.
+const polBox = (id, title, body, custom) => `<div class="adm-card" data-pol="${esc(id)}"><h2 style="font-size:22px">${custom ? `<span class="field"><label for="pol-${esc(id)}-t">Page title</label><input id="pol-${esc(id)}-t" data-act="adm-pol" data-id="${esc(id)}" class="pol-title" value="${esc(title)}"></span>` : esc(title)}</h2>
+  <span class="field"><label for="pol-${esc(id)}">Page text <span class="hint">a line starting with ## is a heading; a blank line starts a new paragraph</span></label><textarea id="pol-${esc(id)}" class="pol-body" rows="12" data-act="adm-pol" data-id="${esc(id)}">${esc(body)}</textarea></span>
+  <p style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px"><label class="btn small ghost" for="polf-${esc(id)}" style="cursor:pointer">Fill from a Word or text file</label><input id="polf-${esc(id)}" class="sr" type="file" accept=".docx,.txt,.md,text/plain" data-act="adm-pol-file" data-id="${esc(id)}">${custom ? `<a class="btn small ghost" href="#policy-${esc(id)}">View page</a><button class="btn small ghost danger" type="button" data-act="adm-pol-del" data-id="${esc(id)}">Remove this page</button>` : `<a class="btn small ghost" href="#${esc(id)}">View page</a>${('legal.' + id) in TXT ? `<button class="linkbtn" type="button" data-act="adm-text-reset" data-k="legal.${esc(id)}">Put back the original</button>` : ''}`}</p></div>`;
+function admPolicies() {
+  const custom = Array.isArray(SET.policyPages) ? SET.policyPages : [];
+  return `<p class="muted">Customers read these pages on the site; there is no download. Choose a Word (.docx) or text file to fill a box, read it over, then click outside the box to save. Business details come from Settings, in {braces} such as {bizName}. Have a legal adviser check every policy before launch.</p>
+    ${Object.entries(LEGAL).map(([id, [t, k]]) => polBox(id, t, Tx(k), false)).join('')}
+    ${custom.map((x) => polBox(x.id, x.title, x.body || '', true)).join('')}
+    <p><button class="btn" type="button" data-act="adm-pol-add">Add a policy page</button> <span class="muted">New pages are found at #policy-name. Add a link in Menus &amp; FAQ → Footer links.</span></p>`;
+}
+const savePolicies = (list) => dbPut('settings', { key: 'policyPages', value: list });
+// Word (.docx) is a zip file; read word/document.xml out of it with the browser's own inflate, no library
+async function docxText(buf) {
+  const v = new DataView(buf); let e = buf.byteLength - 22; while (e >= 0 && v.getUint32(e, true) !== 0x06054b50) e--; if (e < 0) throw new Error('This is not a Word file.');
+  let o = v.getUint32(e + 16, true); const n = v.getUint16(e + 10, true); let xml = null;
+  for (let i = 0; i < n; i++) {
+    const m = v.getUint16(o + 10, true), cs = v.getUint32(o + 20, true), nl = v.getUint16(o + 28, true), xl = v.getUint16(o + 30, true), cl = v.getUint16(o + 32, true), lo = v.getUint32(o + 42, true);
+    const name = new TextDecoder().decode(new Uint8Array(buf, o + 46, nl)); o += 46 + nl + xl + cl;
+    if (name !== 'word/document.xml') continue;
+    const ds = lo + 30 + v.getUint16(lo + 26, true) + v.getUint16(lo + 28, true); const raw = new Uint8Array(buf, ds, cs);
+    xml = m === 0 ? new TextDecoder().decode(raw) : await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+  }
+  if (!xml) throw new Error('No text found in this Word file.');
+  const doc = new DOMParser().parseFromString(xml, 'application/xml'); const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'; const out = []; let list = [];
+  const flush = () => { if (list.length) { out.push(list.join('\n')); list = []; } };
+  [...doc.getElementsByTagNameNS(W, 'p')].forEach((p) => {
+    let t = ''; p.querySelectorAll('*').forEach((el) => { if (el.localName === 't') t += el.textContent; else if (el.localName === 'tab') t += ' '; else if (el.localName === 'br') t += '\n'; });
+    t = t.trim(); if (!t) { flush(); return; }
+    const st = p.getElementsByTagNameNS(W, 'pStyle')[0]; const sv = st ? st.getAttributeNS(W, 'val') || '' : '';
+    if (/^(Heading|Title)/i.test(sv)) { flush(); out.push('## ' + t); } else if (p.getElementsByTagNameNS(W, 'numPr').length) list.push('• ' + t); else { flush(); out.push(t); }
+  });
+  flush(); return out.join('\n\n');
+}
+async function fileToPolicyText(file) {
+  if (/\.docx$/i.test(file.name)) return docxText(await file.arrayBuffer());
+  return (await file.text()).replace(/\r\n?/g, '\n').replace(/^#{1,6} /gm, '## ').trim();
 }
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
@@ -3181,12 +3220,13 @@ function viewWhy() {
       <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#story">Read our story</a><a class="btn ghost" href="#shipping">Shipping &amp; delivery</a></span></div></div></div>`;
 }
 const LEGAL = { privacy: ['Privacy policy', 'legal.privacy'], terms: ['Terms & conditions', 'legal.terms'], shipping: ['Shipping & delivery', 'legal.shipping'], refunds: ['Cancellations & replacements', 'legal.refunds'] };
-function legalBody(k) { return Tx(k).split(/\n\n+/).map((b) => { const m = /^## (.+)\n?([\s\S]*)$/.exec(b); return m ? `<h2>${esc(m[1])}</h2>${m[2] ? `<p>${esc(m[2]).replace(/\n/g, '<br>')}</p>` : ''}` : `<p>${esc(b).replace(/\n/g, '<br>')}</p>`; }).join(''); }
+function legalMap() { const m = Object.assign({}, LEGAL); (Array.isArray(SET.policyPages) ? SET.policyPages : []).forEach((x) => { if (x && x.id && x.title) m['policy-' + x.id] = [x.title, null, x.body || '']; }); return m; }
+function legalBody(k, raw) { return (raw != null ? fill(raw) : Tx(k)).split(/\n\n+/).map((b) => { const m = /^## (.+)\n?([\s\S]*)$/.exec(b); return m ? `<h2>${esc(m[1])}</h2>${m[2] ? `<p>${esc(m[2]).replace(/\n/g, '<br>')}</p>` : ''}` : `<p>${esc(b).replace(/\n/g, '<br>')}</p>`; }).join(''); }
 function viewLegal(r) {
-  const [title, k] = LEGAL[r];
+  const LG = legalMap(); const [title, k, raw] = LG[r];
   return `<div class="wrap legal" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Policies</span><h1 tabindex="-1">${esc(title)}</h1>${Tx('legal.note') ? `<div class="status" role="note">${T('legal.note')}</div>` : ''}</div>
-    <div class="legal-grid"><nav class="legal-nav" aria-label="Policies">${Object.entries(LEGAL).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
-    <div class="article-body">${legalBody(k)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p><p>${T('legal.grievance')}</p></div></div></div>`;
+    <div class="legal-grid"><nav class="legal-nav" aria-label="Policies">${Object.entries(LG).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
+    <div class="article-body">${legalBody(k, raw)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p><p>${T('legal.grievance')}</p></div></div></div>`;
 }
 // a signed-in customer's orders and Bud Points: from the database (my_orders), or this browser's orders in the preview
 function myOrders() {
@@ -3557,7 +3597,7 @@ function viewFor(r, cs) {
   else if (r === 'under-999') html = viewShop('under-999');
   else if (r === 'why') html = viewWhy();
   else if (r === 'journal' || r.startsWith('journal-')) html = viewJournal(r.slice(8));
-  else if (LEGAL[r]) html = viewLegal(r);
+  else if (legalMap()[r]) html = viewLegal(r);
   else if (r === 'track') html = viewTrack();
   else if (r === 'account') html = viewAccount();
   else html = viewNotFound();
@@ -3854,6 +3894,8 @@ document.addEventListener('click', (e) => {
     case 'ov-save': ovSave($('#ov-text').value); break;
     case 'ov-reset': if (UI.ov) { UI.ov.cur = UI.ov.def; ovSave(UI.ov.def); } break;
     case 'ov-scan': ovScanAll(); render(); break;
+    case 'adm-pol-add': { const list = (Array.isArray(SET.policyPages) ? SET.policyPages : []).slice(); let n = list.length + 1; while (list.some((x) => x.id === 'page-' + n)) n++; list.push({ id: 'page-' + n, title: 'New policy page', body: '' }); admDo(async () => { await savePolicies(list); render(); }, 'Page added. Give it a title and text.'); break; }
+    case 'adm-pol-del': { const list = (SET.policyPages || []).filter((x) => x.id !== d.id); admDo(async () => { await savePolicies(list); render(); }, 'Page removed.'); break; }
     case 'adm-list-add': case 'adm-list-del': case 'adm-list-move': listAction(d); break;
     case 'adm-list-reset': admDo(async () => { if (UI.adm.draft) delete UI.adm.draft[d.k]; await dbDel('settings', 'key', d.k); renderChrome(); render(); }, 'Back to the original.'); break;
     case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
@@ -4002,6 +4044,10 @@ document.addEventListener('change', (e) => {
   if (d.act === 'ritual-custom') { UI.ritual.custom[d.k] = t.value; UI.ritual.pick.custom = { 0: true, 1: true }; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
   if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); if (d.k === 'theme') render(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
+  if (d.act === 'adm-pol') { const id = d.id; const box = t.closest('[data-pol]'); const body = box.querySelector('.pol-body').value; const ti = box.querySelector('.pol-title');
+    admDo(async () => { if (ti) { const list = (SET.policyPages || []).map((x) => (x.id === id ? { id, title: ti.value.trim() || x.title, body } : x)); await savePolicies(list); } else { const k = 'legal.' + id; if (body === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: body }); } renderChrome(); }, 'Saved.'); }
+  if (d.act === 'adm-pol-file') { const file = t.files && t.files[0]; if (!file) return; const box = t.closest('[data-pol]'); const ta = box.querySelector('.pol-body');
+    fileToPolicyText(file).then((txt) => { if (!txt) throw new Error('The file has no text.'); ta.value = txt; ta.dispatchEvent(new Event('change', { bubbles: true })); }).catch((err) => say('Couldn’t read the file: ' + err.message)); t.value = ''; }
   if (d.act === 'adm-list') { const key = d.k; admDo(async () => { await saveList(key, readList(key)); renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-ov') { const k = d.k; admDo(async () => { if (!t.value.trim() || t.value === SEEN[k].d) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); UI.adm.open = 'x.'; renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-text') { const k = d.k; admDo(async () => { if (t.value === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); renderChrome(); }, 'Saved.'); }
