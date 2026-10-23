@@ -99,6 +99,15 @@ body.editing .proto #edit-btn { background: #D6A34A; color: #210309; }
 .ov-sheet { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 70; width: min(560px, calc(100vw - 24px)); display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--card); color: var(--choc); border: 1px solid var(--line2); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
 .ov-sheet textarea { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line2); background: var(--ivory); color: var(--choc); resize: vertical; }
 .ov-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.lrow { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; padding: 10px 18px; border-bottom: 1px solid var(--linen); }
+.lrow.faq { grid-template-columns: 1fr auto; }
+.lrow .lbtns { display: flex; gap: 6px; }
+.lrow .lbtns button { min-width: 44px; min-height: 44px; }
+.lrow textarea, .lrow input { width: 100%; }
+.lrow .field.full { grid-column: 1 / -1; }
+.lcol { border: 1px solid var(--line); border-radius: 8px; margin: 12px 0; overflow: hidden; }
+.lcol > .lhead { padding: 12px 18px; background: var(--linen); display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+@media (max-width: 640px) { .lrow { grid-template-columns: 1fr; } }
 .adm-ovpage { padding: 12px 18px 4px; background: var(--linen); border-bottom: 1px solid var(--line); }
 .skip-link { position: absolute; left: 12px; top: -80px; z-index: 100; padding: 12px 18px; background: var(--cta); color: var(--on-cta); font-weight: 700; text-decoration: none; }
 .skip-link:focus { top: 12px; }
@@ -970,10 +979,7 @@ body.app .why-band { padding-bottom: 96px; }
       <span class="muted" id="foot-tag">Made with thought. Given with feeling.</span>
       <div id="foot-social"></div>
     </div>
-    <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#gifts">Gift boxes</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a><a href="#bulk">Corporate &amp; bulk gifts</a><a href="#giftcard">Gift cards</a><a href="#share">Share with a friend</a></nav>
-    <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact us</a><a href="#track">Track your order</a><a href="#shipping">Shipping &amp; delivery</a><a href="#refunds">Cancellations &amp; replacements</a><a href="#faq">FAQ</a><a href="#journal-first-burn">Product care</a></nav>
-    <nav aria-label="About"><strong>About</strong><a href="#story">Our Story</a><a href="#why">Why buy from us</a><a href="#journal">Journal</a><a href="#account">Your account</a></nav>
-    <nav aria-label="Policies"><strong>Policies</strong><a href="#privacy">Privacy policy</a><a href="#terms">Terms &amp; conditions</a><a href="#shipping">Shipping policy</a><a href="#refunds">Replacement policy</a></nav>
+    <div id="foot-cols" style="display:contents"></div>
   </div>
   <div class="wrap foot-pay"><div><strong>We accept</strong><span id="foot-pay"></span></div><div class="muted" id="foot-also">Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.</div></div>
   <div class="foot-base"><div class="wrap"><span id="foot-copy">© BUD &amp; THINGS by Ashi. All rights reserved.</span><span id="foot-made">Hand-made in India</span></div></div>
@@ -1624,11 +1630,35 @@ function route() { const h = (location.hash || '#home').slice(1) || 'home'; if (
 window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false; UI.orderSync = {}; UI.invSync = {}; render(true); track('page_view', { page: pageName(route()) }); });
 
 // ---------- chrome ----------
-const NAV = [['shop', 'Shop'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story']];
+// menus and the FAQ: the owner edits these lists in Owner view (Menus & FAQ); the lists below are what shows until then
+const LIST_DEFAULTS = {
+  navList: [['shop', 'Shop'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story']],
+  menuList: [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['shop', 'All products'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['track', 'Track your order'], ['help', 'Help & contact']],
+  footList: [['Shop', [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['gifts', 'Gift boxes'], ['shop', 'All products'], ['ritual', 'Build Your Ritual'], ['bulk', 'Corporate & bulk gifts'], ['giftcard', 'Gift cards'], ['share', 'Share with a friend']]],
+    ['Help', [['help', 'Contact us'], ['track', 'Track your order'], ['shipping', 'Shipping & delivery'], ['refunds', 'Cancellations & replacements'], ['faq', 'FAQ'], ['journal-first-burn', 'Product care']]],
+    ['About', [['story', 'Our Story'], ['why', 'Why buy from us'], ['journal', 'Journal'], ['account', 'Your account']]],
+    ['Policies', [['privacy', 'Privacy policy'], ['terms', 'Terms & conditions'], ['shipping', 'Shipping policy'], ['refunds', 'Replacement policy']]]]
+};
+const okLink = (x) => Array.isArray(x) && typeof x[0] === 'string' && typeof x[1] === 'string' && x[1].trim();
+// a saved list is used only if it is well formed; otherwise the built-in one
+function listOf(k) {
+  const v = SET[k]; const d = LIST_DEFAULTS[k];
+  if (k === 'footList') return Array.isArray(v) && v.every((c) => Array.isArray(c) && typeof c[0] === 'string' && Array.isArray(c[1]) && c[1].every(okLink)) ? v : d;
+  return Array.isArray(v) && v.every(okLink) ? v : d;
+}
+const linkHref = (to) => (/^https?:\/\//i.test(to) ? to : '#' + to.replace(/^#/, ''));
+const linkA = (to, l, extra) => /^https?:\/\//i.test(to) ? `<a href="${esc(to)}" target="_blank" rel="noopener"${extra || ''}>${esc(l)}</a>` : `<a href="${esc(linkHref(to))}"${extra || ''}>${esc(l)}</a>`;
+// FAQ: a saved list wins; before that, the numbered Site text lines
+function faqItems() {
+  if (Array.isArray(SET.faqList) && SET.faqList.every((x) => x && typeof x.q === 'string')) return SET.faqList.filter((x) => x.q.trim()).map((x) => ({ q: fill(x.q), a: fill(x.a || '') }));
+  const out = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) out.push({ q: Tx('faq.q' + i), a: Tx('faq.a' + i) });
+  return out;
+}
+const mdText = (t) => esc(t).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
 function renderChrome() {
   const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'jesmonite', 'collection'].includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
-  $('#nav').innerHTML = NAV.map(([k, l]) => `<a href="#${k}"${cur(k)}>${l}</a>`).join('');
-  $('#mobile-menu-inner').innerHTML = [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['shop', 'All products'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['track', 'Track your order'], ['account', S.account ? 'Your account' : 'Sign in'], ['help', 'Help & contact']].map(([k, l]) => `<a href="#${k}">${l}</a>`).join('');
+  $('#nav').innerHTML = listOf('navList').map(([k, l]) => linkA(k, l, cur(k))).join('');
+  $('#mobile-menu-inner').innerHTML = listOf('menuList').map(([k, l]) => linkA(k, l)).join('') + `<a href="#account">${S.account ? 'Your account' : 'Sign in'}</a>`;
   $('#mobile-menu').hidden = !UI.menu; $('#menu-btn').setAttribute('aria-expanded', String(UI.menu)); lockPage();
   const cc = cartCount(); const cb = $('#cart-btn');
   cb.setAttribute('aria-label', `Cart, ${cc} item${cc === 1 ? '' : 's'}`);
@@ -1636,6 +1666,7 @@ function renderChrome() {
   const sb = $('#saved-btn'); sb.querySelector('.count')?.remove(); if (S.saved.length) sb.insertAdjacentHTML('beforeend', `<span class="count num">${S.saved.length}</span>`);
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
+  $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also'); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-made').innerHTML = T('foot.made'); $('#foot-pay').innerHTML = payBadges();
   const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
@@ -2116,9 +2147,9 @@ function viewShare() {
       ${sh.err ? `<span class="err full" role="alert">${esc(sh.err)}</span>` : ''}<span class="full"><button class="btn ghost" type="submit">Get my link</button></span></form>` : ''}</div>`;
 }
 function viewFaq() {
-  const qs = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) qs.push(i);
+  const qs = faqItems();
   return `<div class="wrap" style="padding-bottom:var(--section);max-width:820px"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">${T('faq.title')}</h1><p class="muted">${T('faq.sub')}</p></div>
-    <div class="faq">${qs.map((i) => `<details><summary>${T('faq.q' + i)}</summary><p class="muted">${T('faq.a' + i)}</p></details>`).join('')}</div>
+    <div class="faq">${qs.map((x) => `<details><summary>${mdText(x.q)}</summary><p class="muted">${mdText(x.a)}</p></details>`).join('')}</div>
     <p style="margin-top:28px">${socialLinks()}</p></div>`;
 }
 function viewBulk() {
@@ -2151,7 +2182,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2214,7 +2245,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
@@ -2344,6 +2375,62 @@ function shrink(file, max) {
 }
 const asDataURL = (blob) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
 
+
+// Menus & FAQ: the owner's lists. Each change saves the whole list to Settings.
+const ROUTE_HINTS = SEO_PAGES.map((x) => x[0]).concat(['home', 'account', 'saved', 'cart', 'journal-first-burn']);
+function faqRaw() {
+  if (Array.isArray(SET.faqList)) return SET.faqList.map((x) => ({ q: x.q || '', a: x.a || '' }));
+  const raw = (k) => (k in TXT ? TXT[k] : TEXT[k] ? TEXT[k][0] : ''); const out = [];
+  for (let i = 1; raw('faq.q' + i) || TEXT['faq.q' + i]; i++) if (raw('faq.q' + i).trim()) out.push({ q: raw('faq.q' + i), a: raw('faq.a' + i) });
+  return out;
+}
+const lrow = (key, c, i, to, label) => `<div class="lrow"><span class="field"><label for="l-${key}-${c}-${i}-t">Words shown</label><input id="l-${key}-${c}-${i}-t" class="l-label" data-act="adm-list" data-k="${key}" value="${esc(label)}"></span><span class="field"><label for="l-${key}-${c}-${i}-to">Goes to <span class="hint">page name or full web address</span></label><input id="l-${key}-${c}-${i}-to" class="l-to" list="route-hints" data-act="adm-list" data-k="${key}" value="${esc(to)}"></span>
+  <span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="${key}" data-c="${c}" data-i="${i}" data-v="-1" aria-label="Move ${esc(label)} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="${key}" data-c="${c}" data-i="${i}" data-v="1" aria-label="Move ${esc(label)} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="${key}" data-c="${c}" data-i="${i}" aria-label="Remove ${esc(label)}">Remove</button></span></div>`;
+function admLists() {
+  const draft = (key) => (UI.adm.draft && UI.adm.draft[key]) || null;
+  const simple = (key, title, hint) => { const ls = draft(key) || listOf(key); return `<div class="adm-card"><h2 style="font-size:22px">${title}</h2><p class="muted">${hint}</p><div id="ls-${key}">${ls.map(([to, l], i) => lrow(key, 0, i, to, l)).join('')}</div>
+    <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-list-add" data-k="${key}" data-c="0">Add a link</button>${Array.isArray(SET[key]) ? `<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="${key}">Put back the original</button>` : ''}</p></div>`; };
+  const cols = draft('footList') || listOf('footList');
+  const foot = `<div class="adm-card"><h2 style="font-size:22px">Footer links</h2><p class="muted">Columns at the bottom of every page. Add or remove columns and links, and change the order.</p><div id="ls-footList">${cols.map(([t, ls], c) => `<div class="lcol" data-col="${c}"><div class="lhead"><span class="field"><label for="l-foot-${c}-title">Column title</label><input id="l-foot-${c}-title" class="l-title" data-act="adm-list" data-k="footList" value="${esc(t)}"></span><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="footList" data-c="${c}" data-i="col" data-v="-1" aria-label="Move column ${esc(t)} left">←</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="footList" data-c="${c}" data-i="col" data-v="1" aria-label="Move column ${esc(t)} right">→</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="footList" data-c="${c}" data-i="col" aria-label="Remove column ${esc(t)}">Remove column</button></div>
+      <div class="rows">${ls.map(([to, l], i) => lrow('footList', c, i, to, l)).join('')}</div><p style="padding:10px 18px"><button class="btn small" type="button" data-act="adm-list-add" data-k="footList" data-c="${c}">Add a link</button></p></div>`).join('')}</div>
+    <p style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="adm-list-add" data-k="footList" data-c="col">Add a column</button>${Array.isArray(SET.footList) ? '<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="footList">Put back the original</button>' : ''}</p></div>`;
+  const qs = draft('faqList') || faqRaw();
+  const faq = `<div class="adm-card"><h2 style="font-size:22px">Questions and answers (FAQ)</h2><p class="muted">Add as many as you like. *Stars* make italics. Words in {braces} come from Settings, for example {deliveryDays}.</p><div id="ls-faqList">${qs.map((x, i) => `<div class="lrow faq"><span class="field"><label for="l-faq-${i}-q">Question ${i + 1}</label><input id="l-faq-${i}-q" class="l-q" data-act="adm-list" data-k="faqList" value="${esc(x.q)}"></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="-1" aria-label="Move question ${i + 1} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="1" aria-label="Move question ${i + 1} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="faqList" data-c="0" data-i="${i}" aria-label="Remove question ${i + 1}">Remove</button></span><span class="field full"><label for="l-faq-${i}-a">Answer ${i + 1}</label><textarea id="l-faq-${i}-a" class="l-a" rows="3" data-act="adm-list" data-k="faqList">${esc(x.a)}</textarea></span></div>`).join('')}</div>
+    <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-list-add" data-k="faqList" data-c="0">Add a question</button>${Array.isArray(SET.faqList) ? '<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="faqList">Put back the original</button>' : ''}</p></div>`;
+  return `<p class="muted">Edit a box, then click outside it to save. Changes show on the site at once.</p><datalist id="route-hints">${ROUTE_HINTS.map((x) => `<option value="${esc(x)}"></option>`).join('')}</datalist>
+    ${simple('navList', 'Top menu', 'The links across the top of the site on a laptop.')}${simple('menuList', 'Phone menu', 'The list that opens from the menu button on a phone. “Sign in / Your account” is always added at the end.')}${foot}${faq}`;
+}
+// read a list back from the boxes on screen (so typed-but-unsaved edits are kept when you add, move or remove)
+function readList(key) {
+  const box = document.getElementById('ls-' + key); if (!box) return key === 'faqList' ? faqRaw() : JSON.parse(JSON.stringify(listOf(key)));
+  const rows = (root) => [...root.querySelectorAll('.lrow')].map((r) => [r.querySelector('.l-to').value.trim(), r.querySelector('.l-label').value.trim()]);
+  if (key === 'footList') return [...box.querySelectorAll('.lcol')].map((c) => [c.querySelector('.l-title').value.trim(), rows(c)]);
+  if (key === 'faqList') return [...box.querySelectorAll('.lrow')].map((r) => ({ q: r.querySelector('.l-q').value, a: r.querySelector('.l-a').value }));
+  return rows(box);
+}
+// rows with an empty word or address are kept on screen while typing but never saved
+function cleanList(key, v) {
+  if (key === 'footList') return v.filter((c) => c[0]).map((c) => [c[0], c[1].filter((x) => x[0] && x[1])]);
+  if (key === 'faqList') return v.filter((x) => x.q.trim());
+  return v.filter((x) => x[0] && x[1]);
+}
+const saveList = (key, v) => { (UI.adm.draft = UI.adm.draft || {})[key] = v; return dbPut('settings', { key, value: cleanList(key, v) }); };
+function listAction(d) {
+  const key = d.k; const v = readList(key); const c = d.c === 'col' ? 'col' : +d.c; const i = d.i === 'col' ? 'col' : +d.i;
+  const target = key === 'footList' && c !== 'col' && i !== 'col' ? v[c][1] : v;
+  if (d.act === 'adm-list-add') {
+    if (key === 'footList' && c === 'col') v.push(['New column', []]);
+    else if (key === 'footList') v[c][1].push(['', '']);
+    else if (key === 'faqList') v.push({ q: '', a: '' });
+    else v.push(['', '']);
+  } else if (d.act === 'adm-list-del') {
+    if (key === 'footList' && i === 'col') v.splice(c, 1); else target.splice(i, 1);
+  } else if (d.act === 'adm-list-move') {
+    const arr = key === 'footList' && i === 'col' ? v : target; const from = i === 'col' ? c : i; const to = from + (+d.v);
+    if (to < 0 || to >= arr.length) return; const [m] = arr.splice(from, 1); arr.splice(to, 0, m);
+  }
+  admDo(async () => { await saveList(key, v); UI.adm.tab = 'lists'; renderChrome(); render(); }, 'Saved.');
+}
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
   return `<div class="adm-bar"><p class="muted">Edit any line, then click outside the box to save. A new line breaks the line; *words between stars* are set in italics. Words in {braces} come from Settings.</p><span class="field"><label for="tx-q">Find</label><input id="tx-q" data-act="adm-q" value="${esc(UI.adm.q || '')}" placeholder="delivery, gift, hero…"></span></div>
@@ -3755,6 +3842,8 @@ document.addEventListener('click', (e) => {
     case 'ov-save': ovSave($('#ov-text').value); break;
     case 'ov-reset': if (UI.ov) { UI.ov.cur = UI.ov.def; ovSave(UI.ov.def); } break;
     case 'ov-scan': ovScanAll(); render(); break;
+    case 'adm-list-add': case 'adm-list-del': case 'adm-list-move': listAction(d); break;
+    case 'adm-list-reset': admDo(async () => { if (UI.adm.draft) delete UI.adm.draft[d.k]; await dbDel('settings', 'key', d.k); renderChrome(); render(); }, 'Back to the original.'); break;
     case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
     case 'room-open': roomOpen(d.id, UI.pdp[d.id] ? UI.pdp[d.id].vi || 0 : 0); break;
     case 'room-close': roomClose(); break;
@@ -3809,7 +3898,7 @@ document.addEventListener('click', (e) => {
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
-    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'adm-tab': UI.adm.draft = null; UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -3901,6 +3990,7 @@ document.addEventListener('change', (e) => {
   if (d.act === 'ritual-custom') { UI.ritual.custom[d.k] = t.value; UI.ritual.pick.custom = { 0: true, 1: true }; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
   if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); if (d.k === 'theme') render(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
+  if (d.act === 'adm-list') { const key = d.k; admDo(async () => { await saveList(key, readList(key)); renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-ov') { const k = d.k; admDo(async () => { if (!t.value.trim() || t.value === SEEN[k].d) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); UI.adm.open = 'x.'; renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-text') { const k = d.k; admDo(async () => { if (t.value === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); renderChrome(); }, 'Saved.'); }
   if (d.act === 'rv-sort') { UI.rvSort = t.value; render(); $('#rv-sort')?.focus(); }
