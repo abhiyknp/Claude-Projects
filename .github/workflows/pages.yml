@@ -51,7 +51,7 @@ jobs:
               '<meta property="og:image:alt" content="BUD & THINGS by Ashi logo: Made with thought. Given with feeling.">' \
               '<meta name="twitter:card" content="summary_large_image">' \
               '<meta name="p:domain_verify" content="c2fef068eb883efd7abb4d6cdb0c7bc4"/>' \
-              '<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">' '<link rel="icon" href="assets/favicon.ico" sizes="any">' '<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">' \
+              '<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">' '<link rel="icon" href="assets/favicon.ico" sizes="any">' '<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">' \
               '<style>[hidden]{display:none!important}body{margin:0}</style>' '</head>' '<body>'
             cat bud-and-things/prototype/index.html
             printf '%s\n' '</body>' '</html>'
