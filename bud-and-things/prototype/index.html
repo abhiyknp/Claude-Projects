@@ -822,8 +822,9 @@ body.app .why-band { padding-bottom: 96px; }
 .best-item .name { font-family: var(--display); font-size: 22px; text-decoration: none; line-height: 1.1; }
 @media (max-width: 400px) { .combo-tiles .tile { width: 78px; height: 92px; } }
 .pay-badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.pay-badges li { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
-.pay-badges b { font-weight: 800; font-size: 13px; }
+.pay-badges li { display: inline-flex; align-items: center; justify-content: center; gap: 0; min-width: 64px; height: 30px; padding: 0 10px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
+.pay-badges b { font-weight: 800; font-size: 13px; letter-spacing: 0; }
+.pay-badges i + i { margin-left: -5px; }
 .pay-badges i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
 .pay-badges svg { width: 14px; height: 14px; }
 /* footer */
