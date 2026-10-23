@@ -35,7 +35,7 @@
 :root[data-skin="silk"] .site-head .icon-btn .count { background: #D6A34A; color: #210309; }
 :root[data-skin="silk"] .mobile-menu { background: #210309; border-top-color: rgba(214,163,74,.4); }
 :root[data-skin="silk"] .mobile-menu a { color: #FBE9C2; border-bottom-color: rgba(214,163,74,.25); }
-:root[data-skin="silk"] .logo .mark.wordmark { -webkit-mask-image: none; mask-image: none; background: url(assets/silk/logo-horizontal.webp) center / contain no-repeat; width: 142px; aspect-ratio: 1200 / 440; }
+:root[data-skin="silk"] .logo .mark.wordmark { -webkit-mask-image: none; mask-image: none; background: url(assets/silk/logo-horizontal.webp) center / contain no-repeat; width: 172px; aspect-ratio: 1200 / 440; }
 :root[data-skin="silk"] .logo .mark.monogram { background-image: url(assets/silk/leaf.webp); width: 54px; aspect-ratio: 500 / 479; }
 :root[data-skin="silk"] .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); aspect-ratio: 1000 / 795; }
 :root[data-skin="silk"] .ink-light .mark.lockup, :root[data-skin="silk"] .dark-band .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); }
@@ -94,6 +94,8 @@ button, input, select { font: inherit; color: inherit; }
 .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--olive); }
 .muted { color: var(--choc2); }
 .num { font-variant-numeric: tabular-nums; }
+.skip-link { position: absolute; left: 12px; top: -80px; z-index: 100; padding: 12px 18px; background: var(--cta); color: var(--on-cta); font-weight: 700; text-decoration: none; }
+.skip-link:focus { top: 12px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px; border: 1.5px solid var(--cta); background: var(--cta); color: var(--on-cta); font-weight: 600; font-size: 15px; text-decoration: none; cursor: pointer; }
@@ -209,7 +211,11 @@ body.app .site-foot { display: none; }
 .tile.alt { background: var(--sand2); }
 .card .tile { height: 280px; }
 .card .name { font-family: var(--display); font-weight: 300; font-size: 22px; text-decoration: none; line-height: 1.2; }
-.card .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.card .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+/* product cards are a panel: the words and buttons sit inside it with room on every side, never against its edge */
+.grid > .card { background: var(--card); border: 1px solid var(--line); gap: 8px; padding-bottom: var(--s4); }
+.grid > .card > :not(.tile) { margin-inline: var(--s4); }
+.grid > .card > .tile { margin: -1px -1px 4px; }
 .badge { position: absolute; left: 12px; top: 12px; padding: 4px 10px; background: var(--ivory); font-size: 12px; font-weight: 600; letter-spacing: .06em; }
 .badge.out { background: var(--choc); color: var(--ivory); }
 .swatches { display: flex; gap: 6px; }
@@ -217,10 +223,10 @@ body.app .site-foot { display: none; }
 .obj { display: block; flex-shrink: 0; }
 .note-card { background: var(--choc); color: var(--ivory); padding: 26px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; min-height: 360px; }
 .note-card a { color: var(--ivory); font-weight: 600; }
-.note-card h3 { font-size: 26px; }
+.note-card h3, .note-card h2 { font-size: 26px; }
 .note-card .eyebrow { color: var(--glow); }
 .feel-card { border: 1.5px solid var(--terra-ink); padding: 26px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; min-height: 360px; text-decoration: none; }
-.feel-card h3 { font-style: italic; color: var(--terra-ink); font-size: 26px; }
+.feel-card h3, .feel-card h2 { font-style: italic; color: var(--terra-ink); font-size: 26px; }
 
 /* shop */
 .page-head { padding-block: var(--s6) var(--s4); display: flex; flex-direction: column; gap: var(--s3); }
@@ -229,6 +235,11 @@ body.app .site-foot { display: none; }
 .toolbar { border-block: 1px solid var(--line); padding-block: 12px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .toolbar .group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 select, input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input:not([type]) { min-height: 48px; border: 1px solid var(--line2); background: var(--card); padding: 0 12px; font-size: 16px; border-radius: 0; }
+/* one drop-down look everywhere: our own arrow, set in from the edge, so it never touches the border */
+select { -webkit-appearance: none; appearance: none; padding-right: 40px; background-repeat: no-repeat; background-position: right 16px center; background-size: 12px 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%234B2E1E' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+:root[data-skin="silk"] select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%233A0610' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+:root[data-skin="evening"] select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23F1EDE4' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
 label { font-size: 14px; font-weight: 600; }
 .empty { padding: clamp(24px, 5vw, 48px); background: var(--linen); display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
 
@@ -474,7 +485,7 @@ input[type="file"] { padding: 10px 12px; }
 .pfx { display: flex; align-items: stretch; }
 .pfx-c { display: inline-flex; align-items: center; gap: 2px; padding: 0 10px; min-height: 48px; border: 1px solid var(--line2); border-right: 0; background: var(--linen); font-weight: 600; font-size: 15px; color: var(--choc2); }
 .pfx input { flex: 1; min-width: 0; }
-.pfx-c input { flex: none; width: 3.2ch; min-width: 0; min-height: 44px; align-self: stretch; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; }
+.pfx-c input { flex: none; width: 44px; min-width: 0; min-height: 44px; align-self: stretch; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; }
 .adm-filters { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .adm-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 18px; }
 .rv-reply { background: var(--linen); padding: 12px 14px; border-left: 3px solid var(--olive); font-size: 15px; }
@@ -501,9 +512,9 @@ input[type="file"] { padding: 10px 12px; }
   .toolbar .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 12px; width: 100%; }
   .toolbar .tf { flex-direction: column; align-items: stretch; gap: 4px; }
   .toolbar .tf label { font-size: 13px; }
-  .toolbar .tf select { width: 100%; min-height: 46px; font-size: 15px; padding: 0 10px; text-overflow: ellipsis; }
+  .toolbar .tf select { width: 100%; min-height: 46px; font-size: 15px; padding: 0 36px 0 12px; text-overflow: ellipsis; }
 }
-@media (max-width: 560px) { .toolbar .filters { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); } .toolbar .tf select { font-size: 14px; padding: 0 6px; } .toolbar { margin-bottom: 18px; } .toolbar .group:first-child .chip { flex: 1 1 auto; justify-content: center; } }
+@media (max-width: 560px) { .toolbar .filters { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); } .toolbar .tf select { font-size: 14px; padding: 0 32px 0 10px; background-position: right 12px center; } .toolbar { margin-bottom: 18px; } .toolbar .group:first-child .chip { flex: 1 1 auto; justify-content: center; } }
 /* Coming soon: one quiet page for visitors until launch */
 body.cs .proto, body.cs .site-head, body.cs .site-foot, body.cs .tabbar, body.cs #overlay { display: none !important; }
 body.cs main { padding-bottom: 0; }
@@ -659,7 +670,7 @@ body.app .why-band { padding-bottom: 96px; }
 .promo strong { font-family: var(--display); font-size: clamp(28px, 3vw, 38px); font-weight: 500; line-height: 1.05; }
 .promo-acts { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
 .code-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1.5px dashed currentColor; background: transparent; color: inherit; font-weight: 700; letter-spacing: .08em; cursor: pointer; }
-.offers-card .code-chip { min-height: 32px; padding: 0 10px; color: var(--terra-ink); letter-spacing: .06em; }
+.offers-card .code-chip { min-height: 44px; padding: 0 10px; color: var(--terra-ink); letter-spacing: .06em; }
 .promos.slim { padding: 0 0 26px; }
 .promos.slim .promo { min-height: 0; padding: 18px 20px; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 16px; }
 .promos.slim .promo > span:not(.eyebrow):not(.promo-acts) { display: none; }
@@ -753,14 +764,14 @@ body.app .why-band { padding-bottom: 96px; }
 .deliv-head svg { color: var(--terra-ink); flex: none; }
 .deliv-form { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .deliv-form label { font-weight: 700; }
-.deliv-form input { width: 120px; min-height: 40px; }
+.deliv-form input { width: 120px; min-height: 44px; }
 .deliv .ok-text { color: var(--ok); font-weight: 600; }
 .deliv .err { color: var(--terra-ink); }
 .order-by { display: flex; gap: 8px; align-items: center; font-weight: 700; color: var(--terra-ink); }
 .pdp-desc { font-size: 17px; line-height: 1.65; color: var(--choc2); max-width: 560px; }
 .pdp-info .hl-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .gal-main { position: relative; }
-.room-try { position: absolute; right: 14px; top: 14px; width: auto; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(255,252,246,.94); box-shadow: 0 6px 18px rgba(75,46,30,.16); font-size: 13px; font-weight: 700; z-index: 2; }
+.room-try { position: absolute; right: 14px; top: 14px; width: auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(255,252,246,.94); box-shadow: 0 6px 18px rgba(75,46,30,.16); font-size: 13px; font-weight: 700; z-index: 2; }
 .room-try:hover { background: var(--choc); color: var(--ivory); }
 .accs { border-top: 1px solid var(--line); }
 .acc { border-bottom: 1px solid var(--line); }
@@ -923,6 +934,7 @@ body.app .why-band { padding-bottom: 96px; }
   </div>
 </div>
 
+<a class="skip-link" href="#app">Skip to main content</a>
 <header class="site-head">
   <div class="wrap">
     <a class="logo" href="#home" aria-label="BUD &amp; THINGS by Ashi, home"><span class="mark wordmark" aria-hidden="true"></span><span class="mark monogram" aria-hidden="true"></span></a>
@@ -1312,7 +1324,7 @@ const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
-  theme: 'silk', homeStyle: 'gift', comingSoon: true, previewCode: 'budpreview' };
+  theme: 'silk', homeStyle: 'gift', comingSoon: true, previewCode: '' };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
 const LEGAL_KEYS = ['bizName', 'bizAddress', 'gstin', 'grievanceName', 'grievancePhone', 'courtCity', 'policyDate'];
@@ -1540,7 +1552,7 @@ function renderChrome() {
   document.body.classList.toggle('app', S.mode === 'app');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also'); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-made').innerHTML = T('foot.made'); $('#foot-pay').innerHTML = payBadges();
-  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = cs || r === 'home' ? '' : offersBar(); $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
+  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   
@@ -1684,10 +1696,10 @@ function viewShop(cat) {
   if (sh.sort === 'high') list = [...list].sort((a, b) => minPrice(b) - minPrice(a));
   const title = { candles: 'Candles', jesmonite: 'Jesmonite Objects', gifts: 'Gift Boxes', 'under-999': 'Gifts under ₹999' }[sh.cat] || 'All products';
   const blurb = sh.cat === 'candles' ? T('shop.candles') : sh.cat === 'jesmonite' ? T('shop.jesmonite') : sh.cat === 'gifts' ? T('box.sub') : sh.cat === 'under-999' ? 'Small, thoughtful pieces that say you thought of them.' : T('shop.all');
-  const note = (k, href, link) => { const [h, t] = Tx(k).split('|'); return `<div class="note-card"><span class="eyebrow">A little discovery</span><h3>${esc(h)}</h3><p style="opacity:.86">${esc(t || '')}</p><a href="${href}">${link}</a></div>`; };
+  const note = (k, href, link) => { const [h, t] = Tx(k).split('|'); return `<div class="note-card"><span class="eyebrow">A little discovery</span><h2>${esc(h)}</h2><p style="opacity:.86">${esc(t || '')}</p><a href="${href}">${link}</a></div>`; };
   const cards = list.map(card);
   if (cards.length > 4 && sh.type === 'all' && sh.occ === 'all') cards.splice(4, 0, sh.cat === 'candles' ? note('shop.noteCandle', '#help', 'Candle care →') : note('shop.noteJes', '#story', 'Read the material note →'));
-  if (cards.length) cards.push(`<a class="feel-card" href="#feeling"><span class="eyebrow" style="color:var(--terra-ink)">Not sure yet?</span><h3>Find Your Feeling</h3><span class="muted">Five short questions about your space or occasion, then pieces to match.</span><strong>Start →</strong></a>`);
+  if (cards.length) cards.push(`<a class="feel-card" href="#feeling"><span class="eyebrow" style="color:var(--terra-ink)">Not sure yet?</span><h2>Find Your Feeling</h2><span class="muted">Five short questions about your space or occasion, then pieces to match.</span><strong>Start →</strong></a>`);
   return `<div class="wrap"><div class="page-head"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / ${sh.cat === 'all' ? 'Shop' : `<a href="#shop">Shop</a> / ${title}`}</nav>
     <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px"><h1 tabindex="-1">${title}</h1><p class="muted" style="max-width:520px">${blurb}</p></div></div>
     <div class="toolbar"><div class="group" role="group" aria-label="Category">
@@ -1852,8 +1864,8 @@ function giftSummary(g) {
 }
 function viewCheckout() {
   const co = UI.co; const lines = cartLines(); const t = totals(); const g = co.gift;
-  if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
-  if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:var(--s5) var(--section)"><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
+  if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
+  if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:var(--s5) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
   loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
@@ -2257,7 +2269,8 @@ function admStock() {
 function admSettings() {
   const field = setField;
   return `<p class="muted">Each change saves when you leave the box and shows on the site at once.</p>
-    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon page</h2><p class="muted full">While it is on, visitors see only the Coming soon page and its sign-up form${BTDB.on ? '' : ' (once the database is connected)'}. You see the whole site while signed in, and so does anyone who opens the preview link. To launch, switch it off.</p>
+    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon page</h2><p class="muted full">While it is on, visitors see only the Coming soon page and its sign-up form${BTDB.on ? '' : ' (once the database is connected)'}. You see the whole site while signed in, and so does anyone who opens the preview link. To launch, switch it off. The preview code is not a lock: anyone who can read the page data can read it, so use it only to keep casual visitors out, and never rely on it for anything secret.</p>
+      ${!SET.previewCode || /^budpreview$/i.test(SET.previewCode) || String(SET.previewCode).length < 10 ? '<div class="status full" role="note">The preview code is empty, the old default or short. Use at least 10 random letters and numbers, so it cannot be guessed.</div>' : ''}
       ${SET_META.filter((m) => CS_KEYS.includes(m[0])).map(field).join('')}<span class="field full"><label for="cs-link">Preview link for testers</label><span style="display:flex;flex-wrap:wrap;gap:8px"><input id="cs-link" readonly value="${esc(previewLink())}" style="flex:1 1 260px;min-width:0"><button class="btn small ghost" type="button" data-act="cs-copy">Copy link</button></span></span></div>
     <div class="form adm-card"><h2 class="full" style="font-size:24px">Site theme</h2><p class="muted full">The colours every visitor sees. Choosing a mood in the house still recolours the site for that visitor while they browse.</p>
       <span class="field full"><label for="set-theme">Theme</label><select id="set-theme" data-act="adm-set" data-k="theme">${Object.entries(SKINS).map(([k, v]) => `<option value="${k}" ${k === skin('site') ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></span>
@@ -2814,7 +2827,7 @@ const descOf = (p) => p.desc || (BASE_BYID[p.id] || {}).desc || [p.line, p.mater
 const isNew = (p) => idList('newIn').includes(p.id);
 const pts = (n) => Math.floor(n * (+SET.rewardPct || 0) / 100);
 
-// the offers bar above the header on every page; offers whose setting is off are left out
+// the scrolling offers strip, placed after the first banner of each page; offers whose setting is off are left out
 function offersBar() {
   const items = Tx('bar.offers').split('|').map((x) => x.trim()).filter((x) => x && !/\{\w+\}|(^|\D)0%|₹0\b/.test(x) && !(/Bud Points/.test(x) && !+SET.rewardPct) && !(/code|HELLO/i.test(x) && !SET.welcomeCode));
   if (!items.length) return '';
@@ -3363,6 +3376,9 @@ function render(nav) {
   else html = viewNotFound();
   const app = $('#app'); app.innerHTML = html;
   applyBrand(); applySeo(r);
+  // the scrolling offers strip sits after the page's first banner, not glued under the menu
+  const banner = !cs && !/^(admin|checkout|cart|order-|account|track|saved)/.test(r) && app.querySelector('.gh-hero, .page-head, .article-head');
+  if (banner) banner.insertAdjacentHTML('afterend', offersBar()); // pages with no banner have no strip
   renderChrome(); renderOverlay();
   if (!cs) adsLoad();
   if (cs) { if (nav) window.scrollTo(0, 0); return; }
@@ -3997,6 +4013,8 @@ const origRender = render;
 render = function (nav) { if (route() === 'checkout' && nav && UI.co.step === 'contact' && cartCount()) track('checkout_start', { items: cartCount() }); origRender(nav); };
 loadData();
 if (PAID_BACK && BTDB.on) payCheck(PAID_BACK);
+// the skip link must not change the page address, because the address is the route
+$('.skip-link').addEventListener('click', (e) => { e.preventDefault(); $('#app').focus(); });
 render(false);
 track('page_view', { page: pageName(route()) });
 })();

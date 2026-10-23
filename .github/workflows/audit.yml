@@ -1,0 +1,30 @@
+# Checks the BUD & THINGS prototype on every pull request that touches it: contrast, text size, tap targets, headings,
+# alt text, names for links and fields, skip link, sideways scroll, page errors. See bud-and-things/tools/audit.js.
+name: Page audit
+
+on:
+  pull_request:
+    paths:
+      - 'bud-and-things/prototype/**'
+      - 'bud-and-things/tools/audit.js'
+      - '.github/workflows/audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      # actions are pinned to exact commits (Dependabot proposes updates), so a moved tag can't change the build
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install a browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/audit" && cd "$RUNNER_TEMP/audit"
+          npm init -y >/dev/null && npm i playwright@1.49.1 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Run the audit
+        run: PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/audit.js

@@ -6,6 +6,7 @@
 //                            for Pinterest, Google and link previews. People who open it go straight to /#p-<id>.
 //   pinterest/products.xml   RSS feed for Pinterest auto-publishing (Settings → Bulk create Pins → RSS feed)
 //   pinterest/catalog.csv    data source for Pinterest Catalogs, one row per size or finish
+//   sitemap.xml, robots.txt  for Google: the home page and every live product page
 // It also writes the owner's site title, description, tab icon and link picture (Owner view → Site text → Search & sharing,
 // and Photos & videos → Brand) into the head of index.html, where Google and link previews read them.
 // The two feeds list only live products that have a published photo, and stay empty while the Coming soon page is
@@ -106,7 +107,7 @@ function productPage(p, qty) {
 <meta property="product:price:currency" content="INR">
 <meta property="og:availability" content="${inStock ? 'instock' : 'oos'}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/png" href="/assets/monogram-seal.png">
+<link rel="icon" type="image/png" href="/assets/favicon-32.png">
 <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>
 <script>location.replace('/' + location.search + ${JSON.stringify('#p-' + encodeURIComponent(p.id))});</script>
 </head>
@@ -168,6 +169,9 @@ function catalog(items, qty) {
   const ready = comingSoon ? [] : products.filter((p) => p.photos.length);
   write('pinterest/products.xml', rss(ready));
   write('pinterest/catalog.csv', catalog(ready, qty));
+  // sitemap.xml and robots.txt: the home page and every live product page. Pages reached with a # (journal, policies) are part of the home page to a crawler.
+  write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<url><loc>${SITE}/</loc></url>\n${(comingSoon ? [] : products).map((p) => `<url><loc>${esc(p.link)}</loc>${p.updated ? `<lastmod>${new Date(p.updated).toISOString().slice(0, 10)}</lastmod>` : ''}</url>`).join('\n')}\n</urlset>\n`);
+  write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
   const head = patchHome(d, fileUrl); if (head.length) console.log('Page head from Owner view: ' + head.join(', ') + '.');
   const noPhoto = products.filter((p) => !p.photos.length).map((p) => p.id);
   console.log(`Pinterest: ${products.length} product pages; ${ready.length} products in the feeds` +
