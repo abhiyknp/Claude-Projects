@@ -522,6 +522,14 @@ input[type="file"] { padding: 10px 12px; }
 .ch .ch-t { font-size: 12px; fill: var(--choc2); font-family: var(--sans, inherit); }
 .ch .ch-col:hover rect { fill: var(--linen); }
 .ch details { margin-top: 8px; font-size: 14px; }
+.stat .spark { margin-top: 6px; display: block; }
+.spark-line { fill: none; stroke: var(--maroon, #8B1A3A); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.spark-fill { fill: rgba(214,163,74,.28); }
+.donut { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.donut ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; flex: 1 1 160px; font-size: 14px; }
+.donut li { display: grid; grid-template-columns: 12px 1fr auto auto; gap: 8px; align-items: center; }
+.donut li i { width: 12px; height: 12px; border-radius: 3px; }
+.donut-t { font: 700 15px var(--body); fill: var(--choc); }
 .hb { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
 .hb li { display: grid; grid-template-columns: minmax(90px, 1fr) 2fr auto; gap: 10px; align-items: center; }
 .hb-bar { height: 10px; background: var(--linen); display: block; }
@@ -1328,7 +1336,9 @@ const TEXT = {
   'soon.eyebrow': ['Coming soon', 'Coming soon: small line above the heading'],
   'soon.title': ['Something small\n*is beginning to grow.*', 'Coming soon: heading'],
   'soon.text': ['Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving. Leave your email and we’ll tell you the day we open.', 'Coming soon: text'],
-  'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button']
+  'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button'],
+  'soon.pageTitle': ['{section}\n*is coming soon.*', 'Coming soon for one section: heading ({section} is its name)'],
+  'soon.pageText': ['We are still putting the finishing touches on this. Leave your email and we’ll tell you the day it opens.', 'Coming soon for one section: text']
 };
 // Search and sharing: the title and description of each page. Owner view → Site text → Search & sharing.
 // The live site also bakes the site-wide ones into the page head every day, so Google and link previews see them.
@@ -1352,9 +1362,9 @@ const SET_META = [
   ['gstOn', 'GST: I am registered, make tax invoices', 'bool'], ['gstState', 'GST: my state', 'text'], ['invoicePrefix', 'Invoice number prefix (up to 3 letters, e.g. BT)', 'text'], ['invoiceAuto', 'Make the invoice automatically when an order is paid', 'bool'], ['hsnCandles', 'HSN: candles', 'text'], ['gstCandles', 'GST rate: candles (%)', 'num'], ['hsnObjects', 'HSN: Jesmonite objects', 'text'], ['gstObjects', 'GST rate: Jesmonite objects (%)', 'num'], ['hsnGifts', 'HSN: gift boxes', 'text'], ['gstGifts', 'GST rate: gift boxes (%)', 'num'],
   ['reviewAskDays', 'Ask for a review this many days after delivery (0 for never)', 'num'], ['reviewPoints', 'Bud Points for each published review by a signed-in customer (0 for none)', 'num'],
   ['monthlyGoal', 'Monthly sales goal (₹, 0 to hide)', 'num'], ['weeklySummary', 'Email me a summary every Monday', 'bool'], ['festiveOn', 'Home page: show the festive banner (needs at least one gift box)', 'bool'],
-  ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool'], ['previewCode', 'Preview code for testers (empty for none)', 'text']
+  ['theme', 'Site theme', 'theme'], ['homeStyle', 'Home page', 'home'], ['comingSoon', 'Show visitors the Coming soon page instead of the shop', 'bool']
 ];
-const CS_KEYS = ['comingSoon', 'previewCode'];
+const CS_KEYS = ['comingSoon'];
 // settings with their own place in Owner view (the Coupons, Rewards and Invoices tabs)
 const ELSEWHERE_KEYS = ['welcomeCode', 'welcomeOff', 'rewardPct', 'gstin', 'gstOn', 'gstState', 'invoicePrefix', 'invoiceAuto', 'hsnCandles', 'gstCandles', 'hsnObjects', 'gstObjects', 'hsnGifts', 'gstGifts', 'reviewAskDays', 'reviewPoints', 'monthlyGoal', 'weeklySummary'];
 const THEME_KEYS = ['theme', 'homeStyle'];
@@ -1365,7 +1375,7 @@ const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
-  theme: 'silk', homeStyle: 'gift', comingSoon: true, previewCode: '' };
+  theme: 'silk', homeStyle: 'gift', comingSoon: true, previewHash: '', soonPages: [], newSections: [] };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
 const LEGAL_KEYS = ['bizName', 'bizAddress', 'gstin', 'grievanceName', 'grievancePhone', 'courtCity', 'policyDate'];
@@ -1401,8 +1411,28 @@ const VISIT = (() => {
   return v;
 })();
 const REF = (() => { const q = (new URLSearchParams(location.search).get('ref') || '').toUpperCase(); try { if (/^[A-Z0-9]{6}$/.test(q)) { localStorage.setItem('bt-ref', q); return q; } return localStorage.getItem('bt-ref') || ''; } catch (e) { return /^[A-Z0-9]{6}$/.test(q) ? q : ''; } })();
-const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !BTDB.owner() && !(SET.previewCode && PREVIEW === String(SET.previewCode));
-const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(SET.previewCode || '');
+// The page data is public, so the site keeps only a SHA-256 of the preview code. The check runs in the browser: the
+// code in the link is hashed and compared. An old readable previewCode still works until a new code is made.
+let PV_OK = false;
+const sha256 = async (t) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t))), (b) => b.toString(16).padStart(2, '0')).join('');
+async function pvCheck() {
+  let ok = false;
+  if (PREVIEW) { try { ok = !!SET.previewHash && (await sha256(String(PREVIEW))) === SET.previewHash; } catch (e) { ok = false; } if (!ok && SET.previewCode) ok = PREVIEW === String(SET.previewCode); }
+  if (ok !== PV_OK) { PV_OK = ok; if (typeof render === 'function' && !UI.adm.pending) render(); }
+}
+const pvSeesAll = () => !!BTDB.owner() || PV_OK;
+const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !pvSeesAll();
+// the preview code is shown once, when it is made; this browser keeps it so the owner can copy the link again here
+const pvCode = () => { try { return localStorage.getItem('bt-preview-code') || ''; } catch (e) { return ''; } };
+const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(pvCode());
+// Coming soon for single sections: pages the owner marks in Settings show a small Coming soon page instead
+const SOON_OPTS = [['shop', 'Shop (all products)'], ['candles', 'Candles'], ['jesmonite', 'Jesmonite objects'], ['gifts', 'Gift boxes'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['bulk', 'Corporate and bulk gifts'], ['giftcard', 'Gift cards'], ['journal', 'Journal'], ['share', 'Share with a friend'], ['story', 'Our Story'], ['why', 'Why buy from us']];
+// New sections the owner adds later (a new kind of product): a name, one line, and open or still Coming soon
+const newSections = () => (Array.isArray(SET.newSections) ? SET.newSections : []).filter((x) => x && x.id && x.name);
+const secSlug = (t) => String(t).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30);
+const soonFor = (r) => {
+  if (r.startsWith('s-')) { const x = newSections().find((y) => 's-' + y.id === r); return x && !x.live && !pvSeesAll() ? [x.id, x.name] : null; }
+  const k = r.startsWith('journal-') ? 'journal' : r; if (!Array.isArray(SET.soonPages) || !SET.soonPages.includes(k) || pvSeesAll()) return null; return SOON_OPTS.find((o) => o[0] === k) || [k, k]; };
 
 // ---------- the data: built in, from this browser (demo), or from the database ----------
 // DATA holds what the owner can change. Empty products or pairings fall back to the built-in draft range.
@@ -1424,6 +1454,7 @@ function applyData() {
   Object.keys(PIMG).forEach((k) => delete PIMG[k]); // drawings follow edited colours
   const seed = BTDB.on ? {} : defaults().stock; Object.keys(skuMap).forEach((sku) => { if (S.stock[sku] == null) S.stock[sku] = seed[sku] || 0; });
   S.cart = S.cart.filter((l) => skuMap[l.sku]); S.saved = S.saved.filter((id) => byId[id]);
+  if (typeof pvCheck === 'function') pvCheck();
 }
 function useRows(d) {
   DATA.products = d.products; DATA.pairings = d.pairings; DATA.text = Object.fromEntries((d.text || []).map((r) => [r.key, r.value]));
@@ -1842,6 +1873,19 @@ function viewComingSoon() {
   return `<section class="soon" aria-labelledby="soon-h"><span class="mark lockup" role="img" aria-label="BUD &amp; THINGS by Ashi"></span><span class="eyebrow">${T('soon.eyebrow')}</span><h1 id="soon-h" tabindex="-1">${T('soon.title')}</h1><p class="muted">${T('soon.text')}</p>
     <form data-form="news" data-src="coming-soon" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 220px;min-width:0"><button class="btn" type="submit">${T('soon.cta')}</button><span id="news-msg" style="flex:1 1 100%"></span></form>
     ${socialLinks()}</section>`;
+}
+
+function viewSoonSection(o) {
+  return `<section class="soon" aria-labelledby="soon-h"><span class="eyebrow">${T('soon.eyebrow')}</span><h1 id="soon-h" tabindex="-1">${esc(Tx('soon.pageTitle').replace('{section}', o[1])).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>')}</h1><p class="muted">${T('soon.pageText')}</p>
+    <form data-form="news" data-src="soon-${esc(o[0])}" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 220px;min-width:0"><button class="btn" type="submit">${T('soon.cta')}</button><span id="news-msg" style="flex:1 1 100%"></span></form>
+    <p style="margin-top:18px"><a href="#home" style="font-weight:600">Back to the shop</a></p></section>`;
+}
+
+function viewNewSection(r) {
+  const x = newSections().find((y) => 's-' + y.id === r); if (!x) return viewNotFound();
+  const list = P.filter((p) => p.sec === x.id);
+  return `<section class="page-head wrap" style="padding-block:var(--s6) var(--s4)"><span class="eyebrow">New</span><h1 tabindex="-1">${esc(x.name)}</h1>${x.line ? `<p class="muted">${esc(x.line)}</p>` : ''}${x.live ? '' : '<div class="status" role="note">Visitors still see Coming soon here. Only you and the preview link see this page.</div>'}</section>
+    <section class="wrap" style="padding-bottom:var(--section)"><div class="grid">${list.length ? list.map(card).join('') : '<p class="muted">Nothing here yet. In Products, set a product’s “New section” to ' + esc(x.name) + '.</p>'}</div></section>`;
 }
 
 function viewShop(cat) {
@@ -2353,6 +2397,7 @@ function admProductForm(r) {
     ${r ? '' : f('id', 'Web address name', '', { hint: 'lowercase words and dashes, for example rose-and-oud; it can’t change later', req: true })}
     ${f('name', 'Name', d.name, { req: true })}
     <span class="field"><label for="ap-cat">Category</label><select id="ap-cat" name="cat"><option value="candles" ${d.cat === 'candles' ? 'selected' : ''}>Candles</option><option value="jesmonite" ${d.cat !== 'candles' && d.cat !== 'gifts' ? 'selected' : ''}>Jesmonite objects</option><option value="gifts" ${d.cat === 'gifts' ? 'selected' : ''}>Gift boxes</option></select></span>
+    ${newSections().length ? `<span class="field"><label for="ap-sec">New section (optional)</label><select id="ap-sec" name="sec"><option value="">None</option>${newSections().map((x) => `<option value="${esc(x.id)}" ${d.sec === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span>` : ''}
     ${f('type', 'Type', d.type, { hint: 'for example Scented candle, Tray' })}${f('line', 'One-line description', d.line, { full: true })}
     <fieldset class="field full adm-vars"><legend>Options, prices and SKUs <span class="hint">clear an SKU to remove that option; fill the empty row to add one</span></legend>
       ${vs.map((v, i) => `<span class="adm-var"><label class="sr" for="ap-vs${i}">SKU ${i + 1}</label><input id="ap-vs${i}" name="v-sku-${i}" placeholder="SKU, for example BT-CN-RO-220" value="${esc(v.sku)}"><label class="sr" for="ap-vl${i}">Option name ${i + 1}</label><input id="ap-vl${i}" name="v-label-${i}" placeholder="Option, for example 220 g" value="${esc(v.label)}"><label class="sr" for="ap-vp${i}">Price ${i + 1}</label><input id="ap-vp${i}" name="v-price-${i}" type="number" min="0" placeholder="Price ₹" value="${esc(v.price)}">${v.sku && S.stock[v.sku] != null ? `<span class="muted num" style="align-self:center">${stockOf(v.sku)} in stock</span>` : `<label class="sr" for="ap-vq${i}">Opening stock ${i + 1}</label><input id="ap-vq${i}" name="v-qty-${i}" type="number" min="0" max="9999" placeholder="Stock now" value=""></span>`}`).join('')}</fieldset>
@@ -2374,6 +2419,7 @@ function readProductForm(form, live) {
   const all = (n) => [...form.querySelectorAll(`[name="${n}"]:checked`)].map((x) => x.value);
   const variants = []; for (let i = 0; form.elements['v-sku-' + i]; i++) { const sku = v('v-sku-' + i).toUpperCase(); if (sku) variants.push({ sku, label: v('v-label-' + i), price: Math.round(+v('v-price-' + i)) }); }
   const d = { name: v('name'), cat: v('cat'), type: v('type'), line: v('line'), variants, size: v('size'), material: v('material'), care: lineList(v('care')), mood: all('mood'), space: all('space'), occ: all('occ'), gift: form.elements.gift.checked, art: v('art'), c: v('c') };
+  if (v('sec')) d.sec = v('sec');
   if (d.cat === 'gifts') { const old = form.dataset.id && byId[form.dataset.id]; d.img = (old && old.img) || IMG.box; if (old && old.popular) d.popular = true; }
   if (v('notes')) d.notes = csvList(v('notes'));
   if (v('smellsLike')) d.smellsLike = v('smellsLike');
@@ -2453,7 +2499,7 @@ function admLists() {
   const qs = draft('faqList') || faqRaw();
   const faq = `<div class="adm-card"><h2 style="font-size:22px">Questions and answers (FAQ)</h2><p class="muted">Add as many as you like. *Stars* make italics. Words in {braces} come from Settings, for example {deliveryDays}.</p><div id="ls-faqList">${qs.map((x, i) => `<div class="lrow faq"><span class="field"><label for="l-faq-${i}-q">Question ${i + 1}</label><input id="l-faq-${i}-q" class="l-q" data-act="adm-list" data-k="faqList" value="${esc(x.q)}"></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="-1" aria-label="Move question ${i + 1} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="1" aria-label="Move question ${i + 1} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="faqList" data-c="0" data-i="${i}" aria-label="Remove question ${i + 1}">Remove</button></span><span class="field full"><label for="l-faq-${i}-a">Answer ${i + 1}</label><textarea id="l-faq-${i}-a" class="l-a" rows="3" data-act="adm-list" data-k="faqList">${esc(x.a)}</textarea></span></div>`).join('')}</div>
     <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-list-add" data-k="faqList" data-c="0">Add a question</button>${Array.isArray(SET.faqList) ? '<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="faqList">Put back the original</button>' : ''}</p></div>`;
-  return `<p class="muted">Edit a box, then click outside it to save. Changes show on the site at once.</p><datalist id="route-hints">${ROUTE_HINTS.map((x) => `<option value="${esc(x)}"></option>`).join('')}</datalist>
+  return `<p class="muted">Edit a box, then click outside it to save. Changes show on the site at once.</p><datalist id="route-hints">${ROUTE_HINTS.concat(newSections().map((x) => 's-' + x.id)).map((x) => `<option value="${esc(x)}"></option>`).join('')}</datalist>
     ${simple('navList', 'Top menu', 'The links across the top of the site on a laptop.')}${simple('menuList', 'Phone menu', 'The list that opens from the menu button on a phone. “Sign in / Your account” is always added at the end.')}${foot}${faq}`;
 }
 // read a list back from the boxes on screen (so typed-but-unsaved edits are kept when you add, move or remove)
@@ -2614,7 +2660,7 @@ function launchItems() {
     ['Content', 'FAQ has at least 5 questions', faqItems().length >= 5, 'lists', ''],
     ['Content', 'Search and sharing description changed from the draft', 'seo.desc' in TXT, 'text', 'Site text → Search & sharing'],
     ['Safety', 'Database connected', BTDB.on, 'setup', 'Setup'],
-    ['Safety', 'Preview code is long (10+ characters) or empty', !SET.previewCode || String(SET.previewCode).length >= 10 && !/^budpreview$/i.test(SET.previewCode), 'settings', ''],
+    ['Safety', 'Preview code is hidden (no old readable code left)', !SET.previewCode, 'settings', ''],
     ['Safety', 'Owner sign-in asks for a second step', !!(window.BT_CONFIG && BT_CONFIG.ownerTwoStep), 'setup', 'Setup → two-step sign-in'],
     ['Open the shop', 'Coming soon page switched off', SET.comingSoon === false, 'settings', 'Do this last']
   ];
@@ -2659,9 +2705,14 @@ function admStock() {
 function admSettings() {
   const field = setField;
   return `<p class="muted">Each change saves when you leave the box and shows on the site at once.</p>
-    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon page</h2><p class="muted full">While it is on, visitors see only the Coming soon page and its sign-up form${BTDB.on ? '' : ' (once the database is connected)'}. You see the whole site while signed in, and so does anyone who opens the preview link. To launch, switch it off. The preview code is not a lock: anyone who can read the page data can read it, so use it only to keep casual visitors out, and never rely on it for anything secret.</p>
-      ${!SET.previewCode || /^budpreview$/i.test(SET.previewCode) || String(SET.previewCode).length < 10 ? '<div class="status full" role="note">The preview code is empty, the old default or short. Use at least 10 random letters and numbers, so it cannot be guessed.</div>' : ''}
-      ${SET_META.filter((m) => CS_KEYS.includes(m[0])).map(field).join('')}<span class="field full"><label for="cs-link">Preview link for testers</label><span style="display:flex;flex-wrap:wrap;gap:8px"><input id="cs-link" readonly value="${SET.previewCode ? esc(previewLink()) : ''}" placeholder="Make a preview code first, the link appears here" style="flex:1 1 260px;min-width:0">${SET.previewCode ? '<button class="btn small ghost" type="button" data-act="cs-copy">Copy link</button>' : ''}<button class="btn small" type="button" data-act="cs-make">${SET.previewCode ? 'Make a new code' : 'Make a preview code'}</button></span>${SET.previewCode ? '' : '<span class="hint">With no code, no link can open the shop while Coming soon is on. That is why every link shows Coming soon.</span>'}</span></div>
+    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon page</h2><p class="muted full">While it is on, visitors see only the Coming soon page and its sign-up form${BTDB.on ? '' : ' (once the database is connected)'}. You see the whole site while signed in, and so does anyone who opens the preview link. To launch, switch it off. Only a scrambled copy of the preview code is stored, so nobody can read it from the page data. The code is shown once when you make it, so copy the link then.</p>
+      ${SET.previewCode ? '<div class="status full" role="note">An old readable preview code is still stored. Press “Make a new code” to replace it with a hidden one.</div>' : !SET.previewHash ? '<div class="status full" role="note">No preview code yet. Press “Make a preview code” to get a link for testers.</div>' : ''}
+      ${SET_META.filter((m) => CS_KEYS.includes(m[0])).map(field).join('')}<span class="field full"><label for="cs-link">Preview link for testers</label><span style="display:flex;flex-wrap:wrap;gap:8px"><input id="cs-link" readonly value="${pvCode() ? esc(previewLink()) : ''}" placeholder="${SET.previewHash ? 'The link was shown when the code was made. Make a new code for a new link.' : 'Make a preview code first, the link appears here'}" style="flex:1 1 260px;min-width:0">${pvCode() ? '<button class="btn small ghost" type="button" data-act="cs-copy">Copy link</button>' : ''}<button class="btn small" type="button" data-act="cs-make">${SET.previewHash ? 'Make a new code' : 'Make a preview code'}</button></span>${SET.previewHash ? '' : '<span class="hint">With no code, no link can open the shop while Coming soon is on. That is why every link shows Coming soon.</span>'}</span></div>
+    <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon for single sections</h2><p class="muted full">Tick a section to show visitors a small Coming soon page for it, while the rest of the shop stays open. You and anyone with the preview link still see the real page. Untick it when the section is ready. New products stay hidden until you publish them, so you do not need this for those.</p>
+      <fieldset class="full" style="border:0;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 16px"><legend class="sr">Sections that show Coming soon</legend>${SOON_OPTS.map(([k, l]) => `<label class="chk" style="display:flex;align-items:center;gap:10px;min-height:44px"><input type="checkbox" data-act="adm-soon" data-k="${k}" ${(SET.soonPages || []).includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</fieldset></div>
+    <div class="form adm-card" id="ns-card"><h2 class="full" style="font-size:24px">New sections</h2><p class="muted full">Launching a new kind of product? Add a section here. It gets its own page and stays on Coming soon until you tick “Open to visitors”. Then add it to the menu in Menus &amp; FAQ (choose the page named s-…), and put products in it with the “New section” choice on the product form.</p>
+      ${((UI.adm.draftNs || newSections()).map((x, i) => `<div class="lrow" style="grid-column:1/-1"><span class="field"><label for="ns-${i}-n">Section name</label><input id="ns-${i}-n" class="ns-n" data-act="adm-ns" value="${esc(x.name)}"></span><span class="field"><label for="ns-${i}-l">One line about it</label><input id="ns-${i}-l" class="ns-l" data-act="adm-ns" value="${esc(x.line || '')}"></span><label class="chk" style="display:flex;align-items:center;gap:10px;min-height:44px"><input id="ns-${i}-o" class="ns-o" type="checkbox" data-act="adm-ns" ${x.live ? 'checked' : ''}> Open to visitors</label><span class="muted" style="font-size:13px">${x.id ? 'Page: <code>s-' + esc(x.id) + '</code>' : 'Page name is made when you save'}</span><button class="btn small ghost" type="button" data-act="adm-ns-del" data-i="${i}">Remove</button></div>`).join(''))}
+      <div class="full"><button class="btn small" type="button" data-act="adm-ns-add">Add a section</button></div></div>
     <div class="form adm-card"><h2 class="full" style="font-size:24px">Site theme</h2><p class="muted full">The colours every visitor sees. Choosing a mood in the house still recolours the site for that visitor while they browse.</p>
       <span class="field full"><label for="set-theme">Theme</label><select id="set-theme" data-act="adm-set" data-k="theme">${Object.entries(SKINS).map(([k, v]) => `<option value="${k}" ${k === skin('site') ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></span>
       <p class="muted full">${esc(SKINS[skin('site')].use)}</p></div>
@@ -3073,6 +3124,22 @@ function colChart(points, fmt, label) {
   return `<figure class="ch"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}" preserveAspectRatio="none"><line x1="${pad}" x2="${W}" y1="${H - pad}" y2="${H - pad}" class="ch-axis"/><text x="0" y="12" class="ch-t">${esc(fmt(max))}</text>${bars}${ticks}</svg>
     <details><summary class="muted">See the numbers</summary><div class="table-wrap"><table><tbody>${points.filter((p) => p.v).map((p) => `<tr><td class="num">${esc(p.label)}</td><td class="num">${esc(fmt(p.v))}${p.tip ? ' · ' + esc(p.tip) : ''}</td></tr>`).join('') || '<tr><td class="muted">Nothing in this period.</td></tr>'}</tbody></table></div></details></figure>`;
 }
+// small line under a number: the last days at a glance (decorative; the numbers are in the chart below)
+function spark(vals) {
+  if (!vals || vals.length < 2 || !vals.some((v) => v > 0)) return '';
+  const W = 120, H = 32, max = Math.max(...vals), step = W / (vals.length - 1);
+  const pts = vals.map((v, i) => [Math.round(i * step), Math.round(H - 3 - (H - 6) * v / max)]); const line = pts.map((p) => p.join(',')).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false"><polygon points="0,${H} ${line} ${W},${H}" class="spark-fill"/><polyline points="${line}" class="spark-line"/></svg>`;
+}
+// a ring for shares of a whole, with the numbers beside it
+const DONUT = ['#8B1A3A', '#D6A34A', '#B8500F', '#5E6B3A', '#3A0610', '#9A8A6A'];
+function donut(rows, fmt, centre, ctr) {
+  const tot = rows.reduce((a, r) => a + r[1], 0); if (!tot) return '';
+  let off = 0; const R = 46, C = 2 * Math.PI * R;
+  const arcs = rows.map((r, i) => { const len = C * r[1] / tot; const a = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${DONUT[i % DONUT.length]}" stroke-width="13" stroke-dasharray="${len.toFixed(2)} ${(C - len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 60 60)"/>`; off += len; return a; }).join('');
+  return `<div class="donut"><svg viewBox="0 0 120 120" width="132" height="132" role="img" aria-label="${esc(centre)}: ${esc(rows.map((r) => r[0] + ' ' + fmt(r[1])).join(', '))}">${arcs}<text x="60" y="64" text-anchor="middle" class="donut-t">${esc(ctr ? ctr(tot) : fmt(tot))}</text></svg>
+    <ul>${rows.map((r, i) => `<li><i style="background:${DONUT[i % DONUT.length]}"></i><span>${esc(r[0])}</span><b class="num">${esc(fmt(r[1]))}</b><span class="muted">${pct(r[1], tot)}</span></li>`).join('')}</ul></div>`;
+}
 // horizontal bars for shares of a whole: funnel steps, sources, categories
 const hbars = (rows, fmt) => `<ul class="hb">${rows.map(([l, v, max, note]) => `<li><span>${esc(l)}</span><span class="hb-bar" aria-hidden="true"><span style="width:${max ? Math.max(v ? 2 : 0, Math.round(v / max * 100)) : 0}%"></span></span><span class="num">${fmt ? fmt(v) : v}${note ? ` <span class="muted">${esc(note)}</span>` : ''}</span></li>`).join('')}</ul>`;
 const pct = (a, b) => (b ? Math.round(a / b * 100) + '%' : '—');
@@ -3087,7 +3154,7 @@ function admEvents() {
   const revCur = rev(cur), revPrev = rev(prev); const items = cur.reduce((a, o) => a + (o.items || []).reduce((b, l) => b + l.qty, 0), 0);
   const change = (a, b) => (b ? `${a >= b ? '▲' : '▼'} ${Math.abs(Math.round((a - b) / b * 100))}% on the ${days} days before` : 'nothing to compare yet');
   const goal = +SET.monthlyGoal || 0; const mStart = new Date(); mStart.setDate(1); mStart.setHours(0, 0, 0, 0); const revMonth = rev(good.filter((o) => new Date(o.placedAt) >= mStart));
-  const tile = (l, v, sub) => `<div class="stat"><span class="muted">${l}</span><strong class="num">${v}</strong>${sub ? `<span class="muted" style="font-size:13px">${sub}</span>` : ''}</div>`;
+  const tile = (l, v, sub, sp) => `<div class="stat"><span class="muted">${l}</span><strong class="num">${v}</strong>${sub ? `<span class="muted" style="font-size:13px">${sub}</span>` : ''}${sp || ''}</div>`;
   // revenue per day (per week for a year)
   const step = days > 120 ? 7 : 1; const pts = []; for (let t = since; t < now; t += step * dayMs) { const e = t + step * dayMs; const l = good.filter((o) => { const d = +new Date(o.placedAt); return d >= t && d < e; }); const d = new Date(t); pts.push({ label: (step > 1 ? 'Week of ' : '') + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), short: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), v: rev(l), tip: l.length + ' order' + (l.length === 1 ? '' : 's') }); }
   // products
@@ -3125,8 +3192,8 @@ function admEvents() {
   const small = (rows, head) => rows.length ? `<div class="table-wrap"><table>${head ? `<thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead>` : ''}<tbody>${rows.map((r) => `<tr>${r.map((c, i) => `<td${i ? ' class="num"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="muted">Nothing yet.</p>';
   const setF = (k) => { const m = SET_META.find((x) => x[0] === k); return m ? setField(m) : ''; };
   return `<div class="adm-bar"><div class="gh-chips" role="group" aria-label="Period">${[[7, '7 days'], [30, '30 days'], [90, '90 days'], [365, '12 months']].map(([d, l]) => `<button type="button" class="chip" data-act="adm-days" data-v="${d}" aria-pressed="${days === d}">${l}</button>`).join('')}</div>${BTDB.on ? '' : '<span class="muted">Demo mode: visits counted in this browser only.</span>'}</div>
-    <div class="owner-grid">${tile('Sales', inr(revCur), change(revCur, revPrev))}${tile('Orders', cur.length, change(cur.length, prev.length))}${tile('Average order', cur.length ? inr(Math.round(revCur / cur.length)) : '—', cur.length ? (items / cur.length).toFixed(1) + ' pieces per order' : '')}
-      ${tile('Visitors', st.visitors || 0, (st.sessions || 0) + ' visits')}${tile('Visits that bought', pct(fu.bought || 0, fu.visits || 0), '')}${goal ? tile('This month’s goal', pct(revMonth, goal), `${inr(revMonth)} of ${inr(goal)}<span class="hb-bar" aria-hidden="true" style="display:block;margin-top:6px"><span style="width:${Math.min(100, Math.round(revMonth / goal * 100))}%"></span></span>`) : ''}</div>
+    <div class="owner-grid">${tile('Sales', inr(revCur), change(revCur, revPrev), spark(pts.map((p) => p.v)))}${tile('Orders', cur.length, change(cur.length, prev.length))}${tile('Average order', cur.length ? inr(Math.round(revCur / cur.length)) : '—', cur.length ? (items / cur.length).toFixed(1) + ' pieces per order' : '')}
+      ${tile('Visitors', st.visitors || 0, (st.sessions || 0) + ' visits', spark((st.daily || []).map((x) => x.visitors)))}${tile('Visits that bought', pct(fu.bought || 0, fu.visits || 0), '')}${goal ? tile('This month’s goal', pct(revMonth, goal), `${inr(revMonth)} of ${inr(goal)}<span class="hb-bar" aria-hidden="true" style="display:block;margin-top:6px"><span style="width:${Math.min(100, Math.round(revMonth / goal * 100))}%"></span></span>`) : ''}</div>
     ${box(`Sales ${step > 1 ? 'by week' : 'by day'}`, colChart(pts, inr, 'Sales by ' + (step > 1 ? 'week' : 'day')), 'Paid and cash on delivery orders, not cancelled. Gift card payments count as sales.')}
     <div class="adm-cols">
     ${box('From visit to order', hbars([['Visits', fu.visits || 0, fMax], ['Looked at a piece', fu.viewed || 0, fMax, pct(fu.viewed, fMax)], ['Added to cart', fu.added || 0, fMax, pct(fu.added, fMax)], ['Started checkout', fu.checkout || 0, fMax, pct(fu.checkout, fMax)], ['Ordered', fu.bought || 0, fMax, pct(fu.bought, fMax)]]), fu.checkout > fu.bought ? `${fu.checkout - fu.bought} visit${fu.checkout - fu.bought === 1 ? '' : 's'} started checkout and stopped.` : '')}
@@ -3134,9 +3201,9 @@ function admEvents() {
     </div>
     ${box('Pieces', small(prows.map(([id, r]) => [esc((byId[id] || { name: id }).name), r.views, r.adds, r.sold, r.rev ? inr(r.rev) : '', r.views ? pct(r.sold, r.views) : '']), ['Piece', 'Views', 'Added to cart', 'Sold', 'Sales', 'Views that sold']))}
     <div class="adm-cols">
-    ${box('By category', Object.keys(cat).length ? hbars(Object.entries(cat).sort((a, b) => b[1] - a[1]).map(([k, v]) => [k, v, catMax, pct(v, revCur)]), inr) : '<p class="muted">No sales in this period.</p>')}
+    ${box('By category', Object.keys(cat).length ? donut(Object.entries(cat).sort((a, b) => b[1] - a[1]), inr, 'Sales by category') : '<p class="muted">No sales in this period.</p>')}
     ${box('Customers', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${newC} new · ${cur.length - newC} returning</strong><span class="muted">orders in this period</span></div><div><strong class="num">${pct(repeaters.length, Object.keys(byWho).length)}</strong><span class="muted">of customers have ordered more than once</span></div><div><strong class="num">${gaps.length ? Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length) + ' days' : '—'}</strong><span class="muted">between a customer’s orders, on average</span></div></div>`)}
-    ${box('How people paid', small(Object.entries(pay).map(([k, v]) => [esc(k), v[0], inr(v[1])]), ['', 'Orders', 'Value']) + (dl('payment_failed', (d) => d.method).length ? `<p class="muted" style="margin:0">Payments that failed: ${dl('payment_failed', (d) => d.method).map(([m, n]) => esc(m) + ' ' + n).join(', ')}</p>` : ''))}
+    ${box('How people paid', donut(Object.entries(pay).map(([k, v]) => [k, v[0]]), (n) => n + (n === 1 ? ' order' : ' orders'), 'Orders by payment', (n) => String(n)) + small(Object.entries(pay).map(([k, v]) => [esc(k), v[0], inr(v[1])]), ['', 'Orders', 'Value']) + (dl('payment_failed', (d) => d.method).length ? `<p class="muted" style="margin:0">Payments that failed: ${dl('payment_failed', (d) => d.method).map(([m, n]) => esc(m) + ' ' + n).join(', ')}</p>` : ''))}
     ${box('Codes', small(Object.entries(coup).sort((a, b) => b[1][0] - a[1][0]).map(([k, v]) => [esc(k), v[0], inr(v[1]), inr(v[2])]), ['Code', 'Used', 'Taken off', 'Orders worth']))}
     ${box('Bud Points and gift cards', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${ptsIssued}</strong><span class="muted">points given</span></div><div><strong class="num">${ptsUsed}</strong><span class="muted">points spent</span></div><div><strong class="num">${inr(gcUsed)}</strong><span class="muted">paid with gift cards</span></div><div><strong class="num">${inr(gcLeft)}</strong><span class="muted">left on all gift cards</span></div></div>`)}
     ${box('Share links', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${refO.length}</strong><span class="muted">orders from a friend’s link, worth ${inr(rev(refO))}</span></div><div><strong class="num">${(nm.share || 0) + (nm.share_link || 0) + (nm.house_share || 0) + (nm.room_share || 0)}</strong><span class="muted">times the shop was shared</span></div></div>`)}
@@ -3733,6 +3800,8 @@ function viewGiftHome() {
 function viewFor(r, cs) {
   let html;
   if (cs) html = viewComingSoon();
+  else if (soonFor(r)) html = viewSoonSection(soonFor(r));
+  else if (r.startsWith('s-')) html = viewNewSection(r);
   else if (r === 'home' && homeStyle() === 'gift') html = viewGiftHome();
   else if (r === 'shop') html = viewShop('all');
   else if (r === 'candles') html = viewShop('candles');
@@ -4057,6 +4126,8 @@ document.addEventListener('click', (e) => {
   }
   switch (a) {
     case 'adm-save-all': { const n = flushHeld(); if (n) say('Saving ' + n + (n === 1 ? ' change…' : ' changes…')); break; }
+    case 'adm-ns-add': { const cur = readNs(); cur.push({ id: '', name: '', line: '', live: false }); UI.adm.draftNs = cur; UI.adm.pending = new Map(); render(); $('#ns-' + (cur.length - 1) + '-n')?.focus(); break; }
+    case 'adm-ns-del': { const keep = readNs(+d.i); admDo(async () => { SET.newSections = keep; UI.adm.draftNs = null; UI.adm.pending = new Map(); await dbPut('settings', { key: 'newSections', value: keep }); renderChrome(); render(); }, 'Removed.'); break; }
     case 'adm-discard': UI.adm.pending = new Map(); render(); break;
     case 'edit-mode': UI.edit = !UI.edit; document.body.classList.toggle('editing', UI.edit); t.setAttribute('aria-pressed', String(UI.edit)); t.textContent = UI.edit ? 'Stop editing text' : 'Edit text on page'; say(UI.edit ? 'Click any word on the page to change it.' : 'Editing off.'); break;
     case 'ov-close': UI.ov = null; renderOverlay(); break;
@@ -4165,7 +4236,7 @@ document.addEventListener('click', (e) => {
         UI.adm.cust = null; if (BTDB.on) UI.adm.rows = {}; render(); }, 'Their details are deleted.'); break; }
     case 'adm-review-del': if (confirm('Delete this review?')) admDo(async () => { if (BTDB.on) await BTDB.remove('reviews', 'id=eq.' + encodeURIComponent(d.id)); const list = admData('reviews') || []; const i = list.findIndex((x) => String(x.id) === d.id); if (i >= 0) list.splice(i, 1); save(); DATA.reviews = list.filter((x) => x.published); render(); }, 'Review deleted.'); break;
     case 'adm-csv': downloadCSV(d.v === 'subscribers' ? 'bud-and-things-sign-ups' : 'bud-and-things-restock-requests', (admData('people') || []).filter((r) => r.table === d.v)); break;
-    case 'cs-make': { const code = Array.from(crypto.getRandomValues(new Uint32Array(16)), (x) => 'abcdefghjkmnpqrstuvwxyz23456789'[x % 31]).join(''); admDo(async () => { await dbPut('settings', { key: 'previewCode', value: code }); render(); }, 'New preview code saved. Old links stop working. Copy the new link.'); break; }
+    case 'cs-make': { const code = Array.from(crypto.getRandomValues(new Uint32Array(16)), (x) => 'abcdefghjkmnpqrstuvwxyz23456789'[x % 31]).join(''); admDo(async () => { await dbPut('settings', { key: 'previewHash', value: await sha256(code) }); if ('previewCode' in (DATA.settings || {})) await dbDel('settings', 'key', 'previewCode'); try { localStorage.setItem('bt-preview-code', code); } catch (e) { /* link not kept */ } render(); }, 'New preview code saved. Old links stop working. Copy the new link now.'); break; }
     case 'cs-copy': { const l = $('#cs-link'); l.select(); (navigator.clipboard ? navigator.clipboard.writeText(l.value) : Promise.reject()).then(() => say('Preview link copied.'), () => say('Select the link and copy it.')); break; }
     case 'adm-seed':admDo(async () => { const msg = await admSeed(); say('Copied ' + msg + '.'); render(); }); break;
     case 'adm-signout': BTDB.signOut(); UI.adm.mfa = null; UI.adm.err = null; UI.adm.rows = {}; loadData(); render(); say('Signed out.'); break;
@@ -4230,8 +4301,8 @@ document.addEventListener('drop', (e) => {
   admDo(async () => { await dbPut('media', same.map((m, i) => Object.assign({}, m, { sort: i * 10 }))); render(); }, 'Order saved.');
 });
 // ---------- Owner view: edits wait for the Save button ----------
-const HOLD = new Set(['adm-set', 'adm-text', 'adm-ov', 'adm-list', 'adm-pol', 'adm-jr', 'adm-tags', 'adm-quiz', 'stock']);
-const WHOLE = { 'adm-list': (d) => d.k, 'adm-tags': (d) => d.k, 'adm-pol': (d) => d.id, 'adm-jr': () => '', 'adm-quiz': () => '' };
+const HOLD = new Set(['adm-ns', 'adm-set', 'adm-text', 'adm-ov', 'adm-list', 'adm-pol', 'adm-jr', 'adm-tags', 'adm-quiz', 'stock']);
+const WHOLE = { 'adm-ns': () => '', 'adm-list': (d) => d.k, 'adm-tags': (d) => d.k, 'adm-pol': (d) => d.id, 'adm-jr': () => '', 'adm-quiz': () => '' };
 const heldKey = (t) => t.id || (t.dataset.act + '|' + (t.dataset.k || ''));
 const heldFind = (key) => document.getElementById(key) || (key.includes('|') ? document.querySelector(`[data-act="${key.split('|')[0]}"][data-k="${key.split('|')[1]}"]`) : null);
 const heldVal = (t) => (t.type === 'checkbox' ? t.checked : t.value);
@@ -4256,6 +4327,13 @@ function flushHeld() {
   UI.adm.pending = new Map(); document.querySelectorAll('.dirty').forEach((x) => x.classList.remove('dirty')); saveBar(); return n;
 }
 window.addEventListener('beforeunload', (e) => { if (UI.adm && UI.adm.pending && UI.adm.pending.size) { e.preventDefault(); e.returnValue = ''; } });
+function readNs(skip) {
+  const base = UI.adm.draftNs || newSections(); const out = []; const used = new Set(base.map((x) => x.id).filter(Boolean));
+  document.querySelectorAll('#ns-card .ns-n').forEach((el, i) => { if (i === skip) return; const name = el.value.trim(); if (!name) return; const prev = base[i] || {}; let id = prev.id;
+    if (!id) { const b = secSlug(name) || 'section'; id = b; let k = 2; while (used.has(id)) id = b + '-' + k++; used.add(id); }
+    out.push({ id, name, line: $('#ns-' + i + '-l').value.trim(), live: $('#ns-' + i + '-o').checked }); });
+  return out;
+}
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
   if (HOLD.has(d.act) && route() === 'admin' && !d.flush) { holdChange(t); return; }
@@ -4265,6 +4343,8 @@ document.addEventListener('change', (e) => {
   if (d.act === 'ritual-pick') { UI.ritual.pick[UI.ritual.preset][d.i] = t.checked; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'ritual-custom') { UI.ritual.custom[d.k] = t.value; UI.ritual.pick.custom = { 0: true, 1: true }; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
+  if (d.act === 'adm-ns') { const v = readNs(); admDo(async () => { SET.newSections = v; UI.adm.draftNs = null; await dbPut('settings', { key: 'newSections', value: v }); renderChrome(); render(); }, 'Saved.'); }
+  if (d.act === 'adm-soon') { const v = [...document.querySelectorAll('[data-act=adm-soon]')].filter((x) => x.checked).map((x) => x.dataset.k); admDo(async () => { SET.soonPages = v; await dbPut('settings', { key: 'soonPages', value: v }); render(); }, v.length ? 'Saved. These sections show Coming soon.' : 'Saved. No section shows Coming soon.'); }
   if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); if (d.k === 'theme') render(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
   if (d.act === 'adm-pol') { const id = d.id; const box = t.closest('[data-pol]'); const body = box.querySelector('.pol-body').value; const ti = box.querySelector('.pol-title');
     admDo(async () => { if (ti) { const list = (SET.policyPages || []).map((x) => (x.id === id ? { id, title: ti.value.trim() || x.title, body } : x)); await savePolicies(list); } else { const k = 'legal.' + id; if (body === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: body }); } renderChrome(); }, 'Saved.'); }
