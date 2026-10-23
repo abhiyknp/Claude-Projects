@@ -1038,6 +1038,12 @@ const FUTURE = [['Gift sets & curated gifting', 'Next'], ['Home décor & lifesty
 const MOODS = [['calm', 'Calm and grounded'], ['cosy', 'Warm and cosy'], ['fresh', 'Fresh and uplifting'], ['creative', 'Creative and expressive'], ['gift-ready', 'Thoughtful and gift-ready']];
 const SPACES = [['bedroom', 'Bedroom'], ['living', 'Living room'], ['workspace', 'Desk or workspace'], ['kitchen', 'Kitchen'], ['entrance', 'Entrance'], ['bathroom', 'Bathroom'], ['dining', 'Dining table']];
 const OCCASIONS = [['birthday', 'Birthday'], ['anniversary', 'Anniversary'], ['housewarming', 'Housewarming'], ['wedding', 'Wedding'], ['new-baby', 'New baby'], ['thank-you', 'Thank you'], ['festive', 'Festive'], ['milestone', 'A milestone'], ['self-care', 'Self-care'], ['just-because', 'Just because']];
+// the owner can rename, add or hide these choices in Owner view → Filters & quiz; products keep the short key they were tagged with
+const TAG_LISTS = { moodList: [MOODS, 'Feelings'], spaceList: [SPACES, 'Rooms'], occList: [OCCASIONS, 'Occasions'] };
+const TAG_DEFAULTS = {}; Object.entries(TAG_LISTS).forEach(([k, [arr]]) => { TAG_DEFAULTS[k] = arr.map((x) => x.slice()); });
+function applyTagLists() {
+  Object.entries(TAG_LISTS).forEach(([k, [arr]]) => { const v = SET[k]; const ok = Array.isArray(v) && v.length && v.every((x) => Array.isArray(x) && /^[a-z0-9-]+$/.test(x[0]) && typeof x[1] === 'string' && x[1].trim()); arr.splice(0, arr.length, ...(ok ? v : TAG_DEFAULTS[k]).map((x) => [x[0], x[1]])); });
+}
 // occasions with at least one piece to show, so a chip never leads to an empty shop
 const occLive = () => OCCASIONS.filter(([k]) => P.some((p) => (p.occ || []).includes(k)));
 const STATES = ['Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'];
@@ -1393,7 +1399,7 @@ function applyData() {
   indexProducts();
   PAIRINGS = (DATA.pairings && DATA.pairings.length ? DATA.pairings.filter((r) => r.live !== false).sort(bySort).map((r) => Object.assign({ name: r.id, why: '', items: [] }, r.data, { id: r.id })) : BASE_PAIRINGS.slice())
     .filter((x) => x.items.length === 2 && x.items.every(([pid, vi]) => byId[pid] && byId[pid].variants[vi]));
-  TXT = DATA.text || {}; SET = Object.assign({}, SET_DEFAULTS, DATA.settings || {});
+  TXT = DATA.text || {}; SET = Object.assign({}, SET_DEFAULTS, DATA.settings || {}); applyTagLists(); applyQuizQ();
   if (DATA.stock) S.stock = BTDB.on ? Object.assign({}, DATA.stock) : Object.assign(S.stock, DATA.stock);
   Object.keys(PIMG).forEach((k) => delete PIMG[k]); // drawings follow edited colours
   const seed = BTDB.on ? {} : defaults().stock; Object.keys(skuMap).forEach((sku) => { if (S.stock[sku] == null) S.stock[sku] = seed[sku] || 0; });
@@ -1919,6 +1925,8 @@ const FSTEPS = [
   { k: 'kind', q: 'Which kind of piece?', opts: [['candle', 'A candle'], ['object', 'A Jesmonite object'], ['either', 'Either']] },
   { k: 'budget', q: 'What would you like to spend on one piece?', opts: [['u1000', 'Under ₹1,000'], ['u2000', 'Under ₹2,000'], ['any', 'Any amount']] }
 ];
+const QUIZ_DEFAULT_Q = FSTEPS.map((x) => x.q);
+function applyQuizQ() { const v = SET.quizQ; FSTEPS.forEach((x, i) => { x.q = Array.isArray(v) && typeof v[i] === 'string' && v[i].trim() ? v[i] : QUIZ_DEFAULT_Q[i]; }); }
 function viewFeeling() {
   const f = UI.finder;
   if (!f.started) { f.started = true; track('finder_start', {}); }
@@ -1934,7 +1942,7 @@ function viewFeeling() {
   }
   const s = FSTEPS[f.step];
   return `<div class="finder"><aside class="finder-side"><span class="eyebrow num">Find Your Feeling · step ${f.step + 1} of 5</span><div class="progress" aria-hidden="true">${FSTEPS.map((_, i) => `<span class="${i <= f.step ? 'on' : ''}"></span>`).join('')}</div><h1 tabindex="-1">${esc(s.q)}</h1><span style="margin-top:auto;font-size:13px;opacity:.88">Every step can be skipped. Back keeps your answers.</span></aside>
-    <div class="finder-main"><div class="options" role="radiogroup" aria-label="${esc(s.q)}">${s.opts.map(([k, l]) => `<button type="button" role="radio" aria-checked="${f[s.k] === k}" data-act="finder-opt" data-k="${s.k}" data-v="${k}">${s.k === 'mood' ? ICON[MOOD_ICON[k]] : ''}<span>${l}</span></button>`).join('')}</div>
+    <div class="finder-main"><div class="options" role="radiogroup" aria-label="${esc(s.q)}">${s.opts.map(([k, l]) => `<button type="button" role="radio" aria-checked="${f[s.k] === k}" data-act="finder-opt" data-k="${s.k}" data-v="${k}">${s.k === 'mood' ? ICON[MOOD_ICON[k]] || '' : ''}<span>${esc(l)}</span></button>`).join('')}</div>
     <div class="finder-nav">${f.step > 0 ? '<button class="btn ghost" type="button" data-act="finder-back">Back</button>' : ''}<button class="btn" type="button" data-act="finder-next">${f.step === 4 ? 'See my matches' : 'Next'}</button><button class="linkbtn" type="button" data-act="finder-skip">Skip this question</button></div></div></div>`;
 }
 
@@ -2183,7 +2191,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2246,7 +2254,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
@@ -2511,6 +2519,17 @@ function readJournal() {
     if (g('j-prod')) j.prod = g('j-prod'); if (g('j-img')) j.img = g('j-img'); j.links = csvList(g('j-links')); return j; });
 }
 const saveJournal = (list) => dbPut('settings', { key: 'journalList', value: list });
+
+// Filters & quiz: the choices shoppers pick from. A product keeps the short key it was tagged with, so renaming is safe; removing a choice only hides it.
+function admFilters() {
+  const rows = (k, arr) => arr.map(([key, l], i) => `<div class="lrow"><span class="field"><label for="f-${k}-${i}">Words shown <span class="hint">tag: ${esc(key)}</span></label><input id="f-${k}-${i}" class="f-label" data-act="adm-tags" data-k="${k}" data-key="${esc(key)}" value="${esc(l)}"></span><span></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-tags-move" data-k="${k}" data-i="${i}" data-v="-1" aria-label="Move ${esc(l)} up">↑</button><button class="btn small ghost" type="button" data-act="adm-tags-move" data-k="${k}" data-i="${i}" data-v="1" aria-label="Move ${esc(l)} down">↓</button><button class="btn small ghost" type="button" data-act="adm-tags-del" data-k="${k}" data-i="${i}" aria-label="Remove ${esc(l)}">Remove</button></span></div>`).join('');
+  return `<p class="muted">These choices feed the shop filters, Find Your Feeling quiz, product tags and gift dates. Edit a box, then click outside it to save.</p>
+    ${Object.entries(TAG_LISTS).map(([k, [arr, title]]) => `<div class="adm-card"><h2 style="font-size:22px">${title}</h2><div id="tg-${k}">${rows(k, arr)}</div><p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-tags-add" data-k="${k}">Add a choice</button>${Array.isArray(SET[k]) ? `<button class="linkbtn" type="button" data-act="adm-tags-reset" data-k="${k}">Put back the original</button>` : ''}</p></div>`).join('')}
+    <div class="adm-card"><h2 style="font-size:22px">Find Your Feeling questions</h2><div id="tg-quiz">${FSTEPS.map((x, i) => `<span class="field full"><label for="qz-${i}">Question ${i + 1}</label><input id="qz-${i}" class="q-text" data-act="adm-quiz" value="${esc(x.q)}"></span>`).join('')}</div>${Array.isArray(SET.quizQ) ? '<p><button class="linkbtn" type="button" data-act="adm-quiz-reset">Put back the original</button></p>' : ''}</div>`;
+}
+function readTags(k) { const box = document.getElementById('tg-' + k); return box ? [...box.querySelectorAll('.f-label')].map((i) => [i.dataset.key, i.value.trim()]).filter((x) => x[1]) : TAG_LISTS[k][0].map((x) => x.slice()); }
+const tagKey = (label, list) => { let b = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30) || 'choice'; let k = b, n = 2; while (list.some((x) => x[0] === k)) k = b + '-' + n++; return k; };
+const saveTags = (k, v) => { SET[k] = v; applyTagLists(); return dbPut('settings', { key: k, value: v }); };
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
   return `<div class="adm-bar"><p class="muted">Edit any line, then click outside the box to save. A new line breaks the line; *words between stars* are set in italics. Words in {braces} come from Settings.</p><span class="field"><label for="tx-q">Find</label><input id="tx-q" data-act="adm-q" value="${esc(UI.adm.q || '')}" placeholder="delivery, gift, hero…"></span></div>
@@ -3933,6 +3952,11 @@ document.addEventListener('click', (e) => {
     case 'adm-jr-del': { const list = readJournal(); list.splice(+d.i, 1); admDo(async () => { await saveJournal(list); render(); }, 'Story removed.'); break; }
     case 'adm-jr-move': { const list = readJournal(); const i = +d.i, to = i + (+d.v); if (to < 0 || to >= list.length) break; const [m] = list.splice(i, 1); list.splice(to, 0, m); UI.adm.jrOpen = m.id; admDo(async () => { await saveJournal(list); render(); }, 'Saved.'); break; }
     case 'adm-jr-reset': admDo(async () => { await dbDel('settings', 'key', 'journalList'); render(); }, 'Back to the original stories.'); break;
+    case 'adm-tags-add': { const v = readTags(d.k); v.push([tagKey('new choice', v), 'New choice']); admDo(async () => { await saveTags(d.k, v); render(); }, 'Added. Rename it.'); break; }
+    case 'adm-tags-del': { const v = readTags(d.k); if (v.length < 2) { say('Keep at least one choice.'); break; } v.splice(+d.i, 1); admDo(async () => { await saveTags(d.k, v); render(); }, 'Removed. Products keep their tag, it just stops showing.'); break; }
+    case 'adm-tags-move': { const v = readTags(d.k); const i = +d.i, to = i + (+d.v); if (to < 0 || to >= v.length) break; const [m] = v.splice(i, 1); v.splice(to, 0, m); admDo(async () => { await saveTags(d.k, v); render(); }, 'Saved.'); break; }
+    case 'adm-tags-reset': admDo(async () => { await dbDel('settings', 'key', d.k); delete SET[d.k]; applyTagLists(); render(); }, 'Back to the original.'); break;
+    case 'adm-quiz-reset': admDo(async () => { await dbDel('settings', 'key', 'quizQ'); delete SET.quizQ; applyQuizQ(); render(); }, 'Back to the original.'); break;
     case 'adm-list-add': case 'adm-list-del': case 'adm-list-move': listAction(d); break;
     case 'adm-list-reset': admDo(async () => { if (UI.adm.draft) delete UI.adm.draft[d.k]; await dbDel('settings', 'key', d.k); renderChrome(); render(); }, 'Back to the original.'); break;
     case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
@@ -4088,6 +4112,8 @@ document.addEventListener('change', (e) => {
   if (d.act === 'adm-jr') { admDo(async () => { await saveJournal(readJournal()); renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-jr-file') { const file = t.files && t.files[0]; if (!file) return; const ta = t.closest('[data-story]').querySelector('.j-body');
     fileToPolicyText(file).then((txt) => { if (!txt) throw new Error('The file has no text.'); ta.value = txt; ta.dispatchEvent(new Event('change', { bubbles: true })); }).catch((err) => say('Couldn’t read the file: ' + err.message)); t.value = ''; }
+  if (d.act === 'adm-tags') { const k = d.k; admDo(async () => { await saveTags(k, readTags(k)); }, 'Saved.'); }
+  if (d.act === 'adm-quiz') { const v = [...document.querySelectorAll('#tg-quiz .q-text')].map((i) => i.value.trim()); admDo(async () => { SET.quizQ = v; applyQuizQ(); await dbPut('settings', { key: 'quizQ', value: v }); }, 'Saved.'); }
   if (d.act === 'adm-list') { const key = d.k; admDo(async () => { await saveList(key, readList(key)); renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-ov') { const k = d.k; admDo(async () => { if (!t.value.trim() || t.value === SEEN[k].d) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); UI.adm.open = 'x.'; renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-text') { const k = d.k; admDo(async () => { if (t.value === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); renderChrome(); }, 'Saved.'); }
