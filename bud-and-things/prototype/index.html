@@ -1486,7 +1486,7 @@ function setMeta(attr, name, val) {
 function applySeo(r) {
   let title = Tx('seo.title'); let desc = Tx('seo.desc'); let ogt = title;
   if (r.startsWith('p-') && byId[r.slice(2)]) { const p = byId[r.slice(2)]; ogt = p.name; title = p.name + Tx('seo.suffix'); desc = descOf(p) || desc; }
-  else if (r.startsWith('journal-') && JOURNAL.some((j) => j.id === r.slice(8))) { const j = JOURNAL.find((x) => x.id === r.slice(8)); ogt = j.title; title = j.title + Tx('seo.suffix'); desc = j.lead || desc; }
+  else if (r.startsWith('journal-') && journal().some((j) => j.id === r.slice(8))) { const j = journal().find((x) => x.id === r.slice(8)); ogt = j.title; title = j.title + Tx('seo.suffix'); desc = j.lead || desc; }
   else if (r !== 'home' && TEXT['seo.t.' + r] && Tx('seo.t.' + r)) { ogt = Tx('seo.t.' + r); title = ogt + Tx('seo.suffix'); desc = Tx('seo.d.' + r) || desc; }
   document.title = title;
   setMeta('name', 'description', desc); setMeta('property', 'og:title', ogt); setMeta('property', 'og:description', desc);
@@ -2183,7 +2183,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2246,7 +2246,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
@@ -2480,6 +2480,37 @@ async function fileToPolicyText(file) {
   if (/\.docx$/i.test(file.name)) return docxText(await file.arrayBuffer());
   return (await file.text()).replace(/\r\n?/g, '\n').replace(/^#{1,6} /gm, '## ').trim();
 }
+
+// Journal: the stories. Each is a title, a short lead and a body written as "## heading" then text.
+const storyText = (j) => j.body.map(([h, t]) => (h ? '## ' + h + '\n' : '') + t).join('\n\n');
+const parseStory = (txt) => String(txt).split(/\n\n+/).map((b) => b.trim()).filter(Boolean).map((b) => { const m = /^## (.+)\n?([\s\S]*)$/.exec(b); return m ? [m[1].trim(), m[2].replace(/\n+/g, ' ').trim()] : ['', b.replace(/\n+/g, ' ')]; });
+const STORY_IMGS = [['', 'None (use the product drawing)'], [IMG.box, 'Gift box photo'], [IMG.jar, 'Jar photo'], [IMG.tag, 'Gift tag photo'], [IMG.card, 'Care card photo'], [IMG.pouch, 'Pouch photo'], [IMG.seal, 'Seal photo'], [IMG.leather, 'Leather photo']];
+function storyBox(j, i, n) {
+  const id = 'jr-' + i;
+  return `<details class="adm-group" data-story="${esc(j.id)}" ${UI.adm.jrOpen === j.id ? 'open' : ''}><summary>${esc(j.title)} <span class="muted">· ${esc(j.eyebrow || '')}</span></summary><div class="form" style="padding:14px 18px">
+    <span class="field"><label for="${id}-t">Title</label><input id="${id}-t" class="j-title" data-act="adm-jr" value="${esc(j.title)}"></span>
+    <span class="field"><label for="${id}-e">Topic label <span class="hint">for example Gifting, Candle care</span></label><input id="${id}-e" class="j-eyebrow" data-act="adm-jr" value="${esc(j.eyebrow || '')}"></span>
+    <span class="field"><label for="${id}-m">Minutes to read</label><input id="${id}-m" class="j-mins" type="number" min="1" data-act="adm-jr" value="${esc(j.mins || 2)}"></span>
+    <span class="field full"><label for="${id}-l">Short lead</label><input id="${id}-l" class="j-lead" data-act="adm-jr" value="${esc(j.lead || '')}"></span>
+    <span class="field full"><label for="${id}-b">Story text <span class="hint">a line starting with ## is a heading; a blank line starts a new section</span></label><textarea id="${id}-b" class="j-body" rows="10" data-act="adm-jr">${esc(storyText(j))}</textarea></span>
+    <span class="field"><label for="${id}-p">Main product <span class="hint">product name in the web address, shown as its drawing</span></label><input id="${id}-p" class="j-prod" list="prod-ids" data-act="adm-jr" value="${esc(j.prod || '')}"></span>
+    <span class="field"><label for="${id}-k">Products to shop under the story <span class="hint">comma separated</span></label><input id="${id}-k" class="j-links" data-act="adm-jr" value="${esc((j.links || []).join(', '))}"></span>
+    <span class="field full"><label for="${id}-i">Picture</label><select id="${id}-i" class="j-img" data-act="adm-jr">${STORY_IMGS.map(([v, l]) => `<option value="${esc(v)}" ${(j.img || '') === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}${j.img && !STORY_IMGS.some((x) => x[0] === j.img) ? `<option value="${esc(j.img)}" selected>${esc(j.img)}</option>` : ''}</select></span>
+    <span class="full" style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn small ghost" for="${id}-f" style="cursor:pointer">Fill text from a Word or text file</label><input id="${id}-f" class="sr" type="file" accept=".docx,.txt,.md,text/plain" data-act="adm-jr-file"><a class="btn small ghost" href="#journal-${esc(j.id)}">View story</a>
+      <button class="btn small ghost" type="button" data-act="adm-jr-move" data-i="${i}" data-v="-1" aria-label="Move ${esc(j.title)} earlier">↑</button><button class="btn small ghost" type="button" data-act="adm-jr-move" data-i="${i}" data-v="1" aria-label="Move ${esc(j.title)} later">↓</button><button class="btn small ghost danger" type="button" data-act="adm-jr-del" data-i="${i}">Remove story</button></span></div></details>`;
+}
+function admJournal() {
+  const list = journal();
+  return `<p class="muted">Stories appear on the Journal page and, the first three, on the home page. Edit a box, then click outside it to save.</p><datalist id="prod-ids">${prodRows().map((r) => `<option value="${esc(r.id)}"></option>`).join('')}</datalist>
+    <div id="ls-journal">${list.map((j, i) => storyBox(j, i, list.length)).join('')}</div>
+    <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn" type="button" data-act="adm-jr-add">Add a story</button>${Array.isArray(SET.journalList) ? '<button class="linkbtn" type="button" data-act="adm-jr-reset">Put back the original stories</button>' : ''}</p>`;
+}
+function readJournal() {
+  const box = document.getElementById('ls-journal'); if (!box) return journal().map((j) => Object.assign({}, j));
+  return [...box.querySelectorAll('[data-story]')].map((d) => { const g = (c) => d.querySelector('.' + c).value.trim(); const j = { id: d.dataset.story, eyebrow: g('j-eyebrow'), title: g('j-title') || 'Untitled story', mins: Math.max(1, parseInt(g('j-mins'), 10) || 2), lead: g('j-lead'), body: parseStory(d.querySelector('.j-body').value) };
+    if (g('j-prod')) j.prod = g('j-prod'); if (g('j-img')) j.img = g('j-img'); j.links = csvList(g('j-links')); return j; });
+}
+const saveJournal = (list) => dbPut('settings', { key: 'journalList', value: list });
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
   return `<div class="adm-bar"><p class="muted">Edit any line, then click outside the box to save. A new line breaks the line; *words between stars* are set in italics. Words in {braces} come from Settings.</p><span class="field"><label for="tx-q">Find</label><input id="tx-q" data-act="adm-q" value="${esc(UI.adm.q || '')}" placeholder="delivery, gift, hero…"></span></div>
@@ -3176,21 +3207,23 @@ const JOURNAL = [
   { id: 'inside-the-studio', eyebrow: 'From the studio', title: 'Inside the studio: how a batch is made', mins: 2, img: IMG.leather, lead: 'From a sketch to a parcel at your door, every piece passes through Ashi’s hands.',
     body: [['Thought', 'Every piece starts with a moment we want to make room for: tea at four, rings at night, a lamp at the door.'], ['Object', 'Candles are poured and Jesmonite pieces cast in small batches, then cured, checked and finished by hand.'], ['Feeling', 'Each order is packed with tissue, a care card and, for gifts, a hand-written note.'], ['Memory', 'The best part is when a piece becomes part of someone’s everyday. That is what we make them for.']], links: [] }
 ];
+// the stories: the owner's saved list from Owner view → Journal, else the built-in ones above
+const journal = () => (Array.isArray(SET.journalList) && SET.journalList.every((j) => j && j.id && j.title && Array.isArray(j.body)) ? SET.journalList : JOURNAL);
 const postArt = (j) => j.img ? `<img src="${esc(j.img)}" alt="" loading="lazy">` : byId[j.prod] ? art(byId[j.prod], 0, 1.2) : '';
 function journalCards(n) {
-  return `<div class="journal">${JOURNAL.slice(0, n || JOURNAL.length).map((j) => `<a class="post" href="#journal-${j.id}"><span class="tile${j.img ? ' photo-tile' : ' alt'}">${postArt(j)}</span><span class="eyebrow">${esc(j.eyebrow)} · ${j.mins} min read</span><strong>${esc(j.title)}</strong><span class="muted">${esc(j.lead)}</span></a>`).join('')}</div>`;
+  return `<div class="journal">${journal().slice(0, n || journal().length).map((j) => `<a class="post" href="#journal-${j.id}"><span class="tile${j.img ? ' photo-tile' : ' alt'}">${postArt(j)}</span><span class="eyebrow">${esc(j.eyebrow)} · ${j.mins} min read</span><strong>${esc(j.title)}</strong><span class="muted">${esc(j.lead)}</span></a>`).join('')}</div>`;
 }
 function homeJournal(id) {
   return `<section class="section wrap" aria-labelledby="${id}" style="padding-top:0"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="${id}">${T('home.journal')}</h2><span class="muted">${T('home.journalSub')}</span></div><a href="#journal" style="font-weight:600">All stories →</a></div>${journalCards(3)}</section>`;
 }
 function viewJournal(id) {
   if (!id) return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Journal</span><h1 tabindex="-1">Stories, care and gifting</h1><p class="muted" style="max-width:620px">${T('home.journalSub')}</p></div>${journalCards()}</div>`;
-  const j = JOURNAL.find((x) => x.id === id); if (!j) return viewNotFound();
-  const links = j.links.map((x) => byId[x]).filter(Boolean);
+  const j = journal().find((x) => x.id === id); if (!j) return viewNotFound();
+  const links = (j.links || []).map((x) => byId[x]).filter(Boolean);
   return `<article class="wrap article" style="padding-bottom:var(--section)"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#journal">Journal</a> / ${esc(j.title)}</nav>
     <header class="article-head"><span class="eyebrow">${esc(j.eyebrow)} · ${j.mins} min read</span><h1 tabindex="-1">${esc(j.title)}</h1><p class="lead">${esc(j.lead)}</p></header>
     <div class="article-ph tile${j.img ? ' photo-tile' : ' alt'}">${postArt(j)}</div>
-    <div class="article-body">${j.body.map(([h, t]) => `<h2>${esc(h)}</h2><p>${esc(t)}</p>`).join('')}<p class="muted" style="font-size:14px">Written by Ashi at the BUD &amp; THINGS studio.</p></div>
+    <div class="article-body">${j.body.map(([h, t]) => `${h ? `<h2>${esc(h)}</h2>` : ''}<p>${esc(t)}</p>`).join('')}<p class="muted" style="font-size:14px">Written by Ashi at the BUD &amp; THINGS studio.</p></div>
     ${links.length ? `<section class="section" style="padding-bottom:0" aria-labelledby="art-shop"><div class="section-head"><h2 id="art-shop">Shop the story</h2></div><div class="grid">${links.map(card).join('')}</div></section>` : ''}
     <section class="section" style="padding-bottom:0" aria-labelledby="art-more"><div class="section-head"><h2 id="art-more">Keep reading</h2></div>${journalCards(3).replace('<div class="journal">', '<div class="journal">')}</section></article>`;
 }
@@ -3896,6 +3929,10 @@ document.addEventListener('click', (e) => {
     case 'ov-scan': ovScanAll(); render(); break;
     case 'adm-pol-add': { const list = (Array.isArray(SET.policyPages) ? SET.policyPages : []).slice(); let n = list.length + 1; while (list.some((x) => x.id === 'page-' + n)) n++; list.push({ id: 'page-' + n, title: 'New policy page', body: '' }); admDo(async () => { await savePolicies(list); render(); }, 'Page added. Give it a title and text.'); break; }
     case 'adm-pol-del': { const list = (SET.policyPages || []).filter((x) => x.id !== d.id); admDo(async () => { await savePolicies(list); render(); }, 'Page removed.'); break; }
+    case 'adm-jr-add': { const list = readJournal(); let n = list.length + 1; while (list.some((x) => x.id === 'story-' + n)) n++; list.push({ id: 'story-' + n, eyebrow: 'From the studio', title: 'New story', mins: 2, lead: '', body: [['', 'Write your story here.']], links: [] }); UI.adm.jrOpen = 'story-' + n; admDo(async () => { await saveJournal(list); render(); }, 'Story added.'); break; }
+    case 'adm-jr-del': { const list = readJournal(); list.splice(+d.i, 1); admDo(async () => { await saveJournal(list); render(); }, 'Story removed.'); break; }
+    case 'adm-jr-move': { const list = readJournal(); const i = +d.i, to = i + (+d.v); if (to < 0 || to >= list.length) break; const [m] = list.splice(i, 1); list.splice(to, 0, m); UI.adm.jrOpen = m.id; admDo(async () => { await saveJournal(list); render(); }, 'Saved.'); break; }
+    case 'adm-jr-reset': admDo(async () => { await dbDel('settings', 'key', 'journalList'); render(); }, 'Back to the original stories.'); break;
     case 'adm-list-add': case 'adm-list-del': case 'adm-list-move': listAction(d); break;
     case 'adm-list-reset': admDo(async () => { if (UI.adm.draft) delete UI.adm.draft[d.k]; await dbDel('settings', 'key', d.k); renderChrome(); render(); }, 'Back to the original.'); break;
     case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
@@ -4047,6 +4084,9 @@ document.addEventListener('change', (e) => {
   if (d.act === 'adm-pol') { const id = d.id; const box = t.closest('[data-pol]'); const body = box.querySelector('.pol-body').value; const ti = box.querySelector('.pol-title');
     admDo(async () => { if (ti) { const list = (SET.policyPages || []).map((x) => (x.id === id ? { id, title: ti.value.trim() || x.title, body } : x)); await savePolicies(list); } else { const k = 'legal.' + id; if (body === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: body }); } renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-pol-file') { const file = t.files && t.files[0]; if (!file) return; const box = t.closest('[data-pol]'); const ta = box.querySelector('.pol-body');
+    fileToPolicyText(file).then((txt) => { if (!txt) throw new Error('The file has no text.'); ta.value = txt; ta.dispatchEvent(new Event('change', { bubbles: true })); }).catch((err) => say('Couldn’t read the file: ' + err.message)); t.value = ''; }
+  if (d.act === 'adm-jr') { admDo(async () => { await saveJournal(readJournal()); renderChrome(); }, 'Saved.'); }
+  if (d.act === 'adm-jr-file') { const file = t.files && t.files[0]; if (!file) return; const ta = t.closest('[data-story]').querySelector('.j-body');
     fileToPolicyText(file).then((txt) => { if (!txt) throw new Error('The file has no text.'); ta.value = txt; ta.dispatchEvent(new Event('change', { bubbles: true })); }).catch((err) => say('Couldn’t read the file: ' + err.message)); t.value = ''; }
   if (d.act === 'adm-list') { const key = d.k; admDo(async () => { await saveList(key, readList(key)); renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-ov') { const k = d.k; admDo(async () => { if (!t.value.trim() || t.value === SEEN[k].d) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); UI.adm.open = 'x.'; renderChrome(); }, 'Saved.'); }
