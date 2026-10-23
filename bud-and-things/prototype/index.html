@@ -29,18 +29,22 @@
 
 /* Silk · Maroon & Gold: deep wine header, hero and footer over cream shop pages. Every text pair is at least 4.5:1. Gold is only ever used on maroon; on cream, labels use dark gold. The shiny logos replace the flat marks. */
 :root[data-skin="silk"] { --ivory: #F8F0E4; --plaster: #F1E4D0; --linen: #F1E4D0; --sand: #EEDFC4; --sand2: #F3E8D2; --card: #FFFFFF; --caramel: #D6A34A; --terra: #8F1834; --terra-ink: #7A1229; --olive: #7A1229; --choc: #3A0610; --choc2: #5C1F2B; --line: #E0CBB0; --line2: #C9A56F; --glow: #D6A34A; --cta: #8F1834; --on-cta: #F8F0E4; --ok: #3F5A2A; --ok-bg: #E6EBD2; --err-bg: #F5D9D9; --head-bg: #210309; --sk-ink: #3A0610; --sk-ink2: #5C1F2B; --sk-accent: #8F1834; --sk-light: #F3D79B; --sk-dark: #3A0610; --sk-glow: #D6A34A; --sk-cta: #D6A34A; --sk-on-cta: #210309; --sk-chip: rgba(248,240,228,.95); }
-:root[data-skin="silk"] .site-head { color: #F3D79B; border-bottom-color: rgba(214,163,74,.55); background: linear-gradient(90deg, #210309, #3A0610); }
+:root[data-skin="silk"] { --velvet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .78 0 0 0 0 .5 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.15'/%3E%3C/svg%3E"), repeating-linear-gradient(100deg, rgba(0,0,0,0) 0, rgba(255,205,140,.045) 46px, rgba(0,0,0,.09) 92px, rgba(0,0,0,0) 140px), repeating-linear-gradient(72deg, rgba(0,0,0,0) 0, rgba(255,205,140,.04) 120px, rgba(0,0,0,.09) 230px, rgba(0,0,0,0) 330px), linear-gradient(112deg, rgba(255,226,170,0) 18%, rgba(255,226,170,.10) 34%, rgba(255,226,170,0) 52%, rgba(255,226,170,.07) 70%, rgba(255,226,170,0) 86%); }
+/* Velvet silk: a soft grain, long folds and a travelling sheen over every maroon surface. The colour underneath is unchanged, so text contrast is the same. */
+:root[data-skin="silk"] .band, :root[data-skin="silk"] .dark-band, :root[data-skin="silk"] .gh-strip, :root[data-skin="silk"] .foot-base, :root[data-skin="silk"] .note-card, :root[data-skin="silk"] .finder-side, :root[data-skin="silk"] .paths a.feel, :root[data-skin="silk"] .promo-choc, :root[data-skin="silk"] .promo-terra, :root[data-skin="silk"] .pv-bar, :root[data-skin="silk"] .proto, :root[data-skin="silk"] .btn:not(.ghost):not(.small.ghost), :root[data-skin="silk"] .chip[aria-pressed="true"], :root[data-skin="silk"] .gh-flag { background-image: var(--velvet); }
+:root[data-skin="silk"] .mobile-menu { background-image: var(--velvet); }
+:root[data-skin="silk"] .site-head { color: #F3D79B; border-bottom-color: rgba(214,163,74,.55); background: var(--velvet), linear-gradient(90deg, #210309, #3A0610); }
 :root[data-skin="silk"] .site-head .icon-btn, :root[data-skin="silk"] .site-head .nav a { color: #FBE9C2; }
 :root[data-skin="silk"] .site-head .nav a[aria-current="page"] { border-bottom-color: #D6A34A; }
 :root[data-skin="silk"] .site-head .icon-btn .count { background: #D6A34A; color: #210309; }
 :root[data-skin="silk"] .mobile-menu { background: #210309; border-top-color: rgba(214,163,74,.4); }
 :root[data-skin="silk"] .mobile-menu a { color: #FBE9C2; border-bottom-color: rgba(214,163,74,.25); }
-:root[data-skin="silk"] .logo .mark.wordmark { -webkit-mask-image: none; mask-image: none; background: url(assets/silk/logo-horizontal.webp) center / contain no-repeat; width: 172px; aspect-ratio: 1200 / 440; }
+:root[data-skin="silk"] .logo .mark.wordmark { -webkit-mask-image: none; mask-image: none; background: url(assets/silk/logo-horizontal.webp) center / contain no-repeat; width: 236px; aspect-ratio: 1400 / 322; }
 :root[data-skin="silk"] .logo .mark.monogram { background-image: url(assets/silk/leaf.webp); width: 54px; aspect-ratio: 500 / 479; }
-:root[data-skin="silk"] .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); aspect-ratio: 1000 / 795; }
+:root[data-skin="silk"] .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); aspect-ratio: 1000 / 772; }
 :root[data-skin="silk"] .ink-light .mark.lockup, :root[data-skin="silk"] .dark-band .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); }
 :root[data-skin="silk"] .mark.monogram { background-image: url(assets/silk/leaf.webp); aspect-ratio: 500 / 479; }
-:root[data-skin="silk"] .site-foot { background: radial-gradient(ellipse at 85% 10%, #4a0b1c, #3A0610 55%, #210309); color: #FBE9C2; border-top: 1px solid rgba(214,163,74,.55); }
+:root[data-skin="silk"] .site-foot { background: var(--velvet), radial-gradient(ellipse at 85% 10%, #4a0b1c, #3A0610 55%, #210309); color: #FBE9C2; border-top: 1px solid rgba(214,163,74,.55); }
 :root[data-skin="silk"] .site-foot a, :root[data-skin="silk"] .site-foot .muted, :root[data-skin="silk"] .site-foot small { color: #FBE9C2; }
 :root[data-skin="silk"] .site-foot strong { color: #D6A34A; font-family: var(--display); letter-spacing: .06em; }
 :root[data-skin="silk"] .btn:not(.ghost):not(.light) { box-shadow: 0 4px 12px rgba(58,6,16,.22); }
