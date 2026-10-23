@@ -77,7 +77,7 @@ figure.gal img { aspect-ratio: auto; height: min(620px, 80vw); object-fit: cover
 .hero-logo .lockup { color: var(--sk-ink); }
 .ink-light .hero-logo .lockup { color: var(--sk-light); filter: drop-shadow(0 1px 6px rgba(20,12,8,.4)); }
 .logo .mark.monogram { display: none; width: 30px; }
-@media (max-width: 560px) { .logo .mark.wordmark { display: none; } .logo .mark.monogram { display: inline-block; } }
+@media (max-width: 560px) { .logo .mark.wordmark { display: none; } .logo .mark.monogram { display: inline-block; } .logo { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; } }
 .band .opts button { display: inline-flex; align-items: center; gap: 10px; }
 .options button { display: flex; align-items: center; gap: 12px; }
 .options button svg { color: var(--terra-ink); }
@@ -474,7 +474,7 @@ input[type="file"] { padding: 10px 12px; }
 .pfx { display: flex; align-items: stretch; }
 .pfx-c { display: inline-flex; align-items: center; gap: 2px; padding: 0 10px; min-height: 48px; border: 1px solid var(--line2); border-right: 0; background: var(--linen); font-weight: 600; font-size: 15px; color: var(--choc2); }
 .pfx input { flex: 1; min-width: 0; }
-.pfx-c input { flex: none; width: 3.2ch; min-width: 0; min-height: 0; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; }
+.pfx-c input { flex: none; width: 3.2ch; min-width: 0; min-height: 44px; align-self: stretch; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; }
 .adm-filters { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .adm-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 18px; }
 .rv-reply { background: var(--linen); padding: 12px 14px; border-left: 3px solid var(--olive); font-size: 15px; }
@@ -525,7 +525,7 @@ body.cs main { padding-bottom: 0; }
 @media (max-width: 760px) {
   .site-foot nav { gap: 0; }
   .site-foot nav a { display: flex; align-items: center; min-height: 44px; }
-  .crumbs a { display: inline-flex; align-items: center; min-height: 44px; }
+  .crumbs a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; }
   input[type="checkbox"], input[type="radio"] { width: 22px; height: 22px; }
 }
 /* see it in your room: the piece on the visitor's own photo */
@@ -670,6 +670,7 @@ body.app .why-band { padding-bottom: 96px; }
 .festive-copy { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 40px; justify-content: center; }
 .festive-copy::after { content: ""; position: absolute; inset: 0; background: url(assets/pattern-leaf-ivory.png) right bottom / 220px auto; opacity: .1; pointer-events: none; }
 .festive-copy .eyebrow { color: var(--glow); }
+:root[data-skin="signature"] .promo .eyebrow, :root[data-skin="signature"] .festive-copy .eyebrow, :root:not([data-skin]) .promo .eyebrow, :root:not([data-skin]) .festive-copy .eyebrow { color: #FFF8ED; }
 .festive-copy strong { font-family: var(--display); font-size: clamp(32px, 4vw, 50px); font-weight: 500; line-height: 1.04; }
 .festive:hover { color: var(--ivory); }
 .festive .btn.light { color: var(--choc); }
