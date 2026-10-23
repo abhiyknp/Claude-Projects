@@ -429,6 +429,7 @@ body.app .toast { bottom: 96px; }
 .suggest .eyebrow { font-size: 12px; color: var(--ok); }
 .code-form { display: flex; flex-direction: column; gap: 6px; }
 .code-form > span { display: flex; gap: 8px; }
+input:disabled { background: var(--sand); color: var(--ink-2, #5b4a46); opacity: .75; cursor: not-allowed; border-style: dashed; }
 .code-form input { flex: 1 1 auto; min-width: 0; text-transform: uppercase; }
 .code-form .err { color: var(--terra-ink); font-size: 14px; }
 .inv-card { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
@@ -1171,7 +1172,7 @@ const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat
 // in the database (or in this browser in demo mode) and the default here shows until then.
 // In a text, a new line breaks the line and *words between stars* are set in italics. {braces} are filled in from settings.
 const TEXT = {
-  'bar.offers': ['Use {welcomeCode} for {welcomeOff}% off your first order|Free shipping on orders over {freeOver}|Pair a candle with an object and save {ritualOff}%|Earn {rewardPct}% back in Bud Points on every order|Diwali gift boxes are here, wrapped free', 'Offers bar at the top of every page (separate offers with |)'],
+  'bar.offers': ['Use {welcomeCode} for {welcomeOff}% off your first order|Pair a candle with an object and save {ritualOff}%|Earn {rewardPct}% back in Bud Points on every order|Diwali gift boxes are here, wrapped free', 'Offers bar at the top of every page (separate offers with |)'],
   'home.newEyebrow': ['Just poured', 'Home: new arrivals small line'],
   'home.new': ['New arrivals', 'Home: new arrivals heading'],
   'home.catsSub': ['Candles, objects and ready-to-give boxes, all made by hand in small batches.', 'Home: category text'],
@@ -3859,7 +3860,6 @@ function viewGiftHome() {
       <h1 id="gh-h" class="gh-rise">${T('ghome.title')}</h1>
       <p class="muted gh-rise d1" style="font-size:17px;max-width:520px">${T('ghome.sub')}</p>
       <div class="gh-cta gh-rise d2"><a class="btn gh-shine" href="#gifting">${T('ghome.cta1')}</a><a class="btn ghost" href="#feeling">${T('ghome.cta2')}</a></div>
-      ${free ? `<div class="gh-ship"><span>${sub >= free ? T('cart.freeShipDone') : sub ? T('cart.freeShip').replace('{gap}', `<strong class="num">${inr(free - sub)}</strong>`) : T('ghome.ship')}</span><span class="bar" aria-hidden="true"><span style="width:${Math.min(100, Math.round(sub / free * 100))}%"></span></span></div>` : ''}
     </div>
   </section>`,
     welcome: () => `  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--section)" aria-label="Your welcome gift">${G.open
