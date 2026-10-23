@@ -46,8 +46,8 @@ function setup(canvas) {
   const plaster = plasterTex(); plaster.wrapS = plaster.wrapT = THREE.RepeatWrapping; plaster.repeat.set(3, 2);
   const wall = new THREE.Mesh(new THREE.PlaneGeometry(6, 3.2), new THREE.MeshStandardMaterial({ map: plaster, color: LOOKS.day.wall, roughness: .95 }));
   wall.position.set(0, .9, -.34); wall.receiveShadow = true; s.add(wall); R.wall = wall;
-  const oak = loader.load('assets/tex-oak.jpg'); oak.colorSpace = THREE.SRGBColorSpace; oak.wrapS = oak.wrapT = THREE.RepeatWrapping; oak.repeat.set(3.2, .9); oak.anisotropy = 8;
-  const rough = loader.load('assets/tex-oak-rough.jpg'); rough.wrapS = rough.wrapT = THREE.RepeatWrapping; rough.repeat.set(3.2, .9);
+  const oak = loader.load('assets/tex-oak.webp'); oak.colorSpace = THREE.SRGBColorSpace; oak.wrapS = oak.wrapT = THREE.RepeatWrapping; oak.repeat.set(3.2, .9); oak.anisotropy = 8;
+  const rough = loader.load('assets/tex-oak-rough.webp'); rough.wrapS = rough.wrapT = THREE.RepeatWrapping; rough.repeat.set(3.2, .9);
   const top = new THREE.Mesh(new THREE.BoxGeometry(2.4, .04, .68), new THREE.MeshStandardMaterial({ map: oak, roughnessMap: rough, roughness: .85, color: '#CDB497' }));
   top.position.set(0, -.02, 0); top.receiveShadow = top.castShadow = true; s.add(top);
   const front = new THREE.Mesh(new THREE.BoxGeometry(2.4, .7, .02), new THREE.MeshStandardMaterial({ map: oak, roughness: .85, color: '#B99C7E' }));
