@@ -94,6 +94,12 @@ button, input, select { font: inherit; color: inherit; }
 .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--olive); }
 .muted { color: var(--choc2); }
 .num { font-variant-numeric: tabular-nums; }
+.ov-hot { outline: 2px dashed #D6A34A; outline-offset: 3px; cursor: text; background: rgba(214,163,74,.14); }
+body.editing .proto #edit-btn { background: #D6A34A; color: #210309; }
+.ov-sheet { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 70; width: min(560px, calc(100vw - 24px)); display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--card); color: var(--choc); border: 1px solid var(--line2); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+.ov-sheet textarea { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line2); background: var(--ivory); color: var(--choc); resize: vertical; }
+.ov-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.adm-ovpage { padding: 12px 18px 4px; background: var(--linen); border-bottom: 1px solid var(--line); }
 .skip-link { position: absolute; left: 12px; top: -80px; z-index: 100; padding: 12px 18px; background: var(--cta); color: var(--on-cta); font-weight: 700; text-decoration: none; }
 .skip-link:focus { top: 12px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -637,6 +643,7 @@ body.cs main { padding-bottom: 0; }
 @keyframes gh-flip { from { transform: rotateX(90deg); opacity: 0; } to { transform: none; opacity: 1; } }
 /* ---------- review round: offers, why band, categories, banners, reviews, journal, policies, account, product page parts ---------- */
 .gh-strip.offers { background: var(--choc); }
+#app .gh-strip.offers { margin-block: var(--s5); }
 .gh-strip.offers .gh-marq span { display: inline-flex; align-items: center; gap: 8px; }
 .gh-strip.offers svg { color: var(--glow); }
 .why-band { background: var(--plaster); border-top: 1px solid var(--line); padding-block: var(--section-sm); }
@@ -928,6 +935,7 @@ body.app .why-band { padding-bottom: 96px; }
         <button type="button" data-act="mode" data-v="web" id="mode-web">Website</button>
         <button type="button" data-act="mode" data-v="app" id="mode-app">Installed app</button>
       </span>
+      <button type="button" data-act="edit-mode" id="edit-btn" aria-pressed="false">Edit text on page</button>
       <a href="#admin">Owner view</a>
       <button type="button" data-act="reset">Reset demo</button>
     </span>
@@ -1478,6 +1486,84 @@ function applySeo(r) {
   const img = brandUrl('share'); if (img) setMeta('property', 'og:image', img);
 }
 
+// ---------- every visible word can be changed in Owner view ----------
+// Words that are not Site text keys are still editable: after each page is drawn, every plain piece of text (and every
+// placeholder, label and tooltip) is looked up by its original wording; if the owner changed that wording, the new one
+// is shown. Overrides live in the site_text table under keys starting x. so no code change is needed. Text with digits,
+// product names and anything in Owner view are left alone, because those come from products, prices and settings.
+const OV_SKIP = 'script,style,textarea,select,option,code,svg,input,[data-noedit],.adm,.adm-bar,.proto,.num,.ov-sheet,.toast,#live';
+const OV_ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
+const ovNorm = (s) => String(s).replace(/\s+/g, ' ').trim();
+const ovKey = (d) => { let h = 5381; for (let i = 0; i < d.length; i++) h = ((h * 33) ^ d.charCodeAt(i)) >>> 0; return 'x.' + h.toString(36) + d.length.toString(36); };
+const SEEN = {}; const NODEKEY = new WeakMap();
+const ovDynamic = () => { const set = new Set(); P.forEach((p) => { [p.name, p.type, p.line, p.material, p.size].concat(p.notes || [], p.variants.map((v) => v.label)).forEach((x) => x && set.add(ovNorm(x).toLowerCase())); }); return set; };
+const ovOk = (d, dyn) => d.length >= 2 && d.length <= 400 && /[A-Za-z]/.test(d) && !/\d/.test(d) && !/[{}]/.test(d) && !dyn.has(d.toLowerCase());
+function ovWalk(root, fn) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.parentElement && /\S/.test(n.nodeValue) && !n.parentElement.closest(OV_SKIP) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT) });
+  for (let n = w.nextNode(); n; n = w.nextNode()) fn(n);
+}
+function ovSee(d, page) { const k = ovKey(d); const e = SEEN[k] || (SEEN[k] = { d, pages: new Set() }); e.pages.add(page); return k; }
+function applyText(root, page) {
+  if (!root) return; const dyn = ovDynamic();
+  ovWalk(root, (n) => {
+    const d = ovNorm(n.nodeValue); if (!ovOk(d, dyn)) return;
+    const k = ovSee(d, page); NODEKEY.set(n, k);
+    if (k in TXT) { const m = /^(\s*)[\s\S]*?(\s*)$/.exec(n.nodeValue); n.nodeValue = m[1] + TXT[k] + m[2]; }
+  });
+  root.querySelectorAll('[placeholder],[aria-label],[title],[alt]').forEach((el) => {
+    if (el.closest('[data-noedit],.adm,.adm-bar,.proto,.ov-sheet,#live')) return;
+    OV_ATTRS.forEach((a) => { const v = el.getAttribute(a); if (v == null) return; const d = ovNorm(v); if (!ovOk(d, dyn)) return; const k = ovSee(d, page); if (k in TXT) el.setAttribute(a, TXT[k]); });
+  });
+}
+// the Site text keys, by their words without spaces, so a click on a keyed sentence edits that key
+const ovKeyed = () => { const m = {}; Object.keys(TEXT).forEach((k) => { const v = Tx(k).replace(/[*\n]/g, '').replace(/\s+/g, ''); if (v) (m[v] = m[v] || []).push(k); }); return m; };
+// two keys can hold the same words (the home hero and the footer tagline): take the one that belongs to where the click was
+const ovPick = (keys, el) => (el.closest('.site-foot') ? keys.find((k) => k.startsWith('foot.')) : keys.find((k) => !k.startsWith('foot.'))) || keys[0];
+function ovNodeAt(x, y) {
+  let n = null; if (document.caretRangeFromPoint) { const r = document.caretRangeFromPoint(x, y); n = r && r.startContainer; } else if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(x, y); n = p && p.offsetNode; }
+  if (!n || n.nodeType !== 3) return null; const b = n.parentElement.getBoundingClientRect(); return x < b.left - 6 || x > b.right + 6 || y < b.top - 6 || y > b.bottom + 6 ? null : n;
+}
+function ovOpen(n) {
+  const keyed = ovKeyed();
+  for (let el = n.parentElement, i = 0; el && el.id !== 'app' && i < 4; el = el.parentElement, i++) { const ks = keyed[el.textContent.replace(/\s+/g, '')]; const k = ks && ovPick(ks, el); if (k) return (UI.ov = { k, keyed: true, label: TEXT[k][1], def: TEXT[k][0], cur: k in TXT ? TXT[k] : TEXT[k][0] }); }
+  const k = NODEKEY.get(n); if (!k || !SEEN[k]) return null;
+  return (UI.ov = { k, keyed: false, label: 'This wording', def: SEEN[k].d, cur: k in TXT ? TXT[k] : SEEN[k].d });
+}
+async function ovSave(value) {
+  const o = UI.ov; if (!o) return; value = value.replace(/\r/g, '');
+  if (!value.trim()) { say('Type something first, or use “Back to the original”.'); return; }
+  await admDo(async () => { if (value === o.def) { if (o.k in TXT) await dbDel('site_text', 'key', o.k); } else await dbPut('site_text', { key: o.k, value }); UI.ov = null; render(); }, 'Saved. It shows on the site now.');
+}
+// every page's words, found by drawing each page once out of sight, so the Owner view list is complete
+const OV_ROUTES = ['home', 'shop', 'candles', 'jesmonite', 'gifts', 'under-999', 'feeling', 'ritual', 'saved', 'cart', 'gifting', 'story', 'why', 'faq', 'help', 'bulk', 'share', 'giftcard', 'journal', 'track', 'privacy', 'terms', 'shipping', 'refunds'];
+function ovScanAll() {
+  const box = document.createElement('div');
+  OV_ROUTES.concat(P[0] ? ['p-' + P[0].id] : []).forEach((r) => { try { box.innerHTML = viewFor(r, false); applyText(box, r); } catch (e) { /* a page that needs the browser state is skipped */ } });
+  ['.site-head', '.site-foot', '#mobile-menu', '#offers-slot'].forEach((q) => applyText(document.querySelector(q), 'every page'));
+  UI.ovScanned = true;
+}
+const OV_PAGE = { home: 'Home', shop: 'Shop', candles: 'Candles', jesmonite: 'Jesmonite objects', gifts: 'Gift boxes', 'under-999': 'Gifts under ₹999', feeling: 'Find your feeling', ritual: 'Build your ritual', saved: 'Saved items', cart: 'Cart', gifting: 'Gifting', story: 'Our story', why: 'Why from us', faq: 'FAQ', help: 'Help', bulk: 'Corporate gifts', share: 'Share with a friend', giftcard: 'Gift cards', journal: 'Journal', track: 'Track your order', privacy: 'Privacy policy', terms: 'Terms', shipping: 'Shipping policy', refunds: 'Replacement policy', overlay: 'Cart and search panels' };
+const ovPage = (r) => (r === 'every page' ? 'Menu, header, footer' : r.startsWith('p-') ? 'A product page' : OV_PAGE[r] || r);
+function admOv() {
+  const q = (UI.adm.q || '').toLowerCase(); const keyed = ovKeyed();
+  const rows = Object.keys(SEEN).filter((k) => !keyed[SEEN[k].d.replace(/[*\n]/g, '').replace(/\s+/g, '')]).filter((k) => !q || (SEEN[k].d + ' ' + (TXT[k] || '')).toLowerCase().includes(q));
+  const by = {}; rows.forEach((k) => { const pg = [...SEEN[k].pages][0]; (by[pg] = by[pg] || []).push(k); });
+  const orphans = Object.keys(TXT).filter((k) => k.startsWith('x.') && !SEEN[k]);
+  return `<details class="adm-group" ${q || UI.adm.open === 'x.' ? 'open' : ''} data-pre="x."><summary>All other words on the site <span class="muted num">(${rows.length})</span></summary>
+    <div class="adm-text"><p class="muted" style="margin:0">Every other button, label, heading and sentence. Change one and it changes everywhere that exact wording appears. Tip: switch on “Edit text on page” in the grey bar, then click any word on the site.</p>
+    <button class="btn small ghost" type="button" data-act="ov-scan">${UI.ovScanned ? 'Search every page again' : 'Search every page for words'}</button></div>
+    ${Object.keys(by).map((pg) => `<div class="adm-ovpage"><strong>${esc(ovPage(pg))}</strong></div>${by[pg].map((k) => { const cur = k in TXT ? TXT[k] : SEEN[k].d; const changed = k in TXT; return `<div class="adm-text"><label for="ov-${k.replace('.', '-')}">${esc(SEEN[k].d.length > 70 ? SEEN[k].d.slice(0, 70) + '…' : SEEN[k].d)} ${changed ? '<span class="pill">Changed</span>' : ''}</label><textarea id="ov-${k.replace('.', '-')}" data-act="adm-ov" data-k="${k}" rows="${Math.min(5, Math.max(1, Math.ceil(cur.length / 80)))}">${esc(cur)}</textarea>${changed ? `<button class="linkbtn" type="button" data-act="adm-ov-reset" data-k="${k}">Back to the original</button>` : ''}</div>`; }).join('')}`).join('')}
+    ${orphans.length ? `<div class="adm-ovpage"><strong>Saved changes whose original words are not on any page now</strong></div>${orphans.map((k) => `<div class="adm-text"><span>${esc(TXT[k])}</span><button class="linkbtn" type="button" data-act="adm-ov-reset" data-k="${k}">Delete this change</button></div>`).join('')}` : ''}
+  </details>`;
+}
+function ovSheet() {
+  const o = UI.ov; if (!o) return '';
+  return `<div class="scrim" data-act="ov-close"></div><div class="ov-sheet" role="dialog" aria-modal="true" aria-labelledby="ov-h" data-noedit>
+    <h2 id="ov-h" style="font-size:22px">Edit text</h2><p class="muted" style="margin:0">${esc(o.label)}${o.keyed ? '' : '. Changes every place this exact wording appears.'}</p>
+    <textarea id="ov-text" rows="${Math.min(8, Math.max(2, Math.ceil(o.cur.length / 50) + (o.cur.split('\n').length - 1)))}" aria-label="Wording">${esc(o.cur)}</textarea>
+    <div class="ov-actions"><button class="btn" type="button" data-act="ov-save">Save</button><button class="btn ghost" type="button" data-act="ov-close">Cancel</button>${o.cur !== o.def ? '<button class="linkbtn" type="button" data-act="ov-reset">Back to the original</button>' : ''}</div></div>`;
+}
+
 // ---------- helpers ----------
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -1588,7 +1674,9 @@ function renderOverlay() {
     </div></div>`;
   }
   if (UI.toast && !UI.drawer) h += `<div class="toast" role="status">${esc(UI.toast)}</div>`;
-  $('#overlay').innerHTML = h; lockPage();
+  h += ovSheet();
+  $('#overlay').innerHTML = h; lockPage(); if (route() !== 'admin') applyText($('#overlay'), 'overlay');
+  if (UI.ov && !UI.ovFocused) { UI.ovFocused = true; const t = $('#ov-text'); if (t) { t.focus(); t.select(); } } if (!UI.ov) UI.ovFocused = false;
 }
 function lockPage() { document.documentElement.classList.toggle('lock', !!(UI.menu || UI.search || UI.drawer)); }
 function searchResults(q, res) {
@@ -2259,6 +2347,7 @@ const asDataURL = (blob) => new Promise((res, rej) => { const r = new FileReader
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
   return `<div class="adm-bar"><p class="muted">Edit any line, then click outside the box to save. A new line breaks the line; *words between stars* are set in italics. Words in {braces} come from Settings.</p><span class="field"><label for="tx-q">Find</label><input id="tx-q" data-act="adm-q" value="${esc(UI.adm.q || '')}" placeholder="delivery, gift, hero…"></span></div>
+    ${admOv()}
     ${TEXT_GROUPS.map(([pre, name]) => { const keys = Object.keys(TEXT).filter((k) => k.startsWith(pre) && (!q || (TEXT[k][1] + ' ' + Tx(k)).toLowerCase().includes(q))); if (!keys.length) return ''; return `<details class="adm-group" ${q || UI.adm.open === pre ? 'open' : ''} data-pre="${pre}"><summary>${name} <span class="muted num">(${keys.length})</span></summary>${keys.map((k) => { const cur = k in TXT ? TXT[k] : TEXT[k][0]; const changed = k in TXT && TXT[k] !== TEXT[k][0]; return `<div class="adm-text"><label for="tx-${k.replace('.', '-')}">${esc(TEXT[k][1])} ${changed ? '<span class="pill">Changed</span>' : ''}</label><textarea id="tx-${k.replace('.', '-')}" data-act="adm-text" data-k="${k}" rows="${Math.min(6, Math.max(1, Math.ceil(cur.length / 80) + (cur.split('\n').length - 1)))}">${esc(cur)}</textarea>${changed ? `<button class="linkbtn" type="button" data-act="adm-text-reset" data-k="${k}">Put back the original</button>` : ''}</div>`; }).join('')}</details>`; }).join('')}`;
 }
 function admStock() {
@@ -3342,9 +3431,8 @@ function viewGiftHome() {
     <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 240px"><button class="btn" type="submit">Join the list</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`;
 }
 
-function render(nav) {
-  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs);
-  document.body.classList.toggle('public', BTDB.on && !BTDB.owner()); // the preview bar is for the owner and the demo only
+function viewFor(r, cs) {
+  let html;
   if (cs) html = viewComingSoon();
   else if (r === 'home' && homeStyle() === 'gift') html = viewGiftHome();
   else if (r === 'shop') html = viewShop('all');
@@ -3374,12 +3462,19 @@ function render(nav) {
   else if (r === 'track') html = viewTrack();
   else if (r === 'account') html = viewAccount();
   else html = viewNotFound();
+  return html;
+}
+function render(nav) {
+  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs);
+  document.body.classList.toggle('public', BTDB.on && !BTDB.owner()); // the preview bar is for the owner and the demo only
+  html = viewFor(r, cs);
   const app = $('#app'); app.innerHTML = html;
   applyBrand(); applySeo(r);
   // the scrolling offers strip sits after the page's first banner, not glued under the menu
   const banner = !cs && !/^(admin|checkout|cart|order-|account|track|saved)/.test(r) && app.querySelector('.gh-hero, .page-head, .article-head');
   if (banner) banner.insertAdjacentHTML('afterend', offersBar()); // pages with no banner have no strip
   renderChrome(); renderOverlay();
+  if (r !== 'admin') { applyText(app, r); ['.site-head', '.site-foot', '#mobile-menu', '#offers-slot'].forEach((q) => applyText($(q), 'every page')); }
   if (!cs) adsLoad();
   if (cs) { if (nav) window.scrollTo(0, 0); return; }
   if (r === 'checkout' && UI.co.step === 'pay' && UI.co.method === 'qr') drawQR();
@@ -3641,10 +3736,26 @@ const contactOf = (v) => (isEmail(v) ? v.toLowerCase() : asPhone(v));
 function focusFirstError() { const el = document.querySelector('[aria-invalid="true"]'); if (el) el.focus(); }
 
 // ---------- events ----------
+// Edit text on page: a click on a word opens the editor instead of doing what the word normally does
+document.addEventListener('click', (e) => {
+  if (!UI.edit || e.target.closest('.proto,.ov-sheet,.scrim,.adm,[data-noedit]')) return;
+  e.preventDefault(); e.stopPropagation();
+  const n = ovNodeAt(e.clientX, e.clientY); if (n && ovOpen(n)) renderOverlay(); else say('That one comes from products or settings. Change it in Owner view.');
+}, true);
+document.addEventListener('mousemove', (e) => {
+  if (!UI.edit) return; const n = ovNodeAt(e.clientX, e.clientY); const el = n && !n.parentElement.closest('.proto,.ov-sheet,[data-noedit]') ? n.parentElement : null;
+  if (UI.hot !== el) { if (UI.hot) UI.hot.classList.remove('ov-hot'); UI.hot = el; if (el) el.classList.add('ov-hot'); }
+});
 document.addEventListener('click', (e) => {
   const wl = e.target.closest('a[href^="https://wa.me/"]'); if (wl && !/wa\.me\/\?/.test(wl.href) && route() !== 'admin') track('wa_click', { where: pageName(route()) });
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act; const d = t.dataset;
   switch (a) {
+    case 'edit-mode': UI.edit = !UI.edit; document.body.classList.toggle('editing', UI.edit); t.setAttribute('aria-pressed', String(UI.edit)); t.textContent = UI.edit ? 'Stop editing text' : 'Edit text on page'; say(UI.edit ? 'Click any word on the page to change it.' : 'Editing off.'); break;
+    case 'ov-close': UI.ov = null; renderOverlay(); break;
+    case 'ov-save': ovSave($('#ov-text').value); break;
+    case 'ov-reset': if (UI.ov) { UI.ov.cur = UI.ov.def; ovSave(UI.ov.def); } break;
+    case 'ov-scan': ovScanAll(); render(); break;
+    case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
     case 'room-open': roomOpen(d.id, UI.pdp[d.id] ? UI.pdp[d.id].vi || 0 : 0); break;
     case 'room-close': roomClose(); break;
     case 'na-tab': UI.na = d.v; render(); break;
@@ -3790,6 +3901,7 @@ document.addEventListener('change', (e) => {
   if (d.act === 'ritual-custom') { UI.ritual.custom[d.k] = t.value; UI.ritual.pick.custom = { 0: true, 1: true }; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
   if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); if (d.k === 'theme') render(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
+  if (d.act === 'adm-ov') { const k = d.k; admDo(async () => { if (!t.value.trim() || t.value === SEEN[k].d) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); UI.adm.open = 'x.'; renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-text') { const k = d.k; admDo(async () => { if (t.value === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); renderChrome(); }, 'Saved.'); }
   if (d.act === 'rv-sort') { UI.rvSort = t.value; render(); $('#rv-sort')?.focus(); }
   if (d.act === 'adm-cf') { UI.adm.cf[d.k] = t.type === 'checkbox' ? t.checked : t.value; render(); $('#' + t.id)?.focus(); }
