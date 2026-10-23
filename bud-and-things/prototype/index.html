@@ -1085,11 +1085,11 @@ async function pinAutofill(pinEl, cityId, stateId, noteId) {
 const STATUSES = ['Placed', 'Packed', 'Shipped', 'Delivered'];
 // Brand elements from the identity system: leaf, sun, arch, flow, spark.
 const ICON = {
-  leaf: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M7 26C12 20 18 13 26 6"/><path d="M13 19c-4 0-6-3-6-6 4 0 6 2 6 6z"/><path d="M17 15c0-4 2-7 6-7 0 4-2 7-6 7z"/><path d="M19 13c3 1 5 4 4 7-3-1-5-4-4-7z"/></svg>',
-  sun: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M6 22h20"/><path d="M10 22a6 6 0 0 1 12 0"/><path d="M16 8v4M8 13l2.5 2.5M24 13l-2.5 2.5M4 18h3M25 18h3"/></svg>',
-  arch: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M8 27V15a8 8 0 0 1 16 0v12"/><path d="M12 27V16a4 4 0 0 1 8 0v11"/><path d="M5 27h22"/></svg>',
-  flow: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M4 12c4-4 8 4 12 0s8 4 12 0"/><path d="M4 18c4-4 8 4 12 0s8 4 12 0"/><path d="M4 24c4-4 8 4 12 0s8 4 12 0"/></svg>',
-  spark: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4l2.4 9.6L28 16l-9.6 2.4L16 28l-2.4-9.6L4 16l9.6-2.4z"/></svg>'
+  leaf: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7 26C12 20 18 13 26 6"/><path d="M13 19c-4 0-6-3-6-6 4 0 6 2 6 6z"/><path d="M17 15c0-4 2-7 6-7 0 4-2 7-6 7z"/><path d="M19 13c3 1 5 4 4 7-3-1-5-4-4-7z"/></svg>',
+  sun: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 22h20"/><path d="M10 22a6 6 0 0 1 12 0"/><path d="M16 8v4M8 13l2.5 2.5M24 13l-2.5 2.5M4 18h3M25 18h3"/></svg>',
+  arch: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 27V15a8 8 0 0 1 16 0v12"/><path d="M12 27V16a4 4 0 0 1 8 0v11"/><path d="M5 27h22"/></svg>',
+  flow: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 12c4-4 8 4 12 0s8 4 12 0"/><path d="M4 18c4-4 8 4 12 0s8 4 12 0"/><path d="M4 24c4-4 8 4 12 0s8 4 12 0"/></svg>',
+  spark: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4l2.4 9.6L28 16l-9.6 2.4L16 28l-2.4-9.6L4 16l9.6-2.4z"/></svg>'
 };
 const MOOD_ICON = { calm: 'flow', cosy: 'sun', fresh: 'leaf', creative: 'spark', 'gift-ready': 'arch' };
 const BASE_P = P.slice(); const BASE_PAIRINGS = PAIRINGS.slice();
@@ -1694,7 +1694,7 @@ function renderChrome() {
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   
   const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite', 'collection'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
-  $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
+  $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
     + tab('shop', 'Shop', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>')
     + tab('feeling', 'Feeling', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16"/></svg>')
     + tab('saved', 'Saved', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>', S.saved.length)
@@ -2062,10 +2062,10 @@ const waNumber = (n) => { const d = String(n || '').replace(/\D/g, '').replace(/
 const waLink = (text) => SET.whatsapp ? `https://wa.me/${waNumber(SET.whatsapp)}?text=${encodeURIComponent(text)}` : '';
 // Instagram, Pinterest, WhatsApp and email as icons; each shows only once its setting is filled in
 const SOCIAL_ICONS = {
-  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
-  pinterest: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M11.2 9.6l-2.4 10.2"/><path d="M9.7 14.1c.6.9 1.6 1.4 2.8 1.4 2.4 0 4-2 4-4.6 0-2.7-2.1-4.6-4.7-4.6-2.9 0-4.8 2-4.8 4.4 0 1 .4 2 1 2.4"/></svg>',
-  whatsapp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 20.4l1.3-4.2a8.6 8.6 0 1 1 3.1 3l-4.4 1.2z"/><path d="M9 8.2c.2-.5.5-.5.8-.5h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.6 1.1 1.6 2 2.7 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.4.5 0 .9-.6 1.6-1.4 1.8-.8.2-1.8 0-3.4-.8a8.6 8.6 0 0 1-3.3-3.3c-.7-1.3-.8-2.3-.4-3z" fill="currentColor" stroke="none"/></svg>',
-  email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.8 6.8l8.2 6.2 8.2-6.2"/></svg>'
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  pinterest: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M11.2 9.6l-2.4 10.2"/><path d="M9.7 14.1c.6.9 1.6 1.4 2.8 1.4 2.4 0 4-2 4-4.6 0-2.7-2.1-4.6-4.7-4.6-2.9 0-4.8 2-4.8 4.4 0 1 .4 2 1 2.4"/></svg>',
+  whatsapp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 20.4l1.3-4.2a8.6 8.6 0 1 1 3.1 3l-4.4 1.2z"/><path d="M9 8.2c.2-.5.5-.5.8-.5h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.6 1.1 1.6 2 2.7 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.4.5 0 .9-.6 1.6-1.4 1.8-.8.2-1.8 0-3.4-.8a8.6 8.6 0 0 1-3.3-3.3c-.7-1.3-.8-2.3-.4-3z" fill="currentColor" stroke="none"/></svg>',
+  email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.8 6.8l8.2 6.2 8.2-6.2"/></svg>'
 };
 function socialLinks(waText) {
   const ig = String(SET.instagram || '').trim().replace(/^@/, ''), pin = String(SET.pinterest || '').trim().replace(/^@/, ''), wa = waLink(waText || 'Hello BUD & THINGS'), em = String(SET.email || '').trim();
@@ -3620,7 +3620,7 @@ function viewGiftHome() {
   </section>`,
     welcome: () => `  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--s7)" aria-label="Your welcome gift">${G.open
     ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">${T('ghome.wonEyebrow')}</span><strong>${T('ghome.wonTitle')}</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
-    : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}`,
+    : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}`,
     cats: () => catTiles('gh-cats'),
     boxes: () => giftBoxesHTML('gh-boxes-h'),
     new: () => newArrivals('gh-new'),
