@@ -1113,7 +1113,7 @@ try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults
 if (S.account && window.BTDB && BTDB.on && !BTDB.customer()) S.account = null; // the sign-in ended (signed out elsewhere or expired)
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
 const coFresh = (contact, address) => ({ step: 'contact', contact: contact || {}, address: address || {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, gift: { on: false, wrap: false, name: '', phone: '', note: '', date: '' }, code: '', codeErr: null, optin: false });
-const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: coFresh(), toast: null, review: {}, restock: null, orderSync: {}, invOf: {}, track: null, adm: { tab: 'orders', rows: {}, edit: null, q: '' }, gh: { cat: 'all', open: false }, na: 'all', acct: {} };
+const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: coFresh(), toast: null, review: {}, restock: null, orderSync: {}, invOf: {}, track: null, adm: { tab: 'start', rows: {}, edit: null, q: '' }, gh: { cat: 'all', open: false }, na: 'all', acct: {} };
 
 
 // ---------- editable content: site text and settings ----------
@@ -2204,7 +2204,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['start', 'Launch checklist'], ['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2269,7 +2269,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { start: admStart, orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
@@ -2564,6 +2564,43 @@ function admHistory() {
 function admGuide() {
   const rows = [['Change a word on the site', 'Preview bar → Edit text on page, then click the word. Or Site text.'], ['Menu, footer links, FAQ', 'Menus & FAQ'], ['Add a product', 'Products → Add a product. Save as draft, add photos under Photos and videos, then Publish.'], ['Change stock', 'Stock. Counts are per option, grouped by product.'], ['Prices, shipping fee, delivery time, gift wrap', 'Settings'], ['Change a photo, logo or banner', 'Photos & videos. Pick the product, or Brand for logo, packaging and gift photos.'], ['Privacy, terms, shipping and replacement policy', 'Policy pages. Fill from a Word or text file, or type.'], ['Stories', 'Journal'], ['Feelings, rooms, occasions and quiz questions', 'Filters & quiz'], ['Which home page sections show, and in what order', 'Home page'], ['Search and sharing text, favicon', 'Site text → Search & sharing (SEO); Photos & videos → Brand'], ['Undo a change', 'History → Put this back'], ['Go live', 'Settings → Coming soon page: switch it off when everything is ready'], ['Orders, invoices, coupons, rewards, gift cards', 'Their own tabs']];
   return `<p class="muted">Where to change what. Nothing on the site needs a developer.</p><div class="table-wrap"><table><thead><tr><th>I want to…</th><th>Go to</th></tr></thead><tbody>${rows.map(([a, b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// Launch checklist: what is still missing before the shop opens, worked out from what is saved now
+function launchItems() {
+  const has = (k) => String(SET[k] || '').trim().length > 0; const live = prodRows().filter((r) => r.live !== false); const media = DATA.media || [];
+  const photos = (id) => media.filter((m) => m.product_id === id && m.published !== false).length; const brand = (role) => media.some((m) => m.product_id === 'brand' && m.role === role);
+  const noPhoto = live.filter((r) => !photos(r.id)); const noPrice = live.filter((r) => (r.data.variants || []).some((v) => !(v.price > 0)));
+  const inStock = live.filter((r) => (r.data.variants || []).some((v) => stockOf(v.sku) > 0));
+  return [
+    ['Products', 'At least one published product', live.length > 0, 'products', 'Add a product, then press Publish'],
+    ['Products', 'Every published product has a photo', live.length > 0 && !noPhoto.length, 'media', noPhoto.length ? noPhoto.length + ' without a photo: ' + noPhoto.slice(0, 3).map((r) => r.data.name || r.id).join(', ') : ''],
+    ['Products', 'Every price is filled in', live.length > 0 && !noPrice.length, 'products', noPrice.length ? noPrice.length + ' with a missing price' : ''],
+    ['Products', 'Stock counted for at least one option of each product', live.length > 0 && inStock.length === live.length, 'stock', live.length - inStock.length ? (live.length - inStock.length) + ' products show Sold out' : ''],
+    ['Business details', 'Business name and address', has('bizName') && has('bizAddress'), 'settings', 'Settings → Policies'],
+    ['Business details', 'Grievance officer name and phone', has('grievanceName') && has('grievancePhone'), 'settings', 'Settings → Policies'],
+    ['Business details', 'City for legal disputes and policy date', has('courtCity') && has('policyDate'), 'settings', 'Settings → Policies'],
+    ['Business details', 'WhatsApp number or order-alert email', has('whatsapp') || has('orderAlerts'), 'settings', 'So customers can reach you and you hear about orders'],
+    ['Business details', SET.gstOn ? 'GSTIN filled in (GST is on)' : 'GST decision made (off until registered)', !SET.gstOn || has('gstin'), 'invoices', 'Settings → GST and invoices'],
+    ['Shipping', 'Pickup PIN code set', has('pickupPin'), 'settings', 'Turns on the live PIN check'],
+    ['Shipping', 'Shipping fee and delivery time set', +SET.shipFee >= 0 && has('deliveryDays'), 'settings', ''],
+    ['Policies', 'The “template” notice is cleared on the policy pages', !Tx('legal.note').trim(), 'text', 'Only after a legal adviser has checked them'],
+    ['Brand', 'Logo uploaded (wide, stacked, leaf)', brand('logo-wide') && brand('logo-stack') && brand('logo-leaf'), 'media', 'Photos & videos → Brand'],
+    ['Brand', 'Packaging and gift photos', brand('packaging') && brand('gift'), 'media', ''],
+    ['Brand', 'Browser tab icon and link preview picture', brand('favicon') && brand('share'), 'media', ''],
+    ['Content', 'FAQ has at least 5 questions', faqItems().length >= 5, 'lists', ''],
+    ['Content', 'Search and sharing description changed from the draft', 'seo.desc' in TXT, 'text', 'Site text → Search & sharing'],
+    ['Safety', 'Database connected', BTDB.on, 'setup', 'Setup'],
+    ['Safety', 'Preview code is long (10+ characters) or empty', !SET.previewCode || String(SET.previewCode).length >= 10 && !/^budpreview$/i.test(SET.previewCode), 'settings', ''],
+    ['Safety', 'Owner sign-in asks for a second step', !!(window.BT_CONFIG && BT_CONFIG.ownerTwoStep), 'setup', 'Setup → two-step sign-in'],
+    ['Open the shop', 'Coming soon page switched off', SET.comingSoon === false, 'settings', 'Do this last']
+  ];
+}
+function admStart() {
+  const items = launchItems(); const done = items.filter((x) => x[2]).length; const pct = Math.round(done * 100 / items.length); const groups = [...new Set(items.map((x) => x[0]))];
+  return `<div class="adm-card"><h2 style="font-size:26px">${done} of ${items.length} ready to launch</h2><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Launch progress" style="height:14px;border-radius:7px;background:var(--linen);overflow:hidden;margin:10px 0"><div style="height:100%;width:${pct}%;background:var(--cta)"></div></div>
+    <p class="muted">${pct === 100 ? 'Everything on the list is done. Switch the Coming soon page off to open the shop.' : 'Work down the list. “Fix” takes you to the right tab. This list checks what is saved now; it cannot judge photo quality or legal wording.'}</p></div>
+    ${groups.map((g) => `<div class="adm-card"><h2 style="font-size:20px">${esc(g)}</h2>${items.filter((x) => x[0] === g).map(([, l, ok, tab, hint]) => `<div class="lrow" style="grid-template-columns:auto 1fr auto;align-items:center"><span aria-hidden="true" style="font-size:20px">${ok ? '✓' : '○'}</span><span><strong>${esc(l)}</strong>${hint ? `<br><span class="muted">${esc(hint)}</span>` : ''}<span class="sr"> ${ok ? 'done' : 'not done'}</span></span>${ok ? '<span></span>' : `<button class="btn small ghost" type="button" data-act="adm-goto" data-v="${tab}" aria-label="Fix: ${esc(l)}">Fix</button>`}</div>`).join('')}</div>`).join('')}`;
 }
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
