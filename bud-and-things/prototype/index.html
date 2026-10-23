@@ -99,6 +99,16 @@ body.editing .proto #edit-btn { background: #D6A34A; color: #210309; }
 .ov-sheet { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 70; width: min(560px, calc(100vw - 24px)); display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--card); color: var(--choc); border: 1px solid var(--line2); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
 .ov-sheet textarea { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line2); background: var(--ivory); color: var(--choc); resize: vertical; }
 .ov-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.lrow { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; padding: 10px 18px; border-bottom: 1px solid var(--linen); }
+.lrow.faq { grid-template-columns: 1fr auto; }
+.lrow .lbtns { display: flex; gap: 6px; }
+.lrow .lbtns button { min-width: 44px; min-height: 44px; }
+.lrow textarea, .lrow input { width: 100%; }
+.lrow .field.full { grid-column: 1 / -1; }
+.lcol { border: 1px solid var(--line); border-radius: 8px; margin: 12px 0; overflow: hidden; }
+.lcol > .lhead { padding: 12px 18px; background: var(--linen); display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+@media (max-width: 640px) { .lrow { grid-template-columns: 1fr; } }
+.adm-prodrow th { text-align: left; background: var(--linen); padding: 10px 12px; }
 .adm-ovpage { padding: 12px 18px 4px; background: var(--linen); border-bottom: 1px solid var(--line); }
 .skip-link { position: absolute; left: 12px; top: -80px; z-index: 100; padding: 12px 18px; background: var(--cta); color: var(--on-cta); font-weight: 700; text-decoration: none; }
 .skip-link:focus { top: 12px; }
@@ -470,7 +480,7 @@ input[type="file"] { padding: 10px 12px; }
 .adm-checks label, .adm-flags label { display: inline-flex; gap: 6px; align-items: center; font-weight: 400; min-height: 36px; }
 .adm-flags { justify-content: flex-end; }
 .adm-vars { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-.adm-var { display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 8px; }
+.adm-var { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr; gap: 8px; }
 .adm-var input { min-width: 0; }
 .adm-group { border: 1px solid var(--line); background: var(--card); }
 .adm-group summary { padding: 14px 18px; cursor: pointer; font-weight: 700; min-height: 48px; }
@@ -970,10 +980,7 @@ body.app .why-band { padding-bottom: 96px; }
       <span class="muted" id="foot-tag">Made with thought. Given with feeling.</span>
       <div id="foot-social"></div>
     </div>
-    <nav aria-label="Shop"><strong>Shop</strong><a href="#candles">Candles</a><a href="#jesmonite">Jesmonite Objects</a><a href="#gifts">Gift boxes</a><a href="#shop">All products</a><a href="#ritual">Build Your Ritual</a><a href="#bulk">Corporate &amp; bulk gifts</a><a href="#giftcard">Gift cards</a><a href="#share">Share with a friend</a></nav>
-    <nav aria-label="Help"><strong>Help</strong><a href="#help">Contact us</a><a href="#track">Track your order</a><a href="#shipping">Shipping &amp; delivery</a><a href="#refunds">Cancellations &amp; replacements</a><a href="#faq">FAQ</a><a href="#journal-first-burn">Product care</a></nav>
-    <nav aria-label="About"><strong>About</strong><a href="#story">Our Story</a><a href="#why">Why buy from us</a><a href="#journal">Journal</a><a href="#account">Your account</a></nav>
-    <nav aria-label="Policies"><strong>Policies</strong><a href="#privacy">Privacy policy</a><a href="#terms">Terms &amp; conditions</a><a href="#shipping">Shipping policy</a><a href="#refunds">Replacement policy</a></nav>
+    <div id="foot-cols" style="display:contents"></div>
   </div>
   <div class="wrap foot-pay"><div><strong>We accept</strong><span id="foot-pay"></span></div><div class="muted" id="foot-also">Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.</div></div>
   <div class="foot-base"><div class="wrap"><span id="foot-copy">© BUD &amp; THINGS by Ashi. All rights reserved.</span><span id="foot-made">Hand-made in India</span></div></div>
@@ -993,7 +1000,7 @@ body.app .why-band { padding-bottom: 96px; }
 
 // ---------- catalogue (draft) ----------
 // Launch range: candles and Jesmonite objects. Names, scents and prices are drafts until testing is complete.
-const IMG = { box: 'assets/pack-box.jpg', jar: 'assets/pack-jar.jpg', tag: 'assets/pack-tag.jpg', card: 'assets/pack-card.jpg', pouch: 'assets/pack-pouch.jpg', seal: 'assets/pack-seal.jpg', leather: 'assets/pack-leather.jpg', logoPhoto: 'assets/logo-photo.jpg' };
+const IMG = { box: 'assets/pack-box.webp', jar: 'assets/pack-jar.webp', tag: 'assets/pack-tag.webp', card: 'assets/pack-card.webp', pouch: 'assets/pack-pouch.webp', seal: 'assets/pack-seal.webp', leather: 'assets/pack-leather.webp', logoPhoto: 'assets/logo-photo.webp' };
 const CANDLE_CARE = ['Let the first burn melt to the edges (about 2 hours).', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'];
 const JAR_MAT = 'Scented candle in a speckled stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.';
 const JAR_SIZE = '120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm';
@@ -1031,6 +1038,12 @@ const FUTURE = [['Gift sets & curated gifting', 'Next'], ['Home décor & lifesty
 const MOODS = [['calm', 'Calm and grounded'], ['cosy', 'Warm and cosy'], ['fresh', 'Fresh and uplifting'], ['creative', 'Creative and expressive'], ['gift-ready', 'Thoughtful and gift-ready']];
 const SPACES = [['bedroom', 'Bedroom'], ['living', 'Living room'], ['workspace', 'Desk or workspace'], ['kitchen', 'Kitchen'], ['entrance', 'Entrance'], ['bathroom', 'Bathroom'], ['dining', 'Dining table']];
 const OCCASIONS = [['birthday', 'Birthday'], ['anniversary', 'Anniversary'], ['housewarming', 'Housewarming'], ['wedding', 'Wedding'], ['new-baby', 'New baby'], ['thank-you', 'Thank you'], ['festive', 'Festive'], ['milestone', 'A milestone'], ['self-care', 'Self-care'], ['just-because', 'Just because']];
+// the owner can rename, add or hide these choices in Owner view → Filters & quiz; products keep the short key they were tagged with
+const TAG_LISTS = { moodList: [MOODS, 'Feelings'], spaceList: [SPACES, 'Rooms'], occList: [OCCASIONS, 'Occasions'] };
+const TAG_DEFAULTS = {}; Object.entries(TAG_LISTS).forEach(([k, [arr]]) => { TAG_DEFAULTS[k] = arr.map((x) => x.slice()); });
+function applyTagLists() {
+  Object.entries(TAG_LISTS).forEach(([k, [arr]]) => { const v = SET[k]; const ok = Array.isArray(v) && v.length && v.every((x) => Array.isArray(x) && /^[a-z0-9-]+$/.test(x[0]) && typeof x[1] === 'string' && x[1].trim()); arr.splice(0, arr.length, ...(ok ? v : TAG_DEFAULTS[k]).map((x) => [x[0], x[1]])); });
+}
 // occasions with at least one piece to show, so a chip never leads to an empty shop
 const occLive = () => OCCASIONS.filter(([k]) => P.some((p) => (p.occ || []).includes(k)));
 const STATES = ['Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'];
@@ -1072,11 +1085,11 @@ async function pinAutofill(pinEl, cityId, stateId, noteId) {
 const STATUSES = ['Placed', 'Packed', 'Shipped', 'Delivered'];
 // Brand elements from the identity system: leaf, sun, arch, flow, spark.
 const ICON = {
-  leaf: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M7 26C12 20 18 13 26 6"/><path d="M13 19c-4 0-6-3-6-6 4 0 6 2 6 6z"/><path d="M17 15c0-4 2-7 6-7 0 4-2 7-6 7z"/><path d="M19 13c3 1 5 4 4 7-3-1-5-4-4-7z"/></svg>',
-  sun: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M6 22h20"/><path d="M10 22a6 6 0 0 1 12 0"/><path d="M16 8v4M8 13l2.5 2.5M24 13l-2.5 2.5M4 18h3M25 18h3"/></svg>',
-  arch: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M8 27V15a8 8 0 0 1 16 0v12"/><path d="M12 27V16a4 4 0 0 1 8 0v11"/><path d="M5 27h22"/></svg>',
-  flow: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M4 12c4-4 8 4 12 0s8 4 12 0"/><path d="M4 18c4-4 8 4 12 0s8 4 12 0"/><path d="M4 24c4-4 8 4 12 0s8 4 12 0"/></svg>',
-  spark: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4l2.4 9.6L28 16l-9.6 2.4L16 28l-2.4-9.6L4 16l9.6-2.4z"/></svg>'
+  leaf: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7 26C12 20 18 13 26 6"/><path d="M13 19c-4 0-6-3-6-6 4 0 6 2 6 6z"/><path d="M17 15c0-4 2-7 6-7 0 4-2 7-6 7z"/><path d="M19 13c3 1 5 4 4 7-3-1-5-4-4-7z"/></svg>',
+  sun: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 22h20"/><path d="M10 22a6 6 0 0 1 12 0"/><path d="M16 8v4M8 13l2.5 2.5M24 13l-2.5 2.5M4 18h3M25 18h3"/></svg>',
+  arch: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 27V15a8 8 0 0 1 16 0v12"/><path d="M12 27V16a4 4 0 0 1 8 0v11"/><path d="M5 27h22"/></svg>',
+  flow: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 12c4-4 8 4 12 0s8 4 12 0"/><path d="M4 18c4-4 8 4 12 0s8 4 12 0"/><path d="M4 24c4-4 8 4 12 0s8 4 12 0"/></svg>',
+  spark: '<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4l2.4 9.6L28 16l-9.6 2.4L16 28l-2.4-9.6L4 16l9.6-2.4z"/></svg>'
 };
 const MOOD_ICON = { calm: 'flow', cosy: 'sun', fresh: 'leaf', creative: 'spark', 'gift-ready': 'arch' };
 const BASE_P = P.slice(); const BASE_PAIRINGS = PAIRINGS.slice();
@@ -1167,7 +1180,7 @@ const TEXT = {
   'legal.note': ['This page is a template written for BUD & THINGS. Have it checked by a legal adviser, and fill in the business details in Owner view → Settings, before launch. Clear this note once that is done.', 'Policies: review note (empty to hide)'],
   'legal.biz': ['{bizName}, {bizAddress}, India. GSTIN: {gstin}. Email: {email}.', 'Policies: business details'],
   'legal.grievance': ['Grievance officer: {grievanceName}, {email}, {grievancePhone}. We acknowledge complaints within 48 hours and resolve them within 30 days.', 'Policies: grievance officer'],
-  'legal.privacy': ['## Who we are\nBUD & THINGS ("we", "us") sells hand-made candles and Jesmonite objects through budandthings.com. This policy explains what personal data we collect, why, and the choices you have, in line with the Digital Personal Data Protection Act, 2023 and the Information Technology Act, 2000.\n\n## What we collect\nWhen you sign in or order: your name, email, mobile number and delivery address. If you send a gift: the name, mobile number and address of the person receiving it. When you pay: the payment gateway processes your card or UPI details; we never see or store full card numbers. When you browse: the pages you visit and items you add to your cart, kept to improve the shop.\n\n## Why we use it\nTo deliver your order and keep you updated about it, to answer your questions, to run Bud Points, to prevent fraud, and to keep accounts and tax records. We send offers and newsletters only if you sign up for them, and every email has a way to leave.\n\n## Who we share it with\nOnly with the services needed to run the shop: our payment gateway, courier partners, our database and email provider. Each is bound to use your data only for the work they do for us. We never sell your data.\n\n## How long we keep it\nOrder records are kept for 8 years, as Indian tax law requires. Newsletter sign-ups are kept until you leave the list. You can ask us to delete your account at any time.\n\n## Your rights\nYou can ask to see, correct or delete your data, withdraw consent for marketing, or name someone to act for you. Write to {email} and we will reply within 30 days.\n\n## Cookies and storage\nWe keep your cart, saved items and sign-in in your browser\'s storage so the shop works. We do not use advertising cookies.\n\n## Changes\nIf we change this policy we will update the date below and, for important changes, tell you by email. Last updated: {policyDate}.', 'Policies: privacy policy (## starts a heading)'],
+  'legal.privacy': ['## Who we are\nBUD & THINGS ("we", "us") sells hand-made candles and Jesmonite objects through budandthings.com. This policy explains what personal data we collect, why, and the choices you have, in line with the Digital Personal Data Protection Act, 2023 and the Information Technology Act, 2000.\n\n## What we collect\nWhen you sign in or order: your name, email, mobile number and delivery address. If you send a gift: the name, mobile number and address of the person receiving it. When you pay: the payment gateway processes your card or UPI details; we never see or store full card numbers. When you browse: the pages you visit and items you add to your cart, kept to improve the shop.\n\n## Why we use it\nTo deliver your order and keep you updated about it, to answer your questions, to run Bud Points, to prevent fraud, and to keep accounts and tax records. We send offers and newsletters only if you sign up for them, and every email has a way to leave.\n\n## Who we share it with\nOnly with the services needed to run the shop: our payment gateway, courier partners, our database and email provider. Each is bound to use your data only for the work they do for us. We never sell your data.\n\n## How long we keep it\nOrder records are kept for 8 years, as Indian tax law requires. Newsletter sign-ups are kept until you leave the list. You can ask us to delete your account at any time.\n\n## Your rights\nYou can ask to see, correct or delete your data, withdraw consent for marketing, or name someone to act for you. Write to {email} and we will reply within 30 days.\n\n## Cookies and storage\nWe keep your cart, saved items and sign-in in your browser’s storage so the shop works. We do not use advertising cookies.\n\n## Changes\nIf we change this policy we will update the date below and, for important changes, tell you by email. Last updated: {policyDate}.', 'Policies: privacy policy (## starts a heading)'],
   'legal.terms': ['## About these terms\nThese terms apply when you browse budandthings.com or buy from us. By placing an order you agree to them. The shop is run by the business named below.\n\n## Your account\nYou sign in with a one-time code sent to your email. Keep access to that email secure; orders placed from your account are treated as yours. You must be 18 or older, or ordering with a parent or guardian.\n\n## Products\nOur pieces are hand-made, so colour, swirl, speckle and size vary slightly from piece to piece and from the photos. These variations are part of each piece and are not defects. Scent strength depends on the room and how the candle is burned.\n\n## Prices and payment\nPrices are in Indian rupees and include GST. Shipping is shown before you pay. Payment is taken in advance through our payment gateway (UPI, cards, net banking). An order is confirmed only once payment is received.\n\n## Offers, codes and Bud Points\nCodes and offers cannot be exchanged for cash and may be withdrawn at any time. Bud Points are earned on paid orders, have no cash value, and expire 12 months after they are earned.\n\n## Delivery\nDelivery times are estimates. See our Shipping and delivery policy for details.\n\n## Cancellations, damage and refunds\nSee our Cancellations and refunds policy.\n\n## Candle safety\nNever leave a burning candle unattended, keep it away from children, pets, curtains and anything that can catch fire, and follow the care card in the box. We are not responsible for damage caused by unsafe use.\n\n## Intellectual property\nThe BUD & THINGS name, logo, photos, designs and text on this site belong to us and may not be copied without permission.\n\n## Liability\nTo the extent the law allows, our liability for any order is limited to the amount you paid for it.\n\n## Law and disputes\nThese terms are governed by the laws of India. Courts in {courtCity} have jurisdiction. For any complaint, please contact our grievance officer first.', 'Policies: terms and conditions (## starts a heading)'],
   'legal.shipping': ['## Where we deliver\nWe deliver across India through trusted courier partners. Check your PIN code on any product page to see if we reach you and when.\n\n## Shipping charges\nShipping is {shipFee} per order, and free on orders over {freeOver}.\n\n## When it is sent\nEvery piece is made in small batches, so orders are packed and handed to the courier within 1 to 3 working days of payment. Prepaid orders are packed first.\n\n## How long it takes\nMost orders arrive in {deliveryDays} from the day they are sent. Metro cities are usually faster; remote areas, the North-East and islands can take longer.\n\n## Tracking\nOnce your order is sent we email you the courier name and tracking link. You can also follow it under Track your order with your order number and mobile number.\n\n## Gifts\nGift orders can go straight to the person, with your note hand-written on our card and no prices in the parcel. Pick an arrive-by date at checkout and we plan around it.\n\n## Festive deadlines\nAround Diwali and other festivals couriers get busy. Order early; we show the last order date for festive delivery on the site.\n\n## Address problems\nPlease check the address and mobile number carefully. If a parcel comes back because of a wrong address or no one to receive it, we can send it again for the shipping charge.', 'Policies: shipping and delivery (## starts a heading)'],
   'legal.refunds': ['## Cancelling an order\nYou can cancel any time before your order is packed: write to {email} with your order number and we refund the full amount. Once packed, it can no longer be cancelled.\n\n## Damaged or wrong items\nCandles and Jesmonite are fragile. If anything arrives broken, damaged or is not what you ordered, send us a photo or your unboxing video within {exchangeDays} days of delivery. We send a free replacement. Only if we can’t replace it (for example, it has sold out) do we refund it.\n\n## Returns\nBecause candles are a personal-care item and each piece is made by hand, we do not accept returns of undamaged pieces, and we do not offer exchanges or refunds for change of mind.\n\n## How refunds are paid\nRefunds go back to the payment method you used, through our payment gateway, within 5 to 7 working days of approval. Your bank may take a few more days to show it.\n\n## Codes and Bud Points\nIf an order with a code or Bud Points is refunded, the code or points are returned to your account where possible.', 'Policies: cancellations and replacements (## starts a heading)'],
@@ -1386,7 +1399,7 @@ function applyData() {
   indexProducts();
   PAIRINGS = (DATA.pairings && DATA.pairings.length ? DATA.pairings.filter((r) => r.live !== false).sort(bySort).map((r) => Object.assign({ name: r.id, why: '', items: [] }, r.data, { id: r.id })) : BASE_PAIRINGS.slice())
     .filter((x) => x.items.length === 2 && x.items.every(([pid, vi]) => byId[pid] && byId[pid].variants[vi]));
-  TXT = DATA.text || {}; SET = Object.assign({}, SET_DEFAULTS, DATA.settings || {});
+  TXT = DATA.text || {}; SET = Object.assign({}, SET_DEFAULTS, DATA.settings || {}); applyTagLists(); applyQuizQ();
   if (DATA.stock) S.stock = BTDB.on ? Object.assign({}, DATA.stock) : Object.assign(S.stock, DATA.stock);
   Object.keys(PIMG).forEach((k) => delete PIMG[k]); // drawings follow edited colours
   const seed = BTDB.on ? {} : defaults().stock; Object.keys(skuMap).forEach((sku) => { if (S.stock[sku] == null) S.stock[sku] = seed[sku] || 0; });
@@ -1418,14 +1431,27 @@ function mergeRows(table, rows) {
 }
 const baseRow = (p, i) => { const d = Object.assign({}, p); delete d.id; return { id: p.id, data: d, sort: i * 10, live: true }; };
 const pairRow = (x, i) => ({ id: x.id, data: { name: x.name, why: x.why, items: x.items }, sort: i * 10, live: true });
+// change history: what a save replaced, so the owner can put it back (Owner view → History). Best effort: a failure never blocks the save.
+const LOGGED = { site_text: 'key', settings: 'key', products: 'id', pairings: 'id' };
+function snapOld(table, key) {
+  if (table === 'site_text') return key in (DATA.text || {}) ? { key, value: DATA.text[key] } : null;
+  if (table === 'settings') return key in (DATA.settings || {}) ? { key, value: DATA.settings[key] } : null;
+  const r = (DATA[table] || []).find((x) => x.id === key); return r ? JSON.parse(JSON.stringify(r)) : null;
+}
+async function logChange(table, entries) {
+  const rows = entries.filter((e) => JSON.stringify(e.old) !== JSON.stringify(e.new)).map((e) => ({ tbl: table, key: e.key, old: e.old, new: e.new })); if (!rows.length) return;
+  try { if (BTDB.on) await BTDB.insert('change_log', rows); else { S.db = S.db || {}; S.db.log = rows.map((r) => Object.assign({ id: 'L' + Date.now() + r.key, at: new Date().toISOString() }, r)).concat(S.db.log || []).slice(0, 200); save(); } } catch (e) { /* history table not set up yet */ }
+}
 async function dbPut(table, rows) {
   rows = [].concat(rows);
+  if (LOGGED[table]) { const col = LOGGED[table]; await logChange(table, rows.map((r) => ({ key: r[col], old: snapOld(table, r[col]), new: r }))); }
   // the first edit to products or rituals also saves the built-in ones, so nothing disappears from the site
   if ((table === 'products' || table === 'pairings') && !(DATA[table] && DATA[table].length)) { const base = table === 'products' ? BASE_P.map(baseRow) : BASE_PAIRINGS.map(pairRow); rows = base.filter((b) => !rows.some((r) => r.id === b.id)).concat(rows); }
   if (BTDB.on) await BTDB.upsert(table, rows); else if (table === 'stock') { rows.forEach((r) => { S.stock[r.sku] = r.qty; }); save(); }
   mergeRows(table, rows); persistLocal(); applyData();
 }
 async function dbDel(table, col, val) {
+  if (LOGGED[table] && LOGGED[table] === col) await logChange(table, [{ key: val, old: snapOld(table, val), new: null }]);
   if (BTDB.on) await BTDB.remove(table, col + '=eq.' + encodeURIComponent(val));
   if (table === 'site_text') delete DATA.text[val]; else if (table === 'settings') delete DATA.settings[val];
   else if (DATA[table]) DATA[table] = DATA[table].filter((r) => r[col] !== val);
@@ -1479,7 +1505,7 @@ function setMeta(attr, name, val) {
 function applySeo(r) {
   let title = Tx('seo.title'); let desc = Tx('seo.desc'); let ogt = title;
   if (r.startsWith('p-') && byId[r.slice(2)]) { const p = byId[r.slice(2)]; ogt = p.name; title = p.name + Tx('seo.suffix'); desc = descOf(p) || desc; }
-  else if (r.startsWith('journal-') && JOURNAL.some((j) => j.id === r.slice(8))) { const j = JOURNAL.find((x) => x.id === r.slice(8)); ogt = j.title; title = j.title + Tx('seo.suffix'); desc = j.lead || desc; }
+  else if (r.startsWith('journal-') && journal().some((j) => j.id === r.slice(8))) { const j = journal().find((x) => x.id === r.slice(8)); ogt = j.title; title = j.title + Tx('seo.suffix'); desc = j.lead || desc; }
   else if (r !== 'home' && TEXT['seo.t.' + r] && Tx('seo.t.' + r)) { ogt = Tx('seo.t.' + r); title = ogt + Tx('seo.suffix'); desc = Tx('seo.d.' + r) || desc; }
   document.title = title;
   setMeta('name', 'description', desc); setMeta('property', 'og:title', ogt); setMeta('property', 'og:description', desc);
@@ -1624,11 +1650,35 @@ function route() { const h = (location.hash || '#home').slice(1) || 'home'; if (
 window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false; UI.orderSync = {}; UI.invSync = {}; render(true); track('page_view', { page: pageName(route()) }); });
 
 // ---------- chrome ----------
-const NAV = [['shop', 'Shop'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story']];
+// menus and the FAQ: the owner edits these lists in Owner view (Menus & FAQ); the lists below are what shows until then
+const LIST_DEFAULTS = {
+  navList: [['shop', 'Shop'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story']],
+  menuList: [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['shop', 'All products'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['track', 'Track your order'], ['help', 'Help & contact']],
+  footList: [['Shop', [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['gifts', 'Gift boxes'], ['shop', 'All products'], ['ritual', 'Build Your Ritual'], ['bulk', 'Corporate & bulk gifts'], ['giftcard', 'Gift cards'], ['share', 'Share with a friend']]],
+    ['Help', [['help', 'Contact us'], ['track', 'Track your order'], ['shipping', 'Shipping & delivery'], ['refunds', 'Cancellations & replacements'], ['faq', 'FAQ'], ['journal-first-burn', 'Product care']]],
+    ['About', [['story', 'Our Story'], ['why', 'Why buy from us'], ['journal', 'Journal'], ['account', 'Your account']]],
+    ['Policies', [['privacy', 'Privacy policy'], ['terms', 'Terms & conditions'], ['shipping', 'Shipping policy'], ['refunds', 'Replacement policy']]]]
+};
+const okLink = (x) => Array.isArray(x) && typeof x[0] === 'string' && typeof x[1] === 'string' && x[1].trim();
+// a saved list is used only if it is well formed; otherwise the built-in one
+function listOf(k) {
+  const v = SET[k]; const d = LIST_DEFAULTS[k];
+  if (k === 'footList') return Array.isArray(v) && v.every((c) => Array.isArray(c) && typeof c[0] === 'string' && Array.isArray(c[1]) && c[1].every(okLink)) ? v : d;
+  return Array.isArray(v) && v.every(okLink) ? v : d;
+}
+const linkHref = (to) => (/^https?:\/\//i.test(to) ? to : '#' + to.replace(/^#/, ''));
+const linkA = (to, l, extra) => /^https?:\/\//i.test(to) ? `<a href="${esc(to)}" target="_blank" rel="noopener"${extra || ''}>${esc(l)}</a>` : `<a href="${esc(linkHref(to))}"${extra || ''}>${esc(l)}</a>`;
+// FAQ: a saved list wins; before that, the numbered Site text lines
+function faqItems() {
+  if (Array.isArray(SET.faqList) && SET.faqList.every((x) => x && typeof x.q === 'string')) return SET.faqList.filter((x) => x.q.trim()).map((x) => ({ q: fill(x.q), a: fill(x.a || '') }));
+  const out = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) out.push({ q: Tx('faq.q' + i), a: Tx('faq.a' + i) });
+  return out;
+}
+const mdText = (t) => esc(t).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
 function renderChrome() {
   const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'jesmonite', 'collection'].includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
-  $('#nav').innerHTML = NAV.map(([k, l]) => `<a href="#${k}"${cur(k)}>${l}</a>`).join('');
-  $('#mobile-menu-inner').innerHTML = [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['shop', 'All products'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['track', 'Track your order'], ['account', S.account ? 'Your account' : 'Sign in'], ['help', 'Help & contact']].map(([k, l]) => `<a href="#${k}">${l}</a>`).join('');
+  $('#nav').innerHTML = listOf('navList').map(([k, l]) => linkA(k, l, cur(k))).join('');
+  $('#mobile-menu-inner').innerHTML = listOf('menuList').map(([k, l]) => linkA(k, l)).join('') + `<a href="#account">${S.account ? 'Your account' : 'Sign in'}</a>`;
   $('#mobile-menu').hidden = !UI.menu; $('#menu-btn').setAttribute('aria-expanded', String(UI.menu)); lockPage();
   const cc = cartCount(); const cb = $('#cart-btn');
   cb.setAttribute('aria-label', `Cart, ${cc} item${cc === 1 ? '' : 's'}`);
@@ -1636,6 +1686,7 @@ function renderChrome() {
   const sb = $('#saved-btn'); sb.querySelector('.count')?.remove(); if (S.saved.length) sb.insertAdjacentHTML('beforeend', `<span class="count num">${S.saved.length}</span>`);
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
+  $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also'); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-made').innerHTML = T('foot.made'); $('#foot-pay').innerHTML = payBadges();
   const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
@@ -1643,7 +1694,7 @@ function renderChrome() {
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   
   const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite', 'collection'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
-  $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
+  $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
     + tab('shop', 'Shop', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>')
     + tab('feeling', 'Feeling', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16"/></svg>')
     + tab('saved', 'Saved', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>', S.saved.length)
@@ -1847,7 +1898,7 @@ function viewProduct(id) {
     ${deliveryCard(id, st)}
     ${pz ? `<div class="scent"><span class="eyebrow">The scent</span>${p.smellsLike ? `<p class="smells">${esc(p.smellsLike)}</p>` : ''}<div class="pyramid">${[['Top', pz.top], ['Heart', pz.heart], ['Base', pz.base]].map(([l, n]) => `<div><strong>${l}</strong><span class="muted">${esc((n || []).join(', '))}</span></div>`).join('')}</div></div>` : ''}
     <div class="accs">
-      ${acc('size', 'ruler', p.cat === 'gifts' ? 'What’s inside' : 'Size &amp; material', `<dl class="spec">${p.notes && !pz ? `<dt>Scent</dt><dd>${esc(p.notes.join(' · '))}</dd>` : ''}<dt>Size</dt><dd>${esc(p.size)}</dd><dt>${p.cat === 'gifts' ? 'Inside' : 'Material'}</dt><dd>${esc(p.material)}</dd>${one ? '' : `<dt>${optName}s</dt><dd>${p.variants.map((x) => esc(x.label)).join(', ')}</dd>`}</dl>`, true)}
+      ${acc('size', 'ruler', p.cat === 'gifts' ? 'What’s inside' : 'Size &amp; material', `<dl class="spec">${p.notes && !pz ? `<dt>Scent</dt><dd>${esc(p.notes.join(' · '))}</dd>` : ''}<dt>Size</dt><dd>${esc(p.size)}</dd><dt>${p.cat === 'gifts' ? 'Inside' : 'Material'}</dt><dd>${esc(p.material)}</dd>${one ? '' : `<dt>${optName === 'Finish' ? 'Finishes' : optName + 's'}</dt><dd>${p.variants.map((x) => esc(x.label)).join(', ')}</dd>`}</dl>`, true)}
       ${acc('care', 'leaf', p.cat === 'jesmonite' ? 'Care' : 'Burn &amp; care', `<ul class="care">${care}</ul>${p.cat === 'candles' && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}`)}
       ${acc('ship', 'truck', 'Delivery &amp; replacements', `<p>${T('help.shipping')}</p><p>${T('pdp.damage')}</p><p><a href="#shipping">Shipping &amp; delivery</a> · <a href="#refunds">Cancellations &amp; replacements</a></p>`)}
       ${p.occ.length ? acc('gift', 'gift', 'Gifting', `<p>Good to give for ${esc(joinWords(p.occ.map((o) => (OCCASIONS.find((x) => x[0] === o) || [o, o])[1].toLowerCase())))}.</p><p>${T('co.giftNote')}</p>`) : ''}
@@ -1887,6 +1938,8 @@ const FSTEPS = [
   { k: 'kind', q: 'Which kind of piece?', opts: [['candle', 'A candle'], ['object', 'A Jesmonite object'], ['either', 'Either']] },
   { k: 'budget', q: 'What would you like to spend on one piece?', opts: [['u1000', 'Under ₹1,000'], ['u2000', 'Under ₹2,000'], ['any', 'Any amount']] }
 ];
+const QUIZ_DEFAULT_Q = FSTEPS.map((x) => x.q);
+function applyQuizQ() { const v = SET.quizQ; FSTEPS.forEach((x, i) => { x.q = Array.isArray(v) && typeof v[i] === 'string' && v[i].trim() ? v[i] : QUIZ_DEFAULT_Q[i]; }); }
 function viewFeeling() {
   const f = UI.finder;
   if (!f.started) { f.started = true; track('finder_start', {}); }
@@ -1902,7 +1955,7 @@ function viewFeeling() {
   }
   const s = FSTEPS[f.step];
   return `<div class="finder"><aside class="finder-side"><span class="eyebrow num">Find Your Feeling · step ${f.step + 1} of 5</span><div class="progress" aria-hidden="true">${FSTEPS.map((_, i) => `<span class="${i <= f.step ? 'on' : ''}"></span>`).join('')}</div><h1 tabindex="-1">${esc(s.q)}</h1><span style="margin-top:auto;font-size:13px;opacity:.88">Every step can be skipped. Back keeps your answers.</span></aside>
-    <div class="finder-main"><div class="options" role="radiogroup" aria-label="${esc(s.q)}">${s.opts.map(([k, l]) => `<button type="button" role="radio" aria-checked="${f[s.k] === k}" data-act="finder-opt" data-k="${s.k}" data-v="${k}">${s.k === 'mood' ? ICON[MOOD_ICON[k]] : ''}<span>${l}</span></button>`).join('')}</div>
+    <div class="finder-main"><div class="options" role="radiogroup" aria-label="${esc(s.q)}">${s.opts.map(([k, l]) => `<button type="button" role="radio" aria-checked="${f[s.k] === k}" data-act="finder-opt" data-k="${s.k}" data-v="${k}">${s.k === 'mood' ? ICON[MOOD_ICON[k]] || '' : ''}<span>${esc(l)}</span></button>`).join('')}</div>
     <div class="finder-nav">${f.step > 0 ? '<button class="btn ghost" type="button" data-act="finder-back">Back</button>' : ''}<button class="btn" type="button" data-act="finder-next">${f.step === 4 ? 'See my matches' : 'Next'}</button><button class="linkbtn" type="button" data-act="finder-skip">Skip this question</button></div></div></div>`;
 }
 
@@ -2009,10 +2062,10 @@ const waNumber = (n) => { const d = String(n || '').replace(/\D/g, '').replace(/
 const waLink = (text) => SET.whatsapp ? `https://wa.me/${waNumber(SET.whatsapp)}?text=${encodeURIComponent(text)}` : '';
 // Instagram, Pinterest, WhatsApp and email as icons; each shows only once its setting is filled in
 const SOCIAL_ICONS = {
-  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
-  pinterest: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M11.2 9.6l-2.4 10.2"/><path d="M9.7 14.1c.6.9 1.6 1.4 2.8 1.4 2.4 0 4-2 4-4.6 0-2.7-2.1-4.6-4.7-4.6-2.9 0-4.8 2-4.8 4.4 0 1 .4 2 1 2.4"/></svg>',
-  whatsapp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 20.4l1.3-4.2a8.6 8.6 0 1 1 3.1 3l-4.4 1.2z"/><path d="M9 8.2c.2-.5.5-.5.8-.5h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.6 1.1 1.6 2 2.7 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.4.5 0 .9-.6 1.6-1.4 1.8-.8.2-1.8 0-3.4-.8a8.6 8.6 0 0 1-3.3-3.3c-.7-1.3-.8-2.3-.4-3z" fill="currentColor" stroke="none"/></svg>',
-  email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.8 6.8l8.2 6.2 8.2-6.2"/></svg>'
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  pinterest: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M11.2 9.6l-2.4 10.2"/><path d="M9.7 14.1c.6.9 1.6 1.4 2.8 1.4 2.4 0 4-2 4-4.6 0-2.7-2.1-4.6-4.7-4.6-2.9 0-4.8 2-4.8 4.4 0 1 .4 2 1 2.4"/></svg>',
+  whatsapp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 20.4l1.3-4.2a8.6 8.6 0 1 1 3.1 3l-4.4 1.2z"/><path d="M9 8.2c.2-.5.5-.5.8-.5h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.6 1.1 1.6 2 2.7 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.3.1.4.3.4.5 0 .9-.6 1.6-1.4 1.8-.8.2-1.8 0-3.4-.8a8.6 8.6 0 0 1-3.3-3.3c-.7-1.3-.8-2.3-.4-3z" fill="currentColor" stroke="none"/></svg>',
+  email: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.8 6.8l8.2 6.2 8.2-6.2"/></svg>'
 };
 function socialLinks(waText) {
   const ig = String(SET.instagram || '').trim().replace(/^@/, ''), pin = String(SET.pinterest || '').trim().replace(/^@/, ''), wa = waLink(waText || 'Hello BUD & THINGS'), em = String(SET.email || '').trim();
@@ -2116,9 +2169,9 @@ function viewShare() {
       ${sh.err ? `<span class="err full" role="alert">${esc(sh.err)}</span>` : ''}<span class="full"><button class="btn ghost" type="submit">Get my link</button></span></form>` : ''}</div>`;
 }
 function viewFaq() {
-  const qs = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) qs.push(i);
+  const qs = faqItems();
   return `<div class="wrap" style="padding-bottom:var(--section);max-width:820px"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">${T('faq.title')}</h1><p class="muted">${T('faq.sub')}</p></div>
-    <div class="faq">${qs.map((i) => `<details><summary>${T('faq.q' + i)}</summary><p class="muted">${T('faq.a' + i)}</p></details>`).join('')}</div>
+    <div class="faq">${qs.map((x) => `<details><summary>${mdText(x.q)}</summary><p class="muted">${mdText(x.a)}</p></details>`).join('')}</div>
     <p style="margin-top:28px">${socialLinks()}</p></div>`;
 }
 function viewBulk() {
@@ -2151,7 +2204,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2164,6 +2217,7 @@ const pairRows = () => (DATA.pairings && DATA.pairings.length ? DATA.pairings : 
 const csvList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
 const lineList = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 function admData(k) {
+  if (k === 'history' && !BTDB.on) return (S.db && S.db.log) || [];
   if (!BTDB.on) return k === 'orders' ? S.orders : k === 'cards' ? { cards: (S.db && S.db.cards) || [], refs: [] } : k === 'invoices' ? ((S.db && S.db.invoices) || []) : k === 'coupons' ? localCoupons() : k === 'rewards' ? { log: (S.db && S.db.pointsLog) || [] } : k === 'reviews' ? ((S.db && S.db.reviews) || []) : ((S.db && S.db.people) || []);
   if (!UI.adm.rows[k]) { const f = UI.adm.inflight = UI.adm.inflight || {}; if (!f[k]) { f[k] = true; setTimeout(() => admLoad(k)); } return null; }
   return UI.adm.rows[k];
@@ -2172,6 +2226,7 @@ async function admLoad(k) {
   const A = UI.adm; A.loading = k;
   try {
     if (k === 'orders') A.rows.orders = (await BTDB.list('orders', 'order=created_at.desc&limit=300')).map((r) => Object.assign({ placedAt: r.created_at, contact: {}, address: {}, items: [] }, r.data, { id: r.id, status: r.status }));
+    if (k === 'history') A.rows.history = await BTDB.list('change_log', 'order=at.desc&limit=200').catch(() => null) || [];
     if (k === 'orders' || k === 'invoices') { try { A.rows.invoices = await BTDB.list('invoices', 'order=created_at.desc&limit=500'); } catch (e) { A.rows.invoices = []; } }
     if (k === 'reviews') { const [a, b] = await Promise.all([BTDB.list('reviews', 'order=created_at.desc&limit=1000'), BTDB.list('review_authors', 'limit=1000').catch(() => [])]); A.rows.reviews = a; A.rows.revAuthors = b; }
     if (k === 'people') {
@@ -2214,7 +2269,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
@@ -2252,11 +2307,18 @@ function admOrders() {
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
+// what a product still needs before it can be published
+function publishGaps(id, d) {
+  const miss = []; if (!d.type) miss.push('type'); if (!d.line) miss.push('one-line description'); if (!d.size) miss.push('size'); if (!(d.weight > 0)) miss.push('weight'); if (!d.material) miss.push('material');
+  if (d.cat === 'candles' && !(d.notes || []).length) miss.push('scent notes');
+  const photos = DATA.media.filter((m) => m.product_id === id).length; if (!photos && !(d.cat === 'gifts' && d.img && d.img !== IMG.box)) miss.push('at least one photo (save as draft, then add under Photos and videos)');
+  return miss.length ? 'Before you publish, add: ' + miss.join(', ') + '.' : null;
+}
 function admProducts() {
   const A = UI.adm; const rows = prodRows();
   if (A.edit != null) return admProductForm(A.edit === '' ? null : rows.find((r) => r.id === A.edit));
   return `<div class="adm-bar"><p class="muted">Turn a product off to take it off the site without losing it. Lower numbers show first.</p><button class="btn small" type="button" data-act="adm-edit" data-id="">Add a product</button></div>
-    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span></td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Live', 'Hidden')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
+    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span></td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Published', 'Draft')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
 }
 function admProductForm(r) {
   const d = (r && r.data) || { cat: 'candles', variants: [], care: [], mood: [], space: [], occ: [], gift: true, art: 'jar', c: '#DCC9AE' }; const pz = d.pyramid || {}; const b = d.batch || {};
@@ -2270,21 +2332,21 @@ function admProductForm(r) {
     <span class="field"><label for="ap-cat">Category</label><select id="ap-cat" name="cat"><option value="candles" ${d.cat === 'candles' ? 'selected' : ''}>Candles</option><option value="jesmonite" ${d.cat !== 'candles' && d.cat !== 'gifts' ? 'selected' : ''}>Jesmonite objects</option><option value="gifts" ${d.cat === 'gifts' ? 'selected' : ''}>Gift boxes</option></select></span>
     ${f('type', 'Type', d.type, { hint: 'for example Scented candle, Tray' })}${f('line', 'One-line description', d.line, { full: true })}
     <fieldset class="field full adm-vars"><legend>Options, prices and SKUs <span class="hint">clear an SKU to remove that option; fill the empty row to add one</span></legend>
-      ${vs.map((v, i) => `<span class="adm-var"><label class="sr" for="ap-vs${i}">SKU ${i + 1}</label><input id="ap-vs${i}" name="v-sku-${i}" placeholder="SKU, for example BT-CN-RO-220" value="${esc(v.sku)}"><label class="sr" for="ap-vl${i}">Option name ${i + 1}</label><input id="ap-vl${i}" name="v-label-${i}" placeholder="Option, for example 220 g" value="${esc(v.label)}"><label class="sr" for="ap-vp${i}">Price ${i + 1}</label><input id="ap-vp${i}" name="v-price-${i}" type="number" min="0" placeholder="Price ₹" value="${esc(v.price)}"></span>`).join('')}</fieldset>
+      ${vs.map((v, i) => `<span class="adm-var"><label class="sr" for="ap-vs${i}">SKU ${i + 1}</label><input id="ap-vs${i}" name="v-sku-${i}" placeholder="SKU, for example BT-CN-RO-220" value="${esc(v.sku)}"><label class="sr" for="ap-vl${i}">Option name ${i + 1}</label><input id="ap-vl${i}" name="v-label-${i}" placeholder="Option, for example 220 g" value="${esc(v.label)}"><label class="sr" for="ap-vp${i}">Price ${i + 1}</label><input id="ap-vp${i}" name="v-price-${i}" type="number" min="0" placeholder="Price ₹" value="${esc(v.price)}">${v.sku && S.stock[v.sku] != null ? `<span class="muted num" style="align-self:center">${stockOf(v.sku)} in stock</span>` : `<label class="sr" for="ap-vq${i}">Opening stock ${i + 1}</label><input id="ap-vq${i}" name="v-qty-${i}" type="number" min="0" max="9999" placeholder="Stock now" value=""></span>`}`).join('')}</fieldset>
     ${f('notes', 'Scent notes', (d.notes || []).join(', '), { hint: 'comma separated; leave empty for objects' })}
     ${f('smellsLike', 'Smells like', d.smellsLike, { full: true, area: true, rows: 2, hint: 'the scent story, one or two sentences' })}
     ${f('pz-top', 'Top notes', (pz.top || []).join(', '))}${f('pz-heart', 'Heart notes', (pz.heart || []).join(', '))}${f('pz-base', 'Base notes', (pz.base || []).join(', '))}${f('burnTime', 'Burn time', d.burnTime, { hint: 'for example 40 hours' })}
-    ${f('size', 'Size', d.size, { full: true })}${f('material', 'Material', d.material, { full: true, area: true, rows: 2 })}${f('care', 'Care', (d.care || []).join('\n'), { full: true, area: true, rows: 3, hint: 'one line each' })}
+    ${f('size', 'Size', d.size, { full: true })}${f('weight', 'Weight (grams)', d.weight, { type: 'number', hint: 'one piece, packed' })}${f('material', 'Material', d.material, { full: true, area: true, rows: 2 })}${f('care', 'Care', (d.care || []).join('\n'), { full: true, area: true, rows: 3, hint: 'one line each' })}
     ${f('batch-no', 'Batch number', b.no, { type: 'number' })}${f('batch-poured', 'Poured or cast on', b.poured, { type: 'date' })}${f('batch-size', 'Pieces in this batch', b.size, { type: 'number' })}
     ${checks('mood', 'Feelings it suits', MOODS, d.mood)}${checks('space', 'Rooms it suits', SPACES, d.space)}${checks('occ', 'Occasions', OCCASIONS, d.occ)}
     <span class="field"><label for="ap-art">Drawing until photos arrive</label><select id="ap-art" name="art">${ARTS.map(([k, l]) => `<option value="${k}" ${d.art === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
     ${f('c', 'Drawing colour', d.c || '#DCC9AE', { type: 'color' })}
     ${f('sort', 'Order on the site', r ? r.sort : (prodRows().length * 10), { type: 'number' })}
-    <span class="field adm-flags"><label><input type="checkbox" name="gift" ${d.gift !== false ? 'checked' : ''}> Good as a gift</label><label><input type="checkbox" name="live" ${!r || r.live !== false ? 'checked' : ''}> On the site</label></span>
+    <span class="field adm-flags"><label><input type="checkbox" name="gift" ${d.gift !== false ? 'checked' : ''}> Good as a gift</label></span><span class="full status" role="note">${!r || r.live === false ? '<strong>Draft:</strong> customers cannot see this product yet. Fill every detail, add photos under Photos and videos, then press Publish.' : '<strong>Published:</strong> customers can see this product.'}</span>
     ${UI.adm.formErr ? `<span class="err full" role="alert">${esc(UI.adm.formErr)}</span>` : ''}
-    <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Save product</button>${r ? `<button class="btn ghost" type="button" data-act="adm-media-for" data-id="${esc(r.id)}">Photos and videos</button><button class="btn ghost danger" type="button" data-act="adm-del-product" data-id="${esc(r.id)}">Delete</button>` : ''}</span></form>`;
+    <span class="full" style="display:flex;gap:10px;flex-wrap:wrap">${!r || r.live === false ? '<button class="btn ghost" type="submit" data-live="0">Save as draft</button><button class="btn" type="submit" data-live="1">Publish to the site</button>' : '<button class="btn" type="submit" data-live="1">Save changes</button><button class="btn ghost" type="submit" data-live="0">Move back to draft</button>'}${r ? `<button class="btn ghost" type="button" data-act="adm-media-for" data-id="${esc(r.id)}">Photos and videos</button><button class="btn ghost danger" type="button" data-act="adm-del-product" data-id="${esc(r.id)}">Delete</button>` : ''}</span></form>`;
 }
-function readProductForm(form) {
+function readProductForm(form, live) {
   const v = (n) => { const el = form.elements[n]; return el ? String(el.value).trim() : ''; };
   const all = (n) => [...form.querySelectorAll(`[name="${n}"]:checked`)].map((x) => x.value);
   const variants = []; for (let i = 0; form.elements['v-sku-' + i]; i++) { const sku = v('v-sku-' + i).toUpperCase(); if (sku) variants.push({ sku, label: v('v-label-' + i), price: Math.round(+v('v-price-' + i)) }); }
@@ -2294,8 +2356,10 @@ function readProductForm(form) {
   if (v('smellsLike')) d.smellsLike = v('smellsLike');
   if (v('pz-top') || v('pz-heart') || v('pz-base')) d.pyramid = { top: csvList(v('pz-top')), heart: csvList(v('pz-heart')), base: csvList(v('pz-base')) };
   if (v('burnTime')) d.burnTime = v('burnTime');
+  if (+v('weight') > 0) d.weight = Math.round(+v('weight'));
+  d.openStock = {}; for (let i = 0; form.elements['v-sku-' + i]; i++) { const sku = v('v-sku-' + i).toUpperCase(); if (sku && form.elements['v-qty-' + i]) d.openStock[sku] = Math.max(0, parseInt(v('v-qty-' + i), 10) || 0); }
   if (v('batch-no') || v('batch-poured') || v('batch-size')) d.batch = { no: +v('batch-no') || null, poured: v('batch-poured') || null, size: +v('batch-size') || null };
-  return { id: form.dataset.id || slug(v('id')), data: d, sort: Math.round(+v('sort') || 0), live: form.elements.live.checked, isNew: !form.dataset.id };
+  return { id: form.dataset.id || slug(v('id')), data: d, sort: Math.round(+v('sort') || 0), live: live, isNew: !form.dataset.id };
 }
 
 function admPairings() {
@@ -2344,6 +2408,163 @@ function shrink(file, max) {
 }
 const asDataURL = (blob) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
 
+
+// Menus & FAQ: the owner's lists. Each change saves the whole list to Settings.
+const ROUTE_HINTS = SEO_PAGES.map((x) => x[0]).concat(['home', 'account', 'saved', 'cart', 'journal-first-burn']);
+function faqRaw() {
+  if (Array.isArray(SET.faqList)) return SET.faqList.map((x) => ({ q: x.q || '', a: x.a || '' }));
+  const raw = (k) => (k in TXT ? TXT[k] : TEXT[k] ? TEXT[k][0] : ''); const out = [];
+  for (let i = 1; raw('faq.q' + i) || TEXT['faq.q' + i]; i++) if (raw('faq.q' + i).trim()) out.push({ q: raw('faq.q' + i), a: raw('faq.a' + i) });
+  return out;
+}
+const lrow = (key, c, i, to, label) => `<div class="lrow"><span class="field"><label for="l-${key}-${c}-${i}-t">Words shown</label><input id="l-${key}-${c}-${i}-t" class="l-label" data-act="adm-list" data-k="${key}" value="${esc(label)}"></span><span class="field"><label for="l-${key}-${c}-${i}-to">Goes to <span class="hint">page name or full web address</span></label><input id="l-${key}-${c}-${i}-to" class="l-to" list="route-hints" data-act="adm-list" data-k="${key}" value="${esc(to)}"></span>
+  <span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="${key}" data-c="${c}" data-i="${i}" data-v="-1" aria-label="Move ${esc(label)} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="${key}" data-c="${c}" data-i="${i}" data-v="1" aria-label="Move ${esc(label)} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="${key}" data-c="${c}" data-i="${i}" aria-label="Remove ${esc(label)}">Remove</button></span></div>`;
+function admLists() {
+  const draft = (key) => (UI.adm.draft && UI.adm.draft[key]) || null;
+  const simple = (key, title, hint) => { const ls = draft(key) || listOf(key); return `<div class="adm-card"><h2 style="font-size:22px">${title}</h2><p class="muted">${hint}</p><div id="ls-${key}">${ls.map(([to, l], i) => lrow(key, 0, i, to, l)).join('')}</div>
+    <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-list-add" data-k="${key}" data-c="0">Add a link</button>${Array.isArray(SET[key]) ? `<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="${key}">Put back the original</button>` : ''}</p></div>`; };
+  const cols = draft('footList') || listOf('footList');
+  const foot = `<div class="adm-card"><h2 style="font-size:22px">Footer links</h2><p class="muted">Columns at the bottom of every page. Add or remove columns and links, and change the order.</p><div id="ls-footList">${cols.map(([t, ls], c) => `<div class="lcol" data-col="${c}"><div class="lhead"><span class="field"><label for="l-foot-${c}-title">Column title</label><input id="l-foot-${c}-title" class="l-title" data-act="adm-list" data-k="footList" value="${esc(t)}"></span><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="footList" data-c="${c}" data-i="col" data-v="-1" aria-label="Move column ${esc(t)} left">←</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="footList" data-c="${c}" data-i="col" data-v="1" aria-label="Move column ${esc(t)} right">→</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="footList" data-c="${c}" data-i="col" aria-label="Remove column ${esc(t)}">Remove column</button></div>
+      <div class="rows">${ls.map(([to, l], i) => lrow('footList', c, i, to, l)).join('')}</div><p style="padding:10px 18px"><button class="btn small" type="button" data-act="adm-list-add" data-k="footList" data-c="${c}">Add a link</button></p></div>`).join('')}</div>
+    <p style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="adm-list-add" data-k="footList" data-c="col">Add a column</button>${Array.isArray(SET.footList) ? '<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="footList">Put back the original</button>' : ''}</p></div>`;
+  const qs = draft('faqList') || faqRaw();
+  const faq = `<div class="adm-card"><h2 style="font-size:22px">Questions and answers (FAQ)</h2><p class="muted">Add as many as you like. *Stars* make italics. Words in {braces} come from Settings, for example {deliveryDays}.</p><div id="ls-faqList">${qs.map((x, i) => `<div class="lrow faq"><span class="field"><label for="l-faq-${i}-q">Question ${i + 1}</label><input id="l-faq-${i}-q" class="l-q" data-act="adm-list" data-k="faqList" value="${esc(x.q)}"></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="-1" aria-label="Move question ${i + 1} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="1" aria-label="Move question ${i + 1} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="faqList" data-c="0" data-i="${i}" aria-label="Remove question ${i + 1}">Remove</button></span><span class="field full"><label for="l-faq-${i}-a">Answer ${i + 1}</label><textarea id="l-faq-${i}-a" class="l-a" rows="3" data-act="adm-list" data-k="faqList">${esc(x.a)}</textarea></span></div>`).join('')}</div>
+    <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-list-add" data-k="faqList" data-c="0">Add a question</button>${Array.isArray(SET.faqList) ? '<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="faqList">Put back the original</button>' : ''}</p></div>`;
+  return `<p class="muted">Edit a box, then click outside it to save. Changes show on the site at once.</p><datalist id="route-hints">${ROUTE_HINTS.map((x) => `<option value="${esc(x)}"></option>`).join('')}</datalist>
+    ${simple('navList', 'Top menu', 'The links across the top of the site on a laptop.')}${simple('menuList', 'Phone menu', 'The list that opens from the menu button on a phone. “Sign in / Your account” is always added at the end.')}${foot}${faq}`;
+}
+// read a list back from the boxes on screen (so typed-but-unsaved edits are kept when you add, move or remove)
+function readList(key) {
+  const box = document.getElementById('ls-' + key); if (!box) return key === 'faqList' ? faqRaw() : JSON.parse(JSON.stringify(listOf(key)));
+  const rows = (root) => [...root.querySelectorAll('.lrow')].map((r) => [r.querySelector('.l-to').value.trim(), r.querySelector('.l-label').value.trim()]);
+  if (key === 'footList') return [...box.querySelectorAll('.lcol')].map((c) => [c.querySelector('.l-title').value.trim(), rows(c)]);
+  if (key === 'faqList') return [...box.querySelectorAll('.lrow')].map((r) => ({ q: r.querySelector('.l-q').value, a: r.querySelector('.l-a').value }));
+  return rows(box);
+}
+// rows with an empty word or address are kept on screen while typing but never saved
+function cleanList(key, v) {
+  if (key === 'footList') return v.filter((c) => c[0]).map((c) => [c[0], c[1].filter((x) => x[0] && x[1])]);
+  if (key === 'faqList') return v.filter((x) => x.q.trim());
+  return v.filter((x) => x[0] && x[1]);
+}
+const saveList = (key, v) => { (UI.adm.draft = UI.adm.draft || {})[key] = v; return dbPut('settings', { key, value: cleanList(key, v) }); };
+function listAction(d) {
+  const key = d.k; const v = readList(key); const c = d.c === 'col' ? 'col' : +d.c; const i = d.i === 'col' ? 'col' : +d.i;
+  const target = key === 'footList' && c !== 'col' && i !== 'col' ? v[c][1] : v;
+  if (d.act === 'adm-list-add') {
+    if (key === 'footList' && c === 'col') v.push(['New column', []]);
+    else if (key === 'footList') v[c][1].push(['', '']);
+    else if (key === 'faqList') v.push({ q: '', a: '' });
+    else v.push(['', '']);
+  } else if (d.act === 'adm-list-del') {
+    if (key === 'footList' && i === 'col') v.splice(c, 1); else target.splice(i, 1);
+  } else if (d.act === 'adm-list-move') {
+    const arr = key === 'footList' && i === 'col' ? v : target; const from = i === 'col' ? c : i; const to = from + (+d.v);
+    if (to < 0 || to >= arr.length) return; const [m] = arr.splice(from, 1); arr.splice(to, 0, m);
+  }
+  admDo(async () => { await saveList(key, v); UI.adm.tab = 'lists'; renderChrome(); render(); }, 'Saved.');
+}
+
+// Policy pages: the four built-in ones keep their text in Site text; extra pages are saved in Settings. A Word or text file can fill the box.
+const polBox = (id, title, body, custom) => `<div class="adm-card" data-pol="${esc(id)}"><h2 style="font-size:22px">${custom ? `<span class="field"><label for="pol-${esc(id)}-t">Page title</label><input id="pol-${esc(id)}-t" data-act="adm-pol" data-id="${esc(id)}" class="pol-title" value="${esc(title)}"></span>` : esc(title)}</h2>
+  <span class="field"><label for="pol-${esc(id)}">Page text <span class="hint">a line starting with ## is a heading; a blank line starts a new paragraph</span></label><textarea id="pol-${esc(id)}" class="pol-body" rows="12" data-act="adm-pol" data-id="${esc(id)}">${esc(body)}</textarea></span>
+  <p style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px"><label class="btn small ghost" for="polf-${esc(id)}" style="cursor:pointer">Fill from a Word or text file</label><input id="polf-${esc(id)}" class="sr" type="file" accept=".docx,.txt,.md,text/plain" data-act="adm-pol-file" data-id="${esc(id)}">${custom ? `<a class="btn small ghost" href="#policy-${esc(id)}">View page</a><button class="btn small ghost danger" type="button" data-act="adm-pol-del" data-id="${esc(id)}">Remove this page</button>` : `<a class="btn small ghost" href="#${esc(id)}">View page</a>${('legal.' + id) in TXT ? `<button class="linkbtn" type="button" data-act="adm-text-reset" data-k="legal.${esc(id)}">Put back the original</button>` : ''}`}</p></div>`;
+function admPolicies() {
+  const custom = Array.isArray(SET.policyPages) ? SET.policyPages : [];
+  return `<p class="muted">Customers read these pages on the site; there is no download. Choose a Word (.docx) or text file to fill a box, read it over, then click outside the box to save. Business details come from Settings, in {braces} such as {bizName}. Have a legal adviser check every policy before launch.</p>
+    ${Object.entries(LEGAL).map(([id, [t, k]]) => polBox(id, t, Tx(k), false)).join('')}
+    ${custom.map((x) => polBox(x.id, x.title, x.body || '', true)).join('')}
+    <p><button class="btn" type="button" data-act="adm-pol-add">Add a policy page</button> <span class="muted">New pages are found at #policy-name. Add a link in Menus &amp; FAQ → Footer links.</span></p>`;
+}
+const savePolicies = (list) => dbPut('settings', { key: 'policyPages', value: list });
+// Word (.docx) is a zip file; read word/document.xml out of it with the browser's own inflate, no library
+async function docxText(buf) {
+  const v = new DataView(buf); let e = buf.byteLength - 22; while (e >= 0 && v.getUint32(e, true) !== 0x06054b50) e--; if (e < 0) throw new Error('This is not a Word file.');
+  let o = v.getUint32(e + 16, true); const n = v.getUint16(e + 10, true); let xml = null;
+  for (let i = 0; i < n; i++) {
+    const m = v.getUint16(o + 10, true), cs = v.getUint32(o + 20, true), nl = v.getUint16(o + 28, true), xl = v.getUint16(o + 30, true), cl = v.getUint16(o + 32, true), lo = v.getUint32(o + 42, true);
+    const name = new TextDecoder().decode(new Uint8Array(buf, o + 46, nl)); o += 46 + nl + xl + cl;
+    if (name !== 'word/document.xml') continue;
+    const ds = lo + 30 + v.getUint16(lo + 26, true) + v.getUint16(lo + 28, true); const raw = new Uint8Array(buf, ds, cs);
+    xml = m === 0 ? new TextDecoder().decode(raw) : await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+  }
+  if (!xml) throw new Error('No text found in this Word file.');
+  const doc = new DOMParser().parseFromString(xml, 'application/xml'); const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'; const out = []; let list = [];
+  const flush = () => { if (list.length) { out.push(list.join('\n')); list = []; } };
+  [...doc.getElementsByTagNameNS(W, 'p')].forEach((p) => {
+    let t = ''; p.querySelectorAll('*').forEach((el) => { if (el.localName === 't') t += el.textContent; else if (el.localName === 'tab') t += ' '; else if (el.localName === 'br') t += '\n'; });
+    t = t.trim(); if (!t) { flush(); return; }
+    const st = p.getElementsByTagNameNS(W, 'pStyle')[0]; const sv = st ? st.getAttributeNS(W, 'val') || '' : '';
+    if (/^(Heading|Title)/i.test(sv)) { flush(); out.push('## ' + t); } else if (p.getElementsByTagNameNS(W, 'numPr').length) list.push('• ' + t); else { flush(); out.push(t); }
+  });
+  flush(); return out.join('\n\n');
+}
+async function fileToPolicyText(file) {
+  if (/\.docx$/i.test(file.name)) return docxText(await file.arrayBuffer());
+  return (await file.text()).replace(/\r\n?/g, '\n').replace(/^#{1,6} /gm, '## ').trim();
+}
+
+// Journal: the stories. Each is a title, a short lead and a body written as "## heading" then text.
+const storyText = (j) => j.body.map(([h, t]) => (h ? '## ' + h + '\n' : '') + t).join('\n\n');
+const parseStory = (txt) => String(txt).split(/\n\n+/).map((b) => b.trim()).filter(Boolean).map((b) => { const m = /^## (.+)\n?([\s\S]*)$/.exec(b); return m ? [m[1].trim(), m[2].replace(/\n+/g, ' ').trim()] : ['', b.replace(/\n+/g, ' ')]; });
+const STORY_IMGS = [['', 'None (use the product drawing)'], [IMG.box, 'Gift box photo'], [IMG.jar, 'Jar photo'], [IMG.tag, 'Gift tag photo'], [IMG.card, 'Care card photo'], [IMG.pouch, 'Pouch photo'], [IMG.seal, 'Seal photo'], [IMG.leather, 'Leather photo']];
+function storyBox(j, i, n) {
+  const id = 'jr-' + i;
+  return `<details class="adm-group" data-story="${esc(j.id)}" ${UI.adm.jrOpen === j.id ? 'open' : ''}><summary>${esc(j.title)} <span class="muted">· ${esc(j.eyebrow || '')}</span></summary><div class="form" style="padding:14px 18px">
+    <span class="field"><label for="${id}-t">Title</label><input id="${id}-t" class="j-title" data-act="adm-jr" value="${esc(j.title)}"></span>
+    <span class="field"><label for="${id}-e">Topic label <span class="hint">for example Gifting, Candle care</span></label><input id="${id}-e" class="j-eyebrow" data-act="adm-jr" value="${esc(j.eyebrow || '')}"></span>
+    <span class="field"><label for="${id}-m">Minutes to read</label><input id="${id}-m" class="j-mins" type="number" min="1" data-act="adm-jr" value="${esc(j.mins || 2)}"></span>
+    <span class="field full"><label for="${id}-l">Short lead</label><input id="${id}-l" class="j-lead" data-act="adm-jr" value="${esc(j.lead || '')}"></span>
+    <span class="field full"><label for="${id}-b">Story text <span class="hint">a line starting with ## is a heading; a blank line starts a new section</span></label><textarea id="${id}-b" class="j-body" rows="10" data-act="adm-jr">${esc(storyText(j))}</textarea></span>
+    <span class="field"><label for="${id}-p">Main product <span class="hint">product name in the web address, shown as its drawing</span></label><input id="${id}-p" class="j-prod" list="prod-ids" data-act="adm-jr" value="${esc(j.prod || '')}"></span>
+    <span class="field"><label for="${id}-k">Products to shop under the story <span class="hint">comma separated</span></label><input id="${id}-k" class="j-links" data-act="adm-jr" value="${esc((j.links || []).join(', '))}"></span>
+    <span class="field full"><label for="${id}-i">Picture</label><select id="${id}-i" class="j-img" data-act="adm-jr">${STORY_IMGS.map(([v, l]) => `<option value="${esc(v)}" ${(j.img || '') === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}${j.img && !STORY_IMGS.some((x) => x[0] === j.img) ? `<option value="${esc(j.img)}" selected>${esc(j.img)}</option>` : ''}</select></span>
+    <span class="full" style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn small ghost" for="${id}-f" style="cursor:pointer">Fill text from a Word or text file</label><input id="${id}-f" class="sr" type="file" accept=".docx,.txt,.md,text/plain" data-act="adm-jr-file"><a class="btn small ghost" href="#journal-${esc(j.id)}">View story</a>
+      <button class="btn small ghost" type="button" data-act="adm-jr-move" data-i="${i}" data-v="-1" aria-label="Move ${esc(j.title)} earlier">↑</button><button class="btn small ghost" type="button" data-act="adm-jr-move" data-i="${i}" data-v="1" aria-label="Move ${esc(j.title)} later">↓</button><button class="btn small ghost danger" type="button" data-act="adm-jr-del" data-i="${i}">Remove story</button></span></div></details>`;
+}
+function admJournal() {
+  const list = journal();
+  return `<p class="muted">Stories appear on the Journal page and, the first three, on the home page. Edit a box, then click outside it to save.</p><datalist id="prod-ids">${prodRows().map((r) => `<option value="${esc(r.id)}"></option>`).join('')}</datalist>
+    <div id="ls-journal">${list.map((j, i) => storyBox(j, i, list.length)).join('')}</div>
+    <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn" type="button" data-act="adm-jr-add">Add a story</button>${Array.isArray(SET.journalList) ? '<button class="linkbtn" type="button" data-act="adm-jr-reset">Put back the original stories</button>' : ''}</p>`;
+}
+function readJournal() {
+  const box = document.getElementById('ls-journal'); if (!box) return journal().map((j) => Object.assign({}, j));
+  return [...box.querySelectorAll('[data-story]')].map((d) => { const g = (c) => d.querySelector('.' + c).value.trim(); const j = { id: d.dataset.story, eyebrow: g('j-eyebrow'), title: g('j-title') || 'Untitled story', mins: Math.max(1, parseInt(g('j-mins'), 10) || 2), lead: g('j-lead'), body: parseStory(d.querySelector('.j-body').value) };
+    if (g('j-prod')) j.prod = g('j-prod'); if (g('j-img')) j.img = g('j-img'); j.links = csvList(g('j-links')); return j; });
+}
+const saveJournal = (list) => dbPut('settings', { key: 'journalList', value: list });
+
+// Filters & quiz: the choices shoppers pick from. A product keeps the short key it was tagged with, so renaming is safe; removing a choice only hides it.
+function admFilters() {
+  const rows = (k, arr) => arr.map(([key, l], i) => `<div class="lrow"><span class="field"><label for="f-${k}-${i}">Words shown <span class="hint">tag: ${esc(key)}</span></label><input id="f-${k}-${i}" class="f-label" data-act="adm-tags" data-k="${k}" data-key="${esc(key)}" value="${esc(l)}"></span><span></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-tags-move" data-k="${k}" data-i="${i}" data-v="-1" aria-label="Move ${esc(l)} up">↑</button><button class="btn small ghost" type="button" data-act="adm-tags-move" data-k="${k}" data-i="${i}" data-v="1" aria-label="Move ${esc(l)} down">↓</button><button class="btn small ghost" type="button" data-act="adm-tags-del" data-k="${k}" data-i="${i}" aria-label="Remove ${esc(l)}">Remove</button></span></div>`).join('');
+  return `<p class="muted">These choices feed the shop filters, Find Your Feeling quiz, product tags and gift dates. Edit a box, then click outside it to save.</p>
+    ${Object.entries(TAG_LISTS).map(([k, [arr, title]]) => `<div class="adm-card"><h2 style="font-size:22px">${title}</h2><div id="tg-${k}">${rows(k, arr)}</div><p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-tags-add" data-k="${k}">Add a choice</button>${Array.isArray(SET[k]) ? `<button class="linkbtn" type="button" data-act="adm-tags-reset" data-k="${k}">Put back the original</button>` : ''}</p></div>`).join('')}
+    <div class="adm-card"><h2 style="font-size:22px">Find Your Feeling questions</h2><div id="tg-quiz">${FSTEPS.map((x, i) => `<span class="field full"><label for="qz-${i}">Question ${i + 1}</label><input id="qz-${i}" class="q-text" data-act="adm-quiz" value="${esc(x.q)}"></span>`).join('')}</div>${Array.isArray(SET.quizQ) ? '<p><button class="linkbtn" type="button" data-act="adm-quiz-reset">Put back the original</button></p>' : ''}</div>`;
+}
+function readTags(k) { const box = document.getElementById('tg-' + k); return box ? [...box.querySelectorAll('.f-label')].map((i) => [i.dataset.key, i.value.trim()]).filter((x) => x[1]) : TAG_LISTS[k][0].map((x) => x.slice()); }
+const tagKey = (label, list) => { let b = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30) || 'choice'; let k = b, n = 2; while (list.some((x) => x[0] === k)) k = b + '-' + n++; return k; };
+const saveTags = (k, v) => { SET[k] = v; applyTagLists(); return dbPut('settings', { key: k, value: v }); };
+
+// Home page: show, hide and reorder the sections of the home page
+function admHome() {
+  const hide = Array.isArray(SET.homeHide) ? SET.homeHide : []; const name = Object.fromEntries(HOME_SECTIONS);
+  return `<p class="muted">Tick a section to show it on the home page. Use the arrows to change the order. The opening banner always shows. Changes save at once.</p>
+    <div class="adm-card" id="ls-home">${homeOrder(true).map((id, i, all) => `<div class="lrow" style="grid-template-columns:1fr auto" data-sec="${id}"><label class="check"><input type="checkbox" data-act="adm-home" data-id="${id}" ${hide.includes(id) && id !== 'hero' ? '' : 'checked'} ${id === 'hero' ? 'disabled' : ''}> ${esc(name[id])}</label><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-home-move" data-id="${id}" data-v="-1" aria-label="Move ${esc(name[id])} up" ${i === 0 ? 'disabled' : ''}>↑</button><button class="btn small ghost" type="button" data-act="adm-home-move" data-id="${id}" data-v="1" aria-label="Move ${esc(name[id])} down" ${i === all.length - 1 ? 'disabled' : ''}>↓</button></span></div>`).join('')}</div>
+    ${Array.isArray(SET.homeOrder) || hide.length ? '<p><button class="linkbtn" type="button" data-act="adm-home-reset">Put back the original order</button></p>' : ''}`;
+}
+const saveHome = (order, hide) => { SET.homeOrder = order; SET.homeHide = hide; return Promise.all([dbPut('settings', { key: 'homeOrder', value: order }), dbPut('settings', { key: 'homeHide', value: hide })]); };
+function admHistory() {
+  const rows = admData('history'); if (!rows) return '<p class="muted">Loading…</p>';
+  const nice = { site_text: 'Site text', settings: 'Setting', products: 'Product', pairings: 'Ritual' };
+  const show = (v, tbl) => { if (v == null) return '(nothing)'; const x = tbl === 'products' || tbl === 'pairings' ? ((v.data && v.data.name) || v.id) + (v.live === false ? ' (draft)' : '') : typeof v.value === 'string' ? v.value : JSON.stringify(v.value); const t = String(x); return t.length > 90 ? t.slice(0, 90) + '…' : t; };
+  return `<p class="muted">The last 200 changes to site text, settings, products and rituals. Press Put this back to undo one; the undo is itself saved here.${BTDB.on ? ' If this stays empty after you have saved changes, run schema.sql again in Supabase.' : ''}</p>
+    ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>When</th><th>What</th><th>Before</th><th>After</th><th></th></tr></thead><tbody>${rows.map((r, i) => `<tr><td class="num">${esc(new Date(r.at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}</td><td>${esc(nice[r.tbl] || r.tbl)}<br><span class="muted num">${esc(r.key)}</span></td><td>${esc(show(r.old, r.tbl))}</td><td>${esc(show(r.new, r.tbl))}</td><td><button class="btn small ghost" type="button" data-act="adm-undo" data-i="${i}">Put this back</button></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Nothing yet. Changes you save from now on appear here.</p>'}`;
+}
+function admGuide() {
+  const rows = [['Change a word on the site', 'Preview bar → Edit text on page, then click the word. Or Site text.'], ['Menu, footer links, FAQ', 'Menus & FAQ'], ['Add a product', 'Products → Add a product. Save as draft, add photos under Photos and videos, then Publish.'], ['Change stock', 'Stock. Counts are per option, grouped by product.'], ['Prices, shipping fee, delivery time, gift wrap', 'Settings'], ['Change a photo, logo or banner', 'Photos & videos. Pick the product, or Brand for logo, packaging and gift photos.'], ['Privacy, terms, shipping and replacement policy', 'Policy pages. Fill from a Word or text file, or type.'], ['Stories', 'Journal'], ['Feelings, rooms, occasions and quiz questions', 'Filters & quiz'], ['Which home page sections show, and in what order', 'Home page'], ['Search and sharing text, favicon', 'Site text → Search & sharing (SEO); Photos & videos → Brand'], ['Undo a change', 'History → Put this back'], ['Go live', 'Settings → Coming soon page: switch it off when everything is ready'], ['Orders, invoices, coupons, rewards, gift cards', 'Their own tabs']];
+  return `<p class="muted">Where to change what. Nothing on the site needs a developer.</p><div class="table-wrap"><table><thead><tr><th>I want to…</th><th>Go to</th></tr></thead><tbody>${rows.map(([a, b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join('')}</tbody></table></div>`;
+}
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
   return `<div class="adm-bar"><p class="muted">Edit any line, then click outside the box to save. A new line breaks the line; *words between stars* are set in italics. Words in {braces} come from Settings.</p><span class="field"><label for="tx-q">Find</label><input id="tx-q" data-act="adm-q" value="${esc(UI.adm.q || '')}" placeholder="delivery, gift, hero…"></span></div>
@@ -2352,8 +2573,10 @@ function admText() {
 }
 function admStock() {
   const waiting = {}; (admData('people') || []).forEach((r) => { if (r.sku) waiting[r.sku] = (waiting[r.sku] || 0) + 1; });
-  return `<p class="muted">One stock count for every channel. Change a number to record a marketplace sale or a new batch; it saves when you leave the box. At 0 the site shows “Sold out” and collects restock requests.</p>
-    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Option</th><th>SKU</th><th>In stock</th><th>Website</th></tr></thead><tbody>${Object.entries(skuMap).map(([sku, { p, v }]) => { const n = stockOf(sku); return `<tr><td>${esc(p.name)}</td><td>${esc(v.label)}</td><td class="num">${esc(sku)}</td><td><label class="sr" for="st-${esc(sku)}">Stock for ${esc(p.name)} ${esc(v.label)}</label><input type="number" min="0" max="9999" id="st-${esc(sku)}" data-act="stock" data-sku="${esc(sku)}" value="${n}"></td><td>${n === 0 ? '<span class="pill out">Sold out</span>' : n <= 2 ? '<span class="pill low">Low</span>' : '<span class="pill">Listed</span>'}${waiting[sku] ? ` <span class="pill">${waiting[sku]} waiting</span>` : ''}</td></tr>`; }).join('')}</tbody></table></div>`;
+  const rows = prodRows().filter((r) => (r.data.variants || []).length);
+  return `<p class="muted">One stock count for every channel. Change a number to record a marketplace sale or a new batch; it saves when you leave the box. At 0 the site shows “Sold out” and collects restock requests. Draft products are listed here too.</p>
+    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Option</th><th>SKU</th><th>In stock</th><th>Website</th></tr></thead>${rows.map((r) => { const vs = r.data.variants; const tot = vs.reduce((a, v) => a + stockOf(v.sku), 0);
+      return `<tbody><tr class="adm-prodrow"><th scope="rowgroup" colspan="3">${esc(r.data.name || r.id)} ${r.live === false ? '<span class="pill out">Draft</span>' : ''}</th><td class="num"><strong>${tot} left in total</strong></td><td></td></tr>${vs.map((v) => { const sku = v.sku; const n = stockOf(sku); return `<tr><td></td><td>${esc(v.label)}</td><td class="num">${esc(sku)}</td><td><label class="sr" for="st-${esc(sku)}">Stock for ${esc(r.data.name)} ${esc(v.label)}</label><input type="number" min="0" max="9999" id="st-${esc(sku)}" data-act="stock" data-sku="${esc(sku)}" value="${n}"></td><td>${n === 0 ? '<span class="pill out">Sold out</span>' : n <= 2 ? '<span class="pill low">Low</span>' : '<span class="pill">Listed</span>'}${waiting[sku] ? ` <span class="pill">${waiting[sku]} waiting</span>` : ''}</td></tr>`; }).join('')}</tbody>`; }).join('')}</table></div>`;
 }
 function admSettings() {
   const field = setField;
@@ -2599,7 +2822,7 @@ function invoiceHTML(inv) {
   const row = (l) => '<tr><td>' + esc(l.name) + '</td>' + (gst ? `<td>${esc(l.hsn || '')}</td><td>${l.qty}</td><td>${rs(l.taxable)}</td><td>${l.rate}%</td>${d.inter ? `<td>${rs(l.igst)}</td>` : `<td>${rs(l.cgst)}</td><td>${rs(l.sgst)}</td>`}<td>${rs(l.net)}</td>` : `<td>${l.qty}</td><td>${rs(Math.round(l.gross / l.qty))}</td><td>${l.disc ? '−' + rs(l.disc) : '—'}</td><td>${rs(l.net)}</td>`) + '</tr>';
   const sum = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   return `<style>${INV_CSS}</style><div class="inv" id="inv-sheet">${void_ ? '<div class="inv-void" aria-hidden="true">VOID</div>' : ''}
-    <div class="inv-top"><div><h1>${esc(title)}</h1><strong>${esc(sl.name)}</strong><div>${esc(sl.address)}</div>${sl.gstin ? `<div>GSTIN: ${esc(sl.gstin)}</div>` : ''}${sl.email ? `<div>${esc(sl.email)}</div>` : ''}</div>
+    <div class="inv-top"><div><img src="${esc(new URL(brandUrl('logo-wide') || 'assets/silk/logo-horizontal.webp', location.href).href)}" alt="BUD &amp; THINGS" style="height:44px;width:auto;display:block;margin-bottom:10px"><h1>${esc(title)}</h1><strong>${esc(sl.name)}</strong><div>${esc(sl.address)}</div>${sl.gstin ? `<div>GSTIN: ${esc(sl.gstin)}</div>` : ''}${sl.email ? `<div>${esc(sl.email)}</div>` : ''}</div>
       <div class="inv-meta"><div><strong>No.</strong> ${esc(inv.id)}</div><div><strong>Date</strong> ${new Date(d.date + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div><div><strong>Order</strong> ${esc(d.orderId)}</div>${cn ? `<div><strong>Against</strong> ${esc(inv.against || d.against || '')}</div>` : ''}${gst ? `<div><strong>Place of supply</strong> ${esc(d.placeOfSupply)}</div>` : ''}</div></div>
     <div class="inv-cols"><div><h2>Billed to</h2><strong>${esc(b.name)}</strong><div>${esc(b.phone)}${b.email ? ' · ' + esc(b.email) : ''}</div></div><div><h2>Delivered to</h2><div>${[b.line1, b.line2, b.city + ' ' + b.pin, b.state].filter((x) => String(x).trim()).map(esc).join(', ')}</div></div></div>
     <div class="inv-tw"><table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${d.lines.map(row).join('')}</tbody></table></div>
@@ -3038,21 +3261,23 @@ const JOURNAL = [
   { id: 'inside-the-studio', eyebrow: 'From the studio', title: 'Inside the studio: how a batch is made', mins: 2, img: IMG.leather, lead: 'From a sketch to a parcel at your door, every piece passes through Ashi’s hands.',
     body: [['Thought', 'Every piece starts with a moment we want to make room for: tea at four, rings at night, a lamp at the door.'], ['Object', 'Candles are poured and Jesmonite pieces cast in small batches, then cured, checked and finished by hand.'], ['Feeling', 'Each order is packed with tissue, a care card and, for gifts, a hand-written note.'], ['Memory', 'The best part is when a piece becomes part of someone’s everyday. That is what we make them for.']], links: [] }
 ];
+// the stories: the owner's saved list from Owner view → Journal, else the built-in ones above
+const journal = () => (Array.isArray(SET.journalList) && SET.journalList.every((j) => j && j.id && j.title && Array.isArray(j.body)) ? SET.journalList : JOURNAL);
 const postArt = (j) => j.img ? `<img src="${esc(j.img)}" alt="" loading="lazy">` : byId[j.prod] ? art(byId[j.prod], 0, 1.2) : '';
 function journalCards(n) {
-  return `<div class="journal">${JOURNAL.slice(0, n || JOURNAL.length).map((j) => `<a class="post" href="#journal-${j.id}"><span class="tile${j.img ? ' photo-tile' : ' alt'}">${postArt(j)}</span><span class="eyebrow">${esc(j.eyebrow)} · ${j.mins} min read</span><strong>${esc(j.title)}</strong><span class="muted">${esc(j.lead)}</span></a>`).join('')}</div>`;
+  return `<div class="journal">${journal().slice(0, n || journal().length).map((j) => `<a class="post" href="#journal-${j.id}"><span class="tile${j.img ? ' photo-tile' : ' alt'}">${postArt(j)}</span><span class="eyebrow">${esc(j.eyebrow)} · ${j.mins} min read</span><strong>${esc(j.title)}</strong><span class="muted">${esc(j.lead)}</span></a>`).join('')}</div>`;
 }
 function homeJournal(id) {
   return `<section class="section wrap" aria-labelledby="${id}" style="padding-top:0"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="${id}">${T('home.journal')}</h2><span class="muted">${T('home.journalSub')}</span></div><a href="#journal" style="font-weight:600">All stories →</a></div>${journalCards(3)}</section>`;
 }
 function viewJournal(id) {
   if (!id) return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Journal</span><h1 tabindex="-1">Stories, care and gifting</h1><p class="muted" style="max-width:620px">${T('home.journalSub')}</p></div>${journalCards()}</div>`;
-  const j = JOURNAL.find((x) => x.id === id); if (!j) return viewNotFound();
-  const links = j.links.map((x) => byId[x]).filter(Boolean);
+  const j = journal().find((x) => x.id === id); if (!j) return viewNotFound();
+  const links = (j.links || []).map((x) => byId[x]).filter(Boolean);
   return `<article class="wrap article" style="padding-bottom:var(--section)"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#journal">Journal</a> / ${esc(j.title)}</nav>
     <header class="article-head"><span class="eyebrow">${esc(j.eyebrow)} · ${j.mins} min read</span><h1 tabindex="-1">${esc(j.title)}</h1><p class="lead">${esc(j.lead)}</p></header>
     <div class="article-ph tile${j.img ? ' photo-tile' : ' alt'}">${postArt(j)}</div>
-    <div class="article-body">${j.body.map(([h, t]) => `<h2>${esc(h)}</h2><p>${esc(t)}</p>`).join('')}<p class="muted" style="font-size:14px">Written by Ashi at the BUD &amp; THINGS studio.</p></div>
+    <div class="article-body">${j.body.map(([h, t]) => `${h ? `<h2>${esc(h)}</h2>` : ''}<p>${esc(t)}</p>`).join('')}<p class="muted" style="font-size:14px">Written by Ashi at the BUD &amp; THINGS studio.</p></div>
     ${links.length ? `<section class="section" style="padding-bottom:0" aria-labelledby="art-shop"><div class="section-head"><h2 id="art-shop">Shop the story</h2></div><div class="grid">${links.map(card).join('')}</div></section>` : ''}
     <section class="section" style="padding-bottom:0" aria-labelledby="art-more"><div class="section-head"><h2 id="art-more">Keep reading</h2></div>${journalCards(3).replace('<div class="journal">', '<div class="journal">')}</section></article>`;
 }
@@ -3082,12 +3307,13 @@ function viewWhy() {
       <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#story">Read our story</a><a class="btn ghost" href="#shipping">Shipping &amp; delivery</a></span></div></div></div>`;
 }
 const LEGAL = { privacy: ['Privacy policy', 'legal.privacy'], terms: ['Terms & conditions', 'legal.terms'], shipping: ['Shipping & delivery', 'legal.shipping'], refunds: ['Cancellations & replacements', 'legal.refunds'] };
-function legalBody(k) { return Tx(k).split(/\n\n+/).map((b) => { const m = /^## (.+)\n?([\s\S]*)$/.exec(b); return m ? `<h2>${esc(m[1])}</h2>${m[2] ? `<p>${esc(m[2]).replace(/\n/g, '<br>')}</p>` : ''}` : `<p>${esc(b).replace(/\n/g, '<br>')}</p>`; }).join(''); }
+function legalMap() { const m = Object.assign({}, LEGAL); (Array.isArray(SET.policyPages) ? SET.policyPages : []).forEach((x) => { if (x && x.id && x.title) m['policy-' + x.id] = [x.title, null, x.body || '']; }); return m; }
+function legalBody(k, raw) { return (raw != null ? fill(raw) : Tx(k)).split(/\n\n+/).map((b) => { const m = /^## (.+)\n?([\s\S]*)$/.exec(b); return m ? `<h2>${esc(m[1])}</h2>${m[2] ? `<p>${esc(m[2]).replace(/\n/g, '<br>')}</p>` : ''}` : `<p>${esc(b).replace(/\n/g, '<br>')}</p>`; }).join(''); }
 function viewLegal(r) {
-  const [title, k] = LEGAL[r];
+  const LG = legalMap(); const [title, k, raw] = LG[r];
   return `<div class="wrap legal" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Policies</span><h1 tabindex="-1">${esc(title)}</h1>${Tx('legal.note') ? `<div class="status" role="note">${T('legal.note')}</div>` : ''}</div>
-    <div class="legal-grid"><nav class="legal-nav" aria-label="Policies">${Object.entries(LEGAL).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
-    <div class="article-body">${legalBody(k)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p><p>${T('legal.grievance')}</p></div></div></div>`;
+    <div class="legal-grid"><nav class="legal-nav" aria-label="Policies">${Object.entries(LG).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
+    <div class="article-body">${legalBody(k, raw)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p><p>${T('legal.grievance')}</p></div></div></div>`;
 }
 // a signed-in customer's orders and Bud Points: from the database (my_orders), or this browser's orders in the preview
 function myOrders() {
@@ -3369,6 +3595,9 @@ function giftBoxesHTML(id) {
 }
 
 // the gift-first home page: products, gifts and reasons to buy first, and no scroll intro
+// order and visibility of the home page sections: the owner's list in Owner view → Home page, else this order
+const HOME_SECTIONS = [['hero', 'Opening banner'], ['welcome', 'Welcome gift'], ['cats', 'Categories'], ['boxes', 'Gift boxes'], ['new', 'New arrivals'], ['promos', 'Offer banners'], ['best', 'Best sellers'], ['feel', 'Find Your Feeling'], ['occasions', 'Moments (occasions)'], ['rituals', 'Rituals'], ['spotlight', 'Spotlight product'], ['reviews', 'Reviews'], ['packaging', 'How it arrives'], ['story', 'Our story band'], ['journal', 'Journal stories'], ['discover', 'More to explore'], ['festive', 'Festive banner'], ['news', 'Newsletter sign-up']];
+function homeOrder(all) { const known = HOME_SECTIONS.map((x) => x[0]); const v = Array.isArray(SET.homeOrder) ? SET.homeOrder.filter((x) => known.includes(x)) : []; const order = v.concat(known.filter((x) => !v.includes(x))); const hide = Array.isArray(SET.homeHide) ? SET.homeHide : []; return all ? order : order.filter((x) => !hide.includes(x) || x === 'hero'); }
 function viewGiftHome() {
   const G = UI.gh; const t = totals(); const sub = t.sub || 0; const free = +SET.freeOver || 0;
   const feat = idList('featured').map((id) => byId[id]);
@@ -3378,8 +3607,8 @@ function viewGiftHome() {
   const pairs = PAIRINGS.filter((fo) => fo.items.every(([pid, vi]) => byId[pid] && byId[pid].variants[vi])).slice(0, 3);
   const hero = mediaFor('brand', { kind: 'photo', role: ['gift', 'packaging', 'lifestyle'] })[0];
   const pack = brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set: candles in a ribbon-tied box.', 'Gift set box'], [IMG.tag, 'Rustic hang tag with the logo and olive leaf.', 'Hang tag'], [IMG.card, 'Candle care tag with burn instructions.', 'Care tag'], [IMG.seal, 'BUD & THINGS wax seals in brand colours.', 'Wax seals']]);
-  return `
-  <section class="wrap gh-hero" aria-labelledby="gh-h">
+  const BLOCKS = {
+    hero: () => `  <section class="wrap gh-hero" aria-labelledby="gh-h">
     <div class="gh-ph"><img src="${esc(hero ? mUrl(hero) : IMG.box)}" alt="${esc(hero ? hero.alt : 'The BUD & THINGS gift set: candles in a ribbon-tied box.')}">
       <span class="gh-badge"><svg width="14" height="18" viewBox="0 0 14 18" aria-hidden="true"><path d="M7 1C9 5 13 7 13 11.5A6 6 0 0 1 1 11.5C1 8 4 7 4 4c1.5 1 2 2.5 2 4C7 6 7 3 7 1z" fill="#C9A227"/></svg>${T('ghome.badge')}</span></div>
     <div style="display:flex;flex-direction:column;gap:16px">
@@ -3388,47 +3617,39 @@ function viewGiftHome() {
       <div class="gh-cta gh-rise d2"><a class="btn gh-shine" href="#gifting">${T('ghome.cta1')}</a><a class="btn ghost" href="#feeling">${T('ghome.cta2')}</a></div>
       ${free ? `<div class="gh-ship"><span>${sub >= free ? T('cart.freeShipDone') : sub ? T('cart.freeShip').replace('{gap}', `<strong class="num">${inr(free - sub)}</strong>`) : T('ghome.ship')}</span><span class="bar" aria-hidden="true"><span style="width:${Math.min(100, Math.round(sub / free * 100))}%"></span></span></div>` : ''}
     </div>
-  </section>
-
-  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--s7)" aria-label="Your welcome gift">${G.open
+  </section>`,
+    welcome: () => `  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--s7)" aria-label="Your welcome gift">${G.open
     ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">${T('ghome.wonEyebrow')}</span><strong>${T('ghome.wonTitle')}</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
-    : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}
-
-  ${catTiles('gh-cats')}
-  ${giftBoxesHTML('gh-boxes-h')}
-  ${newArrivals('gh-new')}
-  ${promoBanners()}
-
-  <section class="wrap" aria-labelledby="gh-best" style="padding-block:var(--s5) var(--section)">
+    : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}`,
+    cats: () => catTiles('gh-cats'),
+    boxes: () => giftBoxesHTML('gh-boxes-h'),
+    new: () => newArrivals('gh-new'),
+    promos: () => promoBanners(),
+    best: () => `  <section class="wrap" aria-labelledby="gh-best" style="padding-block:var(--s5) var(--section)">
     <div class="section-head"><h2 id="gh-best">${esc(cats.find((c) => c[0] === G.cat)[1])}</h2><a href="#shop" style="font-weight:600">${T('home.seeAll').replace('{count}', P.length)}</a></div>
     <div class="gh-chips" role="group" aria-label="Show">${cats.map(([k, l]) => `<button type="button" class="chip" data-act="gh-cat" data-v="${k}" aria-pressed="${G.cat === k}">${l}</button>`).join('')}</div>
     <div class="grid" style="margin-top:16px">${list.length ? list.map(card).join('') : '<p class="muted">Nothing here yet.</p>'}</div>
-  </section>
-
-  <section class="band" aria-labelledby="gh-feel"><div class="wrap"><div style="flex:1 1 360px"><span class="eyebrow">${T('home.feelEyebrow')}</span><h2 id="gh-feel">${T('home.feel')}</h2></div>
-    <div class="opts" role="group" aria-label="Choose a feeling">${MOODS.map(([k, l]) => `<button type="button" data-act="home-mood" data-v="${k}">${ICON[MOOD_ICON[k]]}<span>${l}</span></button>`).join('')}</div></div></section>
-
-  <section class="section wrap" aria-labelledby="gh-occ"><div class="section-head"><h2 id="gh-occ">${T('home.moment')}</h2></div>
-    <div class="gh-chips">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>
-
-  ${pairs.length ? `<section style="background:var(--linen)" aria-labelledby="gh-pairs"><div class="wrap section"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="gh-pairs">${T('ghome.pairs')}</h2><span class="muted">${T('ghome.pairsSub')}</span></div><a href="#ritual" style="font-weight:600">Make your own →</a></div>
+  </section>`,
+    feel: () => `  <section class="band" aria-labelledby="gh-feel"><div class="wrap"><div style="flex:1 1 360px"><span class="eyebrow">${T('home.feelEyebrow')}</span><h2 id="gh-feel">${T('home.feel')}</h2></div>
+    <div class="opts" role="group" aria-label="Choose a feeling">${MOODS.map(([k, l]) => `<button type="button" data-act="home-mood" data-v="${k}">${ICON[MOOD_ICON[k]]}<span>${l}</span></button>`).join('')}</div></div></section>`,
+    occasions: () => `  <section class="section wrap" aria-labelledby="gh-occ"><div class="section-head"><h2 id="gh-occ">${T('home.moment')}</h2></div>
+    <div class="gh-chips">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>`,
+    rituals: () => `  ${pairs.length ? `<section style="background:var(--linen)" aria-labelledby="gh-pairs"><div class="wrap section"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="gh-pairs">${T('ghome.pairs')}</h2><span class="muted">${T('ghome.pairsSub')}</span></div><a href="#ritual" style="font-weight:600">Make your own →</a></div>
     <div class="gh-pairs">${pairs.map((fo) => { const rp = ritualPrice(fo.items.map(([pid, vi]) => [byId[pid], vi])); return `<div class="gh-pair"><span class="tiles">${fo.items.map(([pid, vi]) => `<span class="tile">${tileArt(byId[pid], vi, .7)}</span>`).join('')}</span>
       <span style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0"><strong style="font-family:var(--display);font-size:22px;line-height:1.05">${esc(fo.name)}</strong><span class="muted" style="font-size:13px">${fo.items.map(([pid]) => esc(byId[pid].name)).join(' + ')}</span>
-      <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="num" style="font-weight:600">${rp.save ? `<s class="muted">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span><button class="btn small" type="button" data-act="gh-pair" data-v="${fo.id}">Add the pair</button></span></span></div>`; }).join('')}</div></div></section>` : ''}
-
-  ${spotlight('gh-spot')}
-  ${homeReviews('gh-rev')}
-
-  <section class="wrap" aria-labelledby="gh-arrive" style="padding-bottom:var(--section)"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.arriveEyebrow')}</span><h2 id="gh-arrive">${T('home.arrive')}</h2></div></div>
-    <div class="pack-grid">${pack.slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>
-
-  ${storyBand('gh-story')}
-  ${homeJournal('gh-jr')}
-  ${discover('gh-disc')}
-  ${festiveBanner()}
-
-  <section class="section wrap" aria-labelledby="gh-news"><div class="intro" style="gap:14px"><h2 id="gh-news" style="font-size:40px">${T('home.news')}</h2><p class="muted" style="font-family:var(--body);font-size:16px">${T('home.newsText')}</p>
-    <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 240px"><button class="btn" type="submit">Join the list</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`;
+      <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="num" style="font-weight:600">${rp.save ? `<s class="muted">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span><button class="btn small" type="button" data-act="gh-pair" data-v="${fo.id}">Add the pair</button></span></span></div>`; }).join('')}</div></div></section>` : ''}`,
+    spotlight: () => spotlight('gh-spot'),
+    reviews: () => homeReviews('gh-rev'),
+    packaging: () => `  <section class="wrap" aria-labelledby="gh-arrive" style="padding-bottom:var(--section)"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.arriveEyebrow')}</span><h2 id="gh-arrive">${T('home.arrive')}</h2></div></div>
+    <div class="pack-grid">${pack.slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>`,
+    story: () => storyBand('gh-story'),
+    journal: () => homeJournal('gh-jr'),
+    discover: () => discover('gh-disc'),
+    festive: () => festiveBanner(),
+    news: () => `  <section class="section wrap" aria-labelledby="gh-news"><div class="intro" style="gap:14px"><h2 id="gh-news" style="font-size:40px">${T('home.news')}</h2><p class="muted" style="font-family:var(--body);font-size:16px">${T('home.newsText')}</p>
+    <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 240px"><button class="btn" type="submit">Join the list</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`
+  };
+  return homeOrder().map((id) => (BLOCKS[id] ? BLOCKS[id]() : '')).join('\n');
 }
 
 function viewFor(r, cs) {
@@ -3458,7 +3679,7 @@ function viewFor(r, cs) {
   else if (r === 'under-999') html = viewShop('under-999');
   else if (r === 'why') html = viewWhy();
   else if (r === 'journal' || r.startsWith('journal-')) html = viewJournal(r.slice(8));
-  else if (LEGAL[r]) html = viewLegal(r);
+  else if (legalMap()[r]) html = viewLegal(r);
   else if (r === 'track') html = viewTrack();
   else if (r === 'account') html = viewAccount();
   else html = viewNotFound();
@@ -3755,6 +3976,22 @@ document.addEventListener('click', (e) => {
     case 'ov-save': ovSave($('#ov-text').value); break;
     case 'ov-reset': if (UI.ov) { UI.ov.cur = UI.ov.def; ovSave(UI.ov.def); } break;
     case 'ov-scan': ovScanAll(); render(); break;
+    case 'adm-pol-add': { const list = (Array.isArray(SET.policyPages) ? SET.policyPages : []).slice(); let n = list.length + 1; while (list.some((x) => x.id === 'page-' + n)) n++; list.push({ id: 'page-' + n, title: 'New policy page', body: '' }); admDo(async () => { await savePolicies(list); render(); }, 'Page added. Give it a title and text.'); break; }
+    case 'adm-pol-del': { const list = (SET.policyPages || []).filter((x) => x.id !== d.id); admDo(async () => { await savePolicies(list); render(); }, 'Page removed.'); break; }
+    case 'adm-jr-add': { const list = readJournal(); let n = list.length + 1; while (list.some((x) => x.id === 'story-' + n)) n++; list.push({ id: 'story-' + n, eyebrow: 'From the studio', title: 'New story', mins: 2, lead: '', body: [['', 'Write your story here.']], links: [] }); UI.adm.jrOpen = 'story-' + n; admDo(async () => { await saveJournal(list); render(); }, 'Story added.'); break; }
+    case 'adm-jr-del': { const list = readJournal(); list.splice(+d.i, 1); admDo(async () => { await saveJournal(list); render(); }, 'Story removed.'); break; }
+    case 'adm-jr-move': { const list = readJournal(); const i = +d.i, to = i + (+d.v); if (to < 0 || to >= list.length) break; const [m] = list.splice(i, 1); list.splice(to, 0, m); UI.adm.jrOpen = m.id; admDo(async () => { await saveJournal(list); render(); }, 'Saved.'); break; }
+    case 'adm-jr-reset': admDo(async () => { await dbDel('settings', 'key', 'journalList'); render(); }, 'Back to the original stories.'); break;
+    case 'adm-tags-add': { const v = readTags(d.k); v.push([tagKey('new choice', v), 'New choice']); admDo(async () => { await saveTags(d.k, v); render(); }, 'Added. Rename it.'); break; }
+    case 'adm-tags-del': { const v = readTags(d.k); if (v.length < 2) { say('Keep at least one choice.'); break; } v.splice(+d.i, 1); admDo(async () => { await saveTags(d.k, v); render(); }, 'Removed. Products keep their tag, it just stops showing.'); break; }
+    case 'adm-tags-move': { const v = readTags(d.k); const i = +d.i, to = i + (+d.v); if (to < 0 || to >= v.length) break; const [m] = v.splice(i, 1); v.splice(to, 0, m); admDo(async () => { await saveTags(d.k, v); render(); }, 'Saved.'); break; }
+    case 'adm-tags-reset': admDo(async () => { await dbDel('settings', 'key', d.k); delete SET[d.k]; applyTagLists(); render(); }, 'Back to the original.'); break;
+    case 'adm-quiz-reset': admDo(async () => { await dbDel('settings', 'key', 'quizQ'); delete SET.quizQ; applyQuizQ(); render(); }, 'Back to the original.'); break;
+    case 'adm-home-move': { const o = homeOrder(true); const i = o.indexOf(d.id), to = i + (+d.v); if (to < 0 || to >= o.length) break; o.splice(i, 1); o.splice(to, 0, d.id); admDo(async () => { await saveHome(o, SET.homeHide || []); render(); }, 'Saved.'); break; }
+    case 'adm-home-reset': admDo(async () => { await dbDel('settings', 'key', 'homeOrder'); await dbDel('settings', 'key', 'homeHide'); delete SET.homeOrder; delete SET.homeHide; render(); }, 'Back to the original.'); break;
+    case 'adm-undo': { const r = (admData('history') || [])[+d.i]; if (!r) break; const col = LOGGED[r.tbl]; admDo(async () => { if (r.old == null) await dbDel(r.tbl, col, r.key); else await dbPut(r.tbl, r.old); if (BTDB.on) UI.adm.rows.history = null; render(); renderChrome(); }, 'Put back.'); break; }
+    case 'adm-list-add': case 'adm-list-del': case 'adm-list-move': listAction(d); break;
+    case 'adm-list-reset': admDo(async () => { if (UI.adm.draft) delete UI.adm.draft[d.k]; await dbDel('settings', 'key', d.k); renderChrome(); render(); }, 'Back to the original.'); break;
     case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
     case 'room-open': roomOpen(d.id, UI.pdp[d.id] ? UI.pdp[d.id].vi || 0 : 0); break;
     case 'room-close': roomClose(); break;
@@ -3809,7 +4046,7 @@ document.addEventListener('click', (e) => {
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
-    case 'adm-tab': UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'adm-tab': UI.adm.draft = null; UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -3901,6 +4138,17 @@ document.addEventListener('change', (e) => {
   if (d.act === 'ritual-custom') { UI.ritual.custom[d.k] = t.value; UI.ritual.pick.custom = { 0: true, 1: true }; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
   if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); if (d.k === 'theme') render(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
+  if (d.act === 'adm-pol') { const id = d.id; const box = t.closest('[data-pol]'); const body = box.querySelector('.pol-body').value; const ti = box.querySelector('.pol-title');
+    admDo(async () => { if (ti) { const list = (SET.policyPages || []).map((x) => (x.id === id ? { id, title: ti.value.trim() || x.title, body } : x)); await savePolicies(list); } else { const k = 'legal.' + id; if (body === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: body }); } renderChrome(); }, 'Saved.'); }
+  if (d.act === 'adm-pol-file') { const file = t.files && t.files[0]; if (!file) return; const box = t.closest('[data-pol]'); const ta = box.querySelector('.pol-body');
+    fileToPolicyText(file).then((txt) => { if (!txt) throw new Error('The file has no text.'); ta.value = txt; ta.dispatchEvent(new Event('change', { bubbles: true })); }).catch((err) => say('Couldn’t read the file: ' + err.message)); t.value = ''; }
+  if (d.act === 'adm-jr') { admDo(async () => { await saveJournal(readJournal()); renderChrome(); }, 'Saved.'); }
+  if (d.act === 'adm-jr-file') { const file = t.files && t.files[0]; if (!file) return; const ta = t.closest('[data-story]').querySelector('.j-body');
+    fileToPolicyText(file).then((txt) => { if (!txt) throw new Error('The file has no text.'); ta.value = txt; ta.dispatchEvent(new Event('change', { bubbles: true })); }).catch((err) => say('Couldn’t read the file: ' + err.message)); t.value = ''; }
+  if (d.act === 'adm-tags') { const k = d.k; admDo(async () => { await saveTags(k, readTags(k)); }, 'Saved.'); }
+  if (d.act === 'adm-quiz') { const v = [...document.querySelectorAll('#tg-quiz .q-text')].map((i) => i.value.trim()); admDo(async () => { SET.quizQ = v; applyQuizQ(); await dbPut('settings', { key: 'quizQ', value: v }); }, 'Saved.'); }
+  if (d.act === 'adm-home') { const hide = (SET.homeHide || []).filter((x) => x !== d.id); if (!t.checked) hide.push(d.id); admDo(async () => { await saveHome(homeOrder(true), hide); render(); }, 'Saved.'); }
+  if (d.act === 'adm-list') { const key = d.k; admDo(async () => { await saveList(key, readList(key)); renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-ov') { const k = d.k; admDo(async () => { if (!t.value.trim() || t.value === SEEN[k].d) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); UI.adm.open = 'x.'; renderChrome(); }, 'Saved.'); }
   if (d.act === 'adm-text') { const k = d.k; admDo(async () => { if (t.value === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: t.value }); renderChrome(); }, 'Saved.'); }
   if (d.act === 'rv-sort') { UI.rvSort = t.value; render(); $('#rv-sort')?.focus(); }
@@ -4035,12 +4283,12 @@ document.addEventListener('submit', (e) => {
     const row = { code: `BT-${pick(4)}-${pick(4)}`, amount: amt, balance: amt, note: note || null };
     admDo(async () => { if (BTDB.on) { await BTDB.insert('gift_cards', row); A.rows = {}; } else { S.db = S.db || {}; S.db.cards = [Object.assign({ created_at: new Date().toISOString() }, row)].concat(S.db.cards || []); save(); } A.cardMsg = `Made ${row.code} for ${inr(amt)}. Copy the code and send it with the card.`; render(); });
     return; }
-  if (kind === 'adm-product') { const r = readProductForm(f); const d = r.data; const A = UI.adm; const others = prodRows().filter((x) => x.id !== r.id); const skus = new Set(); others.forEach((x) => ((x.data || {}).variants || []).forEach((v) => skus.add(v.sku)));
+  if (kind === 'adm-product') { const live = !!(e.submitter && e.submitter.dataset.live === '1'); const r = readProductForm(f, live); const openStock = r.data.openStock; delete r.data.openStock; const d = r.data; const A = UI.adm; const others = prodRows().filter((x) => x.id !== r.id); const skus = new Set(); others.forEach((x) => ((x.data || {}).variants || []).forEach((v) => skus.add(v.sku)));
     A.formErr = !d.name ? 'Give the product a name.' : r.isNew && !/^[a-z0-9][a-z0-9-]{1,59}$/.test(r.id) ? 'Choose a web address name with lowercase letters, numbers and dashes.' : r.isNew && prodRows().some((x) => x.id === r.id) ? 'That web address name is already used.'
-      : !d.variants.length ? 'Add at least one option with an SKU, a name and a price.' : d.variants.some((v) => !v.label || !(v.price > 0)) ? 'Every option needs a name and a price above 0.' : d.variants.some((v, i) => skus.has(v.sku) || d.variants.findIndex((w) => w.sku === v.sku) !== i) ? 'Each SKU can only be used once across the shop.' : null;
-    if (A.formErr) { render(); $('.adm-card .err')?.scrollIntoView({ block: 'center' }); return; }
+      : !d.variants.length ? 'Add at least one option with an SKU, a name and a price.' : d.variants.some((v) => !v.label || !(v.price > 0)) ? 'Every option needs a name and a price above 0.' : d.variants.some((v, i) => skus.has(v.sku) || d.variants.findIndex((w) => w.sku === v.sku) !== i) ? 'Each SKU can only be used once across the shop.' : live && (r.isNew || (prodRows().find((x) => x.id === r.id) || {}).live === false) ? publishGaps(r.id, d) : null;
+    if (A.formErr) { let el = f.querySelector('.err'); if (!el) { el = document.createElement('span'); el.className = 'err full'; el.setAttribute('role', 'alert'); f.querySelector('button[type="submit"]').parentElement.before(el); } el.textContent = A.formErr; el.scrollIntoView({ block: 'center' }); return; }
     const fresh = d.variants.filter((v) => !(v.sku in skuMap) && S.stock[v.sku] == null);
-    admDo(async () => { await dbPut('products', { id: r.id, data: d, sort: r.sort, live: r.live }); if (fresh.length) await dbPut('stock', fresh.map((v) => ({ sku: v.sku, qty: 0 }))); A.edit = null; render(); }, 'Saved ' + d.name + (fresh.length ? '. New options start with 0 in stock; set the count under Stock.' : '.'));
+    admDo(async () => { await dbPut('products', { id: r.id, data: d, sort: r.sort, live: r.live }); if (fresh.length) await dbPut('stock', fresh.map((v) => ({ sku: v.sku, qty: openStock[v.sku] || 0 }))); A.edit = null; render(); }, 'Saved ' + d.name + (live ? ' is published.' : ' is saved as a draft, hidden from customers.') + (fresh.some((v) => !openStock[v.sku]) ? ' Options with no opening stock show Sold out until you set a count under Stock.' : ''));
     return; }
   if (kind === 'adm-pairing') { const v = (n) => String(f.elements[n].value).trim(); const a = v('a').split('|'), b = v('b').split('|');
     if (!v('name')) { say('Give the ritual a name.'); return; } if (a[0] === b[0]) { say('Choose two different pieces.'); return; }

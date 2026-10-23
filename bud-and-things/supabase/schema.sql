@@ -211,6 +211,12 @@ revoke all on hits from anon, authenticated;
 revoke all on invoice_counters from anon, authenticated;
 revoke insert, update, delete on invoices from anon, authenticated;
 
+-- change history: what each save to site text, settings, products and rituals replaced, so Owner view can put it back
+create table if not exists change_log (id bigserial primary key, at timestamptz not null default now(), tbl text not null, key text not null, old jsonb, new jsonb);
+alter table change_log enable row level security;
+drop policy if exists "owner" on change_log;
+create policy "owner" on change_log for all using (is_owner()) with check (is_owner());
+
 do $$
 declare t text;
 begin

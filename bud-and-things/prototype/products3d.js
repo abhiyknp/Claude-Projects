@@ -62,8 +62,8 @@ function mat(o) { const m = new THREE.MeshStandardMaterial(o); ENV_MATS.push(m);
 function phys(o) { const m = new THREE.MeshPhysicalMaterial(o); ENV_MATS.push(m); return m; }
 let TEX = null;
 function textures() {
-  if (TEX) return TEX; const L = new THREE.TextureLoader(); const wood = (rep) => { const t = L.load('assets/tex-oak.jpg'); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); t.anisotropy = 8; return t; };
-  const rough = L.load('assets/tex-oak-rough.jpg'); rough.wrapS = rough.wrapT = THREE.RepeatWrapping; rough.repeat.set(2, 2);
+  if (TEX) return TEX; const L = new THREE.TextureLoader(); const wood = (rep) => { const t = L.load('assets/tex-oak.webp'); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); t.anisotropy = 8; return t; };
+  const rough = L.load('assets/tex-oak-rough.webp'); rough.wrapS = rough.wrapT = THREE.RepeatWrapping; rough.repeat.set(2, 2);
   TEX = { wood, rough, plaster: plasterTex(), bump: noiseBump(), rug: rugTex() }; return TEX;
 }
 
