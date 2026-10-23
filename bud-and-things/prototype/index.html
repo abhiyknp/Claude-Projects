@@ -109,6 +109,13 @@ body.editing .proto #edit-btn { background: #D6A34A; color: #210309; }
 .lcol > .lhead { padding: 12px 18px; background: var(--linen); display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
 @media (max-width: 640px) { .lrow { grid-template-columns: 1fr; } }
 .adm-prodrow th { text-align: left; background: var(--linen); padding: 10px 12px; }
+.dirty { outline: 2px solid var(--caramel); outline-offset: 1px; }
+#save-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 60; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 24px); padding: 10px 14px; background: #2a0510; color: #FBE9C2; border: 1px solid #D6A34A; border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.35); font-size: 15px; }
+#save-bar strong { color: #fff; }
+body:has(#save-bar) { padding-bottom: 96px; }
+@media (max-width: 700px) { #save-bar { left: 0; right: 0; bottom: 0; transform: none; max-width: none; border-radius: 0; border-width: 1px 0 0; flex-wrap: nowrap; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); } #save-bar span { flex: 1 1 auto; font-size: 14px; } #save-bar .btn { padding-inline: 14px; } }
+#save-bar .btn { min-height: 44px; }
+#save-bar .btn.ghost { color: #FBE9C2; border-color: #D6A34A; background: transparent; }
 .adm-ovpage { padding: 12px 18px 4px; background: var(--linen); border-bottom: 1px solid var(--line); }
 .skip-link { position: absolute; left: 12px; top: -80px; z-index: 100; padding: 12px 18px; background: var(--cta); color: var(--on-cta); font-weight: 700; text-decoration: none; }
 .skip-link:focus { top: 12px; }
@@ -838,13 +845,13 @@ body.app .why-band { padding-bottom: 96px; }
 .foot-brand .mark.lockup { max-width: 100%; }
 .foot-pay { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 32px; padding-block: 20px; border-top: 1px solid var(--line); font-size: 14px; }
 .foot-pay > div:first-child { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.foot-pay > div:first-child > strong { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+.foot-pay > div:first-child > strong { font-family: var(--body); font-size: 15px; font-weight: 700; letter-spacing: .04em; color: #FBE9C2; }
 .foot-assure-row { border-top: 1px solid rgba(214,163,74,.35); padding-block: 22px; }
-.foot-assure { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 28px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.foot-assure { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 28px; list-style: none; margin: 0; padding: 0; font-size: 15px; }
 .foot-assure li { display: flex; align-items: center; gap: 12px; }
 .foot-assure svg { width: 22px; height: 22px; flex: none; color: var(--caramel); }
 @media (max-width: 700px) { .foot-assure { grid-template-columns: 1fr; } }
-.foot-base { background: var(--choc); color: var(--ivory); font-size: 13px; }
+.foot-base { background: var(--choc); color: #FBE9C2; font-size: 14px; }
 .foot-base .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 20px; padding-block: 14px; }
 #foot-made { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--caramel); }
 @media (max-width: 1000px) { .site-foot .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-brand { grid-column: 1 / -1; } }
@@ -3766,6 +3773,7 @@ function render(nav) {
   const banner = !cs && !/^(admin|checkout|cart|order-|account|track|saved)/.test(r) && app.querySelector('.gh-hero, .page-head, .article-head');
   if (banner) banner.insertAdjacentHTML('afterend', offersBar()); // pages with no banner have no strip
   renderChrome(); renderOverlay();
+  if (r === 'admin') reapplyHeld(); else saveBar();
   if (r !== 'admin') { applyText(app, r); ['.site-head', '.site-foot', '#mobile-menu', '#offers-slot'].forEach((q) => applyText($(q), 'every page')); }
   if (!cs) adsLoad();
   if (cs) { if (nav) window.scrollTo(0, 0); return; }
@@ -4041,7 +4049,15 @@ document.addEventListener('mousemove', (e) => {
 document.addEventListener('click', (e) => {
   const wl = e.target.closest('a[href^="https://wa.me/"]'); if (wl && !/wa\.me\/\?/.test(wl.href) && route() !== 'admin') track('wa_click', { where: pageName(route()) });
   const t = e.target.closest('[data-act]'); if (!t) return; const a = t.dataset.act; const d = t.dataset;
+  const held = UI.adm && UI.adm.pending && UI.adm.pending.size;
+  if (held) {
+    if (['adm-tab', 'adm-goto', 'adm-find-go', 'adm-edit', 'adm-media-for'].includes(a) && !confirm('You have unsaved changes. Leave without saving them?')) return;
+    if (['adm-tab', 'adm-goto', 'adm-find-go', 'adm-edit', 'adm-media-for'].includes(a)) UI.adm.pending = new Map();
+    else if (/^(adm-list-|adm-jr-|adm-tags-|adm-pol-add|adm-pol-del|adm-home-|adm-undo|cs-make|adm-text-reset|adm-ov-reset|adm-quiz-reset)/.test(a)) flushHeld();
+  }
   switch (a) {
+    case 'adm-save-all': { const n = flushHeld(); if (n) say('Saving ' + n + (n === 1 ? ' change…' : ' changes…')); break; }
+    case 'adm-discard': UI.adm.pending = new Map(); render(); break;
     case 'edit-mode': UI.edit = !UI.edit; document.body.classList.toggle('editing', UI.edit); t.setAttribute('aria-pressed', String(UI.edit)); t.textContent = UI.edit ? 'Stop editing text' : 'Edit text on page'; say(UI.edit ? 'Click any word on the page to change it.' : 'Editing off.'); break;
     case 'ov-close': UI.ov = null; renderOverlay(); break;
     case 'ov-save': ovSave($('#ov-text').value); break;
@@ -4213,8 +4229,36 @@ document.addEventListener('drop', (e) => {
   const same = DATA.media.filter((x) => x.product_id === a.product_id && x.role === a.role).sort((x, y) => (x.sort || 0) - (y.sort || 0)); same.splice(same.indexOf(a), 1); same.splice(same.indexOf(b) + (same.length && (b.sort || 0) > (a.sort || 0) ? 1 : 0), 0, a);
   admDo(async () => { await dbPut('media', same.map((m, i) => Object.assign({}, m, { sort: i * 10 }))); render(); }, 'Order saved.');
 });
+// ---------- Owner view: edits wait for the Save button ----------
+const HOLD = new Set(['adm-set', 'adm-text', 'adm-ov', 'adm-list', 'adm-pol', 'adm-jr', 'adm-tags', 'adm-quiz', 'stock']);
+const WHOLE = { 'adm-list': (d) => d.k, 'adm-tags': (d) => d.k, 'adm-pol': (d) => d.id, 'adm-jr': () => '', 'adm-quiz': () => '' };
+const heldKey = (t) => t.id || (t.dataset.act + '|' + (t.dataset.k || ''));
+const heldFind = (key) => document.getElementById(key) || (key.includes('|') ? document.querySelector(`[data-act="${key.split('|')[0]}"][data-k="${key.split('|')[1]}"]`) : null);
+const heldVal = (t) => (t.type === 'checkbox' ? t.checked : t.value);
+function holdChange(t) {
+  const A = UI.adm; A.pending = A.pending || new Map(); A.pending.set(heldKey(t), heldVal(t)); t.classList.add('dirty'); saveBar();
+}
+function saveBar() {
+  const n = UI.adm.pending ? UI.adm.pending.size : 0; let bar = document.getElementById('save-bar');
+  if (!n || route() !== 'admin') { if (bar) bar.remove(); return; }
+  if (!bar) { bar = document.createElement('div'); bar.id = 'save-bar'; bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Unsaved changes'); document.body.appendChild(bar); }
+  if (bar.dataset.n === String(n)) return; bar.dataset.n = n;
+  bar.innerHTML = `<span><strong>${n}</strong> unsaved ${n === 1 ? 'change' : 'changes'}</span><button class="btn" type="button" data-act="adm-save-all">Save changes</button><button class="btn ghost" type="button" data-act="adm-discard">Discard</button>`;
+}
+function reapplyHeld() {
+  const m = UI.adm.pending; if (!m || !m.size) { saveBar(); return; }
+  m.forEach((v, key) => { const el = heldFind(key); if (!el) return; if (el.type === 'checkbox') el.checked = !!v; else el.value = v; el.classList.add('dirty'); }); saveBar();
+}
+function flushHeld() {
+  const m = UI.adm.pending; if (!m || !m.size) return 0; const n = m.size; const done = new Set();
+  m.forEach((v, key) => { const el = heldFind(key); if (!el) return; const w = WHOLE[el.dataset.act]; if (w) { const g = el.dataset.act + '|' + w(el.dataset); if (done.has(g)) return; done.add(g); }
+    el.dataset.flush = '1'; el.dispatchEvent(new Event('change', { bubbles: true })); delete el.dataset.flush; });
+  UI.adm.pending = new Map(); document.querySelectorAll('.dirty').forEach((x) => x.classList.remove('dirty')); saveBar(); return n;
+}
+window.addEventListener('beforeunload', (e) => { if (UI.adm && UI.adm.pending && UI.adm.pending.size) { e.preventDefault(); e.returnValue = ''; } });
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
+  if (HOLD.has(d.act) && route() === 'admin' && !d.flush) { holdChange(t); return; }
   if (t.id === 'co-state' || t.id === 'pf-a-state') t.dataset.auto = '';
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
   if (d.act === 'home-rit') { UI.ritual.homeSel = UI.ritual.homeSel || { a: true, b: true }; UI.ritual.homeSel[d.k] = t.checked; render(); $('#' + t.id)?.focus(); }
@@ -4243,6 +4287,7 @@ document.addEventListener('change', (e) => {
 });
 document.addEventListener('input', (e) => {
   const ti = e.target;
+  if (ti.dataset && HOLD.has(ti.dataset.act) && route() === 'admin') { holdChange(ti); return; }
   if (ti.id === 'co-pin') { pinAutofill(ti, 'co-city', 'co-state', 'pin-note'); return; }
   if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
   if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
