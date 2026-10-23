@@ -6,6 +6,8 @@
 //                            for Pinterest, Google and link previews. People who open it go straight to /#p-<id>.
 //   pinterest/products.xml   RSS feed for Pinterest auto-publishing (Settings → Bulk create Pins → RSS feed)
 //   pinterest/catalog.csv    data source for Pinterest Catalogs, one row per size or finish
+// It also writes the owner's site title, description, tab icon and link picture (Owner view → Site text → Search & sharing,
+// and Photos & videos → Brand) into the head of index.html, where Google and link previews read them.
 // The two feeds list only live products that have a published photo, and stay empty while the Coming soon page is
 // on, so nothing is pinned before launch or without a real picture. No packages: Node's built-in fetch only.
 'use strict';
@@ -33,9 +35,10 @@ async function load({ url, key }) {
     if (!r.ok) throw new Error(q.split('?')[0] + ': HTTP ' + r.status);
     return r.json();
   };
-  const [products, stock, media, settings] = await Promise.all([
-    get('products?select=*&live=eq.true&order=sort'), get('stock?select=*'), get('media?select=*&published=eq.true&order=sort'), get('settings?select=*')]);
-  return { products, stock, media, settings };
+  const [products, stock, media, settings, text] = await Promise.all([
+    get('products?select=*&live=eq.true&order=sort'), get('stock?select=*'), get('media?select=*&published=eq.true&order=sort'), get('settings?select=*'),
+    get('site_text?select=*').catch(() => [])]);
+  return { products, stock, media, settings, text };
 }
 
 function prepare(d, fileUrl) {
@@ -54,6 +57,23 @@ function prepare(d, fileUrl) {
     return p;
   }).filter((p) => p.variants.length && /^[a-z0-9][a-z0-9-]*$/i.test(p.id)); // the id becomes a folder name
   return { products, qty, comingSoon: set.comingSoon !== false }; // the site treats a missing setting as on
+}
+
+// Only what the owner has changed is written; anything left alone keeps the default already in index.html.
+function patchHome(d, fileUrl) {
+  const f = path.join(out, 'index.html'); if (!fs.existsSync(f)) return [];
+  let h = fs.readFileSync(f, 'utf8'); const done = [];
+  const tx = Object.fromEntries((d.text || []).map((r) => [r.key, r.value]));
+  const brand = (role) => { const m = d.media.find((x) => x.product_id === 'brand' && x.kind === 'photo' && x.role === role); return m ? fileUrl(m.path) : ''; };
+  const swap = (re, val, name) => { const n = h.replace(re, (m, a, b) => a + val + (b || '')); if (n !== h) { h = n; done.push(name); } };
+  const title = String(tx['seo.title'] || '').trim(); const desc = String(tx['seo.desc'] || '').trim();
+  if (title) { swap(/(<title>)[^<]*(<\/title>)/, esc(title), 'title'); swap(/(<meta property="og:title" content=")[^"]*(")/, esc(title), 'og:title'); swap(/(<meta property="og:site_name" content=")[^"]*(")/, esc(title), 'site name'); }
+  if (desc) { swap(/(<meta name="description" content=")[^"]*(")/, esc(desc), 'description'); swap(/(<meta property="og:description" content=")[^"]*(")/, esc(desc), 'og:description'); }
+  const share = brand('share'); if (share) swap(/(<meta property="og:image" content=")[^"]*(")/, esc(share), 'share picture');
+  const icon = brand('favicon');
+  if (icon) { const n = h.replace(/<link rel="icon"[^>]*>\s*<link rel="icon"[^>]*>\s*<link rel="apple-touch-icon"[^>]*>/, () => `<link rel="icon" href="${esc(icon)}"><link rel="apple-touch-icon" href="${esc(icon)}">`); if (n !== h) { h = n; done.push('tab icon'); } }
+  if (done.length) fs.writeFileSync(f, h);
+  return done;
 }
 
 function productPage(p, qty) {
@@ -148,6 +168,7 @@ function catalog(items, qty) {
   const ready = comingSoon ? [] : products.filter((p) => p.photos.length);
   write('pinterest/products.xml', rss(ready));
   write('pinterest/catalog.csv', catalog(ready, qty));
+  const head = patchHome(d, fileUrl); if (head.length) console.log('Page head from Owner view: ' + head.join(', ') + '.');
   const noPhoto = products.filter((p) => !p.photos.length).map((p) => p.id);
   console.log(`Pinterest: ${products.length} product pages; ${ready.length} products in the feeds` +
     (comingSoon ? ' (Coming soon is on, so the feeds are empty).' : '.') + (noPhoto.length && !comingSoon ? ` No photo yet: ${noPhoto.join(', ')}.` : ''));

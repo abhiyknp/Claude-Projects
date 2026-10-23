@@ -1276,7 +1276,14 @@ const TEXT = {
   'soon.text': ['Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving. Leave your email and we’ll tell you the day we open.', 'Coming soon: text'],
   'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button']
 };
-const TEXT_GROUPS = [['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['share.', 'Share with a friend'], ['gc.', 'Gift cards'], ['rem.', 'Gift reminders'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
+// Search and sharing: the title and description of each page. Owner view → Site text → Search & sharing.
+// The live site also bakes the site-wide ones into the page head every day, so Google and link previews see them.
+TEXT['seo.title'] = ['BUD & THINGS by Ashi', 'Search & sharing: site title (home page, browser tab)'];
+TEXT['seo.suffix'] = [' · BUD & THINGS by Ashi', 'Search & sharing: added after every other page title'];
+TEXT['seo.desc'] = ['BUD & THINGS by Ashi: thoughtful objects, meaningful moments.', 'Search & sharing: site description'];
+const SEO_PAGES = [['shop', 'All products', 'Shop all candles and objects', 'Hand-made scented candles, Jesmonite objects and gift boxes.'], ['candles', 'Candles', 'Scented candles', 'Hand-poured scented candles, made in small batches.'], ['jesmonite', 'Jesmonite objects', 'Jesmonite objects', 'Hand-cast Jesmonite trays, dishes and objects for the home.'], ['gifts', 'Gift boxes', 'Gift boxes', 'Gift boxes wrapped free, with your note hand-written on our card.'], ['under-999', 'Gifts under ₹999', 'Gifts under ₹999', 'Small, thoughtful gifts under ₹999.'], ['feeling', 'Find your feeling', 'Find your feeling', 'Tell us the mood and we will find the scent.'], ['ritual', 'Build your ritual', 'Build your ritual', 'Pair a candle with an object for a small daily ritual.'], ['gifting', 'Gifting', 'Gifting', 'Gifts for every occasion, wrapped and ready to give.'], ['story', 'Our story', 'Our story', 'How a home studio became BUD & THINGS.'], ['why', 'Why from us', 'Why people buy from us', 'Hand-made pieces, free replacement, secure payments and gift-ready parcels.'], ['journal', 'Journal', 'Journal', 'Candle care, gifting guides and notes from the studio.'], ['faq', 'FAQ', 'Questions and answers', 'Answers about orders, shipping, candles and gifts.'], ['help', 'Help', 'Help and contact', 'Contact us, track an order, or ask about anything.'], ['bulk', 'Corporate and bulk gifts', 'Corporate and bulk gifts', 'Gifts in bulk for weddings, festivals and teams.'], ['share', 'Share with a friend', 'Share with a friend', 'Share BUD & THINGS and earn Bud Points.'], ['giftcard', 'Gift cards', 'Gift cards', 'Send a BUD & THINGS gift card.'], ['track', 'Track your order', 'Track your order', 'Follow your order with your order number and mobile number.'], ['privacy', 'Privacy policy', 'Privacy policy', ''], ['terms', 'Terms and conditions', 'Terms and conditions', ''], ['shipping', 'Shipping policy', 'Shipping and delivery', ''], ['refunds', 'Replacement policy', 'Cancellations and replacements', '']];
+SEO_PAGES.forEach(([r, label, t, d]) => { TEXT['seo.t.' + r] = [t, 'Search & sharing: ' + label + ' page title']; TEXT['seo.d.' + r] = [d, 'Search & sharing: ' + label + ' page description (empty: the site description)']; });
+const TEXT_GROUPS = [['seo.', 'Search & sharing (SEO)'], ['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['share.', 'Share with a friend'], ['gc.', 'Gift cards'], ['rem.', 'Gift reminders'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
 // settings: money in ₹, lists of product ids separated by commas
 const SET_META = [
   ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Delivery promise on product pages, e.g. Ships within 24 hours (empty to hide; only while it is true)', 'text'],
@@ -1412,7 +1419,7 @@ async function visitorSend(table, row) {
 }
 
 // ---------- photos and videos ----------
-const ROLE_ORDER = ['packshot', 'lifestyle', 'lit', 'detail', 'hand', 'loop', 'packaging', 'gift', 'unboxing', 'ritual', 'founder', 'process', 'story', 'cutout'];
+const ROLE_ORDER = ['packshot', 'lifestyle', 'lit', 'detail', 'hand', 'loop', 'packaging', 'gift', 'unboxing', 'ritual', 'founder', 'process', 'story', 'cutout', 'logo-wide', 'logo-stack', 'logo-leaf', 'favicon', 'share'];
 const mUrl = (m) => BTDB.fileUrl(m.path);
 function mediaFor(pid, o) {
   o = o || {};
@@ -1426,6 +1433,37 @@ function mediaEl(m, cls) {
 // a brand photo the owner uploaded for a role, or the built-in one
 const brandImgs = (role, fallback) => { const list = mediaFor('brand', { role, kind: 'photo' }); return list.length ? list.map((m) => [mUrl(m), m.alt, m.alt]) : fallback; };
 
+
+// the logo, tab icon and link picture the owner uploaded under Photos & videos → Brand; the built-in ones show until then
+const brandUrl = (role) => { const m = mediaFor('brand', { role, kind: 'photo' })[0]; return m ? mUrl(m) : ''; };
+let brandSig = '';
+function applyBrand() {
+  const u = { 'logo-wide': brandUrl('logo-wide'), 'logo-stack': brandUrl('logo-stack'), 'logo-leaf': brandUrl('logo-leaf'), favicon: brandUrl('favicon') };
+  const sig = JSON.stringify(u); if (sig === brandSig) return; brandSig = sig;
+  let st = document.getElementById('brand-css'); if (!st) { st = document.createElement('style'); st.id = 'brand-css'; document.head.appendChild(st); }
+  const rules = {}; const flush = () => { st.textContent = Object.values(rules).join('\n'); }; flush();
+  const cssUrl = (v) => 'url("' + v.replace(/["\\\n]/g, encodeURIComponent) + '")';
+  const base = (v) => `-webkit-mask-image:none!important;mask-image:none!important;background:${cssUrl(v)} center / contain no-repeat!important;`;
+  const add = (role, sel, size) => { if (!u[role]) return; const im = new Image(); im.onload = () => { rules[role + sel] = `${sel}{${base(u[role])}${size ? `width:auto!important;height:${size}px;` : ''}aspect-ratio:${im.naturalWidth} / ${im.naturalHeight}!important}`; flush(); }; im.src = u[role]; };
+  add('logo-wide', '.logo .mark.wordmark', 44); add('logo-stack', '.mark.lockup', 0); add('logo-leaf', '.logo .mark.monogram', 44);
+  if (u['logo-leaf']) { rules.leaf = `.mark.monogram{${base(u['logo-leaf'])}}`; flush(); }
+  if (u.favicon) { const links = [...document.querySelectorAll('link[rel~="icon"],link[rel="apple-touch-icon"]')]; if (!links.length) { const l = document.createElement('link'); l.rel = 'icon'; document.head.appendChild(l); links.push(l); } links.forEach((l) => { l.href = u.favicon; l.removeAttribute('type'); l.removeAttribute('sizes'); }); }
+}
+// page title, description and link preview for the page on screen, from Site text → Search & sharing
+function setMeta(attr, name, val) {
+  let m = document.head.querySelector(`meta[${attr}="${name}"]`);
+  if (!m) { if (!val) return; m = document.createElement('meta'); m.setAttribute(attr, name); document.head.appendChild(m); }
+  m.setAttribute('content', val);
+}
+function applySeo(r) {
+  let title = Tx('seo.title'); let desc = Tx('seo.desc'); let ogt = title;
+  if (r.startsWith('p-') && byId[r.slice(2)]) { const p = byId[r.slice(2)]; ogt = p.name; title = p.name + Tx('seo.suffix'); desc = descOf(p) || desc; }
+  else if (r.startsWith('journal-') && JOURNAL.some((j) => j.id === r.slice(8))) { const j = JOURNAL.find((x) => x.id === r.slice(8)); ogt = j.title; title = j.title + Tx('seo.suffix'); desc = j.lead || desc; }
+  else if (r !== 'home' && TEXT['seo.t.' + r] && Tx('seo.t.' + r)) { ogt = Tx('seo.t.' + r); title = ogt + Tx('seo.suffix'); desc = Tx('seo.d.' + r) || desc; }
+  document.title = title;
+  setMeta('name', 'description', desc); setMeta('property', 'og:title', ogt); setMeta('property', 'og:description', desc);
+  const img = brandUrl('share'); if (img) setMeta('property', 'og:image', img);
+}
 
 // ---------- helpers ----------
 const $ = (s, r = document) => r.querySelector(s);
@@ -2015,8 +2053,8 @@ function viewGifting() {
 const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
-const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band']] };
-const ROLE_LABEL = { packshot: 'Pack shot, plain background', lifestyle: 'In a room', lit: 'Lit candle', detail: 'Close-up detail', hand: 'In the hand', loop: 'Short looping video', packaging: 'Packaging', gift: 'Gift wrap and card', unboxing: 'Unboxing', ritual: 'Ritual pairing', founder: 'Ashi', process: 'Making it', story: 'Home page story band', cutout: 'Cut-out, no background (for See it in your room)' };
+const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
+const ROLE_LABEL = { packshot: 'Pack shot, plain background', lifestyle: 'In a room', lit: 'Lit candle', detail: 'Close-up detail', hand: 'In the hand', loop: 'Short looping video', packaging: 'Packaging', gift: 'Gift wrap and card', unboxing: 'Unboxing', ritual: 'Ritual pairing', founder: 'Ashi', process: 'Making it', story: 'Home page story band', cutout: 'Cut-out, no background (for See it in your room)', 'logo-wide': 'Logo, wide (header)', 'logo-stack': 'Logo, stacked (footer, coming soon)', 'logo-leaf': 'Logo, leaf only (phone header)', favicon: 'Browser tab icon (square PNG)', share: 'Link preview picture (1200 × 630)' };
 const roleOpts = (sel) => ROLE_ORDER.map((r) => `<option value="${r}" ${sel === r ? 'selected' : ''}>${ROLE_LABEL[r] || r}</option>`).join('');
 const slug = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').slice(0, 60);
 const uuid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16)));
@@ -3323,6 +3361,7 @@ function render(nav) {
   else if (r === 'account') html = viewAccount();
   else html = viewNotFound();
   const app = $('#app'); app.innerHTML = html;
+  applyBrand(); applySeo(r);
   renderChrome(); renderOverlay();
   if (!cs) adsLoad();
   if (cs) { if (nav) window.scrollTo(0, 0); return; }
