@@ -837,12 +837,12 @@ body.app .why-band { padding-bottom: 96px; }
 .best-item .name { font-family: var(--display); font-size: 22px; text-decoration: none; line-height: 1.1; }
 @media (max-width: 400px) { .combo-tiles .tile { width: 78px; height: 92px; } }
 .pay-badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.pay-badges li { display: inline-flex; align-items: center; justify-content: center; gap: 0; min-width: 64px; height: 38px; padding: 0 10px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
+.pay-badges li { display: inline-flex; align-items: center; justify-content: center; gap: 0; min-width: 48px; height: 28px; padding: 0 8px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
 .pay-badges b { font-weight: 800; font-size: 13px; letter-spacing: 0; }
 .pay-badges i + i { margin-left: -5px; }
 .pay-badges i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
 .pay-badges svg { width: 14px; height: 14px; }
-.pay-badges svg.pay-logo { width: auto; height: 22px; }
+.pay-badges svg.pay-logo { width: auto; height: 14px; }
 /* footer */
 .site-foot { position: relative; overflow: hidden; }
 .site-foot a { text-decoration: none; }
@@ -862,7 +862,6 @@ body.app .why-band { padding-bottom: 96px; }
 @media (max-width: 700px) { .foot-assure { grid-template-columns: 1fr; } }
 .foot-base { background: var(--choc); color: #FBE9C2; font-size: 14px; }
 .foot-base .wrap { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 6px; padding-block: 16px; }
-#foot-made { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--caramel); }
 @media (max-width: 1000px) { .site-foot .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-brand { grid-column: 1 / -1; } }
 /* story page */
 .story-top { background: var(--choc); color: var(--ivory); overflow: hidden; position: relative; }
@@ -1012,7 +1011,7 @@ body.app .why-band { padding-bottom: 96px; }
   </div>
   <div class="wrap foot-assure-row"><ul class="foot-assure" id="foot-also"></ul></div>
   <div class="wrap foot-pay"><div><span id="foot-pay"></span></div></div>
-  <div class="foot-base"><div class="wrap"><span id="foot-copy"></span><span id="foot-made"></span></div></div>
+  <div class="foot-base"><div class="wrap"><span id="foot-copy"></span></div></div>
 </footer>
 
 <nav class="tabbar" aria-label="App" id="tabbar"></nav>
@@ -1740,7 +1739,7 @@ function renderChrome() {
   document.body.classList.toggle('app', S.mode === 'app');
   $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = Tx('foot.also').split('|').map((x) => x.trim()).filter(Boolean).map((x, i) => `<li>${hl(['spark', 'shield', 'note', 'gift'][i] || 'spark', 22)}<span>${esc(x)}</span></li>`).join(''); $('#foot-social').innerHTML = socialLinks();
-  $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-made').innerHTML = T('foot.made'); $('#foot-pay').innerHTML = payBadges();
+  $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-pay').innerHTML = payBadges();
   const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
