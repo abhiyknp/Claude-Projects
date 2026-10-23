@@ -1,9 +1,9 @@
 <title>BUD &amp; THINGS by Ashi</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lato:wght@400;700&display=swap">
 <style>
 /* Layout: Atelier of Light. One plaster room; warm light carries the colour; square, quiet UI around a single scroll moment. Single light theme by brand choice. */
+@font-face { font-family: 'Playfair Display'; src: url(assets/fonts/playfair.woff2) format('woff2'); font-weight: 400 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Playfair Display'; src: url(assets/fonts/playfair-italic.woff2) format('woff2'); font-weight: 400 900; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Montserrat'; src: url(assets/fonts/montserrat.woff2) format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
 :root {
   --ivory: #FFFBF4; --plaster: #FAF1E4; --linen: #FBF3E6; --sand: #EFDCC3; --sand2: #F3E4CF; --card: #FFFEFB;
   --caramel: #C9A227; --terra: #C45A3A; --terra-ink: #A3472B; --olive: #5B6B46;
@@ -11,16 +11,16 @@
   --cta: #A3472B; --on-cta: #FFF8ED;
   --ok: #4F5E3E; --warn: #A3472B; --ok-bg: #E4E8D9; --err-bg: #F4DDD2; --head-bg: rgba(255,251,244,.96);
   --sk-ink: #4B2E1E; --sk-ink2: #6A4A38; --sk-accent: #A3472B; --sk-light: #FFF8ED; --sk-dark: #4B2E1E; --sk-glow: #F3D9B8; --sk-cta: #FFF8ED; --sk-on-cta: #4B2E1E; --sk-chip: rgba(255,248,237,.94);
-  --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
-  --body: 'Lato', 'Segoe UI', system-ui, sans-serif;
+  --display: 'Playfair Display', Georgia, serif;
+  --body: 'Montserrat', 'Segoe UI', system-ui, sans-serif;
   --wrap: 1280px;
   /* spacing scale (4px base) and fluid layout rhythm: the same steps everywhere, scaled by screen width */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px; --s9: 80px;
   --gutter: clamp(20px, 4vw, 40px);
   --section: clamp(20px, 2.4vw, 28px);
   --section-sm: clamp(28px, 3.4vw, 40px);
-  --fs-h1: clamp(36px, 5vw, 60px);
-  --fs-h2: clamp(28px, 3.2vw, 40px);
+  --fs-h1: clamp(32px, 4.2vw, 50px);
+  --fs-h2: clamp(26px, 2.8vw, 34px);
   color-scheme: light;
 }
 /* Themes: Signature, Monsoon, Silk and Evening. Everyday, Festive and Gifting live on in abhiyknp/pixelpatra (kits/theme-kit). Product colours never change. */
@@ -640,7 +640,7 @@ body.cs main { padding-bottom: 0; }
 .gh-hero { display: grid; gap: 22px; padding-block: 20px 0; }
 .gh-hero .gh-ph { overflow: hidden; aspect-ratio: 4 / 3; background: var(--sand); position: relative; }
 .gh-hero .gh-ph img { width: 100%; height: 100%; object-fit: cover; display: block; animation: gh-kb 16s ease-in-out infinite alternate; }
-.gh-hero h1 { font-size: clamp(38px, 5.4vw, 64px); line-height: 1.02; margin: 0; }
+.gh-hero h1 { font-size: clamp(34px, 4.4vw, 54px); line-height: 1.02; margin: 0; }
 .gh-hero .gh-cta { display: flex; flex-wrap: wrap; gap: 10px; }
 .gh-hero .gh-cta .btn { flex: 1 1 200px; }
 .gh-badge { position: absolute; left: 12px; top: 12px; background: var(--card); color: var(--terra-ink); font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; }
@@ -3037,7 +3037,7 @@ function invoiceSnap(o) {
     seller: { name: SET.bizName || 'BUD & THINGS', address: SET.bizAddress ? SET.bizAddress + ', India' : '', gstin: gst ? String(SET.gstin).trim().toUpperCase() : '', email: SET.email || '' },
     buyer: { name: (o.contact || {}).name || '', phone: (o.contact || {}).phone || '', email: (o.contact || {}).email || '', line1: a.line1 || '', line2: a.line2 || '', city: a.city || '', pin: a.pin || '', state: a.state || '' } };
 }
-const INV_CSS = `.inv{font:14px/1.5 Lato,Arial,sans-serif;color:#2b1d14;background:#fff;max-width:820px;margin:0 auto;padding:28px;box-sizing:border-box;position:relative}.inv *{box-sizing:border-box}.inv h1{font:600 26px/1.2 'Cormorant Garamond',Georgia,serif;margin:0 0 4px}.inv .inv-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid #2b1d14;padding-bottom:14px;margin-bottom:16px}.inv .inv-meta{text-align:right;min-width:200px}.inv .inv-meta div{white-space:nowrap}.inv .inv-cols{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:18px}.inv .inv-cols>div{flex:1 1 240px;min-width:0}.inv h2{font:700 11px/1.4 Lato,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;margin:0 0 4px;color:#7a5a45}.inv .inv-tw{overflow-x:auto}.inv table{width:100%;border-collapse:collapse;font-size:13px}.inv th,.inv td{padding:7px 8px;border-bottom:1px solid #e5d8c8;text-align:right;vertical-align:top}.inv th:first-child,.inv td:first-child{text-align:left}.inv th{background:#f4ebdf;font-weight:700;white-space:nowrap}.inv tfoot td{font-weight:700;border-bottom:0}.inv .inv-sum{margin-left:auto;margin-top:14px;max-width:320px}.inv .inv-sum div{display:flex;justify-content:space-between;gap:16px;padding:3px 0}.inv .inv-sum .grand{border-top:2px solid #2b1d14;font-weight:700;font-size:16px;margin-top:4px;padding-top:6px}.inv .inv-note{margin-top:22px;font-size:12px;color:#5a4636}.inv .inv-sign{margin-top:34px;text-align:right;font-size:13px}.inv .inv-void{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font:700 72px/1 Lato,Arial,sans-serif;color:rgba(163,71,43,.28);border:6px solid rgba(163,71,43,.28);padding:6px 24px;pointer-events:none;letter-spacing:.1em}@media (max-width:560px){.inv{padding:16px}.inv .inv-meta{text-align:left}.inv .inv-void{font-size:44px}}@media print{@page{size:A4;margin:12mm}.inv{padding:0;max-width:none}}`;
+const INV_CSS = `.inv{font:14px/1.5 Montserrat,Arial,sans-serif;color:#2b1d14;background:#fff;max-width:820px;margin:0 auto;padding:28px;box-sizing:border-box;position:relative}.inv *{box-sizing:border-box}.inv h1{font:600 26px/1.2 'Cormorant Garamond',Georgia,serif;margin:0 0 4px}.inv .inv-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:2px solid #2b1d14;padding-bottom:14px;margin-bottom:16px}.inv .inv-meta{text-align:right;min-width:200px}.inv .inv-meta div{white-space:nowrap}.inv .inv-cols{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:18px}.inv .inv-cols>div{flex:1 1 240px;min-width:0}.inv h2{font:700 11px/1.4 Lato,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;margin:0 0 4px;color:#7a5a45}.inv .inv-tw{overflow-x:auto}.inv table{width:100%;border-collapse:collapse;font-size:13px}.inv th,.inv td{padding:7px 8px;border-bottom:1px solid #e5d8c8;text-align:right;vertical-align:top}.inv th:first-child,.inv td:first-child{text-align:left}.inv th{background:#f4ebdf;font-weight:700;white-space:nowrap}.inv tfoot td{font-weight:700;border-bottom:0}.inv .inv-sum{margin-left:auto;margin-top:14px;max-width:320px}.inv .inv-sum div{display:flex;justify-content:space-between;gap:16px;padding:3px 0}.inv .inv-sum .grand{border-top:2px solid #2b1d14;font-weight:700;font-size:16px;margin-top:4px;padding-top:6px}.inv .inv-note{margin-top:22px;font-size:12px;color:#5a4636}.inv .inv-sign{margin-top:34px;text-align:right;font-size:13px}.inv .inv-void{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font:700 72px/1 Lato,Arial,sans-serif;color:rgba(163,71,43,.28);border:6px solid rgba(163,71,43,.28);padding:6px 24px;pointer-events:none;letter-spacing:.1em}@media (max-width:560px){.inv{padding:16px}.inv .inv-meta{text-align:left}.inv .inv-void{font-size:44px}}@media print{@page{size:A4;margin:12mm}.inv{padding:0;max-width:none}}`;
 function invoiceHTML(inv) {
   const d = inv.data, gst = d.gst, cn = inv.kind === 'credit_note', t = d.totals, b = d.buyer, sl = d.seller; const void_ = inv.status === 'Void';
   const title = cn ? 'Credit note' : gst ? 'Tax invoice' : 'Bill of supply';
@@ -4010,7 +4010,7 @@ function drawObj(ctx, o, x, y, s, sun) {
     const lw = w * .66, lh = h * .4, lx = x - lw / 2, ly = y - h * .66;
     ctx.fillStyle = '#F5ECDD'; ctx.fillRect(lx, ly, lw, lh); ctx.strokeStyle = 'rgba(61,40,30,.18)'; ctx.lineWidth = Math.max(.6, .6 * s); ctx.strokeRect(lx, ly, lw, lh);
     const lf = tintLeaf('#4B2E1E'); if (lf) { const lfh = lh * .38; ctx.drawImage(lf, x - lfh * .45, ly + lh * .1, lfh * .9, lfh); }
-    if (s >= 1.4) { ctx.fillStyle = '#4B2E1E'; ctx.textAlign = 'center'; ctx.font = `600 ${Math.max(5, lw * .118).toFixed(1)}px "Cormorant Garamond", Georgia, serif`; ctx.fillText('BUD & THINGS', x, ly + lh * .7); ctx.font = `${Math.max(4, lw * .08).toFixed(1)}px Lato, sans-serif`; ctx.fillText('by Ashi', x, ly + lh * .88); }
+    if (s >= 1.4) { ctx.fillStyle = '#4B2E1E'; ctx.textAlign = 'center'; ctx.font = `600 ${Math.max(5, lw * .118).toFixed(1)}px "Playfair Display", Georgia, serif`; ctx.fillText('BUD & THINGS', x, ly + lh * .7); ctx.font = `${Math.max(4, lw * .08).toFixed(1)}px Lato, sans-serif`; ctx.fillText('by Ashi', x, ly + lh * .88); }
     if (o.lid) {
       const lh2 = 14 * s; const g = ctx.createLinearGradient(x - w / 2, 0, x + w / 2, 0); g.addColorStop(0, '#C9965F'); g.addColorStop(.5, '#A8743F'); g.addColorStop(1, '#7E5230');
       ctx.fillStyle = g; ctx.fillRect(x - w / 2 - 1 * s, y - h - lh2, w + 2 * s, lh2 + 2 * s);

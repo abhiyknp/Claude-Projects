@@ -52,7 +52,7 @@ function labelTex(name) {
   return canvasTex(512, 256, (x, w, h) => {
     x.fillStyle = '#F4ECDF'; x.fillRect(0, 0, w, h);
     if (LEAF_IMG) { const c = document.createElement('canvas'); c.width = LEAF_IMG.width; c.height = LEAF_IMG.height; const k = c.getContext('2d'); k.drawImage(LEAF_IMG, 0, 0); k.globalCompositeOperation = 'source-in'; k.fillStyle = '#3D281E'; k.fillRect(0, 0, c.width, c.height); const lh = 74, lw = lh * c.width / c.height; x.drawImage(c, w / 2 - lw / 2, 26, lw, lh); }
-    x.fillStyle = '#3D281E'; x.textAlign = 'center'; x.font = '600 40px "Cormorant Garamond", Georgia, serif'; x.fillText('BUD & THINGS', w / 2, 150); x.font = '28px Lato, sans-serif'; x.fillStyle = '#6B5546'; x.fillText(name.toUpperCase(), w / 2, 205);
+    x.fillStyle = '#3D281E'; x.textAlign = 'center'; x.font = '600 40px "Playfair Display", Georgia, serif'; x.fillText('BUD & THINGS', w / 2, 150); x.font = '28px Lato, sans-serif'; x.fillStyle = '#6B5546'; x.fillText(name.toUpperCase(), w / 2, 205);
   });
 }
 
