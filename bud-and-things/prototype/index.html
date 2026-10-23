@@ -493,6 +493,8 @@ input[type="file"] { padding: 10px 12px; }
 .need { font-size: 12px; padding: 3px 8px; background: var(--err-bg); color: var(--terra-ink); white-space: nowrap; }
 .need.have { background: var(--ok-bg); color: var(--ok); }
 .adm-media { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.adm-m[draggable=true] { cursor: grab; }
+.adm-m.drag-over { outline: 2px dashed var(--cta); }
 .adm-m { background: var(--card); border: 1px solid var(--line); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
 .adm-m .field input, .adm-m .field select { min-height: 40px; font-size: 14px; }
 .adm-thumb { aspect-ratio: 4 / 3; background: var(--linen); display: block; overflow: hidden; }
@@ -1113,7 +1115,7 @@ try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(defaults
 if (S.account && window.BTDB && BTDB.on && !BTDB.customer()) S.account = null; // the sign-in ended (signed out elsewhere or expired)
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } }
 const coFresh = (contact, address) => ({ step: 'contact', contact: contact || {}, address: address || {}, errors: {}, method: 'qr', upi: '', card: {}, upiSent: false, appSheet: false, gift: { on: false, wrap: false, name: '', phone: '', note: '', date: '' }, code: '', codeErr: null, optin: false });
-const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: coFresh(), toast: null, review: {}, restock: null, orderSync: {}, invOf: {}, track: null, adm: { tab: 'orders', rows: {}, edit: null, q: '' }, gh: { cat: 'all', open: false }, na: 'all', acct: {} };
+const UI = { drawer: false, search: false, searchQ: '', menu: false, shop: { cat: 'all', type: 'all', occ: 'all', sort: 'featured' }, pdp: {}, finder: { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }, ritual: { preset: 'four-oclock', pick: {}, custom: { candle: 'chai-at-four', object: 'ghat-tray' } }, co: coFresh(), toast: null, review: {}, restock: null, orderSync: {}, invOf: {}, track: null, adm: { tab: 'start', rows: {}, edit: null, q: '' }, gh: { cat: 'all', open: false }, na: 'all', acct: {} };
 
 
 // ---------- editable content: site text and settings ----------
@@ -2204,12 +2206,14 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['start', 'Launch checklist'], ['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
 const ROLE_LABEL = { packshot: 'Pack shot, plain background', lifestyle: 'In a room', lit: 'Lit candle', detail: 'Close-up detail', hand: 'In the hand', loop: 'Short looping video', packaging: 'Packaging', gift: 'Gift wrap and card', unboxing: 'Unboxing', ritual: 'Ritual pairing', founder: 'Ashi', process: 'Making it', story: 'Home page story band', cutout: 'Cut-out, no background (for See it in your room)', 'logo-wide': 'Logo, wide (header)', 'logo-stack': 'Logo, stacked (footer, coming soon)', 'logo-leaf': 'Logo, leaf only (phone header)', favicon: 'Browser tab icon (square PNG)', share: 'Link preview picture (1200 × 630)' };
-const roleOpts = (sel) => ROLE_ORDER.map((r) => `<option value="${r}" ${sel === r ? 'selected' : ''}>${ROLE_LABEL[r] || r}</option>`).join('');
+// best size for each kind of picture, shown beside the choice so uploads come out sharp
+const ROLE_SIZE = { packshot: '2000 × 2000 px, square', lifestyle: '2000 × 1500 px, landscape', lit: '2000 × 2000 px, square', detail: '2000 × 2000 px, square', hand: '2000 × 2000 px, square', loop: 'video, up to 15 s, MP4', packaging: '1600 × 1100 px, landscape', gift: '1600 × 1100 px, landscape', unboxing: 'video, up to 30 s, MP4', ritual: '2000 × 1500 px, landscape', founder: '1600 × 2000 px, portrait', process: '1600 × 1100 px, landscape', story: '2000 × 1200 px, wide', cutout: 'PNG with clear background', 'logo-wide': 'about 1200 × 300 px, clear background', 'logo-stack': 'about 800 × 800 px, clear background', 'logo-leaf': 'about 400 × 400 px, clear background', favicon: '512 × 512 px, square', share: '1200 × 630 px, JPG' };
+const roleOpts = (sel) => ROLE_ORDER.map((r) => `<option value="${r}" ${sel === r ? 'selected' : ''}>${ROLE_LABEL[r] || r}${ROLE_SIZE[r] ? ' (' + ROLE_SIZE[r] + ')' : ''}</option>`).join('');
 const slug = (s) => String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-').replace(/-+/g, '-').slice(0, 60);
 const uuid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16)));
 const prodRows = () => (DATA.products && DATA.products.length ? DATA.products : BASE_P.map(baseRow)).slice().sort(bySort);
@@ -2269,9 +2273,10 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { start: admStart, orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
-  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
+  const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Chai at Four, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
+  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${find}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
 // what Shiprocket booked for an order, for the Owner view
@@ -2389,7 +2394,7 @@ function admMedia() {
     <div class="adm-card"><h2 style="font-size:24px">Checklist</h2><p class="muted">What each product needs, from the photo brief. A tick means at least one is uploaded.</p>
       <div class="table-wrap"><table><tbody>${[['brand', 'Brand']].concat(P.map((x) => [x.id, x.name])).map(([id, n]) => `<tr><td><button class="linkbtn" type="button" data-act="adm-up-pick" data-id="${esc(id)}">${esc(n)}</button></td><td class="needs">${need(id)}</td></tr>`).join('')}</tbody></table></div></div>
     <h2 style="font-size:24px;margin-top:24px">${esc(pid === 'brand' ? 'Brand' : (p && p.name) || pid)} · ${list.length} file${list.length === 1 ? '' : 's'}</h2>
-    ${list.length ? `<div class="adm-media">${list.map((m) => `<form data-form="adm-media" data-id="${esc(m.id)}" class="adm-m" novalidate><span class="adm-thumb">${m.kind === 'video' ? `<video src="${esc(mUrl(m))}" muted playsinline preload="metadata"></video>` : `<img src="${esc(mUrl(m))}" alt="">`}</span>
+    ${list.length ? `<p class="muted">Drag a picture onto another one with the same “Shows” to change their order.</p><div class="adm-media">${list.map((m) => `<form data-form="adm-media" data-id="${esc(m.id)}" data-role="${esc(m.role)}" class="adm-m" draggable="true" novalidate><span class="adm-thumb">${m.kind === 'video' ? `<video src="${esc(mUrl(m))}" muted playsinline preload="metadata"></video>` : `<img src="${esc(mUrl(m))}" alt="">`}</span>
         <span class="field"><label for="mr-${esc(m.id)}">Shows</label><select id="mr-${esc(m.id)}" name="role">${roleOpts(m.role)}</select></span>
         ${pid !== 'brand' && p ? `<span class="field"><label for="mv-${esc(m.id)}">Option</label><select id="mv-${esc(m.id)}" name="variant"><option value="">Every option</option>${(p.variants || []).map((v) => `<option ${m.variant === v.label ? 'selected' : ''}>${esc(v.label)}</option>`).join('')}</select></span>` : ''}
         <span class="field"><label for="ma-${esc(m.id)}">Description</label><input id="ma-${esc(m.id)}" name="alt" value="${esc(m.alt || '')}"></span>
@@ -2564,6 +2569,61 @@ function admHistory() {
 function admGuide() {
   const rows = [['Change a word on the site', 'Preview bar → Edit text on page, then click the word. Or Site text.'], ['Menu, footer links, FAQ', 'Menus & FAQ'], ['Add a product', 'Products → Add a product. Save as draft, add photos under Photos and videos, then Publish.'], ['Change stock', 'Stock. Counts are per option, grouped by product.'], ['Prices, shipping fee, delivery time, gift wrap', 'Settings'], ['Change a photo, logo or banner', 'Photos & videos. Pick the product, or Brand for logo, packaging and gift photos.'], ['Privacy, terms, shipping and replacement policy', 'Policy pages. Fill from a Word or text file, or type.'], ['Stories', 'Journal'], ['Feelings, rooms, occasions and quiz questions', 'Filters & quiz'], ['Which home page sections show, and in what order', 'Home page'], ['Search and sharing text, favicon', 'Site text → Search & sharing (SEO); Photos & videos → Brand'], ['Undo a change', 'History → Put this back'], ['Go live', 'Settings → Coming soon page: switch it off when everything is ready'], ['Orders, invoices, coupons, rewards, gift cards', 'Their own tabs']];
   return `<p class="muted">Where to change what. Nothing on the site needs a developer.</p><div class="table-wrap"><table><thead><tr><th>I want to…</th><th>Go to</th></tr></thead><tbody>${rows.map(([a, b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+// Launch checklist: what is still missing before the shop opens, worked out from what is saved now
+function launchItems() {
+  const has = (k) => String(SET[k] || '').trim().length > 0; const live = prodRows().filter((r) => r.live !== false); const media = DATA.media || [];
+  const photos = (id) => media.filter((m) => m.product_id === id && m.published !== false).length; const brand = (role) => media.some((m) => m.product_id === 'brand' && m.role === role);
+  const noPhoto = live.filter((r) => !photos(r.id)); const noPrice = live.filter((r) => (r.data.variants || []).some((v) => !(v.price > 0)));
+  const inStock = live.filter((r) => (r.data.variants || []).some((v) => stockOf(v.sku) > 0));
+  return [
+    ['Products', 'At least one published product', live.length > 0, 'products', 'Add a product, then press Publish'],
+    ['Products', 'Every published product has a photo', live.length > 0 && !noPhoto.length, 'media', noPhoto.length ? noPhoto.length + ' without a photo: ' + noPhoto.slice(0, 3).map((r) => r.data.name || r.id).join(', ') : ''],
+    ['Products', 'Every price is filled in', live.length > 0 && !noPrice.length, 'products', noPrice.length ? noPrice.length + ' with a missing price' : ''],
+    ['Products', 'Stock counted for at least one option of each product', live.length > 0 && inStock.length === live.length, 'stock', live.length - inStock.length ? (live.length - inStock.length) + ' products show Sold out' : ''],
+    ['Business details', 'Business name and address', has('bizName') && has('bizAddress'), 'settings', 'Settings → Policies'],
+    ['Business details', 'Grievance officer name and phone', has('grievanceName') && has('grievancePhone'), 'settings', 'Settings → Policies'],
+    ['Business details', 'City for legal disputes and policy date', has('courtCity') && has('policyDate'), 'settings', 'Settings → Policies'],
+    ['Business details', 'WhatsApp number or order-alert email', has('whatsapp') || has('orderAlerts'), 'settings', 'So customers can reach you and you hear about orders'],
+    ['Business details', SET.gstOn ? 'GSTIN filled in (GST is on)' : 'GST decision made (off until registered)', !SET.gstOn || has('gstin'), 'invoices', 'Settings → GST and invoices'],
+    ['Shipping', 'Pickup PIN code set', has('pickupPin'), 'settings', 'Turns on the live PIN check'],
+    ['Shipping', 'Shipping fee and delivery time set', +SET.shipFee >= 0 && has('deliveryDays'), 'settings', ''],
+    ['Policies', 'The “template” notice is cleared on the policy pages', !Tx('legal.note').trim(), 'text', 'Only after a legal adviser has checked them'],
+    ['Brand', 'Logo uploaded (wide, stacked, leaf)', brand('logo-wide') && brand('logo-stack') && brand('logo-leaf'), 'media', 'Photos & videos → Brand'],
+    ['Brand', 'Packaging and gift photos', brand('packaging') && brand('gift'), 'media', ''],
+    ['Brand', 'Browser tab icon and link preview picture', brand('favicon') && brand('share'), 'media', ''],
+    ['Content', 'FAQ has at least 5 questions', faqItems().length >= 5, 'lists', ''],
+    ['Content', 'Search and sharing description changed from the draft', 'seo.desc' in TXT, 'text', 'Site text → Search & sharing'],
+    ['Safety', 'Database connected', BTDB.on, 'setup', 'Setup'],
+    ['Safety', 'Preview code is long (10+ characters) or empty', !SET.previewCode || String(SET.previewCode).length >= 10 && !/^budpreview$/i.test(SET.previewCode), 'settings', ''],
+    ['Safety', 'Owner sign-in asks for a second step', !!(window.BT_CONFIG && BT_CONFIG.ownerTwoStep), 'setup', 'Setup → two-step sign-in'],
+    ['Open the shop', 'Coming soon page switched off', SET.comingSoon === false, 'settings', 'Do this last']
+  ];
+}
+function admStart() {
+  const items = launchItems(); const done = items.filter((x) => x[2]).length; const pct = Math.round(done * 100 / items.length); const groups = [...new Set(items.map((x) => x[0]))];
+  return `<div class="adm-card"><h2 style="font-size:26px">${done} of ${items.length} ready to launch</h2><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Launch progress" style="height:14px;border-radius:7px;background:var(--linen);overflow:hidden;margin:10px 0"><div style="height:100%;width:${pct}%;background:var(--cta)"></div></div>
+    <p class="muted">${pct === 100 ? 'Everything on the list is done. Switch the Coming soon page off to open the shop.' : 'Work down the list. “Fix” takes you to the right tab. This list checks what is saved now; it cannot judge photo quality or legal wording.'}</p></div>
+    ${groups.map((g) => `<div class="adm-card"><h2 style="font-size:20px">${esc(g)}</h2>${items.filter((x) => x[0] === g).map(([, l, ok, tab, hint]) => `<div class="lrow" style="grid-template-columns:auto 1fr auto;align-items:center"><span aria-hidden="true" style="font-size:20px">${ok ? '✓' : '○'}</span><span><strong>${esc(l)}</strong>${hint ? `<br><span class="muted">${esc(hint)}</span>` : ''}<span class="sr"> ${ok ? 'done' : 'not done'}</span></span>${ok ? '<span></span>' : `<button class="btn small ghost" type="button" data-act="adm-goto" data-v="${tab}" aria-label="Fix: ${esc(l)}">Fix</button>`}</div>`).join('')}</div>`).join('')}`;
+}
+
+// one search across text, products, photos, settings, lists and pages
+function findResults(qq) {
+  const q = qq.trim().toLowerCase(); if (q.length < 2) return '';
+  const hit = (...a) => a.join(' ').toLowerCase().includes(q); const out = [];
+  Object.keys(TEXT).forEach((k) => { if (hit(TEXT[k][1], Tx(k), k)) out.push(['Site text', TEXT[k][1], Tx(k), { tab: 'text', open: k.split('.')[0] + '.' }]); });
+  Object.keys(SEEN).forEach((k) => { if (!(k in TEXT) && hit(SEEN[k].d)) out.push(['Site text', SEEN[k].d, 'Other words on the site', { tab: 'text', open: 'x.' }]); });
+  prodRows().forEach((r) => { const d = r.data || {}; if (hit(d.name, r.id, d.type, d.line, (d.notes || []).join(' '), (d.variants || []).map((v) => v.sku + ' ' + v.label).join(' '))) out.push(['Product', d.name || r.id, (r.live === false ? 'Draft · ' : '') + (d.variants || []).map((v) => v.sku).join(', '), { tab: 'products', edit: r.id }]); });
+  (DATA.media || []).forEach((m) => { if (hit(m.alt, m.role, m.product_id, ROLE_LABEL[m.role])) out.push(['Photo', (m.alt || ROLE_LABEL[m.role] || m.role), (m.product_id === 'brand' ? 'Brand' : (byId[m.product_id] || {}).name || m.product_id) + ' · ' + (ROLE_LABEL[m.role] || m.role), { tab: 'media', prod: m.product_id }]); });
+  SET_META.forEach(([k, l]) => { if (hit(l, k, SET[k])) out.push(['Setting', l, String(SET[k]).slice(0, 80), { tab: 'settings' }]); });
+  faqItems().forEach((x) => { if (hit(x.q, x.a)) out.push(['FAQ', x.q, x.a.slice(0, 80), { tab: 'lists' }]); });
+  Object.values(legalMap()).forEach(([t, k, raw]) => { if (hit(t, raw != null ? raw : Tx(k))) out.push(['Policy page', t, '', { tab: 'policies' }]); });
+  journal().forEach((j) => { if (hit(j.title, j.lead, storyText(j))) out.push(['Journal story', j.title, j.lead || '', { tab: 'journal', jr: j.id }]); });
+  [...listOf('navList'), ...listOf('menuList'), ...listOf('footList').flatMap((c) => c[1])].forEach(([to, l]) => { if (hit(l, to)) out.push(['Menu link', l, to, { tab: 'lists' }]); });
+  const seen = new Set(); const uniq = out.filter((x) => { const k = x[0] + '|' + x[1] + '|' + x[2]; if (seen.has(k)) return false; seen.add(k); return true; });
+  if (!uniq.length) return '<p class="muted">Nothing found for that. Try fewer or different words.</p>';
+  return `<div class="adm-card"><p class="muted">${uniq.length} result${uniq.length === 1 ? '' : 's'}${uniq.length > 40 ? ', showing the first 40' : ''}</p>${uniq.slice(0, 40).map((x, i) => `<div class="lrow" style="grid-template-columns:auto 1fr auto;align-items:center"><span class="pill">${esc(x[0])}</span><span><strong>${esc(String(x[1]).length > 90 ? String(x[1]).slice(0, 90) + '…' : x[1])}</strong>${x[2] ? `<br><span class="muted">${esc(String(x[2]).length > 100 ? String(x[2]).slice(0, 100) + '…' : x[2])}</span>` : ''}</span><button class="btn small ghost" type="button" data-act="adm-find-go" data-t='${esc(JSON.stringify(x[3]))}'>Open</button></div>`).join('')}</div>`;
 }
 function admText() {
   const q = (UI.adm.q || '').toLowerCase();
@@ -3990,6 +4050,7 @@ document.addEventListener('click', (e) => {
     case 'adm-home-move': { const o = homeOrder(true); const i = o.indexOf(d.id), to = i + (+d.v); if (to < 0 || to >= o.length) break; o.splice(i, 1); o.splice(to, 0, d.id); admDo(async () => { await saveHome(o, SET.homeHide || []); render(); }, 'Saved.'); break; }
     case 'adm-home-reset': admDo(async () => { await dbDel('settings', 'key', 'homeOrder'); await dbDel('settings', 'key', 'homeHide'); delete SET.homeOrder; delete SET.homeHide; render(); }, 'Back to the original.'); break;
     case 'adm-undo': { const r = (admData('history') || [])[+d.i]; if (!r) break; const col = LOGGED[r.tbl]; admDo(async () => { if (r.old == null) await dbDel(r.tbl, col, r.key); else await dbPut(r.tbl, r.old); if (BTDB.on) UI.adm.rows.history = null; render(); renderChrome(); }, 'Put back.'); break; }
+    case 'adm-find-go': { const t = JSON.parse(d.t); const A = UI.adm; A.tab = t.tab; A.draft = null; A.edit = t.edit != null ? t.edit : null; if (t.open) A.open = t.open; if (t.prod) A.upProd = t.prod; if (t.jr) A.jrOpen = t.jr; A.find = ''; render(); window.scrollTo({ top: 0 }); break; }
     case 'adm-list-add': case 'adm-list-del': case 'adm-list-move': listAction(d); break;
     case 'adm-list-reset': admDo(async () => { if (UI.adm.draft) delete UI.adm.draft[d.k]; await dbDel('settings', 'key', d.k); renderChrome(); render(); }, 'Back to the original.'); break;
     case 'adm-ov-reset': admDo(async () => { await dbDel('site_text', 'key', d.k); UI.adm.open = 'x.'; render(); }, 'Back to the original.'); break;
@@ -4129,6 +4190,17 @@ document.addEventListener('click', (e) => {
       o.status = st; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = st; save(); track('order_status', { order: o.id, status: st }); render(); say(`${o.id} marked ${st.toLowerCase()}. The customer would get an update.`); }); break;
   }
 });
+// drag a picture onto another of the same kind to reorder (Owner view → Photos & videos)
+let dragMedia = null;
+document.addEventListener('dragstart', (e) => { const f = e.target.closest && e.target.closest('form.adm-m'); dragMedia = f ? f.dataset.id : null; if (f && e.dataTransfer) e.dataTransfer.effectAllowed = 'move'; });
+document.addEventListener('dragover', (e) => { const f = e.target.closest && e.target.closest('form.adm-m'); if (!dragMedia || !f) return; const a = DATA.media.find((x) => x.id === dragMedia); if (a && a.role === f.dataset.role && f.dataset.id !== dragMedia) { e.preventDefault(); f.classList.add('drag-over'); } });
+document.addEventListener('dragleave', (e) => { const f = e.target.closest && e.target.closest('form.adm-m'); if (f) f.classList.remove('drag-over'); });
+document.addEventListener('drop', (e) => {
+  const f = e.target.closest && e.target.closest('form.adm-m'); if (!dragMedia || !f) return; e.preventDefault(); const a = DATA.media.find((x) => x.id === dragMedia); const b = DATA.media.find((x) => x.id === f.dataset.id); const id = dragMedia; dragMedia = null;
+  if (!a || !b || a.id === b.id || a.role !== b.role || a.product_id !== b.product_id) return;
+  const same = DATA.media.filter((x) => x.product_id === a.product_id && x.role === a.role).sort((x, y) => (x.sort || 0) - (y.sort || 0)); same.splice(same.indexOf(a), 1); same.splice(same.indexOf(b) + (same.length && (b.sort || 0) > (a.sort || 0) ? 1 : 0), 0, a);
+  admDo(async () => { await dbPut('media', same.map((m, i) => Object.assign({}, m, { sort: i * 10 }))); render(); }, 'Order saved.');
+});
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
   if (t.id === 'co-state' || t.id === 'pf-a-state') t.dataset.auto = '';
@@ -4163,6 +4235,7 @@ document.addEventListener('input', (e) => {
   if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
   if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
   if (ti.id === 'cf-q' || ti.id === 'rf-q') { (ti.id === 'cf-q' ? UI.adm.cf : UI.adm.rf).q = ti.value; clearTimeout(document.cq); document.cq = setTimeout(() => { render(); const el = $('#' + ti.id); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
+  if (e.target.id === 'adm-find') { UI.adm.find = e.target.value; clearTimeout(document.fq); document.fq = setTimeout(() => { const box = $('#adm-find-res'); if (box) box.innerHTML = UI.adm.find ? findResults(UI.adm.find) : ''; }, 200); return; }
   if (e.target.id === 'tx-q') { UI.adm.q = e.target.value; clearTimeout(document.tq); document.tq = setTimeout(() => { render(); const el = $('#tx-q'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
   if (e.target.id === 'search-q') { UI.searchQ = e.target.value; const q = UI.searchQ.trim().toLowerCase(); const res = q ? P.filter((p) => (p.name + ' ' + p.type + ' ' + (p.notes || []).join(' ') + ' ' + p.line).toLowerCase().includes(q)) : []; $('#search-res').innerHTML = searchResults(q, res); clearTimeout(document.st); document.st = setTimeout(() => { if (q) track(res.length ? 'search' : 'search_no_results', { q }); }, 900); }
 });
