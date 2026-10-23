@@ -821,9 +821,10 @@ body.app .why-band { padding-bottom: 96px; }
 .best-item .name { font-family: var(--display); font-size: 22px; text-decoration: none; line-height: 1.1; }
 @media (max-width: 400px) { .combo-tiles .tile { width: 78px; height: 92px; } }
 .pay-badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.pay-badges li { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--choc); }
-.pay-badges b { font-weight: 800; font-size: 14px; }
-.pay-badges i { width: 18px; height: 18px; border-radius: 50%; display: inline-block; }
+.pay-badges li { display: inline-flex; align-items: center; gap: 5px; height: 30px; padding: 0 10px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
+.pay-badges b { font-weight: 800; font-size: 13px; }
+.pay-badges i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+.pay-badges svg { width: 14px; height: 14px; }
 /* footer */
 .site-foot { position: relative; overflow: hidden; }
 .site-foot a { text-decoration: none; }
@@ -833,10 +834,16 @@ body.app .why-band { padding-bottom: 96px; }
 .site-foot .cols { grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr)); }
 .foot-brand { display: flex; flex-direction: column; gap: 12px; }
 .foot-brand .mark.lockup { max-width: 100%; }
-.foot-pay { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 28px; padding-block: 22px; border-top: 1px solid var(--line); font-size: 14px; }
-.foot-pay > div:first-child { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.foot-pay { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px 32px; padding-block: 20px; border-top: 1px solid var(--line); font-size: 14px; }
+.foot-pay > div:first-child { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.foot-pay > div:first-child > strong { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+.foot-assure { display: flex; flex-wrap: wrap; gap: 6px 22px; list-style: none; margin: 0; padding: 0; font-size: 13px; }
+.foot-assure li { display: inline-flex; align-items: center; gap: 8px; }
+.foot-assure li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--caramel); flex: none; }
+@media (max-width: 700px) { .foot-pay { flex-direction: column; align-items: flex-start; } }
 .foot-base { background: var(--choc); color: var(--ivory); font-size: 13px; }
-.foot-base .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; padding-block: 14px; }
+.foot-base .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 20px; padding-block: 14px; }
+#foot-made { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--caramel); }
 @media (max-width: 1000px) { .site-foot .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .foot-brand { grid-column: 1 / -1; } }
 /* story page */
 .story-top { background: var(--choc); color: var(--ivory); overflow: hidden; position: relative; }
@@ -984,7 +991,7 @@ body.app .why-band { padding-bottom: 96px; }
     </div>
     <div id="foot-cols" style="display:contents"></div>
   </div>
-  <div class="wrap foot-pay"><div><strong>We accept</strong><span id="foot-pay"></span></div><div class="muted" id="foot-also">Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.</div></div>
+  <div class="wrap foot-pay"><div><strong>We accept</strong><span id="foot-pay"></span></div><ul class="foot-assure" id="foot-also"></ul></div>
   <div class="foot-base"><div class="wrap"><span id="foot-copy">© BUD &amp; THINGS by Ashi. All rights reserved.</span><span id="foot-made">Hand-made in India</span></div></div>
 </footer>
 
@@ -1262,7 +1269,7 @@ const TEXT = {
   'help.exchanges': ['If something arrives damaged, message us within {exchangeDays} days of delivery with a photo or your unboxing video and we’ll send a replacement free. We don’t offer refunds.', 'Help: replacements'],
   'help.privacy': ['We use your details only to deliver your order and, if you ask, to send updates. We never sell them.', 'Help: privacy'],
   'foot.tagline': ['Made with thought. Given with feeling.', 'Footer: tagline'],
-  'foot.also': ['Prepaid by UPI, card or net banking. If anything arrives damaged, we replace it free.', 'Footer: small print'],
+  'foot.also': ['Secure prepaid payments|Free replacement if it arrives damaged|Gift-ready packaging', 'Footer: three short promises under the payment badges (separate with |)'],
   'share.eyebrow': ['Share the joy', 'Share page: small line above the heading'],
   'share.title': ['Give a friend *{welcomeOff}% off*', 'Share page: heading'],
   'share.sub': ['Know someone who would love a hand-poured candle? Send them our shop. They get {welcomeOff}% off their first order with {welcomeCode}.', 'Share page: line under the heading'],
@@ -1689,7 +1696,7 @@ function renderChrome() {
   sb.setAttribute('aria-label', `Saved items, ${S.saved.length}`);
   document.body.classList.toggle('app', S.mode === 'app');
   $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
-  $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = T('foot.also'); $('#foot-social').innerHTML = socialLinks();
+  $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = Tx('foot.also').split('|').map((x) => x.trim()).filter(Boolean).map((x) => `<li>${esc(x)}</li>`).join(''); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-made').innerHTML = T('foot.made'); $('#foot-pay').innerHTML = payBadges();
   const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
