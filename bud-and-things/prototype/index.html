@@ -95,6 +95,8 @@ button, input, select { font: inherit; color: inherit; }
 .muted { color: var(--choc2); }
 .num { font-variant-numeric: tabular-nums; }
 .ov-hot { outline: 2px dashed #D6A34A; outline-offset: 3px; cursor: text; background: rgba(214,163,74,.14); }
+body.editing img:not(.proto img) { cursor: pointer; outline: 2px dashed rgba(214,163,74,.0); outline-offset: -3px; }
+body.editing img:not(.proto img):hover { outline-color: #D6A34A; }
 body.editing .proto #edit-btn { background: #D6A34A; color: #210309; }
 .ov-sheet { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 70; width: min(560px, calc(100vw - 24px)); display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--card); color: var(--choc); border: 1px solid var(--line2); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
 .ov-sheet textarea { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line2); background: var(--ivory); color: var(--choc); resize: vertical; }
@@ -109,6 +111,20 @@ body.editing .proto #edit-btn { background: #D6A34A; color: #210309; }
 .lcol > .lhead { padding: 12px 18px; background: var(--linen); display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
 @media (max-width: 640px) { .lrow { grid-template-columns: 1fr; } }
 .adm-prodrow th { text-align: left; background: var(--linen); padding: 10px 12px; }
+body.pv-on { padding-right: 440px; }
+body.pv-on #save-bar { left: calc(50% - 220px); }
+#pv-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 440px; z-index: 55; display: flex; flex-direction: column; background: #f3ece1; border-left: 1px solid var(--line2); }
+.pv-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--choc); color: #FBE9C2; }
+.pv-bar .btn.ghost { color: #FBE9C2; border-color: rgba(251,233,194,.5); background: transparent; min-height: 36px; }
+.pv-bar .btn.ghost[aria-pressed="true"] { background: #D6A34A; color: #210309; border-color: #D6A34A; }
+.pv-ctl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pv-ctl select { min-height: 36px; padding: 0 8px; color: var(--choc); background: #fff; }
+.pv-stage { flex: 1; min-height: 0; padding: 10px; display: flex; justify-content: center; overflow: auto; }
+#pv-frame { width: 100%; height: 100%; border: 1px solid var(--line2); background: #fff; }
+body.pv-phone #pv-frame { width: 390px; max-width: 100%; border-radius: 22px; border: 8px solid #210309; }
+.pv-note { margin: 0; padding: 6px 12px 10px; font-size: 13px; }
+body.framed .proto, body.framed #save-bar { display: none; }
+@media (max-width: 1100px) { body.pv-on { padding-right: 0; } body.pv-on #save-bar { left: 50%; } #pv-panel { left: 0; width: auto; z-index: 80; } }
 .dirty { outline: 2px solid var(--caramel); outline-offset: 1px; }
 #save-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 60; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 24px); padding: 10px 14px; background: #2a0510; color: #FBE9C2; border: 1px solid #D6A34A; border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.35); font-size: 15px; }
 #save-bar strong { color: #fff; }
@@ -972,7 +988,7 @@ body.app .why-band { padding-bottom: 96px; }
         <button type="button" data-act="mode" data-v="web" id="mode-web">Website</button>
         <button type="button" data-act="mode" data-v="app" id="mode-app">Installed app</button>
       </span>
-      <button type="button" data-act="edit-mode" id="edit-btn" aria-pressed="false">Edit text on page</button>
+      <button type="button" data-act="edit-mode" id="edit-btn" aria-pressed="false">Edit text and photos</button>
       <a href="#admin">Owner view</a>
       <button type="button" data-act="reset">Reset demo</button>
     </span>
@@ -1336,6 +1352,13 @@ const TEXT = {
   'soon.eyebrow': ['Coming soon', 'Coming soon: small line above the heading'],
   'soon.title': ['Something small\n*is beginning to grow.*', 'Coming soon: heading'],
   'soon.text': ['Candles and Jesmonite objects, made in small batches for everyday rituals and meaningful giving. Leave your email and we’ll tell you the day we open.', 'Coming soon: text'],
+  'err.eyebrow': ['Page not found', 'Error page: small line above the heading'],
+  'err.title': ['We couldn’t find that page.', 'Error page: heading'],
+  'err.product': ['That piece isn’t available right now.', 'Error page for a missing product: heading'],
+  'err.order': ['We couldn’t find that order.', 'Error page for a missing order: heading'],
+  'err.article': ['We couldn’t find that article.', 'Error page for a missing journal article: heading'],
+  'err.text': ['The link may be old, or the page may have moved. Here are some good places to start.', 'Error page: text'],
+  'err.load': ['We’re having trouble loading the latest shop details. What you see may be a little out of date.', 'Notice when the shop database does not answer'],
   'soon.cta': ['Tell me when you open', 'Coming soon: sign-up button'],
   'soon.pageTitle': ['{section}\n*is coming soon.*', 'Coming soon for one section: heading ({section} is its name)'],
   'soon.pageText': ['We are still putting the finishing touches on this. Leave your email and we’ll tell you the day it opens.', 'Coming soon for one section: text']
@@ -1468,7 +1491,7 @@ function loadData() {
     useRows(d); applyData(); DB.state = 'ok'; DB.error = null;
     try { localStorage.setItem('bt-db-cache', JSON.stringify(d)); } catch (e) { /* full or unavailable */ }
     if (route() === 'home' && scrollY > 40) DB.stale = true; else render();
-  }).catch((e) => { DB.state = 'error'; DB.error = e.message; if (route() === 'admin') render(); });
+  }).catch((e) => { DB.state = 'error'; DB.error = e.message; if (route() === 'admin' || scrollY < 40) render(); });
 }
 // the owner's changes: written to the database when connected, otherwise kept in this browser
 function persistLocal() { if (BTDB.on) return; S.db = { ...(S.db || {}), products: DATA.products, pairings: DATA.pairings, text: DATA.text, settings: DATA.settings, media: DATA.media, reviews: (S.db && S.db.reviews) || [], people: (S.db && S.db.people) || [] }; save(); }
@@ -1633,7 +1656,65 @@ function admOv() {
     ${orphans.length ? `<div class="adm-ovpage"><strong>Saved changes whose original words are not on any page now</strong></div>${orphans.map((k) => `<div class="adm-text"><span>${esc(TXT[k])}</span><button class="linkbtn" type="button" data-act="adm-ov-reset" data-k="${k}">Delete this change</button></div>`).join('')}` : ''}
   </details>`;
 }
+// Edit photos on the page: click a photo, replace it with an upload. Photos that are built in become the owner's own.
+const PH_ROLES = [['packaging', 'Packaging (home, Our Story, gifting)'], ['gift', 'Gift wrap and card'], ['process', 'How it is made'], ['story', 'Our Story'], ['founder', 'Founder'], ['logo-wide', 'Logo, wide'], ['logo-stack', 'Logo, stacked'], ['logo-leaf', 'Logo, leaf only'], ['favicon', 'Tab icon'], ['share', 'Link picture']];
+function phOpen(im) {
+  const src = im.getAttribute('src') || ''; const row = (DATA.media || []).find((m) => m.kind === 'photo' && (m.path === src || mUrl(m) === src || mUrl(m) === im.src));
+  const guess = /logo/.test(src) ? 'logo-wide' : /pack-|box|tag|card|jar|pouch|seal/.test(src) ? 'packaging' : 'story';
+  UI.ph = { src: im.src, alt: im.getAttribute('alt') || '', row: row ? row.id : null, role: row ? row.role : guess, owner: row ? row.product_id : 'brand', msg: '' }; UI.ov = null; renderOverlay();
+}
+async function phSave() {
+  const p = UI.ph; if (!p) return; const file = $('#ph-file') && $('#ph-file').files[0]; const alt = $('#ph-alt').value.trim(); const role = $('#ph-role') ? $('#ph-role').value : p.role;
+  if (!file && !p.row) { p.msg = 'Choose a photo first.'; renderOverlay(); return; }
+  if (file && !/^image\//.test(file.type)) { p.msg = 'That file is not a photo.'; renderOverlay(); return; }
+  p.msg = 'Saving…'; renderOverlay();
+  await admDo(async () => {
+    let path = null;
+    if (file) { const blob = await shrink(file, 2000);
+      if (BTDB.on) { path = p.owner + '/' + Date.now() + '-' + (slug(file.name.replace(/\.\w+$/, '')) || 'photo') + '.' + (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg'); await BTDB.upload(path, blob); }
+      else { if (blob.size > 1.5e6) throw new Error('too big for demo mode; connect the database'); path = await asDataURL(blob); } }
+    const old = p.row && DATA.media.find((m) => m.id === p.row);
+    if (old) await dbPut('media', Object.assign({}, old, { path: path || old.path, alt: alt || old.alt }));
+    else await dbPut('media', [{ id: uuid(), product_id: p.owner, kind: 'photo', role, path, alt: alt || 'BUD & THINGS', sort: 0, published: true }]);
+    UI.ph = null; render();
+  }, 'Photo saved. It shows on the site now.');
+  if (UI.ph) { UI.ph.msg = 'Couldn’t save. Try again.'; renderOverlay(); }
+}
+function phSheet() {
+  const p = UI.ph; if (!p) return '';
+  return `<div class="scrim" data-act="ph-close"></div><div class="ov-sheet" role="dialog" aria-modal="true" aria-labelledby="ph-h" data-noedit>
+    <h2 id="ph-h" style="font-size:22px">${p.row ? 'Replace this photo' : 'Use your own photo here'}</h2>
+    <img src="${esc(p.src)}" alt="" style="max-height:140px;width:auto;max-width:100%;object-fit:contain;align-self:flex-start;border:1px solid var(--line)" data-noedit>
+    ${p.row ? '' : `<p class="muted" style="margin:0">This is a built-in photo. Once you add your own for this spot, only your photos show there.</p><span class="field"><label for="ph-role">Where it shows</label><select id="ph-role">${PH_ROLES.map(([k, l]) => `<option value="${k}" ${k === p.role ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></span>`}
+    <span class="field"><label for="ph-file">${p.row ? 'New photo (leave empty to keep it)' : 'Photo'}</label><input id="ph-file" type="file" accept="image/*"></span>
+    <span class="field"><label for="ph-alt">Describe the photo (for screen readers and search)</label><input id="ph-alt" value="${esc(p.alt)}"></span>
+    ${p.msg ? `<p role="status" class="muted" style="margin:0">${esc(p.msg)}</p>` : ''}
+    <div class="ov-actions"><button class="btn" type="button" data-act="ph-save">Save photo</button><button class="btn ghost" type="button" data-act="ph-close">Cancel</button></div></div>`;
+}
+// ---------- live preview: the site beside the editor, as a phone or a laptop ----------
+const PV_PAGES = [['home', 'Home'], ['shop', 'Shop'], ['candles', 'Candles'], ['jesmonite', 'Jesmonite'], ['gifts', 'Gift boxes'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['faq', 'FAQ'], ['cart', 'Cart']];
+function pvRender(r) {
+  const A = UI.adm; let box = document.getElementById('pv-panel');
+  const on = r === 'admin' && A && A.pv;
+  document.body.classList.toggle('pv-on', !!on); document.body.classList.toggle('pv-phone', !!on && A.pvDev === 'phone');
+  if (!on) { if (box) box.remove(); return; }
+  if (!box) {
+    box = document.createElement('aside'); box.id = 'pv-panel'; box.setAttribute('aria-label', 'Live preview of the site'); box.setAttribute('data-noedit', '');
+    box.innerHTML = `<div class="pv-bar"><strong>Live preview</strong><span class="pv-ctl"><label class="sr" for="pv-page">Page</label><select id="pv-page">${PV_PAGES.concat(newSections().map((x) => ['s-' + x.id, x.name])).map(([k, l]) => `<option value="${esc(k)}">${esc(l)}</option>`).join('')}</select>
+      <button class="btn small ghost" type="button" data-act="pv-dev" data-v="phone" id="pv-b-phone">Phone</button><button class="btn small ghost" type="button" data-act="pv-dev" data-v="laptop" id="pv-b-laptop">Laptop</button><button class="btn small ghost" type="button" data-act="pv-refresh">Refresh</button><button class="btn small" type="button" data-act="pv-toggle">Close</button></span></div>
+      <div class="pv-stage"><iframe id="pv-frame" title="Your shop, as visitors see it" src="${esc(location.pathname)}?frame=1#home"></iframe></div>
+      <p class="pv-note muted">Shows the shop as you see it signed in, including drafts. It refreshes after each save.</p>`;
+    document.body.appendChild(box);
+  }
+  ['phone', 'laptop'].forEach((d) => { const b = box.querySelector('#pv-b-' + d); b.setAttribute('aria-pressed', String((A.pvDev || 'laptop') === d)); });
+}
+function pvRefresh() { const f = document.getElementById('pv-frame'); if (f && f.contentWindow) { try { f.contentWindow.location.reload(); } catch (e) { f.src = f.src; } } }
+function pvGo(page) { const f = document.getElementById('pv-frame'); if (f && f.contentWindow) { try { f.contentWindow.location.hash = page; } catch (e) { /* ignore */ } } }
+window.addEventListener('offline', () => say('You are offline. Some things may not load until you are back online.'));
+window.addEventListener('online', () => { say('Back online.'); if (DB.state === 'error') { DB.state = 'loading'; loadData(); } });
+document.addEventListener('change', (e) => { if (e.target.id === 'pv-page') pvGo(e.target.value); });
 function ovSheet() {
+  if (UI.ph) return phSheet();
   const o = UI.ov; if (!o) return '';
   return `<div class="scrim" data-act="ov-close"></div><div class="ov-sheet" role="dialog" aria-modal="true" aria-labelledby="ov-h" data-noedit>
     <h2 id="ov-h" style="font-size:22px">Edit text</h2><p class="muted" style="margin:0">${esc(o.label)}${o.keyed ? '' : '. Changes every place this exact wording appears.'}</p>
@@ -1925,7 +2006,7 @@ function batchLine(p, left) {
   return bits.length ? `<span class="batch num">${bits.join(' · ')}</span>` : '';
 }
 function viewProduct(id) {
-  const p = byId[id]; if (!p) return viewNotFound();
+  const p = byId[id]; if (!p) return viewNotFound('product');
   const st = UI.pdp[id] || (UI.pdp[id] = { vi: p.variants.length > 1 && p.art === 'jar' ? 1 : 0, qty: 1, pin: '', pinMsg: null, img: 0 });
   if (!p.variants[st.vi]) st.vi = 0;
   const v = p.variants[st.vi]; const left = stockOf(v.sku); const saved = S.saved.includes(p.id);
@@ -2145,7 +2226,7 @@ function payBox(o) {
   return `<div class="pay-panel"><div class="info">${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}${P.busy ? '<span class="waiting" role="status">Checking with Cashfree</span>' : `<span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="pay-order" data-id="${esc(o.id)}">Pay <span class="num">${inr(o.total)}</span> now</button><button class="btn ghost" type="button" data-act="pay-check" data-id="${esc(o.id)}">I’ve paid, check again</button></span>`}<span class="hint">${T('co.payOnline')}</span></div></div>`;
 }
 function viewOrder(id) {
-  const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound();
+  const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound('order');
   if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel) || JSON.stringify(d.delay) !== JSON.stringify(o.delay))) { o.status = d.status; o.parcel = d.parcel; o.delay = d.delay; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
   if (BTDB.on && !(UI.invSync || (UI.invSync = {}))[id] && o.status !== 'Awaiting payment' && o.status !== 'Cancelled') { UI.invSync[id] = 1; BTDB.rpc('get_invoice', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.id && !UI.invOf[id]) { UI.invOf[id] = d; if (route() === 'order-' + id) render(); } }).catch(() => { /* no invoice yet: it shows once it is made */ }); }
   const inv = BTDB.on ? UI.invOf[id] : invoiceOf(id);
@@ -2309,7 +2390,7 @@ async function admLoad(k) {
   } catch (e) { A.rows[k] = A.rows[k] || []; A.err = e.message; }
   A.loading = null; if (A.inflight) delete A.inflight[k]; if (route() === 'admin') render();
 }
-async function admDo(fn, ok) { try { await fn(); if (ok) say(ok); } catch (e) { say('Couldn’t save: ' + e.message); } }
+async function admDo(fn, ok) { try { await fn(); if (ok) say(ok); if (UI.adm && UI.adm.pv) setTimeout(pvRefresh, 400); } catch (e) { say('Couldn’t save: ' + e.message); } }
 const loadingRow = '<p class="muted" role="status">Loading…</p>';
 const pill = (on, a, b) => `<span class="pill${on ? '' : ' out'}">${on ? a : b}</span>`;
 
@@ -2337,7 +2418,7 @@ function viewAdmin() {
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
   const body = { start: admStart, orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
-  const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Chai at Four, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
+  const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Chai at Four, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span><button class="btn small ghost" type="button" data-act="pv-toggle" aria-pressed="${A.pv ? 'true' : 'false'}">${A.pv ? 'Close live preview' : 'Live preview'}</button></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${find}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
@@ -3417,7 +3498,7 @@ function homeJournal(id) {
 }
 function viewJournal(id) {
   if (!id) return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Journal</span><h1 tabindex="-1">Stories, care and gifting</h1><p class="muted" style="max-width:620px">${T('home.journalSub')}</p></div>${journalCards()}</div>`;
-  const j = journal().find((x) => x.id === id); if (!j) return viewNotFound();
+  const j = journal().find((x) => x.id === id); if (!j) return viewNotFound('article');
   const links = (j.links || []).map((x) => byId[x]).filter(Boolean);
   return `<article class="wrap article" style="padding-bottom:var(--section)"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#journal">Journal</a> / ${esc(j.title)}</nav>
     <header class="article-head"><span class="eyebrow">${esc(j.eyebrow)} · ${j.mins} min read</span><h1 tabindex="-1">${esc(j.title)}</h1><p class="lead">${esc(j.lead)}</p></header>
@@ -3621,7 +3702,11 @@ function payBadges() {
   return `<ul class="pay-badges" aria-label="Payment methods we accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
 }
 
-function viewNotFound() { return `<div class="wrap" style="padding-block:var(--section) calc(var(--section) + 20px)"><div class="empty"><h1 tabindex="-1" style="font-size:34px">We couldn’t find that page.</h1><a class="btn small" href="#home">Go home</a></div></div>`; }
+function viewNotFound(kind) {
+  const title = kind === 'product' ? T('err.product') : kind === 'order' ? T('err.order') : kind === 'article' ? T('err.article') : T('err.title');
+  return `<div class="wrap" style="padding-block:var(--section) calc(var(--section) + 20px)"><div class="empty" style="gap:14px"><span class="eyebrow">${T('err.eyebrow')}</span><h1 tabindex="-1" style="font-size:34px">${title}</h1><p class="muted" style="margin:0;max-width:52ch">${T('err.text')}</p>
+    <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn small" href="#shop">See all products</a><a class="btn small ghost" href="#feeling">Find Your Feeling</a><a class="btn small ghost" href="#gifting">Gifting</a><a class="btn small ghost" href="#help">Contact us</a><button class="btn small ghost" type="button" data-act="search">Search</button></span></div></div>`;
+}
 
 // ---------- render ----------
 // ---------- see it in your room: the piece on the visitor's own photo. The photo stays in the browser; nothing is uploaded ----------
@@ -3840,16 +3925,17 @@ function viewFor(r, cs) {
   return html;
 }
 function render(nav) {
-  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs);
+  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs); document.body.classList.toggle('framed', /[?&]frame=1/.test(location.search));
   document.body.classList.toggle('public', BTDB.on && !BTDB.owner()); // the preview bar is for the owner and the demo only
   html = viewFor(r, cs);
-  const app = $('#app'); app.innerHTML = html;
+  const app = $('#app'); app.innerHTML = (BTDB.on && DB.state === 'error' && r !== 'admin' && !BTDB.owner() ? `<div class="wrap" style="padding-top:12px"><div class="status err" role="alert" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="flex:1 1 260px">${T('err.load')}</span><button class="btn small" type="button" data-act="db-retry">Try again</button></div></div>` : '') + html;
   applyBrand(); applySeo(r);
   // the scrolling offers strip sits after the page's first banner, not glued under the menu
   const banner = !cs && !/^(admin|checkout|cart|order-|account|track|saved)/.test(r) && app.querySelector('.gh-hero, .page-head, .article-head');
   if (banner) banner.insertAdjacentHTML('afterend', offersBar()); // pages with no banner have no strip
   renderChrome(); renderOverlay();
   if (r === 'admin') reapplyHeld(); else saveBar();
+  pvRender(r);
   if (r !== 'admin') { applyText(app, r); ['.site-head', '.site-foot', '#mobile-menu', '#offers-slot'].forEach((q) => applyText($(q), 'every page')); }
   if (!cs) adsLoad();
   if (cs) { if (nav) window.scrollTo(0, 0); return; }
@@ -4116,6 +4202,7 @@ function focusFirstError() { const el = document.querySelector('[aria-invalid="t
 document.addEventListener('click', (e) => {
   if (!UI.edit || e.target.closest('.proto,.ov-sheet,.scrim,.adm,[data-noedit]')) return;
   e.preventDefault(); e.stopPropagation();
+  const im = e.target.closest('img'); if (im) { phOpen(im); return; }
   const n = ovNodeAt(e.clientX, e.clientY); if (n && ovOpen(n)) renderOverlay(); else say('That one comes from products or settings. Change it in Owner view.');
 }, true);
 document.addEventListener('mousemove', (e) => {
@@ -4136,7 +4223,13 @@ document.addEventListener('click', (e) => {
     case 'adm-ns-add': { const cur = readNs(); cur.push({ id: '', name: '', line: '', live: false }); UI.adm.draftNs = cur; UI.adm.pending = new Map(); render(); $('#ns-' + (cur.length - 1) + '-n')?.focus(); break; }
     case 'adm-ns-del': { const keep = readNs(+d.i); admDo(async () => { SET.newSections = keep; UI.adm.draftNs = null; UI.adm.pending = new Map(); await dbPut('settings', { key: 'newSections', value: keep }); renderChrome(); render(); }, 'Removed.'); break; }
     case 'adm-discard': UI.adm.pending = new Map(); render(); break;
-    case 'edit-mode': UI.edit = !UI.edit; document.body.classList.toggle('editing', UI.edit); t.setAttribute('aria-pressed', String(UI.edit)); t.textContent = UI.edit ? 'Stop editing text' : 'Edit text on page'; say(UI.edit ? 'Click any word on the page to change it.' : 'Editing off.'); break;
+    case 'edit-mode': UI.edit = !UI.edit; document.body.classList.toggle('editing', UI.edit); t.setAttribute('aria-pressed', String(UI.edit)); t.textContent = UI.edit ? 'Stop editing' : 'Edit text and photos'; say(UI.edit ? 'Click any word on the page to change it.' : 'Editing off.'); break;
+    case 'db-retry': DB.state = 'loading'; DB.error = null; render(); loadData(); break;
+    case 'pv-toggle': UI.adm.pv = !UI.adm.pv; render(); break;
+    case 'pv-dev': UI.adm.pvDev = d.v; pvRender('admin'); break;
+    case 'pv-refresh': pvRefresh(); break;
+    case 'ph-save': phSave(); break;
+    case 'ph-close': UI.ph = null; renderOverlay(); break;
     case 'ov-close': UI.ov = null; renderOverlay(); break;
     case 'ov-save': ovSave($('#ov-text').value); break;
     case 'ov-reset': if (UI.ov) { UI.ov.cur = UI.ov.def; ovSave(UI.ov.def); } break;
