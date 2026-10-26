@@ -25,6 +25,11 @@
     try { keepCust(await req('POST', '/auth/v1/token?grant_type=refresh_token', { refresh_token: cust.refresh }, null, key)); } catch (e) { keepCust(null); }
     return cust && cust.access;
   }
+  const CL = (window.BT_CONFIG && window.BT_CONFIG.cloudinary) || {};
+  const cloud = String(CL.cloud || ''), preset = String(CL.preset || '');
+  const isCl = (p) => /^https:\/\/res\.cloudinary\.com\/[^/]+\/(image|video)\/upload\//.test(p);
+  // Cloudinary pictures and videos arrive in the best format and quality for each visitor, no wider than `w` pixels
+  const sized = (p, w) => p.replace('/upload/', '/upload/f_auto,q_auto' + (w ? ',w_' + w + ',c_limit' : '') + '/');
   const enc = (path) => path.split('/').map(encodeURIComponent).join('/');
 
   async function req(method, path, body, headers, bearer) {
@@ -62,8 +67,18 @@
     // the shop's Edge Functions (supabase/functions): pay (Cashfree) and delivery (Shiprocket)
     fn: (name, body) => req('POST', '/functions/v1/' + name, body || {}),
     // photos and videos, in the public "media" bucket
-    fileUrl: (path) => (/^(https?:|data:|blob:|assets\/)/.test(path) ? path : url + '/storage/v1/object/public/media/' + enc(path)),
+    fileUrl: (path, w) => (isCl(path) ? (/\/upload\/(f_|q_|w_)/.test(path) ? path : sized(path, w === undefined ? 1600 : w)) : /^(https?:|data:|blob:|assets\/)/.test(path) ? path : url + '/storage/v1/object/public/media/' + enc(path)),
     upload: (path, file) => req('POST', '/storage/v1/object/media/' + enc(path), file, { 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'true' }),
+    // saves a photo or video and returns the path to keep in the media table: a Cloudinary address when Cloudinary is set
+    // up in config.js (unsigned preset, so no secret is needed here), otherwise a path in the Supabase "media" bucket
+    store: async (path, file) => {
+      if (!cloud || !preset) { await window.BTDB.upload(path, file); return path; }
+      const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', preset); fd.append('folder', 'bud-and-things/' + path.split('/')[0]);
+      const r = await fetch('https://api.cloudinary.com/v1_1/' + cloud + '/auto/upload', { method: 'POST', body: fd });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.secure_url) throw new Error((j.error && j.error.message) || ('Cloudinary upload failed (' + r.status + ')'));
+      return j.secure_url;
+    },
     removeFile: (path) => req('DELETE', '/storage/v1/object/media/' + enc(path)),
     // the owner signs in with the email and password set up in Supabase → Authentication, then with a 6-digit code
     // from an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…) when config.js turns the

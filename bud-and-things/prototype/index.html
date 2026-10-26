@@ -1684,7 +1684,7 @@ async function phSave() {
   await admDo(async () => {
     let path = null;
     if (file) { const blob = await shrink(file, 2000);
-      if (BTDB.on) { path = p.owner + '/' + Date.now() + '-' + (slug(file.name.replace(/\.\w+$/, '')) || 'photo') + '.' + (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg'); await BTDB.upload(path, blob); }
+      if (BTDB.on) { path = p.owner + '/' + Date.now() + '-' + (slug(file.name.replace(/\.\w+$/, '')) || 'photo') + '.' + (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg'); path = await BTDB.store(path, blob); }
       else { if (blob.size > 1.5e6) throw new Error('too big for demo mode; connect the database'); path = await asDataURL(blob); } }
     const old = p.row && DATA.media.find((m) => m.id === p.row);
     if (old) await dbPut('media', Object.assign({}, old, { path: path || old.path, alt: alt || old.alt }));
@@ -4629,7 +4629,7 @@ document.addEventListener('submit', (e) => {
         const kind = /^video\//.test(file.type) ? 'video' : /^image\//.test(file.type) ? 'photo' : null; if (!kind) { skipped.push(file.name + ' (not a photo or video)'); continue; }
         try {
           const blob = kind === 'photo' ? await shrink(file, 2000) : file; let path;
-          if (BTDB.on) { if (blob.size > 50e6) { skipped.push(file.name + ' (over 50 MB)'); continue; } path = pid + '/' + Date.now() + '-' + (slug(file.name.replace(/\.\w+$/, '')) || 'file') + '.' + (blob.type.split('/')[1] || 'bin').replace('jpeg', 'jpg').replace('quicktime', 'mov'); await BTDB.upload(path, blob); }
+          if (BTDB.on) { if (blob.size > 50e6) { skipped.push(file.name + ' (over 50 MB)'); continue; } path = pid + '/' + Date.now() + '-' + (slug(file.name.replace(/\.\w+$/, '')) || 'file') + '.' + (blob.type.split('/')[1] || 'bin').replace('jpeg', 'jpg').replace('quicktime', 'mov'); path = await BTDB.store(path, blob); }
           else { if (blob.size > 1.5e6) { skipped.push(file.name + ' (too big for demo mode; connect the database)'); continue; } path = await asDataURL(blob); }
           rows.push({ id: uuid(), product_id: pid, variant, kind, role, path, alt: alt || ((byId[pid] || {}).name || 'BUD & THINGS') + ', ' + role, sort: (n++) * 10, published: true });
         } catch (err) { skipped.push(file.name + ' (' + err.message + ')'); }
