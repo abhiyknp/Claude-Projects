@@ -1082,6 +1082,7 @@ body.app .why-band { padding-bottom: 96px; }
 <script src="config.js"></script>
 <script src="vendor/qrcode/qrcode.js"></script>
 <script src="db.js?v=9"></script>
+<script src="import.js"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -2401,7 +2402,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['start', 'Launch checklist'], ['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['start', 'Launch checklist'], ['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['import', 'Import from sheet'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2468,7 +2469,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { start: admStart, orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { start: admStart, orders: admOrders, products: admProducts, import: admImport, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Chai at Four, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span><button class="btn small ghost" type="button" data-act="pv-toggle" aria-pressed="${A.pv ? 'true' : 'false'}">${A.pv ? 'Close live preview' : 'Live preview'}</button></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${find}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
@@ -2519,6 +2520,64 @@ function admProducts() {
   if (A.edit != null) return admProductForm(A.edit === '' ? null : rows.find((r) => r.id === A.edit));
   return `<div class="adm-bar"><p class="muted">Turn a product off to take it off the site without losing it. Lower numbers show first.</p><button class="btn small" type="button" data-act="adm-edit" data-id="">Add a product</button></div>
     <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span></td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Published', 'Draft')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
+}
+// ---------- import products from a sheet (Excel file, Google Sheet link or .csv; the reading rules are in import.js) ----------
+function admImport() {
+  const A = UI.adm; const m = A.imp || {}; const p = m.plan; const saved = (DATA.settings || {}).importSheetUrl || '';
+  const todo = p ? p.items.filter((i) => i.isNew || i.changed) : []; const c = p && p.counts;
+  const intro = `<div class="form adm-card"><h2 class="full" style="font-size:24px">Import products from a sheet</h2>
+    <p class="muted full">Reads only the product tabs: the ones with the headings <em>Product ID / SKU</em>, <em>Product Name</em> and <em>Product Type</em>. Costs, recipes and orders are never read. Add three columns to those tabs: <strong>Selling price (₹)</strong>, <strong>Stock</strong> and <strong>Show on website</strong> (Yes or No). Optional: <strong>Short description</strong> and <strong>Primary image link</strong> (starts with https://). A product with no price, or without Yes, is saved as a draft. IDs look like BNT-PRD-CG-001. Nothing changes until you press <em>Copy to database</em>, and History can put a product back.</p>
+    <span class="field"><label for="imp-file">An Excel (.xlsx) or .csv file</label><input id="imp-file" type="file" accept=".xlsx,.csv" data-act="imp-file"></span>
+    <span class="field full"><label for="imp-url">Or a Google Sheet link <span class="hint">one link per tab, one per line. Best: in Google Sheets choose File, Share, Publish to web, pick only the product tab, choose CSV, and paste that link</span></label><textarea id="imp-url" rows="2" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv">${esc(m.url != null ? m.url : saved)}</textarea></span>
+    <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="imp-fetch" ${m.busy ? 'disabled' : ''}>${m.busy ? 'Reading…' : 'Read the sheet'}</button></span>
+    ${m.err ? `<span class="err full" role="alert">${esc(m.err)}</span>` : ''}${m.done ? `<span class="status full" role="status">${esc(m.done)}</span>` : ''}</div>`;
+  if (!p) return intro;
+  const rowOf = (i) => { const q = Object.values(i.skuQty)[0]; return `<tr><td class="num">${esc(i.sku)}</td><td>${esc(i.name)}</td><td>${i.cat === 'candles' ? 'Candles' : i.cat === 'gifts' ? 'Gift boxes' : 'Jesmonite'}</td><td class="num">${i.price ? inr(i.price) : '–'}</td><td class="num">${q != null ? q : '–'}</td><td>${i.isNew ? 'New' : i.changed ? 'Changed' : 'No change'}</td><td>${i.live ? 'On the site' : 'Draft' + (i.hiddenBecause ? ' (' + esc(i.hiddenBecause) + ')' : '')}</td><td>${i.image ? 'Link' : ''}</td></tr>`; };
+  return intro + `<div class="form adm-card"><h3 class="full">What would happen</h3>
+    <p class="full"><strong>${c.added}</strong> new, <strong>${c.changed}</strong> changed, <strong>${c.same}</strong> with no change. <strong>${c.live}</strong> would be on the site and <strong>${c.hidden}</strong> saved as drafts.${p.tabs.length ? ' Tabs read: ' + esc(p.tabs.join(', ')) + '.' : ''} Products already in the shop but not in the sheet are left alone.</p>
+    ${p.problems.length ? `<div class="status full" role="note"><strong>Fix these in the sheet, then read it again. These rows are skipped:</strong><ul>${p.problems.map((x) => `<li>${esc(x.where)}: ${esc(x.msg)}</li>`).join('')}</ul></div>` : ''}
+    ${p.items.length ? `<div class="table-wrap full"><table><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Change</th><th>On the site</th><th>Photo</th></tr></thead><tbody>${p.items.map(rowOf).join('')}</tbody></table></div>` : ''}
+    ${p.notes.length ? `<ul class="muted full">${p.notes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    <label class="chk full" style="display:flex;align-items:center;gap:10px;min-height:44px"><input type="checkbox" id="imp-stock"> Also set the stock counts of products already in the shop <span class="hint">Off is safer: orders have been lowering those counts. New products always start with the sheet’s stock.</span></label>
+    <span class="full"><button class="btn" type="button" data-act="imp-copy" ${todo.length ? '' : 'disabled'}>Copy to database</button></span></div>`;
+}
+function impSet(sheets, url) { UI.adm.imp = { plan: BTImport.plan(sheets, prodRows(), S.stock), url }; render(); }
+async function impLoadFile(file) {
+  const A = UI.adm; A.imp = { busy: true }; render();
+  try { impSet(/\.csv$/i.test(file.name) ? [{ name: file.name, rows: BTImport.parseCsv(await file.text()) }] : await BTImport.readXlsx(await file.arrayBuffer())); }
+  catch (e) { A.imp = { err: 'Couldn’t read that file: ' + e.message }; render(); }
+}
+async function impFetch() {
+  const A = UI.adm; const raw = (($('#imp-url') || {}).value || '').trim(); const links = raw.split(/\s+/).filter(Boolean);
+  if (!links.length) { A.imp = { err: 'Paste a Google Sheet link first.', url: raw }; render(); return; }
+  const bad = links.find((l) => !BTImport.googleCsvUrl(l)); if (bad) { A.imp = { err: 'That is not a Google Sheet link: ' + bad, url: raw }; render(); return; }
+  A.imp = { busy: true, url: raw }; render();
+  try {
+    const sheets = [];
+    for (let i = 0; i < links.length; i++) {
+      const r = await fetch(BTImport.googleCsvUrl(links[i]), { credentials: 'omit' }); if (!r.ok) throw new Error('Google answered ' + r.status + ' for link ' + (i + 1) + '. Check that the tab is published to the web.');
+      const txt = await r.text(); if (/^\s*<(!doctype|html)/i.test(txt)) throw new Error('link ' + (i + 1) + ' is not public. Publish that tab to the web as CSV.');
+      sheets.push({ name: 'Link ' + (i + 1), rows: BTImport.parseCsv(txt) });
+    }
+    if (raw !== ((DATA.settings || {}).importSheetUrl || '')) { try { await dbPut('settings', { key: 'importSheetUrl', value: raw }); } catch (e) { /* the link is only remembered for next time */ } }
+    impSet(sheets, raw);
+  } catch (e) { A.imp = { err: 'Couldn’t read the sheet: ' + e.message, url: raw }; render(); }
+}
+async function impCopy() {
+  const A = UI.adm; const p = A.imp && A.imp.plan; const todo = p ? p.items.filter((i) => i.isNew || i.changed) : []; if (!todo.length) return;
+  const allStock = !!($('#imp-stock') || {}).checked;
+  if (!confirm('Copy ' + todo.length + ' product' + (todo.length === 1 ? '' : 's') + ' to the database?')) return;
+  const fresh = new Set(); p.items.forEach((i) => (i.data.variants || []).forEach((v) => { if (S.stock[v.sku] == null) fresh.add(v.sku); }));
+  await admDo(async () => {
+    await dbPut('products', todo.map((i) => { const d = Object.assign({}, i.data); if (d.cat === 'gifts' && !d.img) d.img = IMG.box; return { id: i.id, data: d, sort: i.sort, live: i.live }; }));
+    const st = []; p.items.forEach((i) => (i.data.variants || []).forEach((v) => { const q = i.skuQty[v.sku]; if (fresh.has(v.sku)) st.push({ sku: v.sku, qty: q || 0 }); else if (allStock && q != null) st.push({ sku: v.sku, qty: q }); }));
+    if (st.length) await dbPut('stock', st);
+    const photos = p.items.filter((i) => i.image && !DATA.media.some((m) => m.product_id === i.id && m.path === i.image))
+      .map((i) => ({ id: uuid(), product_id: i.id, kind: 'photo', role: 'packshot', path: i.image, alt: i.name, sort: 0, published: true }));
+    if (photos.length) await dbPut('media', photos);
+    A.imp = { done: 'Copied ' + todo.length + ' product' + (todo.length === 1 ? '' : 's') + ' to the database' + (photos.length ? ' and ' + photos.length + ' photo link' + (photos.length === 1 ? '' : 's') : '') + '. Check them under Products; drafts stay hidden until they have a price and Yes.' };
+    render();
+  }, 'Copied to the database.');
 }
 function admProductForm(r) {
   const d = (r && r.data) || { cat: 'candles', variants: [], care: [], mood: [], space: [], occ: [], gift: true, art: 'jar', c: '#DCC9AE' }; const pz = d.pyramid || {}; const b = d.batch || {};
@@ -4359,6 +4418,8 @@ document.addEventListener('click', (e) => {
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
     case 'adm-tab': UI.adm.draft = null; UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'imp-fetch': impFetch(); break;
+    case 'imp-copy': impCopy(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -4489,6 +4550,7 @@ function readNs(skip) {
 }
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
+  if (d.act === 'imp-file' && t.files && t.files[0]) { impLoadFile(t.files[0]); t.value = ''; return; }
   if (HOLD.has(d.act) && route() === 'admin' && !d.flush) { holdChange(t); return; }
   if (t.id === 'co-state' || t.id === 'pf-a-state') t.dataset.auto = '';
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
