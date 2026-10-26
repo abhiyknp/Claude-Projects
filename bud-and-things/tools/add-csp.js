@@ -7,7 +7,9 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const dir = process.argv[2]; if (!dir) { console.error('usage: add-csp.js <site folder>'); process.exit(1); }
 const cfg = fs.readFileSync(path.join(__dirname, '..', 'prototype', 'config.js'), 'utf8');
 const db = (/url:\s*'([^']*)'/.exec(cfg) || [])[1] || '';
-const connect = ["'self'", db && new URL(db).origin, 'https://api.postalpincode.in', 'https://api.cloudinary.com', ...(process.env.BT_CSP_CONNECT || '').split(/\s+/)].filter(Boolean);
+// Owner view reads a product sheet from Google Sheets (Import from sheet)
+const sheets = ['https://docs.google.com', 'https://*.googleusercontent.com'];
+const connect = ["'self'", db && new URL(db).origin, 'https://api.postalpincode.in', 'https://api.cloudinary.com', ...sheets, ...(process.env.BT_CSP_CONNECT || '').split(/\s+/)].filter(Boolean);
 // Meta Pixel and Google Analytics, used only when the owner adds an id in Settings
 const ads = { script: ['https://connect.facebook.net', 'https://www.googletagmanager.com'], connect: ['https://www.facebook.com', 'https://connect.facebook.net', 'https://*.google-analytics.com', 'https://*.analytics.google.com', 'https://www.googletagmanager.com'] };
 // Cashfree's checkout: its script, the payment window it opens over the page, and the calls it makes

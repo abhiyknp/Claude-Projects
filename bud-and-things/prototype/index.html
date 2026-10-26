@@ -28,7 +28,7 @@
 :root[data-skin="evening"] { --ivory: #12142B; --plaster: #1A1D3A; --linen: #1D2040; --sand: #2E3260; --sand2: #252950; --card: #171A33; --caramel: #C99A6C; --terra: #E2B45C; --terra-ink: #E2B45C; --olive: #B9C38A; --choc: #F1EDE4; --choc2: #C2C0D6; --line: #2E3260; --line2: #3D4278; --glow: #7A5410; --cta: #E2B45C; --on-cta: #12142B; --ok: #B9D38A; --ok-bg: #24302A; --err-bg: #3A2236; --head-bg: rgba(18,20,43,.94); --sk-ink: #F1EDE4; --sk-ink2: #C2C0D6; --sk-accent: #E2B45C; --sk-dark: #12142B; --sk-glow: #E2B45C; --sk-cta: #E2B45C; --sk-on-cta: #12142B; color-scheme: dark; }
 
 /* Silk · Maroon & Gold: deep wine header, hero and footer over cream shop pages. Every text pair is at least 4.5:1. Gold is only ever used on maroon; on cream, labels use dark gold. The shiny logos replace the flat marks. */
-:root[data-skin="silk"] { --ivory: #F8F0E4; --plaster: #F1E4D0; --linen: #F1E4D0; --sand: #EEDFC4; --sand2: #F3E8D2; --card: #FFFFFF; --caramel: #D6A34A; --terra: #8F1834; --terra-ink: #7A1229; --olive: #7A1229; --choc: #3A0610; --choc2: #5C1F2B; --line: #E0CBB0; --line2: #C9A56F; --glow: #D6A34A; --cta: #8F1834; --on-cta: #F8F0E4; --ok: #3F5A2A; --ok-bg: #E6EBD2; --err-bg: #F5D9D9; --head-bg: #210309; --sk-ink: #3A0610; --sk-ink2: #5C1F2B; --sk-accent: #8F1834; --sk-light: #F3D79B; --sk-dark: #3A0610; --sk-glow: #D6A34A; --sk-cta: #D6A34A; --sk-on-cta: #210309; --sk-chip: rgba(248,240,228,.95); }
+:root[data-skin="silk"] { --ivory: #F8F0E4; --plaster: #F1E4D0; --linen: #F1E4D0; --sand: #EEDFC4; --sand2: #F3E8D2; --card: #FFFFFF; --caramel: #D6A34A; --terra: #8F1834; --terra-ink: #7A1229; --olive: #7A1229; --choc: #150206; --choc2: #2E0412; --line: #E0CBB0; --line2: #C9A56F; --glow: #D6A34A; --cta: #8F1834; --on-cta: #F8F0E4; --ok: #3F5A2A; --ok-bg: #E6EBD2; --err-bg: #F5D9D9; --head-bg: #080102; --sk-ink: #150206; --sk-ink2: #2E0412; --sk-accent: #8F1834; --sk-light: #F3D79B; --sk-dark: #150206; --sk-glow: #D6A34A; --sk-cta: #D6A34A; --sk-on-cta: #080102; --sk-chip: rgba(248,240,228,.95); }
 :root[data-skin="silk"] { --velvet: url(assets/silk/velvet.webp); }
 /* Velvet silk: a soft grain, long folds and a travelling sheen over every maroon surface. The colour underneath is unchanged, so text contrast is the same. */
 :root[data-skin="silk"] .band, :root[data-skin="silk"] .dark-band, :root[data-skin="silk"] .gh-strip, :root[data-skin="silk"] .foot-base, :root[data-skin="silk"] .note-card, :root[data-skin="silk"] .finder-side, :root[data-skin="silk"] .paths a.feel, :root[data-skin="silk"] .promo-choc, :root[data-skin="silk"] .promo-terra, :root[data-skin="silk"] .pv-bar, :root[data-skin="silk"] .proto { background-image: var(--velvet); background-size: 1024px 768px; }
@@ -39,18 +39,18 @@
 @keyframes silk-drift2 { to { background-position: 1024px 768px, 0 0; } }
 @media (prefers-reduced-motion: reduce) { :root[data-skin="silk"] .band, :root[data-skin="silk"] .dark-band, :root[data-skin="silk"] .gh-strip, :root[data-skin="silk"] .foot-base, :root[data-skin="silk"] .site-head, :root[data-skin="silk"] .site-foot { animation: none; } }
 
-:root[data-skin="silk"] .site-head { color: #F3D79B; border-bottom-color: rgba(214,163,74,.55); background: var(--velvet), linear-gradient(90deg, #210309, #3A0610); background-size: 1024px 768px, auto; }
+:root[data-skin="silk"] .site-head { color: #F3D79B; border-bottom-color: rgba(214,163,74,.55); background: var(--velvet), linear-gradient(90deg, #080102, #150206); background-size: 1024px 768px, auto; }
 :root[data-skin="silk"] .site-head .icon-btn, :root[data-skin="silk"] .site-head .nav a { color: #FBE9C2; }
 :root[data-skin="silk"] .site-head .nav a[aria-current="page"] { border-bottom-color: #D6A34A; }
-:root[data-skin="silk"] .site-head .icon-btn .count { background: #D6A34A; color: #210309; }
-:root[data-skin="silk"] .mobile-menu { background: #210309; border-top-color: rgba(214,163,74,.4); }
+:root[data-skin="silk"] .site-head .icon-btn .count { background: #D6A34A; color: #080102; }
+:root[data-skin="silk"] .mobile-menu { background: #080102; border-top-color: rgba(214,163,74,.4); }
 :root[data-skin="silk"] .mobile-menu a { color: #FBE9C2; border-bottom-color: rgba(214,163,74,.25); }
 :root[data-skin="silk"] .logo .mark.wordmark { -webkit-mask-image: none; mask-image: none; background: url(assets/silk/logo-horizontal.webp) center / contain no-repeat; width: 300px; aspect-ratio: 1400 / 320; }
 :root[data-skin="silk"] .logo .mark.monogram { background-image: url(assets/silk/leaf.webp); width: 54px; aspect-ratio: 500 / 479; }
 :root[data-skin="silk"] .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); aspect-ratio: 1240 / 944; }
 :root[data-skin="silk"] .ink-light .mark.lockup, :root[data-skin="silk"] .dark-band .mark.lockup { background-image: url(assets/silk/logo-stacked.webp); }
 :root[data-skin="silk"] .mark.monogram { background-image: url(assets/silk/leaf.webp); aspect-ratio: 500 / 479; }
-:root[data-skin="silk"] .site-foot { background: var(--velvet), radial-gradient(ellipse at 85% 10%, #4a0b1c, #3A0610 55%, #210309); background-size: 1024px 768px, auto; color: #FBE9C2; border-top: 1px solid rgba(214,163,74,.55); }
+:root[data-skin="silk"] .site-foot { background: var(--velvet), radial-gradient(ellipse at 85% 10%, #1C0309, #150206 55%, #080102); background-size: 1024px 768px, auto; color: #FBE9C2; border-top: 1px solid rgba(214,163,74,.55); }
 :root[data-skin="silk"] .site-foot a, :root[data-skin="silk"] .site-foot .muted, :root[data-skin="silk"] .site-foot small { color: #FBE9C2; }
 :root[data-skin="silk"] .site-foot strong { color: #D6A34A; font-family: var(--display); letter-spacing: .06em; }
 :root[data-skin="silk"] .btn:not(.ghost):not(.light) { box-shadow: 0 4px 12px rgba(58,6,16,.22); }
@@ -107,7 +107,7 @@ button, input, select { font: inherit; color: inherit; }
 .ov-hot { outline: 2px dashed #D6A34A; outline-offset: 3px; cursor: text; background: rgba(214,163,74,.14); }
 body.editing img:not(.proto img) { cursor: pointer; outline: 2px dashed rgba(214,163,74,.0); outline-offset: -3px; }
 body.editing img:not(.proto img):hover { outline-color: #D6A34A; }
-body.editing .proto #edit-btn { background: #D6A34A; color: #210309; }
+body.editing .proto #edit-btn { background: #D6A34A; color: #080102; }
 .ov-sheet { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 70; width: min(560px, calc(100vw - 24px)); display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--card); color: var(--choc); border: 1px solid var(--line2); box-shadow: 0 24px 60px rgba(0,0,0,.35); }
 .ov-sheet textarea { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line2); background: var(--ivory); color: var(--choc); resize: vertical; }
 .ov-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
@@ -126,12 +126,12 @@ body.pv-on #save-bar { left: calc(50% - 220px); }
 #pv-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 440px; z-index: 55; display: flex; flex-direction: column; background: #f3ece1; border-left: 1px solid var(--line2); }
 .pv-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--choc); color: #FBE9C2; }
 .pv-bar .btn.ghost { color: #FBE9C2; border-color: rgba(251,233,194,.5); background: transparent; min-height: 36px; }
-.pv-bar .btn.ghost[aria-pressed="true"] { background: #D6A34A; color: #210309; border-color: #D6A34A; }
+.pv-bar .btn.ghost[aria-pressed="true"] { background: #D6A34A; color: #080102; border-color: #D6A34A; }
 .pv-ctl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .pv-ctl select { min-height: 36px; padding: 0 8px; color: var(--choc); background: #fff; }
 .pv-stage { flex: 1; min-height: 0; padding: 10px; display: flex; justify-content: center; overflow: auto; }
 #pv-frame { width: 100%; height: 100%; border: 1px solid var(--line2); background: #fff; }
-body.pv-phone #pv-frame { width: 390px; max-width: 100%; border-radius: 22px; border: 8px solid #210309; }
+body.pv-phone #pv-frame { width: 390px; max-width: 100%; border-radius: 22px; border: 8px solid #080102; }
 .pv-note { margin: 0; padding: 6px 12px 10px; font-size: 13px; }
 body.framed .proto, body.framed #save-bar { display: none; }
 @media (max-width: 1100px) { body.pv-on { padding-right: 0; } body.pv-on #save-bar { left: 50%; } #pv-panel { left: 0; width: auto; z-index: 80; } }
@@ -575,6 +575,20 @@ input[type="file"] { padding: 10px 12px; }
   .toolbar .tf select { width: 100%; min-height: 46px; font-size: 15px; padding: 0 36px 0 12px; text-overflow: ellipsis; }
 }
 @media (max-width: 560px) { .toolbar .filters { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); } .toolbar .tf select { font-size: 14px; padding: 0 32px 0 10px; background-position: right 12px center; } .toolbar { margin-bottom: 18px; } .toolbar .group:first-child .chip { flex: 1 1 auto; justify-content: center; } }
+/* phones, round 2: tidy cards, buttons and the payment row */
+:root[data-skin="silk"] .chip[aria-pressed="true"], :root[data-skin="silk"] .chip[aria-checked="true"], :root[data-skin="silk"] .chip[aria-current="page"] { background: var(--cta); border-color: var(--cta); color: var(--on-cta); }
+:root[data-skin="silk"] .card .btn.ghost { color: var(--cta); border-color: var(--cta); }
+:root[data-skin="silk"] .disc { background: #0F0204; }
+:root[data-skin="silk"] .disc-copy { background: linear-gradient(0deg, rgba(8,1,2,.96) 55%, rgba(8,1,2,0)); }
+@media (max-width: 560px) {
+  .card { display: flex; flex-direction: column; }
+  .card .row { margin-top: auto; padding-top: 8px; }
+  .card .row > span:last-child { margin-left: 0; width: 100%; align-items: center; }
+  .card .row .btn.small { flex: 1 1 auto; }
+  .band .opts { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .band .opts button { width: 100%; justify-content: flex-start; }
+  .foot-base { font-size: 13px; }
+}
 /* Coming soon: one quiet page for visitors until launch */
 body.cs .proto, body.cs .site-head, body.cs .site-foot, body.cs .tabbar, body.cs #overlay { display: none !important; }
 body.cs main { padding-bottom: 0; }
@@ -585,6 +599,18 @@ body.cs main { padding-bottom: 0; }
 .soon p { max-width: 520px; margin: 0; }
 .soon form { width: 100%; max-width: 480px; display: flex; flex-wrap: wrap; gap: 10px; text-align: left; margin-top: 8px; }
 .soon .social { margin-top: 4px; }
+/* Silk: the Coming soon page is deep maroon velvet with gold, like the header and footer. Every text pair is at least 4.5:1. */
+:root[data-skin="silk"] .soon { background: var(--velvet), radial-gradient(ellipse at 85% 10%, #1C0309, #150206 55%, #080102); background-size: 1024px 768px, auto; color: #FBE9C2; animation: silk-drift2 70s linear infinite; }
+:root[data-skin="silk"] .soon h1 { color: #FBE9C2; }
+:root[data-skin="silk"] .soon h1 em, :root[data-skin="silk"] .soon .eyebrow { color: #D6A34A; }
+:root[data-skin="silk"] .soon p, :root[data-skin="silk"] .soon label, :root[data-skin="silk"] .soon .muted, :root[data-skin="silk"] .soon #news-msg { color: #FBE9C2; }
+:root[data-skin="silk"] .soon input { background: rgba(248,240,228,.96); color: #150206; border-color: #D6A34A; }
+:root[data-skin="silk"] .soon .btn { background: #D6A34A; color: #080102; border-color: #D6A34A; }
+:root[data-skin="silk"] .soon .btn:hover { background: #F3D79B; border-color: #F3D79B; }
+:root[data-skin="silk"] .soon .social a { color: #FBE9C2; }
+:root[data-skin="silk"] .soon .social a:hover { background: #D6A34A; border-color: #D6A34A; color: #080102; }
+:root[data-skin="silk"] .soon a:focus-visible, :root[data-skin="silk"] .soon .btn:focus-visible, :root[data-skin="silk"] .soon input:focus-visible { outline-color: #F3D79B; }
+@media (prefers-reduced-motion: reduce) { :root[data-skin="silk"] .soon { animation: none; } }
 /* Instagram, Pinterest, WhatsApp and email as round icon links */
 .social { display: flex; flex-wrap: wrap; gap: 12px; list-style: none; margin: 0; padding: 0; }
 .social a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; color: var(--choc); transition: background .2s, color .2s, border-color .2s; }
@@ -872,6 +898,12 @@ body.app .why-band { padding-bottom: 96px; }
 .pay-badges i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
 .pay-badges svg { width: 14px; height: 14px; }
 .pay-badges svg.pay-logo { width: auto; height: 14px; }
+/* footer: small tiles, always one line */
+.site-foot .pay-badges { flex-wrap: nowrap; gap: 6px; }
+.site-foot .pay-badges li { flex: 1 1 0; min-width: 0; height: 24px; padding: 0 6px; gap: 4px; white-space: nowrap; border-radius: 3px; }
+.site-foot .pay-badges svg { width: 11px; height: 11px; }
+.site-foot .pay-badges svg.pay-logo { width: auto; height: 11px; }
+@media (max-width: 380px) { .site-foot .pay-badges { gap: 4px; } .site-foot .pay-badges li { padding: 0 4px; } .site-foot .pay-badges svg.pay-logo { height: 10px; } }
 /* footer */
 .site-foot { position: relative; overflow: hidden; }
 .site-foot a { text-decoration: none; }
@@ -988,7 +1020,7 @@ body.app .why-band { padding-bottom: 96px; }
 @media (pointer: coarse), (max-width: 820px) {
   .card .name, .note-card a, .finder-nav .linkbtn, .deliv-form .linkbtn, .adm-banner .linkbtn { display: inline-flex; align-items: center; min-height: 44px; }
   .deliv-form .linkbtn { min-width: 44px; justify-content: center; }
-  .section-head a, .section a[href^="#"]:not(.btn):not(.tile):not(.card) { min-height: 44px; display: inline-flex; align-items: center; }
+  .section-head a, .section a[href^="#"]:not(.btn):not(.tile):not(.card):not(.disc) { min-height: 44px; display: inline-flex; align-items: center; }
   .adm-banner .linkbtn { display: inline; min-height: 0; padding: 12px 4px; }
 }
 </style>
@@ -1050,6 +1082,7 @@ body.app .why-band { padding-bottom: 96px; }
 <script src="config.js"></script>
 <script src="vendor/qrcode/qrcode.js"></script>
 <script src="db.js?v=9"></script>
+<script src="import.js"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -1959,6 +1992,13 @@ function card(p, i) {
 }
 
 
+// a photo that fails to load (deleted file, bad link) falls back to the drawn product instead of a broken-image icon
+document.addEventListener('error', (e) => {
+  const im = e.target; if (!im || im.tagName !== 'IMG') return;
+  const t = im.closest('.card .tile'); if (!t) return;
+  im.remove(); if (!t.querySelector('img.fill')) t.classList.remove('has-ph');
+}, true);
+
 // ---------- views ----------
 const RETURNING = (() => { let r = false; try { r = !sessionStorage.getItem('bt-session') && !!S.walkDone; sessionStorage.setItem('bt-session', '1'); } catch (e) { /* ignore */ } return r; })();
 function ritualPrice(items) { const lines = items.map(([p, vi]) => ({ p, v: p.variants[vi], qty: 1 })); const sum = lines.reduce((a, l) => a + l.v.price, 0); return { sum, save: ritualSaving(lines) }; }
@@ -2362,7 +2402,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['start', 'Launch checklist'], ['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['start', 'Launch checklist'], ['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['import', 'Import from sheet'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture']] };
@@ -2429,7 +2469,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { start: admStart, orders: admOrders, products: admProducts, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const body = { start: admStart, orders: admOrders, products: admProducts, import: admImport, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Chai at Four, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span><button class="btn small ghost" type="button" data-act="pv-toggle" aria-pressed="${A.pv ? 'true' : 'false'}">${A.pv ? 'Close live preview' : 'Live preview'}</button></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${find}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
@@ -2480,6 +2520,71 @@ function admProducts() {
   if (A.edit != null) return admProductForm(A.edit === '' ? null : rows.find((r) => r.id === A.edit));
   return `<div class="adm-bar"><p class="muted">Turn a product off to take it off the site without losing it. Lower numbers show first.</p><button class="btn small" type="button" data-act="adm-edit" data-id="">Add a product</button></div>
     <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span></td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Published', 'Draft')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
+}
+// ---------- import products from a sheet (Excel file, Google Sheet link or .csv; the reading rules are in import.js) ----------
+const IMP_TABS = 'Glass Candles, Moulded Candles, Tealight Candles, Jesmonite Tray, DIY Items';
+function admImport() {
+  const A = UI.adm; const m = A.imp || {}; const p = m.plan; const saved = (DATA.settings || {}).importSheetUrl || '';
+  const todo = p ? p.items.filter((i) => i.isNew || i.changed) : []; const c = p && p.counts;
+  const intro = `<div class="form adm-card"><h2 class="full" style="font-size:24px">Import products from a sheet</h2>
+    <p class="muted full">Reads only the product tabs: the ones with the headings <em>Product ID / SKU</em>, <em>Product Name</em> and <em>Product Type</em>. Costs, recipes and orders are never read. Add three columns to those tabs: <strong>Selling price (₹)</strong>, <strong>Stock</strong> and <strong>Show on website</strong> (Yes or No). Optional: <strong>Short description</strong> and <strong>Primary image link</strong> (starts with https://). A product with no price, or without Yes, is saved as a draft. IDs look like BNT-PRD-CG-001. Nothing changes until you press <em>Copy to database</em>, and History can put a product back.</p>
+    <span class="field"><label for="imp-file">An Excel (.xlsx) or .csv file</label><input id="imp-file" type="file" accept=".xlsx,.csv" data-act="imp-file"></span>
+    <span class="field full"><label for="imp-url">Or a Google Sheet link <span class="hint">one link per tab, one per line. Best: in Google Sheets choose File, Share, Publish to web, pick only the product tab, choose CSV, and paste that link</span></label><textarea id="imp-url" rows="2" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv">${esc(m.url != null ? m.url : saved)}</textarea></span>
+    <span class="field full"><label for="imp-tabs">Tab names <span class="hint">used when the link is a whole workbook (no #gid number): these tabs are read from it, separated by commas</span></label><input id="imp-tabs" value="${esc(m.tabs != null ? m.tabs : ((DATA.settings || {}).importTabs || IMP_TABS))}"></span>
+    <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="imp-fetch" ${m.busy ? 'disabled' : ''}>${m.busy ? 'Reading…' : 'Read the sheet'}</button></span>
+    ${m.err ? `<span class="err full" role="alert">${esc(m.err)}</span>` : ''}${m.done ? `<span class="status full" role="status">${esc(m.done)}</span>` : ''}</div>`;
+  if (!p) return intro;
+  const rowOf = (i) => { const q = Object.values(i.skuQty)[0]; return `<tr><td class="num">${esc(i.sku)}</td><td>${esc(i.name)}</td><td>${i.cat === 'candles' ? 'Candles' : i.cat === 'gifts' ? 'Gift boxes' : 'Jesmonite'}</td><td class="num">${i.price ? inr(i.price) : '–'}</td><td class="num">${q != null ? q : '–'}</td><td>${i.isNew ? 'New' : i.changed ? 'Changed' : 'No change'}</td><td>${i.live ? 'On the site' : 'Draft' + (i.hiddenBecause ? ' (' + esc(i.hiddenBecause) + ')' : '')}</td><td>${i.image ? 'Link' : ''}</td></tr>`; };
+  return intro + `<div class="form adm-card"><h3 class="full">What would happen</h3>
+    <p class="full"><strong>${c.added}</strong> new, <strong>${c.changed}</strong> changed, <strong>${c.same}</strong> with no change. <strong>${c.live}</strong> would be on the site and <strong>${c.hidden}</strong> saved as drafts.${p.tabs.length ? ' Tabs read: ' + esc(p.tabs.join(', ')) + '.' : ''} Products already in the shop but not in the sheet are left alone.</p>
+    ${p.problems.length ? `<div class="status full" role="note"><strong>Fix these in the sheet, then read it again. These rows are skipped:</strong><ul>${p.problems.map((x) => `<li>${esc(x.where)}: ${esc(x.msg)}</li>`).join('')}</ul></div>` : ''}
+    ${p.items.length ? `<div class="table-wrap full"><table><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Change</th><th>On the site</th><th>Photo</th></tr></thead><tbody>${p.items.map(rowOf).join('')}</tbody></table></div>` : ''}
+    ${p.notes.length ? `<ul class="muted full">${p.notes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    <label class="chk full" style="display:flex;align-items:center;gap:10px;min-height:44px"><input type="checkbox" id="imp-stock"> Also set the stock counts of products already in the shop <span class="hint">Off is safer: orders have been lowering those counts. New products always start with the sheet’s stock.</span></label>
+    <span class="full"><button class="btn" type="button" data-act="imp-copy" ${todo.length ? '' : 'disabled'}>Copy to database</button></span></div>`;
+}
+function impSet(sheets, url) { UI.adm.imp = { plan: BTImport.plan(sheets, prodRows(), S.stock), url }; render(); }
+async function impLoadFile(file) {
+  const A = UI.adm; A.imp = { busy: true }; render();
+  try { impSet(/\.csv$/i.test(file.name) ? [{ name: file.name, rows: BTImport.parseCsv(await file.text()) }] : await BTImport.readXlsx(await file.arrayBuffer())); }
+  catch (e) { A.imp = { err: 'Couldn’t read that file: ' + e.message }; render(); }
+}
+async function impFetch() {
+  const A = UI.adm; const raw = (($('#imp-url') || {}).value || '').trim(); const links = raw.split(/\s+/).filter(Boolean);
+  if (!links.length) { A.imp = { err: 'Paste a Google Sheet link first.', url: raw }; render(); return; }
+  const bad = links.find((l) => !BTImport.googleCsvUrl(l)); if (bad) { A.imp = { err: 'That is not a Google Sheet link: ' + bad, url: raw }; render(); return; }
+  const tabsRaw = (($('#imp-tabs') || {}).value || '').trim() || IMP_TABS; const tabs = tabsRaw.split(',').map((x) => x.trim()).filter(Boolean);
+  A.imp = { busy: true, url: raw, tabs: tabsRaw }; render();
+  try {
+    const sheets = []; const get = async (url, name, what) => {
+      const r = await fetch(url, { credentials: 'omit' }); if (!r.ok) throw new Error('Google answered ' + r.status + ' for ' + what + '. Check that the sheet is shared with anyone who has the link, or the tab is published to the web.');
+      const txt = await r.text(); if (/^\s*<(!doctype|html)/i.test(txt)) throw new Error(what + ' is not public. Share the sheet with anyone who has the link, or publish that tab to the web as CSV.');
+      sheets.push({ name, rows: BTImport.parseCsv(txt) });
+    };
+    for (let i = 0; i < links.length; i++) {
+      if (BTImport.isWorkbookLink(links[i])) { for (const t of tabs) await get(BTImport.googleCsvUrl(links[i], t), t, 'the tab ' + t); }
+      else await get(BTImport.googleCsvUrl(links[i]), 'Link ' + (i + 1), 'link ' + (i + 1));
+    }
+    const keep = async (key, val) => { if (val !== ((DATA.settings || {})[key] || '')) { try { await dbPut('settings', { key, value: val }); } catch (e) { /* only remembered for next time */ } } };
+    await keep('importSheetUrl', raw); await keep('importTabs', tabsRaw);
+    impSet(sheets, raw);
+  } catch (e) { A.imp = { err: 'Couldn’t read the sheet: ' + e.message, url: raw }; render(); }
+}
+async function impCopy() {
+  const A = UI.adm; const p = A.imp && A.imp.plan; const todo = p ? p.items.filter((i) => i.isNew || i.changed) : []; if (!todo.length) return;
+  const allStock = !!($('#imp-stock') || {}).checked;
+  if (!confirm('Copy ' + todo.length + ' product' + (todo.length === 1 ? '' : 's') + ' to the database?')) return;
+  const fresh = new Set(); p.items.forEach((i) => (i.data.variants || []).forEach((v) => { if (S.stock[v.sku] == null) fresh.add(v.sku); }));
+  await admDo(async () => {
+    await dbPut('products', todo.map((i) => { const d = Object.assign({}, i.data); if (d.cat === 'gifts' && !d.img) d.img = IMG.box; return { id: i.id, data: d, sort: i.sort, live: i.live }; }));
+    const st = []; p.items.forEach((i) => (i.data.variants || []).forEach((v) => { const q = i.skuQty[v.sku]; if (fresh.has(v.sku)) st.push({ sku: v.sku, qty: q || 0 }); else if (allStock && q != null) st.push({ sku: v.sku, qty: q }); }));
+    if (st.length) await dbPut('stock', st);
+    const photos = p.items.filter((i) => i.image && !DATA.media.some((m) => m.product_id === i.id && m.path === i.image))
+      .map((i) => ({ id: uuid(), product_id: i.id, kind: 'photo', role: 'packshot', path: i.image, alt: i.name, sort: 0, published: true }));
+    if (photos.length) await dbPut('media', photos);
+    A.imp = { done: 'Copied ' + todo.length + ' product' + (todo.length === 1 ? '' : 's') + ' to the database' + (photos.length ? ' and ' + photos.length + ' photo link' + (photos.length === 1 ? '' : 's') : '') + '. Check them under Products; drafts stay hidden until they have a price and Yes.' };
+    render();
+  }, 'Copied to the database.');
 }
 function admProductForm(r) {
   const d = (r && r.data) || { cat: 'candles', variants: [], care: [], mood: [], space: [], occ: [], gift: true, art: 'jar', c: '#DCC9AE' }; const pz = d.pyramid || {}; const b = d.batch || {};
@@ -3226,7 +3331,7 @@ function spark(vals) {
   return `<svg class="spark" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false"><polygon points="0,${H} ${line} ${W},${H}" class="spark-fill"/><polyline points="${line}" class="spark-line"/></svg>`;
 }
 // a ring for shares of a whole, with the numbers beside it
-const DONUT = ['#8B1A3A', '#D6A34A', '#B8500F', '#5E6B3A', '#3A0610', '#9A8A6A'];
+const DONUT = ['#8B1A3A', '#D6A34A', '#B8500F', '#5E6B3A', '#150206', '#9A8A6A'];
 function donut(rows, fmt, centre, ctr) {
   const tot = rows.reduce((a, r) => a + r[1], 0); if (!tot) return '';
   let off = 0; const R = 46, C = 2 * Math.PI * R;
@@ -3355,6 +3460,7 @@ const HL_ICON = {
   shield: '<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
   card: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/>',
   ruler: '<path d="M3 16L16 3l5 5L8 21z"/><path d="M7 12l2 2M10 9l2 2M13 6l2 2"/>',
+  bank: '<path d="M3 10l9-6 9 6z"/><path d="M5.5 10v8M10 10v8M14 10v8M18.5 10v8"/><path d="M3 20h18"/>',
   wallet: '<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H18v3"/><path d="M3 7.5V18a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H5.5A2.5 2.5 0 0 1 3 7.5z"/><path d="M16 14h4v3h-4a1.5 1.5 0 0 1 0-3z"/>',
   tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.4"/>',
   star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8z"/>',
@@ -3712,7 +3818,7 @@ function payBadges() {
     Visa: svg(48, '<text x="0" y="19" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-style="italic" font-size="20" letter-spacing="-.5" fill="#1A1F71">VISA</text>'),
     Mastercard: svg(40, '<circle cx="14" cy="12" r="10" fill="#EB001B"/><circle cx="26" cy="12" r="10" fill="#F79E1B"/><path d="M20 4.2a10 10 0 0 1 0 15.6 10 10 0 0 1 0-15.6z" fill="#FF5F00"/>'),
     RuPay: svg(60, '<text x="0" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#1B3F8B">Ru</text><text x="21" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#F58220">Pay</text><polygon points="55,6 60,12 55,18" fill="#097939"/>'),
-    'Net banking': hl('card', 16) + '<span>Net banking</span>', Wallets: hl('wallet', 16) + '<span>Wallets</span>' };
+    'Net banking': hl('bank', 16) + '<span class="sr">Net banking</span>', Wallets: hl('wallet', 16) + '<span class="sr">Wallets</span>' };
   return `<ul class="pay-badges" aria-label="Payment methods we accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
 }
 
@@ -3969,7 +4075,7 @@ function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >
 const SKINS = {
   signature: { name: 'Signature · Approved palette', use: 'The approved palette: ivory, sand, caramel, terracotta, olive and chocolate.', eyebrow: 'Collection 01 · Everyday Rituals', dark: true, wall: ['#C45A3A', '#8F4C33', '#7A3F2A'], floor: ['#4A3125', '#4B2E1E', '#33211A'], arch: ['#8F4C33', '#C45A3A', '#B36C49', '#C9A227'], plinth: '#FFF8ED', duskWall: '#2A1B14', duskFloor: '#1F140F', night: '#120B08', light: '255,236,210', type: '#FFF8ED', ink2: '#F3E6D6', fx: null },
   monsoon: { name: 'Monsoon · Peacock & Moss', use: 'For June to September: a deep peacock room, moss light and soft rain, made for earthy scents like Monsoon Letters.', eyebrow: 'The monsoon edit', dark: true, wall: ['#0F4C4A', '#0D4341', '#0B3A38'], floor: ['#082B29', '#072624', '#06201F'], arch: ['#0C3F3D', '#11504D', '#16605C', '#1B706B'], plinth: '#DDE9E4', duskWall: '#06201F', duskFloor: '#041716', night: '#020C0B', light: '214,236,190', type: '#C9E265', ink2: '#CFE7DE', fx: 'rain' },
-  silk: { name: 'Silk · Maroon & Gold', use: 'The maroon and gold look from the new logo: deep wine header, hero and footer, silk shine, cream shop pages with dark text. Every text pair passes 4.5:1.', eyebrow: 'Made with thought. Given with feeling.', dark: true, wall: ['#5A0C24', '#4A0A1E', '#3A0610'], floor: ['#2A0409', '#210309', '#1A0207'], arch: ['#4A0A1E', '#5E0F28', '#7A1634', '#8F1834'], plinth: '#F8F0E4', duskWall: '#210309', duskFloor: '#18020A', night: '#0E0105', light: '243,215,155', type: '#D6A34A', ink2: '#F3D79B', fx: null },
+  silk: { name: 'Silk · Maroon & Gold', use: 'The maroon and gold look from the new logo: deep wine header, hero and footer, silk shine, cream shop pages with dark text. Every text pair passes 4.5:1.', eyebrow: 'Made with thought. Given with feeling.', dark: true, wall: ['#250310', '#1C0309', '#150206'], floor: ['#0A0103', '#080102', '#060102'], arch: ['#1C0309', '#2E0412', '#340614', '#8F1834'], plinth: '#F8F0E4', duskWall: '#080102', duskFloor: '#060102', night: '#0E0105', light: '243,215,155', type: '#D6A34A', ink2: '#F3D79B', fx: null },
   evening: { name: 'Evening · Indigo & Brass', use: 'For night-time browsing and dark-mode phones: an indigo room, brass light and the candle already burning.', eyebrow: 'After dark', dark: true, lit: true, wall: ['#1B1F45', '#181B3D', '#141735'], floor: ['#0F1129', '#0D0F24', '#0B0C1F'], arch: ['#14173A', '#1C2050', '#242962', '#2C3274'], plinth: '#2E3260', duskWall: '#0B0C1F', duskFloor: '#07081A', night: '#05060F', light: '226,180,92', type: '#E2B45C', ink2: '#C2C0D6', fx: 'evening' }
 };
 const LEAF = new Image();
@@ -4319,6 +4425,8 @@ document.addEventListener('click', (e) => {
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
     case 'adm-tab': UI.adm.draft = null; UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'imp-fetch': impFetch(); break;
+    case 'imp-copy': impCopy(); break;
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
@@ -4449,6 +4557,7 @@ function readNs(skip) {
 }
 document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
+  if (d.act === 'imp-file' && t.files && t.files[0]) { impLoadFile(t.files[0]); t.value = ''; return; }
   if (HOLD.has(d.act) && route() === 'admin' && !d.flush) { holdChange(t); return; }
   if (t.id === 'co-state' || t.id === 'pf-a-state') t.dataset.auto = '';
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
