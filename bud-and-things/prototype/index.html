@@ -587,8 +587,6 @@ input[type="file"] { padding: 10px 12px; }
   .card .row .btn.small { flex: 1 1 auto; }
   .band .opts { display: grid; grid-template-columns: 1fr; gap: 10px; }
   .band .opts button { width: 100%; justify-content: flex-start; }
-  .site-foot .pay-badges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .site-foot .pay-badges li { min-width: 0; height: 36px; }
   .foot-base { font-size: 13px; }
 }
 /* Coming soon: one quiet page for visitors until launch */
@@ -900,6 +898,12 @@ body.app .why-band { padding-bottom: 96px; }
 .pay-badges i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
 .pay-badges svg { width: 14px; height: 14px; }
 .pay-badges svg.pay-logo { width: auto; height: 14px; }
+/* footer: small tiles, always one line */
+.site-foot .pay-badges { flex-wrap: nowrap; gap: 6px; }
+.site-foot .pay-badges li { min-width: 0; height: 24px; padding: 0 6px; gap: 4px; white-space: nowrap; border-radius: 3px; }
+.site-foot .pay-badges svg { width: 11px; height: 11px; }
+.site-foot .pay-badges svg.pay-logo { width: auto; height: 11px; }
+@media (max-width: 380px) { .site-foot .pay-badges { gap: 4px; } .site-foot .pay-badges li { padding: 0 4px; } .site-foot .pay-badges svg.pay-logo { height: 10px; } }
 /* footer */
 .site-foot { position: relative; overflow: hidden; }
 .site-foot a { text-decoration: none; }
@@ -3390,6 +3394,7 @@ const HL_ICON = {
   shield: '<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
   card: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/>',
   ruler: '<path d="M3 16L16 3l5 5L8 21z"/><path d="M7 12l2 2M10 9l2 2M13 6l2 2"/>',
+  bank: '<path d="M3 10l9-6 9 6z"/><path d="M5.5 10v8M10 10v8M14 10v8M18.5 10v8"/><path d="M3 20h18"/>',
   wallet: '<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H18v3"/><path d="M3 7.5V18a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H5.5A2.5 2.5 0 0 1 3 7.5z"/><path d="M16 14h4v3h-4a1.5 1.5 0 0 1 0-3z"/>',
   tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.4"/>',
   star: '<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8z"/>',
@@ -3747,7 +3752,7 @@ function payBadges() {
     Visa: svg(48, '<text x="0" y="19" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-style="italic" font-size="20" letter-spacing="-.5" fill="#1A1F71">VISA</text>'),
     Mastercard: svg(40, '<circle cx="14" cy="12" r="10" fill="#EB001B"/><circle cx="26" cy="12" r="10" fill="#F79E1B"/><path d="M20 4.2a10 10 0 0 1 0 15.6 10 10 0 0 1 0-15.6z" fill="#FF5F00"/>'),
     RuPay: svg(60, '<text x="0" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#1B3F8B">Ru</text><text x="21" y="18" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-style="italic" font-size="17" fill="#F58220">Pay</text><polygon points="55,6 60,12 55,18" fill="#097939"/>'),
-    'Net banking': hl('card', 16) + '<span>Net banking</span>', Wallets: hl('wallet', 16) + '<span>Wallets</span>' };
+    'Net banking': hl('bank', 16) + '<span class="sr">Net banking</span>', Wallets: hl('wallet', 16) + '<span class="sr">Wallets</span>' };
   return `<ul class="pay-badges" aria-label="Payment methods we accept">${PAY_ICONS.map((k) => `<li title="${k}" aria-label="${k}">${b[k]}</li>`).join('')}</ul>`;
 }
 
