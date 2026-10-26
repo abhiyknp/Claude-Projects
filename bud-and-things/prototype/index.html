@@ -2522,6 +2522,7 @@ function admProducts() {
     <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span></td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Published', 'Draft')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
 }
 // ---------- import products from a sheet (Excel file, Google Sheet link or .csv; the reading rules are in import.js) ----------
+const IMP_TABS = 'Glass Candles, Moulded Candles, Tealight Candles, Jesmonite Tray, DIY Items';
 function admImport() {
   const A = UI.adm; const m = A.imp || {}; const p = m.plan; const saved = (DATA.settings || {}).importSheetUrl || '';
   const todo = p ? p.items.filter((i) => i.isNew || i.changed) : []; const c = p && p.counts;
@@ -2529,6 +2530,7 @@ function admImport() {
     <p class="muted full">Reads only the product tabs: the ones with the headings <em>Product ID / SKU</em>, <em>Product Name</em> and <em>Product Type</em>. Costs, recipes and orders are never read. Add three columns to those tabs: <strong>Selling price (₹)</strong>, <strong>Stock</strong> and <strong>Show on website</strong> (Yes or No). Optional: <strong>Short description</strong> and <strong>Primary image link</strong> (starts with https://). A product with no price, or without Yes, is saved as a draft. IDs look like BNT-PRD-CG-001. Nothing changes until you press <em>Copy to database</em>, and History can put a product back.</p>
     <span class="field"><label for="imp-file">An Excel (.xlsx) or .csv file</label><input id="imp-file" type="file" accept=".xlsx,.csv" data-act="imp-file"></span>
     <span class="field full"><label for="imp-url">Or a Google Sheet link <span class="hint">one link per tab, one per line. Best: in Google Sheets choose File, Share, Publish to web, pick only the product tab, choose CSV, and paste that link</span></label><textarea id="imp-url" rows="2" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv">${esc(m.url != null ? m.url : saved)}</textarea></span>
+    <span class="field full"><label for="imp-tabs">Tab names <span class="hint">used when the link is a whole workbook (no #gid number): these tabs are read from it, separated by commas</span></label><input id="imp-tabs" value="${esc(m.tabs != null ? m.tabs : ((DATA.settings || {}).importTabs || IMP_TABS))}"></span>
     <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="imp-fetch" ${m.busy ? 'disabled' : ''}>${m.busy ? 'Reading…' : 'Read the sheet'}</button></span>
     ${m.err ? `<span class="err full" role="alert">${esc(m.err)}</span>` : ''}${m.done ? `<span class="status full" role="status">${esc(m.done)}</span>` : ''}</div>`;
   if (!p) return intro;
@@ -2551,15 +2553,20 @@ async function impFetch() {
   const A = UI.adm; const raw = (($('#imp-url') || {}).value || '').trim(); const links = raw.split(/\s+/).filter(Boolean);
   if (!links.length) { A.imp = { err: 'Paste a Google Sheet link first.', url: raw }; render(); return; }
   const bad = links.find((l) => !BTImport.googleCsvUrl(l)); if (bad) { A.imp = { err: 'That is not a Google Sheet link: ' + bad, url: raw }; render(); return; }
-  A.imp = { busy: true, url: raw }; render();
+  const tabsRaw = (($('#imp-tabs') || {}).value || '').trim() || IMP_TABS; const tabs = tabsRaw.split(',').map((x) => x.trim()).filter(Boolean);
+  A.imp = { busy: true, url: raw, tabs: tabsRaw }; render();
   try {
-    const sheets = [];
+    const sheets = []; const get = async (url, name, what) => {
+      const r = await fetch(url, { credentials: 'omit' }); if (!r.ok) throw new Error('Google answered ' + r.status + ' for ' + what + '. Check that the sheet is shared with anyone who has the link, or the tab is published to the web.');
+      const txt = await r.text(); if (/^\s*<(!doctype|html)/i.test(txt)) throw new Error(what + ' is not public. Share the sheet with anyone who has the link, or publish that tab to the web as CSV.');
+      sheets.push({ name, rows: BTImport.parseCsv(txt) });
+    };
     for (let i = 0; i < links.length; i++) {
-      const r = await fetch(BTImport.googleCsvUrl(links[i]), { credentials: 'omit' }); if (!r.ok) throw new Error('Google answered ' + r.status + ' for link ' + (i + 1) + '. Check that the tab is published to the web.');
-      const txt = await r.text(); if (/^\s*<(!doctype|html)/i.test(txt)) throw new Error('link ' + (i + 1) + ' is not public. Publish that tab to the web as CSV.');
-      sheets.push({ name: 'Link ' + (i + 1), rows: BTImport.parseCsv(txt) });
+      if (BTImport.isWorkbookLink(links[i])) { for (const t of tabs) await get(BTImport.googleCsvUrl(links[i], t), t, 'the tab ' + t); }
+      else await get(BTImport.googleCsvUrl(links[i]), 'Link ' + (i + 1), 'link ' + (i + 1));
     }
-    if (raw !== ((DATA.settings || {}).importSheetUrl || '')) { try { await dbPut('settings', { key: 'importSheetUrl', value: raw }); } catch (e) { /* the link is only remembered for next time */ } }
+    const keep = async (key, val) => { if (val !== ((DATA.settings || {})[key] || '')) { try { await dbPut('settings', { key, value: val }); } catch (e) { /* only remembered for next time */ } } };
+    await keep('importSheetUrl', raw); await keep('importTabs', tabsRaw);
     impSet(sheets, raw);
   } catch (e) { A.imp = { err: 'Couldn’t read the sheet: ' + e.message, url: raw }; render(); }
 }

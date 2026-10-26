@@ -87,13 +87,16 @@
   }
 
   // a Google Sheet link: a "Publish to web" CSV link is used as it is; a normal share link becomes a CSV export link
-  function googleCsvUrl(link) {
+  // tab: a tab name, to read that tab of a whole-workbook link
+  function googleCsvUrl(link, tab) {
     link = String(link || '').trim(); if (!/^https:\/\/docs\.google\.com\/spreadsheets\//.test(link)) return '';
     if (/\/pub\?/.test(link) || /output=csv/.test(link)) return link.replace(/output=(html|xlsx|pdf)/, 'output=csv');
     const id = (/\/d\/([\w-]+)/.exec(link) || [])[1]; if (!id) return '';
     const gid = (/[#&?]gid=(\d+)/.exec(link) || [])[1];
-    return 'https://docs.google.com/spreadsheets/d/' + id + '/gviz/tq?tqx=out:csv&headers=0' + (gid ? '&gid=' + gid : '');
+    return 'https://docs.google.com/spreadsheets/d/' + id + '/gviz/tq?tqx=out:csv&headers=0' + (gid ? '&gid=' + gid : tab ? '&sheet=' + encodeURIComponent(tab) : '');
   }
+  // a whole-workbook link has no tab number (gid) and is not a "Publish to web" link, so it is read tab by tab by name
+  const isWorkbookLink = (link) => !!googleCsvUrl(link) && !/\/pub\?/.test(link) && !/output=csv/.test(link) && !/[#&?]gid=\d+/.test(link);
 
   // ---------- turning product tabs into shop products ----------
   const norm = (s) => String(s == null ? '' : s).toLowerCase().replace(/\s+/g, ' ').trim();
@@ -182,6 +185,6 @@
     return out;
   }
 
-  const api = { readXlsx, parseCsv, googleCsvUrl, plan, findHeader };
+  const api = { readXlsx, parseCsv, googleCsvUrl, isWorkbookLink, plan, findHeader };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.BTImport = api;
 })(typeof window !== 'undefined' ? window : globalThis);

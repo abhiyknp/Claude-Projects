@@ -14,6 +14,10 @@ const run = (rows, existing, stock) => imp.plan([{ name: 'Glass Candles', rows: 
   assert.strictEqual(imp.googleCsvUrl('https://docs.google.com/spreadsheets/d/e/2PACX-abc/pub?gid=0&single=true&output=html'), 'https://docs.google.com/spreadsheets/d/e/2PACX-abc/pub?gid=0&single=true&output=csv');
   assert.ok(/gviz\/tq\?tqx=out:csv&headers=0&gid=5$/.test(imp.googleCsvUrl('https://docs.google.com/spreadsheets/d/AbC_1-2/edit#gid=5')));
   assert.strictEqual(imp.googleCsvUrl('https://example.com/x'), '');
+  assert.ok(/&sheet=Glass%20Candles$/.test(imp.googleCsvUrl('https://docs.google.com/spreadsheets/d/AbC_1-2/edit?usp=sharing', 'Glass Candles')));
+  assert.ok(imp.isWorkbookLink('https://docs.google.com/spreadsheets/d/AbC_1-2/edit?usp=sharing'));
+  assert.ok(!imp.isWorkbookLink('https://docs.google.com/spreadsheets/d/AbC_1-2/edit#gid=5'));
+  assert.ok(!imp.isWorkbookLink('https://docs.google.com/spreadsheets/d/e/2PACX-abc/pub?gid=0&single=true&output=csv'));
 
   // a good row, a hidden row, rows with problems
   let p = run([',1,BNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown + White,200,https://res.cloudinary.com/x/a.jpg,799,12,Yes',
