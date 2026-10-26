@@ -585,6 +585,18 @@ body.cs main { padding-bottom: 0; }
 .soon p { max-width: 520px; margin: 0; }
 .soon form { width: 100%; max-width: 480px; display: flex; flex-wrap: wrap; gap: 10px; text-align: left; margin-top: 8px; }
 .soon .social { margin-top: 4px; }
+/* Silk: the Coming soon page is deep maroon velvet with gold, like the header and footer. Every text pair is at least 4.5:1. */
+:root[data-skin="silk"] .soon { background: var(--velvet), radial-gradient(ellipse at 85% 10%, #4a0b1c, #3A0610 55%, #210309); background-size: 1024px 768px, auto; color: #FBE9C2; animation: silk-drift2 70s linear infinite; }
+:root[data-skin="silk"] .soon h1 { color: #FBE9C2; }
+:root[data-skin="silk"] .soon h1 em, :root[data-skin="silk"] .soon .eyebrow { color: #D6A34A; }
+:root[data-skin="silk"] .soon p, :root[data-skin="silk"] .soon label, :root[data-skin="silk"] .soon .muted, :root[data-skin="silk"] .soon #news-msg { color: #FBE9C2; }
+:root[data-skin="silk"] .soon input { background: rgba(248,240,228,.96); color: #3A0610; border-color: #D6A34A; }
+:root[data-skin="silk"] .soon .btn { background: #D6A34A; color: #210309; border-color: #D6A34A; }
+:root[data-skin="silk"] .soon .btn:hover { background: #F3D79B; border-color: #F3D79B; }
+:root[data-skin="silk"] .soon .social a { color: #FBE9C2; }
+:root[data-skin="silk"] .soon .social a:hover { background: #D6A34A; border-color: #D6A34A; color: #210309; }
+:root[data-skin="silk"] .soon a:focus-visible, :root[data-skin="silk"] .soon .btn:focus-visible, :root[data-skin="silk"] .soon input:focus-visible { outline-color: #F3D79B; }
+@media (prefers-reduced-motion: reduce) { :root[data-skin="silk"] .soon { animation: none; } }
 /* Instagram, Pinterest, WhatsApp and email as round icon links */
 .social { display: flex; flex-wrap: wrap; gap: 12px; list-style: none; margin: 0; padding: 0; }
 .social a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; color: var(--choc); transition: background .2s, color .2s, border-color .2s; }
