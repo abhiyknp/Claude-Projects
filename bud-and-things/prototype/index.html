@@ -575,6 +575,22 @@ input[type="file"] { padding: 10px 12px; }
   .toolbar .tf select { width: 100%; min-height: 46px; font-size: 15px; padding: 0 36px 0 12px; text-overflow: ellipsis; }
 }
 @media (max-width: 560px) { .toolbar .filters { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); } .toolbar .tf select { font-size: 14px; padding: 0 32px 0 10px; background-position: right 12px center; } .toolbar { margin-bottom: 18px; } .toolbar .group:first-child .chip { flex: 1 1 auto; justify-content: center; } }
+/* phones, round 2: tidy cards, buttons and the payment row */
+:root[data-skin="silk"] .chip[aria-pressed="true"], :root[data-skin="silk"] .chip[aria-checked="true"], :root[data-skin="silk"] .chip[aria-current="page"] { background: var(--cta); border-color: var(--cta); color: var(--on-cta); }
+:root[data-skin="silk"] .card .btn.ghost { color: var(--cta); border-color: var(--cta); }
+:root[data-skin="silk"] .disc { background: #0F0204; }
+:root[data-skin="silk"] .disc-copy { background: linear-gradient(0deg, rgba(8,1,2,.96) 55%, rgba(8,1,2,0)); }
+@media (max-width: 560px) {
+  .card { display: flex; flex-direction: column; }
+  .card .row { margin-top: auto; padding-top: 8px; }
+  .card .row > span:last-child { margin-left: 0; width: 100%; align-items: center; }
+  .card .row .btn.small { flex: 1 1 auto; }
+  .band .opts { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .band .opts button { width: 100%; justify-content: flex-start; }
+  .site-foot .pay-badges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .site-foot .pay-badges li { min-width: 0; height: 36px; }
+  .foot-base { font-size: 13px; }
+}
 /* Coming soon: one quiet page for visitors until launch */
 body.cs .proto, body.cs .site-head, body.cs .site-foot, body.cs .tabbar, body.cs #overlay { display: none !important; }
 body.cs main { padding-bottom: 0; }
@@ -1000,7 +1016,7 @@ body.app .why-band { padding-bottom: 96px; }
 @media (pointer: coarse), (max-width: 820px) {
   .card .name, .note-card a, .finder-nav .linkbtn, .deliv-form .linkbtn, .adm-banner .linkbtn { display: inline-flex; align-items: center; min-height: 44px; }
   .deliv-form .linkbtn { min-width: 44px; justify-content: center; }
-  .section-head a, .section a[href^="#"]:not(.btn):not(.tile):not(.card) { min-height: 44px; display: inline-flex; align-items: center; }
+  .section-head a, .section a[href^="#"]:not(.btn):not(.tile):not(.card):not(.disc) { min-height: 44px; display: inline-flex; align-items: center; }
   .adm-banner .linkbtn { display: inline; min-height: 0; padding: 12px 4px; }
 }
 </style>
@@ -1970,6 +1986,13 @@ function card(p, i) {
     <span class="row"><span class="num" style="font-weight:600">${priceFrom(p)}</span><span style="display:flex;gap:4px"><button class="icon-btn" type="button" data-act="save" data-id="${p.id}" aria-pressed="${saved}" aria-label="${saved ? 'Remove ' + esc(p.name) + ' from saved' : 'Save ' + esc(p.name)}">${HEART(saved)}</button>${out ? '' : `<button class="btn ghost small" type="button" data-act="quick-add" data-id="${p.id}">Add</button>`}</span></span></div>`;
 }
 
+
+// a photo that fails to load (deleted file, bad link) falls back to the drawn product instead of a broken-image icon
+document.addEventListener('error', (e) => {
+  const im = e.target; if (!im || im.tagName !== 'IMG') return;
+  const t = im.closest('.card .tile'); if (!t) return;
+  im.remove(); if (!t.querySelector('img.fill')) t.classList.remove('has-ph');
+}, true);
 
 // ---------- views ----------
 const RETURNING = (() => { let r = false; try { r = !sessionStorage.getItem('bt-session') && !!S.walkDone; sessionStorage.setItem('bt-session', '1'); } catch (e) { /* ignore */ } return r; })();
