@@ -4598,6 +4598,27 @@ document.addEventListener('input', (e) => {
   if (e.target.id === 'tx-q') { UI.adm.q = e.target.value; clearTimeout(document.tq); document.tq = setTimeout(() => { render(); const el = $('#tx-q'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
   if (e.target.id === 'search-q') { UI.searchQ = e.target.value; const q = UI.searchQ.trim().toLowerCase(); const res = q ? P.filter((p) => (p.name + ' ' + p.type + ' ' + (p.notes || []).join(' ') + ' ' + p.line).toLowerCase().includes(q)) : []; $('#search-res').innerHTML = searchResults(q, res); clearTimeout(document.st); document.st = setTimeout(() => { if (q) track(res.length ? 'search' : 'search_no_results', { q }); }, 900); }
 });
+// Owner view forms: the Save / Add button goes off while the save is under way, so one click can't send it twice, and stays
+// off once saved until something in the form changes. Runs ahead of the form's own handler.
+const NET = { n: 0 };
+{ const raw = window.fetch; window.fetch = function () { NET.n++; const p = raw.apply(this, arguments); const done = () => { NET.n--; }; p.then(done, done); return p; }; }
+const OWNER_SAVE = (k) => /^adm-/.test(k) && !/^adm-(rf|cf)$/.test(k); // the two filter forms only narrow a list
+const saveBtns = (f) => [...f.querySelectorAll('button:not([type="button"])')];
+const holdSave = (f, off) => { saveBtns(f).forEach((b) => { b.disabled = off; }); if (off) f.dataset.saved = '1'; else f.removeAttribute('data-saved'); };
+document.addEventListener('submit', (e) => {
+  const f = e.target; const kind = f.dataset && f.dataset.form; if (!kind || !OWNER_SAVE(kind)) return;
+  if (f.dataset.busy) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+  f.dataset.busy = '1'; saveBtns(f).forEach((b) => { b.disabled = true; });
+  const id = f.dataset.id; let idle = 0; const t0 = Date.now();
+  const iv = setInterval(() => {
+    idle = NET.n ? 0 : idle + 1; if (idle < 2 && Date.now() - t0 < 60000) return;
+    clearInterval(iv); f.removeAttribute('data-busy');
+    const live = document.contains(f) ? f : document.querySelector('form[data-form="' + kind + '"]' + (id ? '[data-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]' : ''));
+    if (live) holdSave(live, true);
+  }, 150);
+}, true);
+const reopenSave = (e) => { const f = e.target.closest && e.target.closest('form[data-saved]'); if (f) holdSave(f, false); };
+document.addEventListener('input', reopenSave, true); document.addEventListener('change', reopenSave, true);
 document.addEventListener('submit', (e) => {
   const f = e.target; const kind = f.dataset.form; if (!kind) return; e.preventDefault();
   const co = UI.co;
