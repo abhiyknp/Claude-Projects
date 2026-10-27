@@ -183,6 +183,13 @@ http.createServer((req, res) => {
       m = /^\/rest\/v1\/rpc\/(\w+)$/.exec(u.pathname);
       if (m && m[1] === 'place_order') { try { return send(res, 200, JSON.stringify(placeOrder(json().o, custOf(auth))), 'application/json'); } catch (e) { return fail(res, 400, e.message); } }
       if (m && m[1] === 'my_orders') { const em = custOf(auth); if (!em) return fail(res, 400, 'sign_in'); return send(res, 200, { points: pointsOf(em), orders: T.orders.filter((x) => x.data.email === em).slice().reverse().slice(0, 50).map((x) => Object.assign({}, x.data, { status: x.status })) }); }
+      // "Download my data", as export_my_data in schema.sql: this customer's own records only
+      if (m && m[1] === 'export_my_data') {
+        const em = custOf(auth); if (!em) return fail(res, 400, 'sign_in');
+        const p = T.profiles.find((x) => x.email === em);
+        return send(res, 200, { email: em, exported_at: new Date().toISOString(), profile: p ? { name: p.name, phone: p.phone, addresses: p.addresses, prefs: p.prefs } : null,
+          orders: T.orders.filter((x) => x.data.email === em).map((x) => Object.assign({}, x.data, { status: x.status })), bud_points_adjustments: [], reviews: [], sign_ups: [], restock_requests: [], gift_reminders: [] });
+      }
       // profiles, as my_profile / save_profile / forget_me in schema.sql
       if (m && ['my_profile', 'save_profile', 'forget_me'].includes(m[1])) {
         const em = custOf(auth); if (!em) return fail(res, 400, 'sign_in');
