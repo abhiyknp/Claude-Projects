@@ -93,6 +93,7 @@ figure.gal img { aspect-ratio: auto; height: min(620px, 80vw); object-fit: cover
 .options button svg { color: var(--terra-ink); }
 .options button[aria-checked="true"] svg { color: inherit; }
 @media (max-width: 760px) { .mark.lockup { width: min(300px, 78vw); } }
+main#app:empty { min-height: 100vh; }
 body { background: var(--ivory); color: var(--choc); font-family: var(--body); font-size: 16px; line-height: 1.55; }
 h1, h2, h3 { font-family: var(--display); font-weight: 500; line-height: 1.08; margin: 0; text-wrap: balance; }
 p { margin: 0; }
@@ -1080,7 +1081,7 @@ body.app .why-band { padding-bottom: 96px; }
 <div class="sr" aria-live="polite" id="live"></div>
 
 <script src="config.js"></script>
-<script src="vendor/qrcode/qrcode.js"></script>
+<script src="vendor/qrcode/qrcode.js" defer></script>
 <script src="db.js?v=9"></script>
 <script src="import.js"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
@@ -3489,7 +3490,7 @@ const pts = (n) => Math.floor(n * (+SET.rewardPct || 0) / 100);
 function offersBar() {
   const items = Tx('bar.offers').split('|').map((x) => x.trim()).filter((x) => x && !/\{\w+\}|(^|\D)0%|₹0\b/.test(x) && !(/Bud Points/.test(x) && !+SET.rewardPct) && !(/code|HELLO/i.test(x) && !SET.welcomeCode));
   if (!items.length) return '';
-  return `<div class="gh-strip offers" role="region" aria-label="Offers"><span class="sr">${esc(items.join('. '))}</span><div class="gh-marq" aria-hidden="true">${items.concat(items).map((x) => `<span>${hl('tag', 14)} ${esc(x).toUpperCase()}</span>`).join('')}</div></div>`;
+  return `<div class="gh-strip offers" role="region" aria-label="Offer highlights"><span class="sr">${esc(items.join('. '))}</span><div class="gh-marq" aria-hidden="true">${items.concat(items).map((x) => `<span>${hl('tag', 14)} ${esc(x).toUpperCase()}</span>`).join('')}</div></div>`;
 }
 
 // "Why people buy from us": a band above the footer on every page
@@ -3658,7 +3659,7 @@ function legalBody(k, raw) { return (raw != null ? fill(raw) : Tx(k)).split(/\n\
 function viewLegal(r) {
   const LG = legalMap(); const [title, k, raw] = LG[r];
   return `<div class="wrap legal" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Policies</span><h1 tabindex="-1">${esc(title)}</h1>${Tx('legal.note') ? `<div class="status" role="note">${T('legal.note')}</div>` : ''}</div>
-    <div class="legal-grid"><nav class="legal-nav" aria-label="Policies">${Object.entries(LG).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
+    <div class="legal-grid"><nav class="legal-nav" aria-label="Policy pages">${Object.entries(LG).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
     <div class="article-body">${legalBody(k, raw)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p><p>${T('legal.grievance')}</p></div></div></div>`;
 }
 // a signed-in customer's orders and Bud Points: from the database (my_orders), or this browser's orders in the preview
@@ -3751,7 +3752,7 @@ function signInBox(next) {
 }
 function viewAccount() {
   const a = S.account;
-  if (!a) return `<div class="wrap" style="padding-block:var(--s6) var(--section)">${signInBox(UI.acct.next || '')}</div>`;
+  if (!a) return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Sign in</h1>${signInBox(UI.acct.next || '')}</div>`;
   loadMine(); const list = myOrders(); const pm = ptsMine();
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Your account</span><h1 tabindex="-1">Hello${a.name ? ', ' + esc(a.name.split(' ')[0]) : ''}.</h1><p class="muted">Signed in as ${esc(a.email)}. <button class="linkbtn" type="button" data-act="acct-out">Sign out</button></p></div>
     <div class="acct-grid">${+SET.rewardPct ? `<div class="acct-card points"><span class="eyebrow">Bud Points</span><strong class="num">${pm.available}</strong><span>Worth ${inr(pm.available)} off your next order.${pm.pending ? ` ${pm.pending} more arrive once your open orders are delivered.` : ''} You earn ${esc(SET.rewardPct)}% back on every order.</span></div>` : ''}
