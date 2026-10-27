@@ -158,7 +158,7 @@ Testing without accounts: `tools/mock-supabase.js` stands in for both functions.
 
 ## Customer profiles (October 2026)
 
-Run `schema.sql` again. Signed-in customers get **Your details** on their account page: name, mobile, up to 5 saved addresses (one is the usual) and how they want to be reached. Checkout starts from these (name, mobile, and the usual address unless the order is a gift), and every order adds its address to the profile. "Clear my saved details" empties the profile and keeps past orders. A customer can only read and change their own profile (`my_profile`, `save_profile`, `forget_me`); Ashi can read all of them in the `profiles` table.
+Run `schema.sql` again. Signed-in customers get **Your details** on their account page: name, mobile, up to 5 saved addresses (one is the usual) and how they want to be reached. Checkout starts from these (name, mobile, and the usual address unless the order is a gift), and every order adds its address to the profile. "Clear my saved details" empties the profile and keeps past orders. "Download my data" gives the customer one JSON file with their profile, all their orders, Bud Points adjustments, reviews, sign-ups, restock requests and gift reminders (`export_my_data`, at most 5 a hour). Ashi's private notes and tags about a customer are not in it. A customer can only read and change their own profile (`my_profile`, `save_profile`, `forget_me`); Ashi can read all of them in the `profiles` table.
 
 ## Messages to customers (October 2026)
 
@@ -167,11 +167,13 @@ The database queues a message when something happens (the `notifications` table,
 | Happening | Customer | Ashi |
 |---|---|---|
 | First sign-in (welcome) | email | |
-| Order placed and paid, or cash on delivery | email, WhatsApp/SMS if chosen | email: new order |
+| Order placed and paid, or cash on delivery | email, WhatsApp/SMS if chosen | email: new orderemail: new order; WhatsApp too if `ownerWhatsappOn` is on |
 | Shipped, Delivered, Cancelled | email, WhatsApp/SMS if chosen | |
 | Payment arrived after the order was released | email: refund coming | email: refund needed |
 | A piece they asked about is back in stock | email or WhatsApp/SMS (whichever they left) | |
 | Gift date coming up (`reminderDays`, 7 by default) | email or WhatsApp/SMS | |
+
+To get new-order alerts on WhatsApp too, set the shop WhatsApp number and switch on "Also tell me about every new order" in Settings (`ownerWhatsappOn`). It sends only once the WhatsApp provider is set up (`WHATSAPP_URL`, below). WhatsApp usually only lets a business start a conversation with a template the provider has had approved, so ask the provider about one for new-order alerts. Until then, the email alert is the one that works.
 
 Sign-in codes stay with Supabase's own email. Email always works. WhatsApp, SMS and phone notifications only go to customers who ticked them (account page, or the WhatsApp tick at checkout), and only once Ashi switches the channel on in Owner view → Settings (`whatsappOn`, `smsOn`, `pushOn`). New orders go to `orderAlerts` (the contact email when empty).
 
