@@ -74,9 +74,9 @@ const attachment = (inv: any) => ({ filename: String(inv.id).replace(/[^A-Za-z0-
 // the page: ivory paper, chocolate text, terracotta button (the brand palette), plain enough for any inbox
 function html(m: Msg, site: string, tail: string) {
   const body = m.lines.filter(Boolean).map((l, i) => `<p style="margin:0 0 14px;font-size:${i ? 15 : 17}px;line-height:1.6">${esc(l)}</p>`).join('');
-  const btn = m.button ? `<p style="margin:24px 0"><a href="${esc(m.button[1])}" style="background:#A55B3F;color:#F8F0E4;text-decoration:none;padding:12px 22px;display:inline-block;font-size:14px;letter-spacing:.04em">${esc(m.button[0])}</a></p>` : '';
+  const btn = m.button ? `<p style="margin:24px 0"><a href="${esc(m.button[1])}" style="background:#8B1A3A;color:#F8F0E4;text-decoration:none;padding:12px 22px;display:inline-block;font-size:14px;letter-spacing:.04em">${esc(m.button[0])}</a></p>` : '';
   return `<div style="background:#F8F0E4;padding:28px 12px"><div style="max-width:520px;margin:0 auto;background:#fff;padding:32px 28px;font-family:Georgia,'Times New Roman',serif;color:#3D281E">
-<p style="margin:0 0 22px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#6B705C">BUD &amp; THINGS</p>${body}${m.extra ? `<div style="margin:20px 0 0;border-top:1px solid #e6dccb;padding-top:16px">${m.extra}</div>` : ''}${btn}
+<p style="margin:0 0 22px">${site ? `<img src="${esc(site.replace(/\/$/, ''))}/assets/logo-wordmark.png" alt="BUD &amp; THINGS" width="170" style="display:block;width:170px;height:auto;border:0">` : `<span style="font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8B1A3A">BUD &amp; THINGS</span>`}</p>${body}${m.extra ? `<div style="margin:20px 0 0;border-top:1px solid #e6dccb;padding-top:16px">${m.extra}</div>` : ''}${btn}
 <p style="margin:28px 0 0;font-size:12px;color:#6B705C;line-height:1.5">${esc(tail)}${site ? ` <a href="${esc(site)}" style="color:#6B705C">${esc(site.replace(/^https?:\/\//, ''))}</a>` : ''}</p></div></div>`;
 }
 
