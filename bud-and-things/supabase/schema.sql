@@ -840,10 +840,28 @@ begin
   update profiles set name = '', phone = '', addresses = '[]', prefs = '{}', updated_at = now() where email = em;
 end $$;
 
+-- "Download my data": everything the shop holds under the signed-in customer's email, as one JSON file. The owner's private
+-- notes and tags about a customer (customer_meta) and the messages queue are not included.
+create or replace function export_my_data() returns jsonb language plpgsql security definer set search_path = public as $$
+declare em text := customer_email();
+begin
+  if em is null then raise exception 'sign_in'; end if;
+  perform hit('export', em, 5, '1 hour');
+  return jsonb_build_object(
+    'email', em, 'exported_at', now(),
+    'profile', (select to_jsonb(p) - 'email' from profiles p where p.email = em),
+    'orders', coalesce((select jsonb_agg(o.data || jsonb_build_object('status', o.status, 'placed_at', o.created_at) order by o.created_at) from orders o where o.data ->> 'email' = em), '[]'::jsonb),
+    'bud_points_adjustments', coalesce((select jsonb_agg(jsonb_build_object('points', l.delta, 'note', l.note, 'at', l.created_at) order by l.created_at) from points_log l where l.email = em), '[]'::jsonb),
+    'reviews', coalesce((select jsonb_agg(jsonb_build_object('product', r.product_id, 'name', r.name, 'rating', r.rating, 'body', r.body, 'published', r.published, 'at', r.created_at) order by r.created_at) from reviews r join review_authors a on a.review_id = r.id where a.email = em), '[]'::jsonb),
+    'sign_ups', coalesce((select jsonb_agg(jsonb_build_object('source', s.source, 'at', s.created_at) order by s.created_at) from subscribers s where lower(s.contact) = em), '[]'::jsonb),
+    'restock_requests', coalesce((select jsonb_agg(jsonb_build_object('sku', q.sku, 'at', q.created_at) order by q.created_at) from restock_requests q where lower(q.contact) = em), '[]'::jsonb),
+    'gift_reminders', coalesce((select jsonb_agg(jsonb_build_object('occasion', d.occasion, 'for', d.for_name, 'day', d.day) order by d.day) from reminders d where lower(d.contact) = em), '[]'::jsonb));
+end $$;
+
 -- ---------- messages to customers and the owner ----------
 -- The database queues a message when something happens; the notify function sends it (supabase/functions/notify).
 --   welcome      a customer's first sign-in (not for customers who ordered before profiles existed)
---   confirmed    an order is Placed: paid online, a gift card or points, or cash on delivery (and new_order to the owner)
+--   confirmed    an order is Placed: paid online, a gift card or points, or cash on delivery (and new_order to the owner, by email and, if ownerWhatsappOn is set, on WhatsApp)
 --   shipped, delivered, cancelled   as the order moves along; delayed when the owner marks it running late and ticks "tell the customer"; refund when a late payment has to go back
 --   restock      a piece someone asked about is back in stock
 --   reminder     a week before a saved gift date (reminderDays), from the daily run
@@ -888,6 +906,10 @@ begin
   if ev is null or em is null then return new; end if;
   perform tell(ev, em, new.phone, new.id || ':' || ev, new.id, '{}', optin);
   if ev = 'confirmed' then perform queue_note('new_order', 'email', shop_inbox(), new.id || ':new_order', new.id, '{}'); end if;
+  -- the owner can also be told on WhatsApp (Settings → ownerWhatsappOn), at the shop WhatsApp number; sent only once a provider is set up
+  if ev = 'confirmed' and cfg_on('ownerWhatsappOn', false) and norm_phone(cfg_text('whatsapp', '')) is not null then
+    perform queue_note('new_order', 'whatsapp', norm_phone(cfg_text('whatsapp', '')), new.id || ':new_order', new.id, '{}');
+  end if;
   return new;
 end $$;
 drop trigger if exists order_notes on orders;
@@ -1094,9 +1116,11 @@ revoke execute on function remember_details(text, text, text, jsonb) from public
 revoke execute on function my_profile() from public, anon;
 revoke execute on function save_profile(jsonb) from public, anon;
 revoke execute on function forget_me() from public, anon;
+revoke execute on function export_my_data() from public, anon;
 grant execute on function my_profile() to authenticated;
 grant execute on function save_profile(jsonb) to authenticated;
 grant execute on function forget_me() to authenticated;
+grant execute on function export_my_data() to authenticated;
 revoke execute on function shop_inbox() from public, anon, authenticated;
 revoke execute on function queue_note(text, text, text, text, text, jsonb) from public, anon, authenticated;
 revoke execute on function tell(text, text, text, text, text, jsonb, boolean) from public, anon, authenticated;
