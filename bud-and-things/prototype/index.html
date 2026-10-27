@@ -4279,7 +4279,7 @@ async function placeOrder(via) {
       if (/bad_card/.test(m)) co.gcard = null;
       co.payErr = /bad_card/.test(m) ? 'That gift card has no balance left, so we took it off. Please check the total and pay again.' : /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
         : /too_many/.test(m) ? 'We’ve had a lot of orders from this connection or number. Please message us on WhatsApp and we’ll place it for you.' : /bad_quantity/.test(m) ? 'That’s more than we can send in one order. Please lower the quantities, or message us for a bulk order.'
-        : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
+        : /bad_order:(upi_off|method)/.test(m) ? 'UPI QR payment isn’t available right now. Please choose Pay online, or message us on WhatsApp and we’ll help you pay.' : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
       if (/sold_out|price_changed|unknown_item/.test(m)) loadData(); render(); return;
     }
     co.placing = false; if (via === 'Online' || via === 'UPI QR') o.status = 'Awaiting payment'; // until Razorpay confirms it, or the owner sees the UPI payment
