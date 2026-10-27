@@ -16,7 +16,7 @@ Public preview: https://abhiyknp.github.io/Claude-Projects/
 | Typography | Cormorant Garamond (display) + Lato (UI), both SIL OFL |
 | Founder | Brand lockup stays **BUD & THINGS**; Ashi signs the Our Story note and the footer |
 | Commerce | Own website takes its own orders. **No shop platform.** Amazon, Flipkart, Meesho etc. are run from their own seller panels |
-| Payments | **Cashfree**: its own checkout window for UPI, cards, net banking and wallets. Payment is confirmed by Cashfree (checked by the `pay` Edge Function and its signed webhook), never by the browser. Prepaid only: cash on delivery is off unless turned on in Settings. Setup: [supabase/README.md](supabase/README.md#online-payments-cashfree) |
+| Payments | **Razorpay**: its own checkout window for UPI, cards, net banking and wallets. Payment is confirmed by Razorpay (checked by the `pay` Edge Function and its signed webhook), never by the browser. Prepaid only: cash on delivery is off unless turned on in Settings. Setup: [supabase/README.md](supabase/README.md#online-payments-razorpay) |
 | Delivery | **Shiprocket**: a real PIN code check on product pages, **Book courier** in Owner view (AWB, pickup and label in one step), and tracking that moves orders to Shipped and Delivered on its own (`delivery` Edge Function). Setup: [supabase/README.md](supabase/README.md#delivery-shiprocket) |
 | Stock | One shared stock count across all channels, kept in the database and edited in the Owner view, with marketplace buffers |
 | Content | Products, prices, rituals, every line of site text, settings, stock, photos and videos live in a Supabase database and are edited from the website's **Owner view** (`#admin`). Nothing day to day needs a code change. Setup: [supabase/README.md](supabase/README.md) |
@@ -32,7 +32,7 @@ Public preview: https://abhiyknp.github.io/Claude-Projects/
 - **Next.js + TypeScript**: website, PWA and the shell for the store apps
 - **GSAP + ScrollTrigger**: the Living Canvas only; CSS for everything else
 - **Supabase** (free starter plan): products, text, settings, photos and videos, orders, stock, reviews and sign-ups. Already wired into the prototype (`prototype/db.js`, `supabase/schema.sql`)
-- **Cashfree**: checkout, UPI, cards, net banking, webhooks (wired in, `supabase/functions/pay`)
+- **Razorpay**: checkout, UPI, cards, net banking, webhooks (wired in, `supabase/functions/pay`)
 - **Shiprocket**: couriers, labels, tracking (wired in, `supabase/functions/delivery`)
 - **Capacitor**: wraps the same app for the Play Store and App Store
 - **Vercel / Netlify / Cloudflare Pages**: hosting, free tier at launch

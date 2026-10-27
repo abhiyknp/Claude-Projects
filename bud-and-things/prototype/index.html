@@ -1334,7 +1334,7 @@ const TEXT = {
   'cart.gift': ['Sending it as a gift? Add a note, wrapping and a delivery date at checkout.', 'Cart: gift hint'],
   'co.giftTitle': ['Send it as a gift', 'Checkout: gift option'],
   'co.giftNote': ['We hand-write your note on our thank-you card. Prices are left out of the parcel.', 'Checkout: gift explanation'],
-  'co.payOnline': ['UPI, cards, net banking and wallets, through Cashfree’s secure checkout. We never see your card or bank details.', 'Checkout: paying online'],
+  'co.payOnline': ['UPI, cards, net banking and wallets, through Razorpay’s secure checkout. We never see your card or bank details.', 'Checkout: paying online'],
   'co.cod': ['Pay in cash or by UPI when it arrives. A {codFee} fee covers the courier’s cash handling.', 'Checkout: cash on delivery'],
   'co.optin': ['Send my order updates and candle care tips on WhatsApp', 'Checkout: WhatsApp opt-in'],
   'gift.title': ['Small gift. Real feeling.', 'Gifting: heading'],
@@ -2240,7 +2240,7 @@ function viewCheckout() {
     let panel = '';
     if (co.placing) panel = '<div class="pay-panel"><span class="waiting" role="status">Placing your order</span></div>';
     else if (BTDB.on && !t.total) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Nothing more to pay</strong><span class="muted">Your ${t.card ? 'gift card' : 'Bud Points'} cover${t.card ? 's' : ''} the whole order.</span><button class="btn" type="button" data-act="pay-success" data-via="Gift card or points">Place order</button></div></div>`;
-    else if (BTDB.on && m !== 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay securely with Cashfree</strong><span class="muted">${T('co.payOnline')}</span><button class="btn" type="button" data-act="pay-success" data-via="Online">Pay <span class="num">${inr(t.total)}</span></button><span class="hint">Your order is saved first, so if the payment doesn’t go through you can try again from the order page.</span></div></div>`;
+    else if (BTDB.on && m !== 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay securely with Razorpay</strong><span class="muted">${T('co.payOnline')}</span><button class="btn" type="button" data-act="pay-success" data-via="Online">Pay <span class="num">${inr(t.total)}</span></button><span class="hint">Your order is saved first, so if the payment doesn’t go through you can try again from the order page.</span></div></div>`;
     else if (m === 'qr') panel = `<div class="pay-panel"><canvas id="qr" width="29" height="29" aria-label="Demo UPI QR code for ${inr(t.total)}"></canvas><div class="info"><strong style="font-size:18px">Scan with any UPI app</strong><span class="muted">Open your UPI app, scan the code and approve <strong class="num">${inr(t.total)}</strong>. The amount is fixed in the code, and this page updates on its own once the payment arrives.</span><span class="waiting" role="status">Waiting for your payment</span><span class="hint">Demo QR made for this order. It is not a real payment code.</span><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI QR">Demo: simulate payment received</button></div></div>`;
     else if (m === 'app') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay with a UPI app on this phone</strong><span class="muted">Opens the UPI apps installed on this phone. You approve <strong class="num">${inr(t.total)}</strong> and come straight back here.</span>${co.appSheet ? `<div class="status" role="status">Demo: your UPI app would now ask you to approve ${inr(t.total)} to BUD &amp; THINGS.</div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI app">Simulate: approved</button><button class="btn small ghost" type="button" data-act="pay-fail">Simulate: declined</button></span>` : '<button class="btn" type="button" data-act="pay-app">Open UPI app</button>'}<span class="hint">If you are shopping on a computer, use the QR code instead.</span></div></div>`;
     else if (m === 'upi') panel = `<form data-form="upi" class="pay-panel" novalidate><div class="info"><span class="field"><label for="co-upi">UPI ID <span class="hint">for example name@bank</span></label><input id="co-upi" data-co="upi" autocomplete="off" value="${esc(co.upi)}" ${co.errors.upi ? 'aria-invalid="true" aria-describedby="co-upi-err"' : ''}>${co.errors.upi ? `<span class="err" id="co-upi-err">${esc(co.errors.upi)}</span>` : ''}</span>
@@ -2277,7 +2277,7 @@ function socialLinks(waText) {
 // the Pay now box on an unpaid order
 function payBox(o) {
   const P = UI.pay && UI.pay.id === o.id ? UI.pay : {};
-  return `<div class="pay-panel"><div class="info">${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}${P.busy ? '<span class="waiting" role="status">Checking with Cashfree</span>' : `<span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="pay-order" data-id="${esc(o.id)}">Pay <span class="num">${inr(o.total)}</span> now</button><button class="btn ghost" type="button" data-act="pay-check" data-id="${esc(o.id)}">I’ve paid, check again</button></span>`}<span class="hint">${T('co.payOnline')}</span></div></div>`;
+  return `<div class="pay-panel"><div class="info">${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}${P.busy ? '<span class="waiting" role="status">Checking with Razorpay</span>' : `<span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="pay-order" data-id="${esc(o.id)}">Pay <span class="num">${inr(o.total)}</span> now</button><button class="btn ghost" type="button" data-act="pay-check" data-id="${esc(o.id)}">I’ve paid, check again</button></span>`}<span class="hint">${T('co.payOnline')}</span></div></div>`;
 }
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound('order');
@@ -2505,7 +2505,7 @@ function admOrders() {
   const live = list.filter((o) => o.status !== 'Cancelled'); const rev = live.filter((o) => o.status !== 'Awaiting payment').reduce((a, o) => a + (o.total || 0), 0); const open = live.filter((o) => o.status !== 'Delivered').length;
   const low = Object.keys(skuMap).filter((s) => stockOf(s) <= 2).length; const gifts = live.filter((o) => o.gift && o.gift.on && o.status !== 'Delivered').length;
   return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Running late</span><strong class="num">${live.filter((o) => o.delay && canDelay(o)).length}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
-    ${delayForm(list)}${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${delayNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Cashfree</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
+    ${delayForm(list)}${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${delayNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Razorpay</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
@@ -4251,7 +4251,7 @@ async function placeOrder(via) {
         : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
       if (/sold_out|price_changed|unknown_item/.test(m)) loadData(); render(); return;
     }
-    co.placing = false; if (via === 'Online') o.status = 'Awaiting payment'; // until Cashfree confirms it
+    co.placing = false; if (via === 'Online') o.status = 'Awaiting payment'; // until Razorpay confirms it
     UI.mine = null; // read the orders and points again
   } else id = 'BT-' + (1001 + S.orders.length);
   o.id = id;
@@ -4264,18 +4264,24 @@ async function placeOrder(via) {
   if (o.status === 'Awaiting payment') payOnline(id);
 }
 
-// ---------- paying online (Cashfree) ----------
-// The order is saved first; the pay function opens a Cashfree payment for the total the database worked out, and the
-// order only counts as paid once Cashfree says so (here, or through its webhook if this page is closed).
+// ---------- paying online (Razorpay) ----------
+// The order is saved first; the pay function opens a Razorpay payment for the total the database worked out, and the
+// order only counts as paid once Razorpay says so (here, or through its webhook if this page is closed).
 const loadScript = (src) => loadScript[src] || (loadScript[src] = new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.async = true; el.onload = ok; el.onerror = () => { delete loadScript[src]; no(new Error('script')); }; document.head.appendChild(el); }));
 async function payOnline(id) {
   const o = S.orders.find((x) => x.id === id); const P = UI.pay = { id, busy: true, err: null }; render();
   try {
-    const [r] = await Promise.all([BTDB.fn('pay', { action: 'start', order_id: id, phone: o.contact.phone }), loadScript('https://sdk.cashfree.com/js/v3/cashfree.js')]);
+    const [r] = await Promise.all([BTDB.fn('pay', { action: 'start', order_id: id, phone: o.contact.phone }), loadScript('https://checkout.razorpay.com/v1/checkout.js')]);
     if (r.status) { await payCheck(id); return; }
     P.busy = false; render();
-    const res = await window.Cashfree({ mode: r.mode }).checkout({ paymentSessionId: r.session, redirectTarget: '_modal' });
-    if (res && res.error) P.err = res.error.message || 'The payment didn’t go through.';
+    // resolves when the customer pays, closes the window or the payment fails; the server then checks with Razorpay
+    await new Promise((done) => {
+      const rz = new window.Razorpay({ key: r.key, order_id: r.razorpay_order, amount: r.amount, currency: 'INR', name: 'BUD & THINGS', description: 'Order ' + id,
+        prefill: { name: o.contact.name || '', email: o.contact.email || '', contact: o.contact.phone || '' }, theme: { color: '#4B2E1E' },
+        handler: () => done(), modal: { ondismiss: () => done() } });
+      rz.on('payment.failed', (f) => { P.err = (f && f.error && f.error.description) || 'The payment didn’t go through.'; });
+      rz.open();
+    });
     await payCheck(id);
   } catch (e) {
     P.busy = false;
@@ -4283,7 +4289,7 @@ async function payOnline(id) {
     render();
   }
 }
-// ask the pay function whether Cashfree has the money; it records the payment if so
+// ask the pay function whether Razorpay has the money; it records the payment if so
 async function payCheck(id) {
   const o = S.orders.find((x) => x.id === id); const P = UI.pay = UI.pay && UI.pay.id === id ? UI.pay : { id }; P.busy = true; render();
   try {

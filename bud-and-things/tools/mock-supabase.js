@@ -234,7 +234,7 @@ http.createServer((req, res) => {
       }
       if (m && m[1] === 'gift_card_balance') { const gc = T.gift_cards.find((x) => x.code === String(json().card_code).trim().toUpperCase()); return send(res, 200, gc ? String(gc.balance) : 'null', 'application/json'); }
       if (m && m[1] === 'my_referral') { const who = String(json().contact_in).trim().toLowerCase(); let r = T.referrers.find((x) => x.contact === who); if (!r) { r = { id: Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'), contact: who, created_at: new Date().toISOString() }; T.referrers.push(r); } return send(res, 200, JSON.stringify(r.id), 'application/json'); }
-      // the pay (Cashfree) and delivery (Shiprocket) functions: paid at once, every PIN reachable, a made-up AWB number
+      // the pay (Razorpay) and delivery (Shiprocket) functions: paid at once, every PIN reachable, a made-up AWB number
       if (u.pathname === '/functions/v1/pay') { const b = json(); const o = T.orders.find((x) => x.id === b.order_id); if (!o) return fail(res, 404, 'not_found');
         if (o.status === 'Awaiting payment') { o.status = 'Placed'; o.data.payment = { by: 'mock' }; autoInvoice(o, 'Awaiting payment'); } return send(res, 200, { status: o.status, paid: true }); }
       if (u.pathname === '/functions/v1/delivery') { const b = json();

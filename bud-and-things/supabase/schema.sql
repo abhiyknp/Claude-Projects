@@ -423,7 +423,7 @@ begin
   if length(coalesce(a ->> 'line1', '')) not between 1 and 200 or length(coalesce(a ->> 'line2', '')) > 200 then raise exception 'bad_order:address'; end if;
   if coalesce(a ->> 'pin', '') !~ '^[1-9][0-9]{5}$' then raise exception 'bad_order:pin'; end if;
   if length(coalesce(a ->> 'city', '')) not between 1 and 80 or length(coalesce(a ->> 'state', '')) not between 1 and 60 then raise exception 'bad_order:address'; end if;
-  -- Online: paid through Cashfree (functions/pay). Gift card or points: only when they cover the whole total.
+  -- Online: paid through Razorpay (functions/pay). Gift card or points: only when they cover the whole total.
   if method is null or method not in ('Online', 'Gift card or points', 'Cash on delivery') then raise exception 'bad_order:method'; end if;
   -- the shop is prepaid: cash on delivery stays off unless the owner turns it on in Settings
   if method = 'Cash on delivery' and not cfg_on('codOn', false) then raise exception 'bad_order:cod_off'; end if;
@@ -539,12 +539,12 @@ begin
   update orders set status = 'Cancelled' where id = r.id;
 end $$;
 
--- ---------- online payment (Cashfree) and delivery (Shiprocket) ----------
+-- ---------- online payment (Razorpay) and delivery (Shiprocket) ----------
 -- Only the pay and delivery functions (supabase/functions) call these, with the service key; visitors and the owner can't.
 
--- Cashfree confirmed the payment. Usually the order is still waiting, and moves on to Placed. If it was paid after its
+-- Razorpay confirmed the payment. Usually the order is still waiting, and moves on to Placed. If it was paid after its
 -- hold ran out (and was cancelled), the pieces and gift card balance are taken again when they're still there;
--- otherwise it stays cancelled and is marked refundDue so the owner refunds it in the Cashfree dashboard.
+-- otherwise it stays cancelled and is marked refundDue so the owner refunds it in the Razorpay dashboard.
 create or replace function mark_paid(order_id text, pay jsonb) returns text language plpgsql security definer set search_path = public as $$
 declare r record; it jsonb; ok boolean := true;
 begin
