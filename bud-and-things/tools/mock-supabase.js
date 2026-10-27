@@ -98,7 +98,8 @@ function placeOrder(o, em) {
   const c = o.contact || {}, a = o.address || {}, g = o.gift, bad = (w) => { throw new Error('bad_order:' + w); };
   if (!c.name || c.name.length > 80) bad('name'); if (!normPhone(c.phone)) bad('phone'); c.phone = normPhone(c.phone);
   if (!a.line1 || !/^[1-9]\d{5}$/.test(a.pin || '') || !a.city || !a.state) bad('address');
-  if (!['Online', 'Gift card or points', 'Cash on delivery'].includes(o.method)) bad('method');
+  if (!['Online', 'UPI QR', 'Gift card or points', 'Cash on delivery'].includes(o.method)) bad('method');
+  if (o.method === 'UPI QR' && !(setting('upiQrOn', false) && /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(setting('upiId', ''))))) bad('upi_off');
   if (o.method === 'Cash on delivery' && !setting('codOn', false)) bad('cod_off');
   if (!Array.isArray(o.items) || !o.items.length || o.items.length > 20) bad('items');
   const items = [], seen = new Set(), candles = [], objects = []; let sub = 0, pieces = 0;
@@ -128,7 +129,7 @@ function placeOrder(o, em) {
   if (gc) gc.balance -= cardOff;
   items.forEach((it) => { T.stock.find((x) => x.sku === it.sku).qty -= it.qty; });
   const id = 'BT-' + orderNo++ + '-' + Math.random().toString(16).slice(2, 8).toUpperCase().padEnd(6, '0');
-  const status = o.method === 'Online' ? 'Awaiting payment' : 'Placed';
+  const status = o.method === 'Online' || o.method === 'UPI QR' ? 'Awaiting payment' : 'Placed';
   const data = { id, placedAt: new Date().toISOString(), method: o.method, items, email: em, contact: { name: c.name, phone: c.phone, email: em }, address: { line1: a.line1, line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state },
     sub, ritual, code, codeOff, pointsUsed: usePts, points: earned, ship, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin, card: card || null, cardOff, ref };
   const row = { id, data, status, phone: c.phone, total, method: o.method, created_at: data.placedAt }; T.orders.push(row); autoInvoice(row, null);
@@ -209,6 +210,9 @@ http.createServer((req, res) => {
         T.profiles.filter((p) => c.includes(p.email)).forEach((p) => Object.assign(p, { name: '', phone: '', addresses: [], prefs: {} })); return send(res, 200, null);
       }
       if (m && m[1] === 'get_invoice') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === normPhone(a.phone_no)); return send(res, 200, (o && T.invoices.find((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued')) || null); }
+      if (m && m[1] === 'note_payment') { const a = json(), ref = String(a.utr || '').trim().toUpperCase(); if (!/^[A-Z0-9]{8,22}$/.test(ref)) return send(res, 400, { message: 'bad_utr' });
+        const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === normPhone(a.phone_no) && x.method === 'UPI QR' && x.status === 'Awaiting payment');
+        if (!o) return send(res, 400, { message: 'not_found' }); o.data.utr = ref; o.data.utrAt = new Date().toISOString(); return send(res, 200, null); }
       if (m && m[1] === 'get_order') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === normPhone(a.phone_no)); return send(res, 200, o ? Object.assign({}, o.data, { status: o.status }) : null); }
       if (m && m[1] === 'cancel_order') {
         if (!own) return fail(res, 400, 'not_allowed');

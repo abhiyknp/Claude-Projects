@@ -137,6 +137,18 @@ The checkout opens Razorpay's own payment window (UPI, cards, net banking and wa
 
 Unlike a payment link, a Razorpay order does not expire. The 2 hour stock hold still applies: a payment that arrives after it is handled by the late-payment rule above.
 
+### Backup: manual UPI QR (if the gateway is not ready in time)
+
+A fallback that needs no gateway account. The customer scans a QR that carries the exact amount and the order number. Nothing tells the site when the money arrives, so the owner checks the bank and confirms each order by hand.
+
+1. Run `schema.sql` again in the SQL Editor (safe to re-run). It adds the `UPI QR` payment method and a `note_payment` function.
+2. Owner view → Settings: turn on **Offer manual UPI QR payment**, set **UPI ID for the QR** (a business or merchant UPI ID, not a personal one) and **Name shown in the UPI app**.
+3. Checkout then shows **Pay online** and **UPI QR**. A UPI QR order is saved as **Awaiting payment**, and its order page shows the QR, the UPI ID, and a box for the bank's transaction reference (UTR).
+4. Each day open Owner view → Orders. Match the amount and the UTR with your bank app, then press **Mark paid**. The order moves to **Placed**.
+5. Pieces are held for `payHoldMins` (120 by default). While you confirm by hand, raise it in Settings (for example 720) so a paid order is not released before you see the payment.
+
+Turn the setting off when online payment is live. A customer's UTR is only a note: never mark an order paid from a screenshot or a UTR alone without seeing the money in the bank.
+
 ## Delivery (Shiprocket)
 
 The `delivery` Edge Function (`supabase/functions/delivery`) does three things:

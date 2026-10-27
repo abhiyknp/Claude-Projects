@@ -1421,7 +1421,7 @@ const TEXT_GROUPS = [['seo.', 'Search & sharing (SEO)'], ['bar.', 'Offers bar'],
 // settings: money in ₹, lists of product ids separated by commas
 const SET_META = [
   ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Delivery promise on product pages, e.g. Ships within 24 hours (empty to hide; only while it is true)', 'text'],
-  ['exchangeDays', 'Replacement window (days)', 'num'], ['codOn', 'Offer cash on delivery', 'bool'], ['codFee', 'Cash on delivery fee (₹)', 'num'],
+  ['exchangeDays', 'Replacement window (days)', 'num'], ['upiQrOn', 'Offer manual UPI QR payment (a backup while online payment is not live)', 'bool'], ['upiId', 'UPI ID for the QR (for example name@bank)', 'text'], ['upiName', 'Name shown in the UPI app (up to 30 characters)', 'text'], ['codOn', 'Offer cash on delivery', 'bool'], ['codFee', 'Cash on delivery fee (₹)', 'num'],
   ['wrapFee', 'Gift wrap price (₹)', 'num'], ['ritualOff', 'Ritual saving: % off a candle and object bought together (0 for none)', 'num'],
   ['welcomeCode', 'Welcome code for newsletter sign-ups', 'text'], ['welcomeOff', 'Welcome code saving (%)', 'num'], ['repourPrice', 'Jar re-pour price (₹, 0 to hide)', 'num'], ['rewardPct', 'Bud Points: % of each paid order given back as points (1 point = ₹1; 0 to hide)', 'num'],
   ['featured', 'Home: featured product ids', 'text'], ['giftPicks', 'Gifting: popular product ids', 'text'], ['homeRitual', 'Home: ritual pairing id', 'text'], ['newIn', 'Home: new arrival product ids', 'text'], ['spotlight', 'Home: spotlight product id', 'text'],
@@ -1441,7 +1441,7 @@ const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'gift'; };
-const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
+const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, upiQrOn: false, upiId: '', upiName: 'Bud & Things', codFee: 49, wrapFee: 99, ritualOff: 10, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'chai-at-four, ghat-tray, brass-and-saffron, moonlet-ring-dish', giftPicks: 'brass-and-saffron, ghat-tray, moonlet-ring-dish, first-light', homeRitual: 'four-oclock', newIn: 'diwali-glow-box, terrace-garden, pebble-coasters, jharokha-catch-all, grand-diwali-box, little-diya-box', spotlight: 'chai-at-four', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
   reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
@@ -2206,7 +2206,7 @@ function viewCheckout() {
   const co = UI.co; const lines = cartLines(); const t = totals(); const g = co.gift;
   if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
   if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:var(--s5) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
-  loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr';
+  loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr'; if (co.method === 'upiqr' && !upiQrOk()) co.method = 'qr';
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
   const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> ${t.code ? 'applied' : `needs ${inr(co.coupon.min_order)} of pieces in your cart`}</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
@@ -2240,6 +2240,7 @@ function viewCheckout() {
     let panel = '';
     if (co.placing) panel = '<div class="pay-panel"><span class="waiting" role="status">Placing your order</span></div>';
     else if (BTDB.on && !t.total) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Nothing more to pay</strong><span class="muted">Your ${t.card ? 'gift card' : 'Bud Points'} cover${t.card ? 's' : ''} the whole order.</span><button class="btn" type="button" data-act="pay-success" data-via="Gift card or points">Place order</button></div></div>`;
+    else if (BTDB.on && m === 'upiqr' && upiQrOk()) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay by UPI QR</strong><span class="muted">We save your order first, then show a UPI QR with <strong class="num">${inr(t.total)}</strong> and your order number filled in. Scan it with any UPI app. We check our bank account and confirm your order, usually within a few hours.</span><button class="btn" type="button" data-act="pay-success" data-via="UPI QR">Place order and show QR</button><span class="hint">Your pieces are held while we wait for the payment.</span></div></div>`;
     else if (BTDB.on && m !== 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay securely with Razorpay</strong><span class="muted">${T('co.payOnline')}</span><button class="btn" type="button" data-act="pay-success" data-via="Online">Pay <span class="num">${inr(t.total)}</span></button><span class="hint">Your order is saved first, so if the payment doesn’t go through you can try again from the order page.</span></div></div>`;
     else if (m === 'qr') panel = `<div class="pay-panel"><canvas id="qr" width="29" height="29" aria-label="Demo UPI QR code for ${inr(t.total)}"></canvas><div class="info"><strong style="font-size:18px">Scan with any UPI app</strong><span class="muted">Open your UPI app, scan the code and approve <strong class="num">${inr(t.total)}</strong>. The amount is fixed in the code, and this page updates on its own once the payment arrives.</span><span class="waiting" role="status">Waiting for your payment</span><span class="hint">Demo QR made for this order. It is not a real payment code.</span><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI QR">Demo: simulate payment received</button></div></div>`;
     else if (m === 'app') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay with a UPI app on this phone</strong><span class="muted">Opens the UPI apps installed on this phone. You approve <strong class="num">${inr(t.total)}</strong> and come straight back here.</span>${co.appSheet ? `<div class="status" role="status">Demo: your UPI app would now ask you to approve ${inr(t.total)} to BUD &amp; THINGS.</div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI app">Simulate: approved</button><button class="btn small ghost" type="button" data-act="pay-fail">Simulate: declined</button></span>` : '<button class="btn" type="button" data-act="pay-app">Open UPI app</button>'}<span class="hint">If you are shopping on a computer, use the QR code instead.</span></div></div>`;
@@ -2251,7 +2252,7 @@ function viewCheckout() {
       <span class="field"><label for="co-ccvv">CVV</label><input id="co-ccvv" data-co="ccvv" inputmode="numeric" autocomplete="cc-csc" maxlength="4" value="${esc(c.ccvv || '')}" ${e.ccvv ? 'aria-invalid="true" aria-describedby="co-ccvv-err"' : ''}>${e.ccvv ? `<span class="err" id="co-ccvv-err">${esc(e.ccvv)}</span>` : ''}</span></div>
       <button class="btn" type="submit">Pay ${inr(t.total)} by card</button><span class="hint">In the real site this form belongs to the payment gateway. BUD &amp; THINGS never sees card details.</span></div></form>`; }
     else if (m === 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay when it arrives</strong><span class="muted">${T('co.cod')}</span><button class="btn" type="button" data-act="pay-success" data-via="Cash on delivery">Place order · pay <span class="num">${inr(t.total)}</span> on delivery</button></div></div>`;
-    main = `<h1 tabindex="-1" style="font-size:40px">Pay <span class="num">${inr(t.total)}</span></h1>${co.payErr ? `<div class="status err" role="alert">${esc(co.payErr)}</div>` : ''}${BTDB.on ? (SET.codOn && t.total ? `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('online', 'Pay online')}${tab('cod', 'Cash on delivery')}</div>` : '') : `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('qr', 'UPI QR')}${tab('app', 'UPI app')}${tab('upi', 'UPI ID')}${tab('card', 'Card')}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>`}${panel}<button class="linkbtn" type="button" data-act="co-step" data-v="address">Back to delivery</button>`;
+    main = `<h1 tabindex="-1" style="font-size:40px">Pay <span class="num">${inr(t.total)}</span></h1>${co.payErr ? `<div class="status err" role="alert">${esc(co.payErr)}</div>` : ''}${BTDB.on ? ((SET.codOn || upiQrOk()) && t.total ? `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('online', 'Pay online')}${upiQrOk() ? tab('upiqr', 'UPI QR') : ''}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>` : '') : `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('qr', 'UPI QR')}${tab('app', 'UPI app')}${tab('upi', 'UPI ID')}${tab('card', 'Card')}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>`}${panel}<button class="linkbtn" type="button" data-act="co-step" data-v="address">Back to delivery</button>`;
   }
   return `<div class="wrap"><div class="checkout"><div class="checkout-main">${steps}${main}</div>${side}</div></div>`;
 }
@@ -2277,6 +2278,15 @@ function socialLinks(waText) {
 // the Pay now box on an unpaid order
 function payBox(o) {
   const P = UI.pay && UI.pay.id === o.id ? UI.pay : {};
+  if (o.method === 'UPI QR') {
+    if (!upiQrOk()) return '<div class="pay-panel"><div class="info"><span class="muted">Please message us on WhatsApp and we’ll help you pay this order.</span></div></div>';
+    return `<div class="pay-panel"><canvas id="upi-qr" data-id="${esc(o.id)}" width="200" height="200" role="img" aria-label="UPI QR code for ${inr(o.total)}" style="width:200px;height:200px;max-width:100%"></canvas><div class="info"><strong style="font-size:18px">Scan and pay <span class="num">${inr(o.total)}</span></strong>
+      <span class="muted">Open any UPI app, scan the code and approve <strong class="num">${inr(o.total)}</strong>. Don’t change the amount or the note. Paying from a phone? <a href="${esc(upiUri(o))}">Open your UPI app</a>.</span>
+      <span class="hint">Or pay to UPI ID <strong>${esc(SET.upiId)}</strong> with the note <strong>Order ${esc(o.id)}</strong>.</span>
+      ${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}
+      ${o.utr ? `<div class="status ok" role="status">Thank you. We have your reference <strong>${esc(o.utr)}</strong>. We check our bank account and confirm your order, usually within a few hours.</div>` : `<span class="field"><label for="utr-${esc(o.id)}">After paying, enter the transaction reference <span class="hint">(UTR, from your UPI app)</span></label><input id="utr-${esc(o.id)}" autocomplete="off" maxlength="22" inputmode="text"></span><button class="btn" type="button" data-act="utr-send" data-id="${esc(o.id)}">I’ve paid</button>`}
+    </div></div>`;
+  }
   return `<div class="pay-panel"><div class="info">${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}${P.busy ? '<span class="waiting" role="status">Checking with Razorpay</span>' : `<span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="pay-order" data-id="${esc(o.id)}">Pay <span class="num">${inr(o.total)}</span> now</button><button class="btn ghost" type="button" data-act="pay-check" data-id="${esc(o.id)}">I’ve paid, check again</button></span>`}<span class="hint">${T('co.payOnline')}</span></div></div>`;
 }
 function viewOrder(id) {
@@ -2505,7 +2515,7 @@ function admOrders() {
   const live = list.filter((o) => o.status !== 'Cancelled'); const rev = live.filter((o) => o.status !== 'Awaiting payment').reduce((a, o) => a + (o.total || 0), 0); const open = live.filter((o) => o.status !== 'Delivered').length;
   const low = Object.keys(skuMap).filter((s) => stockOf(s) <= 2).length; const gifts = live.filter((o) => o.gift && o.gift.on && o.status !== 'Delivered').length;
   return `<div class="owner-grid"><div class="stat"><span class="muted">Website orders</span><strong class="num">${list.length}</strong></div><div class="stat"><span class="muted">To pack or ship</span><strong class="num">${open}</strong></div><div class="stat"><span class="muted">Running late</span><strong class="num">${live.filter((o) => o.delay && canDelay(o)).length}</strong></div><div class="stat"><span class="muted">Gifts to wrap</span><strong class="num">${gifts}</strong></div><div class="stat"><span class="muted">Takings</span><strong class="num">${inr(rev)}</strong></div><div class="stat"><span class="muted">Options at 2 or fewer</span><strong class="num">${low}</strong></div></div>
-    ${delayForm(list)}${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${delayNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Razorpay</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
+    ${delayForm(list)}${list.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Placed</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Next step</th></tr></thead><tbody>${list.map((o) => { const i = STATUSES.indexOf(o.status); const g = o.gift && o.gift.on ? o.gift : null; return `<tr><td><a href="#order-${esc(o.id)}">${esc(o.id)}</a></td><td class="num">${new Date(o.placedAt).toLocaleDateString('en-IN')}</td><td>${esc(o.contact.name || '')}<br><span class="muted num">${esc(o.contact.phone || '')}</span>${o.optin ? '<br><span class="pill">WhatsApp updates</span>' : ''}</td><td>${o.items.map((l) => esc(l.name) + ' · ' + esc(l.label) + ' × ' + l.qty).join('<br>')}${g ? `<div class="gift-sum small"><strong>Gift for ${esc(g.name)}</strong>${g.wrap || g.date ? `<span>${[g.wrap ? 'Gift wrap' : '', g.date ? 'Arrive by ' + niceDay(g.date) : ''].filter(Boolean).join(' · ')}</span>` : ''}${g.note ? `<span class="muted">“${esc(g.note)}”</span>` : ''}</div>` : ''}</td><td class="num">${inr(o.total)}${o.codeOff ? `<br><span class="muted">${esc(o.code)}</span>` : ''}</td><td>${esc(o.method)}${o.utr ? `<br><span class="muted">UTR ${esc(o.utr)}</span>` : ''}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td><td><span style="display:flex;gap:8px;flex-wrap:wrap">${o.status === 'Awaiting payment' ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark paid</button>` : i >= 0 && i < 3 ? `<button class="btn small ghost" type="button" data-act="advance" data-id="${esc(o.id)}">Mark ${STATUSES[i + 1].toLowerCase()}</button>` : `<span class="muted">${o.status === 'Cancelled' ? 'Cancelled' : 'Done'}</span>`}${['Awaiting payment', 'Placed', 'Packed'].includes(o.status) ? `<button class="btn small ghost" type="button" data-act="adm-cancel" data-id="${esc(o.id)}">Cancel</button>` : ''}${BTDB.on && ['Placed', 'Packed'].includes(o.status) && !(o.parcel && o.parcel.awb) ? `<button class="btn small" type="button" data-act="adm-ship" data-id="${esc(o.id)}" ${UI.adm.shipping === o.id ? 'disabled' : ''}>${UI.adm.shipping === o.id ? 'Booking…' : 'Book courier'}</button>` : ''}</span>${parcelNote(o)}${delayNote(o)}${o.refundDue ? '<span class="pill out">Paid late: refund it in Razorpay</span>' : ''}</td></tr>`; }).join('')}</tbody></table></div>`
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
@@ -4060,7 +4070,7 @@ function render(nav) {
   if (!cs) adsLoad();
   if (cs) { if (nav) window.scrollTo(0, 0); return; }
   if (r === 'checkout' && UI.co.step === 'pay' && UI.co.method === 'qr') drawQR();
-  drawMfaQR();
+  drawMfaQR(); drawUpiQR();
   if (nav) { window.scrollTo(0, 0); const h = app.querySelector('h1[tabindex]'); if (h && r !== 'home') h.focus({ preventScroll: true }); }
 }
 
@@ -4210,6 +4220,27 @@ function drawQR() {
   finder(1, 1); finder(n - 8, 1); finder(1, n - 8);
 }
 
+// the owner's manual UPI QR fallback: on in Settings, with a valid UPI ID
+const upiQrOk = () => !!SET.upiQrOn && /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(SET.upiId || ''));
+// the UPI address a QR or phone app opens: exact amount and the order number in the note, so the payment can be matched
+const upiUri = (o) => 'upi://pay?pa=' + encodeURIComponent(SET.upiId) + '&pn=' + encodeURIComponent(String(SET.upiName || 'Bud & Things').slice(0, 30)) + '&am=' + Number(o.total).toFixed(2) + '&cu=INR&tn=' + encodeURIComponent('Order ' + o.id);
+function drawUpiQR() {
+  const cv = $('#upi-qr'); if (!cv || !window.qrcode) return; const o = S.orders.find((x) => x.id === cv.dataset.id); if (!o) return;
+  const q = window.qrcode(0, 'M'); q.addData(upiUri(o)); q.make();
+  const n = q.getModuleCount(), pad = 4, k = 6; cv.width = cv.height = (n + pad * 2) * k;
+  const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height); ctx.fillStyle = '#000';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) ctx.fillRect((x + pad) * k, (y + pad) * k, k, k);
+}
+// the customer sends the bank's reference (UTR) for their payment; the owner finds it in Orders and presses Mark paid
+async function sendUtr(id) {
+  const o = S.orders.find((x) => x.id === id), el = $('#utr-' + id); if (!o || !el) return; const ref = el.value.replace(/\s+/g, '').toUpperCase();
+  const P = UI.pay = { id, busy: false, err: null };
+  if (!/^[A-Z0-9]{8,22}$/.test(ref)) { P.err = 'Please enter the transaction reference from your UPI app (usually 12 digits).'; render(); return; }
+  try { await BTDB.rpc('note_payment', { order_id: id, phone_no: o.contact.phone, utr: ref }); o.utr = ref; P.sent = true; save(); }
+  catch (e) { P.err = /not_found/.test(e.message) ? 'This order is no longer waiting for payment. Please message us on WhatsApp.' : /bad_utr/.test(e.message) ? 'That reference doesn’t look right. Please check it in your UPI app.' : 'We couldn’t save that just now. Please try again, or message us on WhatsApp.'; }
+  render();
+}
+
 // the authenticator set-up code, drawn here from the otpauth:// address (vendor/qrcode) rather than Supabase's picture
 function drawMfaQR() {
   const cv = $('#mfa-qr'), m = UI.adm && UI.adm.mfa; if (!cv || !m || !m.uri || !window.qrcode) return;
@@ -4251,7 +4282,7 @@ async function placeOrder(via) {
         : /bad_order/.test(m) ? 'Something in your details doesn’t look right. Please check your name, mobile, address and PIN code.' : 'We couldn’t place the order (' + m + '). Nothing was charged; please try again.';
       if (/sold_out|price_changed|unknown_item/.test(m)) loadData(); render(); return;
     }
-    co.placing = false; if (via === 'Online') o.status = 'Awaiting payment'; // until Razorpay confirms it
+    co.placing = false; if (via === 'Online' || via === 'UPI QR') o.status = 'Awaiting payment'; // until Razorpay confirms it, or the owner sees the UPI payment
     UI.mine = null; // read the orders and points again
   } else id = 'BT-' + (1001 + S.orders.length);
   o.id = id;
@@ -4261,7 +4292,7 @@ async function placeOrder(via) {
   if (o.status === 'Awaiting payment') track('order_saved', { order: id, value: t.total }); else track('purchase', { order: id, value: t.total, method: via, gift: !!o.gift });
   UI.justPlaced = id; UI.co = coFresh(o.contact, o.gift ? {} : o.address);
   location.hash = 'order-' + id;
-  if (o.status === 'Awaiting payment') payOnline(id);
+  if (o.status === 'Awaiting payment' && via === 'Online') payOnline(id);
 }
 
 // ---------- paying online (Razorpay) ----------
@@ -4493,6 +4524,7 @@ document.addEventListener('click', (e) => {
     case 'adm-ship': { const A = UI.adm; const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o || A.shipping) break; A.shipping = o.id; render();
       admDo(async () => { try { const r = await BTDB.fn('delivery', { action: 'book', order_id: o.id }); o.parcel = r.ship; if (r.status) o.status = r.status; track('courier_booked', { order: o.id }); } finally { A.shipping = null; render(); } }, `Courier booked for ${o.id}. Print the label and pack it for pickup.`); break; }
     case 'pay-check': payCheck(d.id); break;
+    case 'utr-send': sendUtr(d.id); break;
     case 'adm-csv-points': downloadCSV('bud-points', pointsByCustomer(admData('orders') || [], admData('rewards').log).map((r) => ({ email: r.email, name: r.name, orders: r.orders, earned: r.earned, spent: r.used, given_by_owner: r.adj, coming: r.pending, can_spend: r.available })), ['email', 'name', 'orders', 'earned', 'spent', 'given_by_owner', 'coming', 'can_spend']); break;
     case 'inv-print': { const iv = BTDB.on ? UI.invOf[d.id] : invoiceOf(d.id); if (iv) printInvoice(iv); break; }
     case 'adm-inv-view': UI.adm.tab = 'invoices'; UI.adm.invView = d.id; UI.adm.invAct = null; render(); window.scrollTo({ top: 0 }); break;
