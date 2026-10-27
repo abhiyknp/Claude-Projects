@@ -72,7 +72,7 @@ To change a limit, add a row with the name in brackets as its key and a number a
 ### Paid online, cash on delivery, cancelled
 
 - The shop is prepaid. **Cash on delivery** stays off unless you turn on `codOn` in Settings; its orders start as **Placed**.
-- Orders paid online start as **Awaiting payment** until Cashfree confirms the payment, and then move to **Placed** on their own. Their stock is held for 2 hours (setting `payHoldMins`), then released, and the order shows as **Cancelled**. The Cashfree payment link lapses at the same time. If a payment still arrives after that, the order comes back when its pieces are still in stock. Otherwise it stays cancelled and Owner view marks it **Paid late: refund it in Cashfree**. **Mark paid** is still there for a payment you received another way.
+- Orders paid online start as **Awaiting payment** until Razorpay confirms the payment, and then move to **Placed** on their own. Their stock is held for 2 hours (setting `payHoldMins`), then released, and the order shows as **Cancelled**. The Razorpay payment link lapses at the same time. If a payment still arrives after that, the order comes back when its pieces are still in stock. Otherwise it stays cancelled and Owner view marks it **Paid late: refund it in Razorpay**. **Mark paid** is still there for a payment you received another way.
 - An order fully covered by a gift card or Bud Points needs no payment and starts as **Placed**.
 - **Cancel** in the Owner view puts an order's pieces back in stock. It works until the order is shipped.
 - Order numbers have a random part, such as `BT-1042-7F3A9C`, so nobody can find other people's orders by counting.
@@ -104,7 +104,7 @@ Point a local preview's `config.js` at `http://localhost:54321` (any anon key wo
 
 ## Still to do before taking real money
 
-- Set up Cashfree and Shiprocket (the two sections below). Until Cashfree is set up, the live checkout says online payment isn't switched on yet.
+- Set up Razorpay and Shiprocket (the two sections below). Until Razorpay is set up, the live checkout says online payment isn't switched on yet.
 - For cash on delivery, consider a one-time code by SMS or WhatsApp to the customer's mobile before the order is accepted (the delivery partner or an SMS service can send it); until then, the limits above keep a script from taking all the stock.
 - Set up the messages below (email first), so customers hear about their order without asking.
 - Back up: Supabase's free plan keeps daily backups for a short time only. Export orders regularly from the Table Editor, or move to a paid plan at launch.
@@ -118,22 +118,36 @@ Run `schema.sql` again in the SQL Editor to add them. It is safe to re-run. Then
 - **Gift reminders.** Shoppers save a date on the Gifting page. Owner view → Sign-ups lists them with the soonest first and a Message link for each. Send one about a week before the date.
 - **Share links.** On `#share`, a customer gets their own link (`?ref=ABC123`). An order placed through that link is credited to them, but never to their own number. Owner view → Gift cards lists the customers who brought orders, so you can send each one the thank-you card set in Settings → `refReward`.
 
-## Online payments (Cashfree)
+## Online payments (Razorpay)
 
-The checkout opens Cashfree's own payment window (UPI, cards, net banking and wallets), so card and bank details never pass through the site. The `pay` Edge Function (`supabase/functions/pay`) asks Cashfree for exactly the total the database worked out. It marks an order paid only when Cashfree itself reports it paid for the full amount, either straight after checkout or through Cashfree's webhook if the customer closes the page.
+The checkout opens Razorpay's own payment window (UPI, cards, net banking and wallets), so card and bank details never pass through the site. The `pay` Edge Function (`supabase/functions/pay`) asks Razorpay for exactly the total the database worked out. It marks an order paid only when Razorpay itself reports it paid for the full amount, either straight after checkout or through Razorpay's webhook if the customer closes the page.
 
-1. **Account.** Sign up at cashfree.com → Payment Gateway, and complete the KYC (PAN, bank account, business details and website). Until it is approved, use the **Test** mode keys.
-2. **Keys.** Cashfree dashboard → Developers → API Keys: copy the **App ID** and the **Secret Key**. Keep the secret key out of this repository and out of `config.js`.
+1. **Account.** Sign up at razorpay.com, and complete the KYC (PAN, bank account, business details and website). Until it is approved, use the **Test** mode keys.
+2. **Keys.** Razorpay dashboard → Account & Settings → API keys → Generate key: copy the **Key Id** and the **Key Secret**. Keep the secret out of this repository and out of `config.js`. Test keys start `rzp_test_`, live keys `rzp_live_`; that prefix is what switches the site between test and live.
 3. **Install the Supabase command line** once (`npm i -g supabase`, then `supabase login` and `supabase link --project-ref cgccziskvqyatrjqdtka` in `bud-and-things`).
 4. **Secrets** (from `bud-and-things`):
    ```sh
-   supabase secrets set CASHFREE_APP_ID=... CASHFREE_SECRET_KEY=... CASHFREE_ENV=sandbox \
+   supabase secrets set RAZORPAY_KEY_ID=... RAZORPAY_KEY_SECRET=... RAZORPAY_WEBHOOK_SECRET=<any long random text> \
      SITE_URL=https://budandthings.com SITE_ORIGINS="https://budandthings.com https://abhiyknp.github.io"
    ```
-   Change `CASHFREE_ENV` to `production`, with the production keys, once you're ready to take real money.
-5. **Deploy:** `supabase functions deploy pay --no-verify-jwt`. The function checks Cashfree's signature itself, because Cashfree can't send a Supabase sign-in.
-6. **Webhook.** In the Cashfree dashboard → Developers → Webhooks, add `https://cgccziskvqyatrjqdtka.supabase.co/functions/v1/pay` for **Payment success**. In the same place, whitelist the site's domain.
-7. **Try it** in test mode with Cashfree's test UPI ID or card. The order should move to **Placed** by itself.
+   Switch to the `rzp_live_` keys once you're ready to take real money.
+5. **Deploy:** `supabase functions deploy pay --no-verify-jwt`. The function checks Razorpay's signature itself, because Razorpay can't send a Supabase sign-in.
+6. **Webhook.** Razorpay dashboard → Account & Settings → Webhooks → Add: URL `https://cgccziskvqyatrjqdtka.supabase.co/functions/v1/pay`, the same secret as `RAZORPAY_WEBHOOK_SECRET`, and the events **order.paid** and **payment.captured**. Keep payment capture on **automatic** (Settings → Payment capture), so paid orders show as paid.
+7. **Try it** in test mode with Razorpay's test UPI ID (`success@razorpay`) or test card. The order should move to **Placed** by itself.
+
+Unlike a payment link, a Razorpay order does not expire. The 2 hour stock hold still applies: a payment that arrives after it is handled by the late-payment rule above.
+
+### Backup: manual UPI QR (if the gateway is not ready in time)
+
+A fallback that needs no gateway account. The customer scans a QR that carries the exact amount and the order number. Nothing tells the site when the money arrives, so the owner checks the bank and confirms each order by hand.
+
+1. Run `schema.sql` again in the SQL Editor (safe to re-run). It adds the `UPI QR` payment method and a `note_payment` function.
+2. Owner view → Settings: turn on **Offer manual UPI QR payment**, set **UPI ID for the QR** (a business or merchant UPI ID, not a personal one) and **Name shown in the UPI app**.
+3. Checkout then shows **Pay online** and **UPI QR**. A UPI QR order is saved as **Awaiting payment**, and its order page shows the QR, the UPI ID, and a box for the bank's transaction reference (UTR).
+4. Each day open Owner view → Orders. Match the amount and the UTR with your bank app, then press **Mark paid**. The order moves to **Placed**.
+5. Pieces are held for `payHoldMins` (120 by default). While you confirm by hand, raise it in Settings (for example 720) so a paid order is not released before you see the payment.
+
+Turn the setting off when online payment is live. A customer's UTR is only a note: never mark an order paid from a screenshot or a UTR alone without seeing the money in the bank.
 
 ## Delivery (Shiprocket)
 
@@ -214,4 +228,4 @@ Run `schema.sql` again in the SQL Editor to add them. It is safe to re-run.
 
 ## Mobile numbers (October 2026)
 
-Every mobile number is saved as `+` the country code and the number, such as `+919876543210` or `+447911123456` (E.164), in orders, saved accounts, gift recipients, sign-ups, restock requests, gift reminders and share links. Forms show an editable country code box (it starts at `91`) beside the number box, so a customer abroad can change it. India (`+91`) takes exactly 10 digits starting with 6, 7, 8 or 9; any other country takes 6 to 12 digits. A number typed without a country code, such as `9876543210`, `919876543210` or `09876543210`, is read as Indian. The database does the conversion (`norm_phone()` in `schema.sql`), so it holds whatever the page sends. Run `schema.sql` again to convert numbers saved earlier (already-correct ones are left alone). Exports and the Customers list show the `+` form, ready for WhatsApp providers and spreadsheets, and a country can be read from the start of the number. Cashfree and Shiprocket receive the plain 10 digits for an Indian number and the full digits for any other country.
+Every mobile number is saved as `+` the country code and the number, such as `+919876543210` or `+447911123456` (E.164), in orders, saved accounts, gift recipients, sign-ups, restock requests, gift reminders and share links. Forms show an editable country code box (it starts at `91`) beside the number box, so a customer abroad can change it. India (`+91`) takes exactly 10 digits starting with 6, 7, 8 or 9; any other country takes 6 to 12 digits. A number typed without a country code, such as `9876543210`, `919876543210` or `09876543210`, is read as Indian. The database does the conversion (`norm_phone()` in `schema.sql`), so it holds whatever the page sends. Run `schema.sql` again to convert numbers saved earlier (already-correct ones are left alone). Exports and the Customers list show the `+` form, ready for WhatsApp providers and spreadsheets, and a country can be read from the start of the number. Razorpay and Shiprocket receive the plain 10 digits for an Indian number and the full digits for any other country.

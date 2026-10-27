@@ -12,8 +12,8 @@ const sheets = ['https://docs.google.com', 'https://*.googleusercontent.com'];
 const connect = ["'self'", db && new URL(db).origin, 'https://api.postalpincode.in', 'https://api.cloudinary.com', ...sheets, ...(process.env.BT_CSP_CONNECT || '').split(/\s+/)].filter(Boolean);
 // Meta Pixel and Google Analytics, used only when the owner adds an id in Settings
 const ads = { script: ['https://connect.facebook.net', 'https://www.googletagmanager.com'], connect: ['https://www.facebook.com', 'https://connect.facebook.net', 'https://*.google-analytics.com', 'https://*.analytics.google.com', 'https://www.googletagmanager.com'] };
-// Cashfree's checkout: its script, the payment window it opens over the page, and the calls it makes
-const pay = { script: ['https://sdk.cashfree.com'], frame: ['https://sdk.cashfree.com', 'https://*.cashfree.com'], connect: ['https://*.cashfree.com'], form: ['https://*.cashfree.com'] };
+// Razorpay's checkout: its script, the payment window it opens over the page, and the calls it makes
+const pay = { script: ['https://checkout.razorpay.com'], frame: ['https://api.razorpay.com', 'https://checkout.razorpay.com'], connect: ['https://*.razorpay.com'], form: ['https://*.razorpay.com'] };
 const media = ["'self'", 'data:', 'blob:', db && new URL(db).origin].filter(Boolean);
 
 function policy(html) {

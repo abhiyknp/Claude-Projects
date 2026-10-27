@@ -64,7 +64,7 @@
     update: (table, match, patch) => req('PATCH', '/rest/v1/' + table + '?' + match, patch, { Prefer: 'return=minimal' }),
     remove: (table, match) => req('DELETE', '/rest/v1/' + table + '?' + match),
     rpc: (fn, args) => req('POST', '/rest/v1/rpc/' + fn, args || {}),
-    // the shop's Edge Functions (supabase/functions): pay (Cashfree) and delivery (Shiprocket)
+    // the shop's Edge Functions (supabase/functions): pay (Razorpay) and delivery (Shiprocket)
     fn: (name, body) => req('POST', '/functions/v1/' + name, body || {}),
     // photos and videos, in the public "media" bucket
     fileUrl: (path, w) => (isCl(path) ? (/\/upload\/(f_|q_|w_)/.test(path) ? path : sized(path, w === undefined ? 1600 : w)) : /^(https?:|data:|blob:|assets\/)/.test(path) ? path : url + '/storage/v1/object/public/media/' + enc(path)),
