@@ -8,7 +8,7 @@
 //   Razorpay's webhook, signed with the webhook secret, so a payment is recorded even if the customer closes the page
 //
 // Set up: see "Online payments (Razorpay)" in supabase/README.md.
-import { env, dbReady, db, getOrder, hmac, same, reply, cors, ORDER_ID } from '../_shared/util.ts';
+import { env, dbReady, db, getOrder, hmac, same, reply, cors, ORDER_ID, allowed } from '../_shared/util.ts';
 
 // Saved numbers look like +919876543210 or +447911123456. Compare them as full digits (a bare 10-digit number is Indian).
 const fullPhone = (v: unknown) => { const d = String(v || '').replace(/\D/g, ''); return d.length === 10 ? '91' + d : d; };
@@ -67,6 +67,9 @@ export async function handle(req: Request) {
     try { b = JSON.parse(raw); } catch { return reply(req, 400, { error: 'bad_request' }); }
     const id = String(b.order_id || '').toUpperCase().trim();
     if (!ORDER_ID.test(id)) return reply(req, 400, { error: 'bad_order' });
+    // browsers only: per visitor, so a bot can't open Razorpay orders or guess order numbers (Razorpay's webhook is exempt above)
+    if (b.action === 'start' && !(await allowed(req, 'pay-start', 20, '1 hour'))) return reply(req, 429, { error: 'too_many_requests' });
+    if (b.action === 'verify' && !(await allowed(req, 'pay-verify', 120, '1 hour'))) return reply(req, 429, { error: 'too_many_requests' });
     const o = await getOrder(id);
 
     if (b.action === 'start') {
