@@ -1,7 +1,7 @@
 // Helpers shared by the pay and delivery functions: settings from the environment, the database with the service
 // key, and replies the shop's pages are allowed to read.
 
-export const env = (k: string) => Deno.env.get(k) || '';
+export const env = (k: string) => (Deno.env.get(k) || '').trim();
 const DB = () => env('SUPABASE_URL'), SERVICE = () => env('SUPABASE_SERVICE_ROLE_KEY');
 export const dbReady = () => !!(DB() && SERVICE());
 
