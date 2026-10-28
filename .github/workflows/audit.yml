@@ -7,6 +7,7 @@ on:
     paths:
       - 'bud-and-things/prototype/**'
       - 'bud-and-things/tools/audit.js'
+      - 'bud-and-things/tools/test-*.js'
       - '.github/workflows/audit.yml'
   workflow_dispatch:
 
@@ -28,3 +29,12 @@ jobs:
           npx playwright install --with-deps chromium >/dev/null
       - name: Run the audit
         run: PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/audit.js
+      - name: Run the sheet import and invoice tests
+        run: |
+          node bud-and-things/tools/test-import.js
+          node bud-and-things/tools/test-invoice.js
+      - name: Run the shop flow test
+        run: |
+          sh bud-and-things/tools/preview.sh >/dev/null 2>&1 &
+          sleep 3
+          PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-flow.js
