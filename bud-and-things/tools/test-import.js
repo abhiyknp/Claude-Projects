@@ -46,6 +46,26 @@ const run = (rows, existing, stock) => imp.plan([{ name: 'Glass Candles', rows: 
   // tabs without the three product headings are ignored
   p = imp.plan([{ name: 'Recipe', rows: [['Recipe Line ID', 'Product ID / SKU', 'Product Name']] }], [], {});
   assert.strictEqual(p.tabs.length, 0); assert.ok(/No product tab/.test(p.problems[0].msg));
+  // marketplace columns: price, dimensions, barcode. Blank keeps what the shop has; bad values are ignored with a note
+  assert.deepStrictEqual(imp.parseDims('10x10x8'), { l: 10, b: 10, h: 8 }); assert.deepStrictEqual(imp.parseDims(' 12.5 X 8 × 6 cm'), { l: 12.5, b: 8, h: 6 }); assert.deepStrictEqual(imp.parseDims('10*10*8'), { l: 10, b: 10, h: 8 });
+  assert.strictEqual(imp.parseDims('10x10'), null); assert.strictEqual(imp.parseDims('0x1x1'), null); assert.strictEqual(imp.parseDims(''), null);
+  assert.strictEqual(imp.cleanGtin('4006381333931'), '4006381333931'); assert.strictEqual(imp.cleanGtin('4006 3813 33931'), '4006381333931'); assert.strictEqual(imp.cleanGtin('036000291452'), '036000291452');
+  assert.strictEqual(imp.cleanGtin('4006381333932'), ''); assert.strictEqual(imp.cleanGtin('12345'), ''); assert.strictEqual(imp.cleanGtin('abc'), '');
+  const MH = HEAD + ',Marketplace Price (₹),Dimensions (cm),Barcode (EAN)';
+  const mrun = (rows, existing) => imp.plan([{ name: 'Glass Candles', rows: imp.parseCsv([MH].concat(rows).join('\n')) }], existing || [], {});
+  p = mrun([',1,BNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown,200,,799,12,Yes,899,10x10x8,4006381333931']);
+  assert.strictEqual(p.items[0].data.mrpMarket, 899); assert.deepStrictEqual(p.items[0].data.dims, { l: 10, b: 10, h: 8 }); assert.strictEqual(p.items[0].data.gtin, '4006381333931'); assert.strictEqual(p.notes.length, 0);
+  // blank cells keep what the shop already has; the site price is not touched
+  const ex = [{ id: p.items[0].id, data: JSON.parse(JSON.stringify(p.items[0].data)), sort: 1000, live: true }];
+  p = mrun([',1,BNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown,200,,799,12,Yes,,,'], ex);
+  assert.strictEqual(p.items[0].data.mrpMarket, 899); assert.deepStrictEqual(p.items[0].data.dims, { l: 10, b: 10, h: 8 }); assert.strictEqual(p.items[0].data.gtin, '4006381333931'); assert.strictEqual(p.counts.same, 1);
+  p = mrun([',1,BNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown,200,,799,12,Yes,949,12x12x9,'], ex);
+  assert.strictEqual(p.counts.changed, 1); assert.strictEqual(p.items[0].data.mrpMarket, 949); assert.strictEqual(p.items[0].data.variants[0].price, 799);
+  // unreadable values are ignored and explained, never saved
+  p = mrun([',1,BNT-PRD-CG-002,Vanilla,Glass candle,,,,,500,,Yes,abc,10x10,123']);
+  assert.ok(!('mrpMarket' in p.items[0].data) && !('dims' in p.items[0].data) && !('gtin' in p.items[0].data)); assert.strictEqual(p.notes.length, 3);
+  // sheets without the new columns still import exactly as before
+  p = run([',1,BNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown,200,,799,12,Yes'], [], {}); assert.ok(!('mrpMarket' in p.items[0].data));
   console.log('Import checks passed.');
 
   const file = process.argv[2];

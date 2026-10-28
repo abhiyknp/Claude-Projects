@@ -104,7 +104,8 @@
     sku: ['product id / sku', 'product id', 'sku'], name: ['product name', 'name'], type: ['product type', 'type'], scent: ['scent'], colour: ['colour', 'color'],
     weight: ['actual weight (g)', 'weight (g)', 'weight'], pack: ['packaging type'], img: ['primary image link', 'image link'],
     price: ['selling price (₹)', 'selling price', 'price (₹)', 'price'], stock: ['stock', 'opening stock'], show: ['show on website', 'on website'],
-    desc: ['short description', 'description', 'one-line description']
+    desc: ['short description', 'description', 'one-line description'],
+    mrp: ['marketplace price (₹)', 'marketplace price', 'marketplace mrp'], dims: ['dimensions (cm)', 'dimensions', 'package size (cm)', 'package size'], gtin: ['barcode (ean)', 'barcode', 'ean', 'gtin']
   };
   const ID_RE = /^BNT-PRD-([A-Z]{2,4})-(\d{3})$/;
   const CODE_BY_SHEET = [[/glass/, 'CG'], [/mould/, 'MC'], [/tealight/, 'TL'], [/jesmonite|tray|dish/, 'JT'], [/diy/, 'DIY']];
@@ -121,6 +122,18 @@
     return null;
   }
   const num = (s) => { const n = parseFloat(String(s).replace(/[₹,\s]/g, '')); return isFinite(n) ? n : NaN; };
+  // "10x10x8", "10 X 10 × 8" or "10*10*8" (centimetres, length x breadth x height) -> { l, b, h }, or null
+  function parseDims(s) {
+    const m = /^\s*(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)\s*(?:cm)?\s*$/i.exec(String(s == null ? '' : s));
+    if (!m) return null; const l = +m[1], b = +m[2], h = +m[3];
+    return l > 0 && b > 0 && h > 0 ? { l, b, h } : null;
+  }
+  // an EAN-8, UPC-A (12), EAN-13 or GTIN-14 with a correct check digit, else ''
+  function cleanGtin(s) {
+    const v = String(s == null ? '' : s).replace(/[\s-]/g, ''); if (!/^(\d{8}|\d{12}|\d{13}|\d{14})$/.test(v)) return '';
+    let sum = 0; for (let i = 0; i < v.length - 1; i++) sum += +v[v.length - 2 - i] * (i % 2 === 0 ? 3 : 1);
+    return (10 - (sum % 10)) % 10 === +v[v.length - 1] ? v : '';
+  }
   const yes = (s) => /^(yes|y|true|1|live|show)$/i.test(String(s).trim());
   const list = (s) => String(s || '').split(/[,;/]/).map((x) => x.trim()).filter((x) => x && !/^n\/?a$/i.test(x));
   const clean = (o) => { Object.keys(o).forEach((k) => { if (o[k] === '' || o[k] == null || (Array.isArray(o[k]) && !o[k].length)) delete o[k]; }); return o; };
@@ -161,7 +174,12 @@
         seen[skuRaw] = where;
         const code = m[1]; const type = cell(row, 'type'); const price = Math.round(num(cell(row, 'price'))); const w = Math.round(num(cell(row, 'weight')));
         const colour = cell(row, 'colour'); const sw = SWATCH.find(([k]) => norm(colour).includes(k));
-        const d = clean({ sku: skuRaw, name, type, cat: CAT[code] || 'candles', line: cell(row, 'desc'), notes: list(cell(row, 'scent')), colour, packaging: cell(row, 'pack'), weight: w > 0 ? w : '' });
+        // marketplace fields: a blank cell leaves what the shop already has; a cell that cannot be read is ignored with a note
+        const mrpRaw = cell(row, 'mrp'); const mrp = Math.round(num(mrpRaw)); const dimsRaw = cell(row, 'dims'); const dims = parseDims(dimsRaw); const gtinRaw = cell(row, 'gtin'); const gtin = cleanGtin(gtinRaw);
+        if (mrpRaw && !(mrp > 0)) out.notes.push(where + ': the marketplace price "' + mrpRaw + '" is not a number, ignored.');
+        if (dimsRaw && !dims) out.notes.push(where + ': the dimensions "' + dimsRaw + '" should look like 10x10x8 (cm), ignored.');
+        if (gtinRaw && !gtin) out.notes.push(where + ': the barcode "' + gtinRaw + '" is not a valid EAN/UPC (8, 12, 13 or 14 digits with a correct last digit), ignored.');
+        const d = clean({ sku: skuRaw, name, type, cat: CAT[code] || 'candles', line: cell(row, 'desc'), notes: list(cell(row, 'scent')), colour, packaging: cell(row, 'pack'), weight: w > 0 ? w : '', mrpMarket: mrp > 0 ? mrp : '', dims: dims || '', gtin });
         if (!CAT[code]) out.notes.push(where + ': code ' + code + ' is new, so it was put under Candles. Change it in Products if needed.');
         const hasPrice = price > 0; const wantLive = h.map.show != null && yes(cell(row, 'show'));
         if (hasPrice) d.variants = [{ sku: skuRaw, label: w > 0 ? w + ' g' : 'Standard', price }];
@@ -185,6 +203,6 @@
     return out;
   }
 
-  const api = { readXlsx, parseCsv, googleCsvUrl, isWorkbookLink, plan, findHeader };
+  const api = { readXlsx, parseCsv, googleCsvUrl, isWorkbookLink, plan, findHeader, parseDims, cleanGtin };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.BTImport = api;
 })(typeof window !== 'undefined' ? window : globalThis);
