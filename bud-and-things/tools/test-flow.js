@@ -1,12 +1,14 @@
 // End-to-end shop flow at desktop and phone width: add to cart, checkout validation, UPI payment, order page,
 // sign-in, the 3D sample room, owner view, finder. Prints what it sees and any page errors. Needs a preview server (tools/preview.sh).
-const { chromium } = require(require('child_process').execSync('npm root -g').toString().trim() + '/playwright');
+const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_process').execSync('npm root -g').toString().trim() + '/playwright');
 (async () => {
   const b = await chromium.launch();
   const errs = [];
   const url = process.env.BT_URL || 'http://localhost:8765/page.html';
   for (const [w, h] of [[1280, 900], [390, 844]]) {
     const pg = await b.newPage({ viewport: { width: w, height: h } });
+    // config.js now points at the live project, where the Coming soon page hides the shop; this flow runs on the built-in draft content
+    await pg.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
     pg.on('pageerror', (e) => errs.push(w + ' pageerror: ' + e.message));
     pg.on('console', (m) => { if (m.type() === 'error' && !/fonts\.g/.test(m.text()) && !/ERR_/.test(m.text())) errs.push(w + ' console: ' + m.text()); });
     await pg.goto(url + '#home');
@@ -39,6 +41,7 @@ const { chromium } = require(require('child_process').execSync('npm root -g').to
     await pg.click('[data-act="pay-success"]'); await pg.waitForTimeout(150);
     console.log(w, 'order page:', (await pg.textContent('h1')).trim(), '|', (await pg.textContent('.checkout-side .grand')).trim());
     await pg.goto(url + '#admin'); await pg.waitForTimeout(100); await over('admin');
+    await pg.click('[data-act="adm-tab"][data-v="orders"]');
     await pg.click('[data-act="advance"]');
     console.log(w, 'admin status:', await pg.$$eval('td .pill', (e) => e.map((x) => x.textContent).slice(0, 1)));
     await pg.click('[data-act="advance"]'); await pg.click('[data-act="advance"]');
@@ -58,5 +61,6 @@ const { chromium } = require(require('child_process').execSync('npm root -g').to
     await pg.close();
   }
   console.log('ERRORS:', errs.length ? errs : 'none');
+  if (errs.length) process.exitCode = 1;
   await b.close();
 })();
