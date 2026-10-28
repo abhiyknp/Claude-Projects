@@ -4313,7 +4313,7 @@ async function payOnline(id) {
     // resolves when the customer pays, closes the window or the payment fails; the server then checks with Razorpay
     await new Promise((done) => {
       const rz = new window.Razorpay({ key: r.key, order_id: r.razorpay_order, amount: r.amount, currency: 'INR', name: 'BUD & THINGS', description: 'Order ' + id,
-        prefill: { name: o.contact.name || '', email: o.contact.email || '', contact: o.contact.phone || '' }, theme: { color: '#4B2E1E' },
+        prefill: { name: o.contact.name || '', email: o.contact.email || '', contact: o.contact.phone || '' }, theme: { color: '#8F1834' },
         handler: () => done(), modal: { ondismiss: () => done() } });
       rz.on('payment.failed', (f) => { P.err = (f && f.error && f.error.description) || 'The payment didn’t go through.'; });
       rz.open();
