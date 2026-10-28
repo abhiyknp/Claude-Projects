@@ -423,8 +423,10 @@ begin
   if length(coalesce(a ->> 'line1', '')) not between 1 and 200 or length(coalesce(a ->> 'line2', '')) > 200 then raise exception 'bad_order:address'; end if;
   if coalesce(a ->> 'pin', '') !~ '^[1-9][0-9]{5}$' then raise exception 'bad_order:pin'; end if;
   if length(coalesce(a ->> 'city', '')) not between 1 and 80 or length(coalesce(a ->> 'state', '')) not between 1 and 60 then raise exception 'bad_order:address'; end if;
-  -- Online: paid through Cashfree (functions/pay). Gift card or points: only when they cover the whole total.
-  if method is null or method not in ('Online', 'Gift card or points', 'Cash on delivery') then raise exception 'bad_order:method'; end if;
+  -- Online: paid through Razorpay (functions/pay). Gift card or points: only when they cover the whole total.
+  if method is null or method not in ('Online', 'UPI QR', 'Gift card or points', 'Cash on delivery') then raise exception 'bad_order:method'; end if;
+  -- UPI QR is the owner's manual fallback while the gateway is not live: only when switched on and a UPI ID is set
+  if method = 'UPI QR' and not (cfg_on('upiQrOn', false) and cfg_text('upiId', '') ~ '^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$') then raise exception 'bad_order:upi_off'; end if;
   -- the shop is prepaid: cash on delivery stays off unless the owner turns it on in Settings
   if method = 'Cash on delivery' and not cfg_on('codOn', false) then raise exception 'bad_order:cod_off'; end if;
   perform hit('order-phone', phone, 3, '1 day');
@@ -517,6 +519,18 @@ begin
   return (select data || jsonb_build_object('status', status) from orders where id = upper(trim(order_id)) and phone = norm_phone(phone_no));
 end $$;
 
+-- A customer who paid by UPI QR sends the bank's reference (UTR) for their order, so the owner can find the payment fast.
+-- It only notes the reference. The order moves on when the owner checks the bank and presses Mark paid.
+create or replace function note_payment(order_id text, phone_no text, utr text) returns void language plpgsql security definer set search_path = public as $$
+declare ref text := upper(trim(coalesce(utr, '')));
+begin
+  perform hit('utr', client_key(), 10, '1 hour');
+  if ref !~ '^[A-Z0-9]{8,22}$' then raise exception 'bad_utr'; end if;
+  update orders set data = data || jsonb_build_object('utr', ref, 'utrAt', now())
+    where id = upper(trim(order_id)) and phone = norm_phone(phone_no) and method = 'UPI QR' and status = 'Awaiting payment';
+  if not found then raise exception 'not_found'; end if;
+end $$;
+
 -- the customer's own invoice for an order: the order number and the mobile number on it, as for get_order
 create or replace function get_invoice(order_id text, phone_no text) returns jsonb language plpgsql security definer set search_path = public as $$
 begin
@@ -539,12 +553,12 @@ begin
   update orders set status = 'Cancelled' where id = r.id;
 end $$;
 
--- ---------- online payment (Cashfree) and delivery (Shiprocket) ----------
+-- ---------- online payment (Razorpay) and delivery (Shiprocket) ----------
 -- Only the pay and delivery functions (supabase/functions) call these, with the service key; visitors and the owner can't.
 
--- Cashfree confirmed the payment. Usually the order is still waiting, and moves on to Placed. If it was paid after its
+-- Razorpay confirmed the payment. Usually the order is still waiting, and moves on to Placed. If it was paid after its
 -- hold ran out (and was cancelled), the pieces and gift card balance are taken again when they're still there;
--- otherwise it stays cancelled and is marked refundDue so the owner refunds it in the Cashfree dashboard.
+-- otherwise it stays cancelled and is marked refundDue so the owner refunds it in the Razorpay dashboard.
 create or replace function mark_paid(order_id text, pay jsonb) returns text language plpgsql security definer set search_path = public as $$
 declare r record; it jsonb; ok boolean := true;
 begin
@@ -1063,6 +1077,7 @@ revoke execute on function client_key() from public, anon, authenticated;
 revoke execute on function guard_visitor() from public, anon, authenticated;
 revoke execute on function place_order(jsonb) from public, anon;
 revoke execute on function get_order(text, text) from public;
+revoke execute on function note_payment(text, text, text) from public;
 revoke execute on function get_invoice(text, text) from public;
 revoke execute on function cancel_order(text) from public, anon;
 revoke execute on function set_delay(text, jsonb) from public, anon;
@@ -1079,6 +1094,7 @@ revoke execute on function points_of(text) from public, anon, authenticated;
 revoke execute on function my_orders() from public, anon;
 grant execute on function my_orders() to authenticated;
 grant execute on function get_order(text, text) to anon, authenticated;
+grant execute on function note_payment(text, text, text) to anon, authenticated;
 grant execute on function get_invoice(text, text) to anon, authenticated;
 grant execute on function cancel_order(text) to authenticated;
 grant execute on function set_delay(text, jsonb) to authenticated;
