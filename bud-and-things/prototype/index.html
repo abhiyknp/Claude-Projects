@@ -2509,6 +2509,11 @@ function admOrders() {
     : '<div class="empty"><strong>No website orders yet.</strong><span class="muted">Place one from the shop: add something to the cart, check out as a guest and simulate a payment.</span><a class="btn small" href="#shop">Go to the shop</a></div>'}`;
 }
 
+// what a product still needs before it can go on a marketplace (never blocks the website)
+function marketGaps(d) {
+  const miss = []; if (!(d.weight > 0)) miss.push('weight'); if (!d.dims) miss.push('package size'); if (!(d.mrpMarket > 0)) miss.push('marketplace price');
+  return miss;
+}
 // what a product still needs before it can be published
 function publishGaps(id, d) {
   const miss = []; if (!d.type) miss.push('type'); if (!d.line) miss.push('one-line description'); if (!d.size) miss.push('size'); if (!(d.weight > 0)) miss.push('weight'); if (!d.material) miss.push('material');
@@ -2520,7 +2525,7 @@ function admProducts() {
   const A = UI.adm; const rows = prodRows();
   if (A.edit != null) return admProductForm(A.edit === '' ? null : rows.find((r) => r.id === A.edit));
   return `<div class="adm-bar"><p class="muted">Turn a product off to take it off the site without losing it. Lower numbers show first.</p><button class="btn small" type="button" data-act="adm-edit" data-id="">Add a product</button></div>
-    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span></td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Published', 'Draft')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
+    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span>${marketGaps(d).length ? `<br><span class="muted" style="font-size:13px">Marketplace: add ${esc(marketGaps(d).join(', '))}</span>` : ''}</td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Published', 'Draft')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
 }
 // ---------- import products from a sheet (Excel file, Google Sheet link or .csv; the reading rules are in import.js) ----------
 const IMP_TABS = 'Glass Candles, Moulded Candles, Tealight Candles, Jesmonite Tray, DIY Items';
@@ -2604,7 +2609,7 @@ function admProductForm(r) {
     ${f('notes', 'Scent notes', (d.notes || []).join(', '), { hint: 'comma separated; leave empty for objects' })}
     ${f('smellsLike', 'Smells like', d.smellsLike, { full: true, area: true, rows: 2, hint: 'the scent story, one or two sentences' })}
     ${f('pz-top', 'Top notes', (pz.top || []).join(', '))}${f('pz-heart', 'Heart notes', (pz.heart || []).join(', '))}${f('pz-base', 'Base notes', (pz.base || []).join(', '))}${f('burnTime', 'Burn time', d.burnTime, { hint: 'for example 40 hours' })}
-    ${f('size', 'Size', d.size, { full: true })}${f('weight', 'Weight (grams)', d.weight, { type: 'number', hint: 'one piece, packed' })}${f('material', 'Material', d.material, { full: true, area: true, rows: 2 })}${f('care', 'Care', (d.care || []).join('\n'), { full: true, area: true, rows: 3, hint: 'one line each' })}
+    ${f('size', 'Size', d.size, { full: true })}${f('weight', 'Weight (grams)', d.weight, { type: 'number', hint: 'one piece, packed' })}${f('mrpMarket', 'Marketplace price (₹)', d.mrpMarket, { type: 'number', hint: 'for Amazon and other marketplaces; empty means the site price' })}${f('dims', 'Package size (cm)', d.dims ? [d.dims.l, d.dims.b, d.dims.h].join('x') : '', { hint: 'length x breadth x height, for example 10x10x8' })}${f('gtin', 'Barcode (EAN / GTIN)', d.gtin, { hint: 'optional until a marketplace asks' })}${f('material', 'Material', d.material, { full: true, area: true, rows: 2 })}${f('care', 'Care', (d.care || []).join('\n'), { full: true, area: true, rows: 3, hint: 'one line each' })}
     ${f('batch-no', 'Batch number', b.no, { type: 'number' })}${f('batch-poured', 'Poured or cast on', b.poured, { type: 'date' })}${f('batch-size', 'Pieces in this batch', b.size, { type: 'number' })}
     ${checks('mood', 'Feelings it suits', MOODS, d.mood)}${checks('space', 'Rooms it suits', SPACES, d.space)}${checks('occ', 'Occasions', OCCASIONS, d.occ)}
     <span class="field"><label for="ap-art">Drawing until photos arrive</label><select id="ap-art" name="art">${ARTS.map(([k, l]) => `<option value="${k}" ${d.art === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
@@ -2626,6 +2631,9 @@ function readProductForm(form, live) {
   if (v('pz-top') || v('pz-heart') || v('pz-base')) d.pyramid = { top: csvList(v('pz-top')), heart: csvList(v('pz-heart')), base: csvList(v('pz-base')) };
   if (v('burnTime')) d.burnTime = v('burnTime');
   if (+v('weight') > 0) d.weight = Math.round(+v('weight'));
+  if (+v('mrpMarket') > 0) d.mrpMarket = Math.round(+v('mrpMarket'));
+  if (v('dims')) { const dm = BTImport.parseDims(v('dims')); if (dm) d.dims = dm; }
+  if (v('gtin')) { const g = BTImport.cleanGtin(v('gtin')); if (g) d.gtin = g; }
   d.openStock = {}; for (let i = 0; form.elements['v-sku-' + i]; i++) { const sku = v('v-sku-' + i).toUpperCase(); if (sku && form.elements['v-qty-' + i]) d.openStock[sku] = Math.max(0, parseInt(v('v-qty-' + i), 10) || 0); }
   if (v('batch-no') || v('batch-poured') || v('batch-size')) d.batch = { no: +v('batch-no') || null, poured: v('batch-poured') || null, size: +v('batch-size') || null };
   return { id: form.dataset.id || slug(v('id')), data: d, sort: Math.round(+v('sort') || 0), live: live, isNew: !form.dataset.id };
@@ -4745,6 +4753,7 @@ document.addEventListener('submit', (e) => {
     return; }
   if (kind === 'adm-product') { const live = !!(e.submitter && e.submitter.dataset.live === '1'); const r = readProductForm(f, live); const openStock = r.data.openStock; delete r.data.openStock; const d = r.data; const A = UI.adm; const others = prodRows().filter((x) => x.id !== r.id); const skus = new Set(); others.forEach((x) => ((x.data || {}).variants || []).forEach((v) => skus.add(v.sku)));
     A.formErr = !d.name ? 'Give the product a name.' : r.isNew && !/^[a-z0-9][a-z0-9-]{1,59}$/.test(r.id) ? 'Choose a web address name with lowercase letters, numbers and dashes.' : r.isNew && prodRows().some((x) => x.id === r.id) ? 'That web address name is already used.'
+      : f.elements.dims && f.elements.dims.value.trim() && !d.dims ? 'Package size should look like 10x10x8 (length x breadth x height, in cm).' : f.elements.gtin && f.elements.gtin.value.trim() && !d.gtin ? 'That barcode is not a valid EAN or UPC (8, 12, 13 or 14 digits, correct last digit). Clear it or fix it.'
       : !d.variants.length ? 'Add at least one option with an SKU, a name and a price.' : d.variants.some((v) => !v.label || !(v.price > 0)) ? 'Every option needs a name and a price above 0.' : d.variants.some((v, i) => skus.has(v.sku) || d.variants.findIndex((w) => w.sku === v.sku) !== i) ? 'Each SKU can only be used once across the shop.' : live && (r.isNew || (prodRows().find((x) => x.id === r.id) || {}).live === false) ? publishGaps(r.id, d) : null;
     if (A.formErr) { let el = f.querySelector('.err'); if (!el) { el = document.createElement('span'); el.className = 'err full'; el.setAttribute('role', 'alert'); f.querySelector('button[type="submit"]').parentElement.before(el); } el.textContent = A.formErr; el.scrollIntoView({ block: 'center' }); return; }
     const fresh = d.variants.filter((v) => !(v.sku in skuMap) && S.stock[v.sku] == null);
