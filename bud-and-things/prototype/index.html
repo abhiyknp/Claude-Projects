@@ -1098,7 +1098,7 @@ body.app .why-band { padding-bottom: 96px; }
 
 // ---------- catalogue (draft) ----------
 // Launch range: candles and Jesmonite objects. Names, scents and prices are drafts until testing is complete.
-const IMG = { box: 'assets/catalogue/bnt-prd-jt-001.jpg', jar: 'assets/catalogue/bnt-prd-cg-001.jpg', tag: 'assets/catalogue/bnt-prd-jt-002.jpg', card: 'assets/catalogue/bnt-prd-tl-001.jpg', pouch: 'assets/catalogue/bnt-prd-jt-004.jpg', seal: 'assets/catalogue/bnt-prd-jt-005.jpg', leather: 'assets/catalogue/bnt-prd-mc-002.jpg', logoPhoto: 'assets/catalogue/bnt-prd-jt-003.jpg' };
+const IMG = { box: 'assets/catalogue/bnt-prd-jt-003.jpg', jar: 'assets/catalogue/bnt-prd-cg-001.jpg', tag: 'assets/catalogue/bnt-prd-jt-002.jpg', card: 'assets/catalogue/bnt-prd-tl-001.jpg', pouch: 'assets/catalogue/bnt-prd-jt-004.jpg', seal: 'assets/catalogue/bnt-prd-jt-005.jpg', leather: 'assets/catalogue/bnt-prd-mc-002.jpg', logoPhoto: 'assets/catalogue/bnt-prd-jt-003.jpg' };
 const CANDLE_CARE = ['Let the first burn melt to the edges (about 2 hours).', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'];
 const PILLAR_COL = { 'Ivory': '#F6EDDF', 'Terracotta': '#C45A3A', 'Olive': '#5B6B46' };
 const FIN = { 'Ivory': '#F1E8DA', 'Ivory Terrazzo': '#EFE7DA', 'Sand': '#DCC9AE', 'Terracotta': '#B0644A', 'Caramel Swirl': '#C99A6C', 'Caramel': '#C99A6C', 'Olive': '#6B6B43', 'Mixed Earth · set of 4': '#6B6B43', 'All Ivory · set of 4': '#F1E8DA' };
@@ -1139,7 +1139,6 @@ let P = [
   {"id": "bnt-prd-diy-001", "name": "Paint Your Starfish", "cat": "jesmonite", "type": "DIY paint kit", "line": "Paint your own starfish.", "desc": "A do-it-yourself paint kit: a starfish to paint, with paints and a brush. About 43 g.", "variants": [{"sku": "BNT-PRD-DIY-001", "label": "43 g", "price": 69, "stock": 1}], "material": "Starfish, paints and a brush.", "size": "43 g", "weight": 43, "care": [], "mood": [], "space": [], "occ": [], "gift": true, "art": "tray", "c": "#F4ECE0", "img": "assets/catalogue/bnt-prd-diy-001.jpg"}
 ];
 let PAIRINGS = [];
-const FUTURE = [['Home décor & lifestyle objects', 'Later'], ['Celebration & corporate gifting', 'Later']];
 const MOODS = [['calm', 'Calm and grounded'], ['cosy', 'Warm and cosy'], ['fresh', 'Fresh and uplifting'], ['creative', 'Creative and expressive'], ['gift-ready', 'Thoughtful and gift-ready']];
 const SPACES = [['bedroom', 'Bedroom'], ['living', 'Living room'], ['workspace', 'Desk or workspace'], ['kitchen', 'Kitchen'], ['entrance', 'Entrance'], ['bathroom', 'Bathroom'], ['dining', 'Dining table']];
 // the four shop categories on sale today; each is a slice of a product group (cat) by its type
@@ -1287,7 +1286,7 @@ const TEXT = {
   'acct.sub': ['We send a code to your email. No password to remember. Signing in keeps your orders, tracking and Bud Points in one place.', 'Account: sign-in text'],
   'track.title': ['Track your order', 'Track order: heading'],
   'track.sub': ['Enter the order number from your confirmation email and the mobile number you ordered with.', 'Track order: text'],
-  'foot.copy': ['© {year} BUD & THINGS by Ashi. Made in small batches, never in a hurry. India.', 'Footer: copyright line'],
+  'foot.copy': ['© {year} BUD & THINGS by Ashi. All rights reserved.', 'Footer: copyright line'],
   'foot.made': ['Thought. Object. Feeling. Memory.', 'Footer: made in line'],
   'legal.note': ['This page is a template written for BUD & THINGS. Have it checked by a legal adviser, and fill in the business details in Owner view → Settings, before launch. Clear this note once that is done.', 'Policies: review note (empty to hide)'],
   'legal.biz': ['{bizName}, {bizAddress}, India. GSTIN: {gstin}. Email: {email}.', 'Policies: business details'],
@@ -1340,7 +1339,7 @@ const TEXT = {
   'home.news': ['Hear about new pieces first', 'Newsletter: heading'],
   'home.newsText': ['Early access to every new batch, and {welcomeOff}% off your first order. One email a month; leave any time.', 'Newsletter: text'],
   'home.newsDone': ['You’re on the list. Your welcome code is {welcomeCode}: use it at checkout for {welcomeOff}% off.', 'Newsletter: thank-you message'],
-  'shop.all': ['Everything ready to order today: glass candles, tealights, moulded candles and Jesmonite trays.', 'Shop: all products line'],
+  'shop.all': ['', 'Shop: all products line'],
   'shop.candles': ['Glass candles, tealights and moulded candles. Poured in small batches.', 'Shop: candles line'],
   'shop.jesmonite': ['Trays, ring dishes and sculptural forms cast in Jesmonite, a water-based composite. Each piece varies a little in tone and texture.', 'Shop: Jesmonite line'],
   'shop.noteCandle': ['Why the first burn matters|Let the first burn melt the wax right to the edges, about two hours. It helps the candle burn evenly every time after.', 'Shop: candle note card (title|text)'],
@@ -2077,7 +2076,6 @@ function viewShop(cat) {
     ${promoBanners().replace('wrap promos', 'promos slim')}
     <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'piece' : 'pieces'}${+SET.ritualOff ? ` · <span class="save-note">Pair any candle with an object and save ${SET.ritualOff}%</span>` : ''}</p>
     ${list.length ? `<div class="grid" style="padding-bottom:var(--s7)">${cards.join('')}</div>` : `<div class="empty" style="margin-bottom:40px"><strong>Nothing matches these filters yet.</strong><span class="muted">Clear a filter, or try Find Your Feeling for suggestions.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="clear-filters">Clear filters</button><a class="btn small ghost" href="#feeling">Find Your Feeling</a></span></div>`}
-    <div class="next-up" style="margin-bottom:80px"><span class="eyebrow">Coming later, not yet available</span><span class="muted">${FUTURE.map((f) => esc(f[0])).join(' · ')}.</span></div>
   </div>`;
 }
 
@@ -2359,8 +2357,6 @@ function viewStory() {
       <ol class="how-steps">${steps.map(([i, h, t], n) => `<li><span class="how-n num">0${n + 1}</span>${hl(i, 28)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></section>
     <section class="section" aria-labelledby="pill-h" style="padding-bottom:0"><div class="section-head"><h2 id="pill-h">What we hold to</h2></div>
       <div class="pillars">${pillars.map(([ic, h, t]) => `<div>${ICON[ic]}<strong>${h}</strong><span class="muted">${t}</span></div>`).join('')}</div></section>
-    <section class="section" aria-labelledby="next-h" style="padding-bottom:0"><div class="section-head"><h2 id="next-h">How we will grow</h2></div>
-      <ol class="grow"><li class="now"><strong>Now</strong><span>Candles and Jesmonite objects, made in small batches.</span></li>${FUTURE.map(([f, s]) => `<li><strong>${s}</strong><span>${esc(f)}. Not yet available.</span></li>`).join('')}</ol></section>
     <section class="section" style="padding-bottom:0">${discover('story-disc').replace('section wrap', '')}</section></div>`;
 }
 function viewHelp() {
@@ -3612,9 +3608,9 @@ function festiveBanner() {
 
 function spotlight(id) {
   const p = byId[String(SET.spotlight || '').trim()] || idList('featured').map((x) => byId[x])[0]; if (!p) return '';
-  const vi = p.variants.length > 1 && p.art === 'jar' ? 1 : 0; const ph = mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0];
+  const vi = p.variants.length > 1 && p.art === 'jar' ? 1 : 0; const ph = mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0]; const pic = ph ? mUrl(ph) : p.img; const picAlt = ph ? ph.alt : p.name;
   return `<section class="spot" aria-labelledby="${id}"><div class="wrap section"><div class="split">
-    <a class="spot-ph tile${ph ? ' photo-tile' : ''}" href="#p-${p.id}" aria-label="${esc(p.name)}">${ph ? `<img src="${esc(mUrl(ph))}" alt="${esc(ph.alt)}" loading="lazy">` : art(p, vi, 1.9)}</a>
+    <a class="spot-ph tile${pic ? ' photo-tile' : ''}" href="#p-${p.id}" aria-label="${esc(p.name)}">${pic ? `<img src="${esc(pic)}" alt="${esc(picAlt)}" loading="lazy">` : art(p, vi, 1.9)}</a>
     <div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow">${T('home.spotEyebrow')}</span><h2 id="${id}" style="font-size:clamp(34px,4vw,52px)">${esc(p.name)}</h2>
       ${p.smellsLike ? `<p class="spot-quote">${esc(p.smellsLike)}</p>` : ''}<p class="muted">${esc(descOf(p))}</p>
       <ul class="hl-row">${highlightsOf(p).slice(0, 3).map(([i, t]) => `<li>${hl(i, 22)}<span>${esc(t)}</span></li>`).join('')}</ul>
