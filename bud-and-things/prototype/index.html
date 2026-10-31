@@ -1,4 +1,4 @@
-<title>BUD &amp; THINGS by Ashi</title>
+<title>BUD &amp; THINGS by Ashi | Handmade Candles &amp; Jesmonite Trays in India</title>
 <style>
 /* Layout: Atelier of Light. One plaster room; warm light carries the colour; square, quiet UI around a single scroll moment. Single light theme by brand choice. */
 @font-face { font-family: 'Playfair Display'; src: url(assets/fonts/playfair.woff2) format('woff2'); font-weight: 400 900; font-style: normal; font-display: swap; }
@@ -671,8 +671,8 @@ body.cs main { padding-bottom: 0; }
 .gh-strip { background: var(--choc); color: var(--ivory); font-size: 12px; font-weight: 700; letter-spacing: .06em; overflow: hidden; white-space: nowrap; }
 .gh-strip .gh-marq { display: inline-flex; gap: 48px; padding: 9px 0; animation: gh-marq 26s linear infinite; }
 .gh-hero { display: grid; gap: 22px; padding-block: 20px 0; }
-.gh-hero .gh-ph { overflow: hidden; aspect-ratio: 4 / 3; background: var(--sand); position: relative; }
-.gh-hero .gh-ph img { width: 100%; height: 100%; object-fit: cover; display: block; animation: gh-kb 16s ease-in-out infinite alternate; }
+.gh-hero .gh-ph { overflow: hidden; aspect-ratio: 1 / 1; max-width: 480px; width: 100%; justify-self: center; background: var(--sand); position: relative; }
+.gh-hero .gh-ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .gh-hero h1 { font-size: clamp(34px, 4.4vw, 54px); line-height: 1.02; margin: 0; }
 .gh-hero .gh-cta { display: flex; flex-wrap: wrap; gap: 10px; }
 .gh-hero .gh-cta .btn { flex: 1 1 200px; }
@@ -1098,7 +1098,7 @@ body.app .why-band { padding-bottom: 96px; }
 
 // ---------- catalogue (draft) ----------
 // Launch range: candles and Jesmonite objects. Names, scents and prices are drafts until testing is complete.
-const IMG = { box: 'assets/catalogue/bnt-prd-jt-001.jpg', jar: 'assets/catalogue/bnt-prd-cg-001.jpg', tag: 'assets/catalogue/bnt-prd-jt-002.jpg', card: 'assets/catalogue/bnt-prd-tl-001.jpg', pouch: 'assets/catalogue/bnt-prd-jt-004.jpg', seal: 'assets/catalogue/bnt-prd-jt-005.jpg', leather: 'assets/catalogue/bnt-prd-mc-002.jpg', logoPhoto: 'assets/catalogue/bnt-prd-jt-003.jpg' };
+const IMG = { box: 'assets/catalogue/bnt-prd-jt-003.jpg', jar: 'assets/catalogue/bnt-prd-cg-001.jpg', tag: 'assets/catalogue/bnt-prd-jt-002.jpg', card: 'assets/catalogue/bnt-prd-tl-001.jpg', pouch: 'assets/catalogue/bnt-prd-jt-004.jpg', seal: 'assets/catalogue/bnt-prd-jt-005.jpg', leather: 'assets/catalogue/bnt-prd-mc-002.jpg', logoPhoto: 'assets/catalogue/bnt-prd-jt-003.jpg' };
 const CANDLE_CARE = ['Let the first burn melt to the edges (about 2 hours).', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'];
 const PILLAR_COL = { 'Ivory': '#F6EDDF', 'Terracotta': '#C45A3A', 'Olive': '#5B6B46' };
 const FIN = { 'Ivory': '#F1E8DA', 'Ivory Terrazzo': '#EFE7DA', 'Sand': '#DCC9AE', 'Terracotta': '#B0644A', 'Caramel Swirl': '#C99A6C', 'Caramel': '#C99A6C', 'Olive': '#6B6B43', 'Mixed Earth · set of 4': '#6B6B43', 'All Ivory · set of 4': '#F1E8DA' };
@@ -1139,7 +1139,6 @@ let P = [
   {"id": "bnt-prd-diy-001", "name": "Paint Your Starfish", "cat": "jesmonite", "type": "DIY paint kit", "line": "Paint your own starfish.", "desc": "A do-it-yourself paint kit: a starfish to paint, with paints and a brush. About 43 g.", "variants": [{"sku": "BNT-PRD-DIY-001", "label": "43 g", "price": 69, "stock": 1}], "material": "Starfish, paints and a brush.", "size": "43 g", "weight": 43, "care": [], "mood": [], "space": [], "occ": [], "gift": true, "art": "tray", "c": "#F4ECE0", "img": "assets/catalogue/bnt-prd-diy-001.jpg"}
 ];
 let PAIRINGS = [];
-const FUTURE = [['Home décor & lifestyle objects', 'Later'], ['Celebration & corporate gifting', 'Later']];
 const MOODS = [['calm', 'Calm and grounded'], ['cosy', 'Warm and cosy'], ['fresh', 'Fresh and uplifting'], ['creative', 'Creative and expressive'], ['gift-ready', 'Thoughtful and gift-ready']];
 const SPACES = [['bedroom', 'Bedroom'], ['living', 'Living room'], ['workspace', 'Desk or workspace'], ['kitchen', 'Kitchen'], ['entrance', 'Entrance'], ['bathroom', 'Bathroom'], ['dining', 'Dining table']];
 // the four shop categories on sale today; each is a slice of a product group (cat) by its type
@@ -1287,7 +1286,7 @@ const TEXT = {
   'acct.sub': ['We send a code to your email. No password to remember. Signing in keeps your orders, tracking and Bud Points in one place.', 'Account: sign-in text'],
   'track.title': ['Track your order', 'Track order: heading'],
   'track.sub': ['Enter the order number from your confirmation email and the mobile number you ordered with.', 'Track order: text'],
-  'foot.copy': ['© {year} BUD & THINGS by Ashi. Made in small batches, never in a hurry. India.', 'Footer: copyright line'],
+  'foot.copy': ['© {year} BUD & THINGS by Ashi. All rights reserved.', 'Footer: copyright line'],
   'foot.made': ['Thought. Object. Feeling. Memory.', 'Footer: made in line'],
   'legal.note': ['This page is a template written for BUD & THINGS. Have it checked by a legal adviser, and fill in the business details in Owner view → Settings, before launch. Clear this note once that is done.', 'Policies: review note (empty to hide)'],
   'legal.biz': ['{bizName}, {bizAddress}, India. GSTIN: {gstin}. Email: {email}.', 'Policies: business details'],
@@ -1340,7 +1339,7 @@ const TEXT = {
   'home.news': ['Hear about new pieces first', 'Newsletter: heading'],
   'home.newsText': ['Early access to every new batch, and {welcomeOff}% off your first order. One email a month; leave any time.', 'Newsletter: text'],
   'home.newsDone': ['You’re on the list. Your welcome code is {welcomeCode}: use it at checkout for {welcomeOff}% off.', 'Newsletter: thank-you message'],
-  'shop.all': ['Everything ready to order today: glass candles, tealights, moulded candles and Jesmonite trays.', 'Shop: all products line'],
+  'shop.all': ['', 'Shop: all products line'],
   'shop.candles': ['Glass candles, tealights and moulded candles. Poured in small batches.', 'Shop: candles line'],
   'shop.jesmonite': ['Trays, ring dishes and sculptural forms cast in Jesmonite, a water-based composite. Each piece varies a little in tone and texture.', 'Shop: Jesmonite line'],
   'shop.noteCandle': ['Why the first burn matters|Let the first burn melt the wax right to the edges, about two hours. It helps the candle burn evenly every time after.', 'Shop: candle note card (title|text)'],
@@ -1433,9 +1432,9 @@ const TEXT = {
 };
 // Search and sharing: the title and description of each page. Owner view → Site text → Search & sharing.
 // The live site also bakes the site-wide ones into the page head every day, so Google and link previews see them.
-TEXT['seo.title'] = ['BUD & THINGS by Ashi', 'Search & sharing: site title (home page, browser tab)'];
+TEXT['seo.title'] = ['BUD & THINGS by Ashi | Handmade Candles & Jesmonite Trays in India', 'Search & sharing: site title (home page, browser tab)'];
 TEXT['seo.suffix'] = [' · BUD & THINGS by Ashi', 'Search & sharing: added after every other page title'];
-TEXT['seo.desc'] = ['BUD & THINGS by Ashi: thoughtful objects, meaningful moments.', 'Search & sharing: site description'];
+TEXT['seo.desc'] = ['BUD & THINGS by Ashi: handmade glass candles, tealight candles, moulded candles and Jesmonite trays, made in small batches in India.', 'Search & sharing: site description'];
 const SEO_PAGES = [['shop', 'All products', 'Shop all candles and objects', 'Hand-made glass candles, tealights, moulded candles and Jesmonite trays.'], ['candles', 'Candles', 'Hand-poured candles', 'Hand-poured glass candles, tealights and moulded candles, made in small batches.'], ['glass', 'Glass Candles', 'Glass candles', 'Hand-poured scented candles in glass.'], ['tealight', 'Tealight Candles', 'Tealight candles', 'Small hand-poured tealights.'], ['moulded', 'Moulded Candles', 'Moulded candles', 'Hand-moulded candles in playful shapes.'], ['jesmonite', 'Jesmonite Trays', 'Jesmonite trays', 'Hand-cast Jesmonite trays, dishes and a paint-your-own kit.'], ['under-999', 'Gifts under ₹999', 'Gifts under ₹999', 'Small, thoughtful gifts under ₹999.'], ['feeling', 'Find your feeling', 'Find your feeling', 'Tell us the mood and we will find the scent.'], ['ritual', 'Build your ritual', 'Build your ritual', 'Pair a candle with an object for a small daily ritual.'], ['gifting', 'Gifting', 'Gifting', 'Gifts for every occasion, wrapped and ready to give.'], ['story', 'Our story', 'Our story', 'How a home studio became BUD & THINGS.'], ['why', 'Why from us', 'Why people buy from us', 'Hand-made pieces, free replacement, secure payments and gift-ready parcels.'], ['journal', 'Journal', 'Journal', 'Candle care, gifting guides and notes from the studio.'], ['faq', 'FAQ', 'Questions and answers', 'Answers about orders, shipping, candles and gifts.'], ['help', 'Help', 'Help and contact', 'Contact us, track an order, or ask about anything.'], ['bulk', 'Corporate and bulk gifts', 'Corporate and bulk gifts', 'Gifts in bulk for weddings, festivals and teams.'], ['share', 'Share with a friend', 'Share with a friend', 'Share BUD & THINGS and earn Bud Points.'], ['giftcard', 'Gift cards', 'Gift cards', 'Send a BUD & THINGS gift card.'], ['track', 'Track your order', 'Track your order', 'Follow your order with your order number and mobile number.'], ['privacy', 'Privacy policy', 'Privacy policy', ''], ['terms', 'Terms and conditions', 'Terms and conditions', ''], ['shipping', 'Shipping policy', 'Shipping and delivery', ''], ['refunds', 'Replacement policy', 'Cancellations and replacements', '']];
 SEO_PAGES.forEach(([r, label, t, d]) => { TEXT['seo.t.' + r] = [t, 'Search & sharing: ' + label + ' page title']; TEXT['seo.d.' + r] = [d, 'Search & sharing: ' + label + ' page description (empty: the site description)']; });
 const TEXT_GROUPS = [['seo.', 'Search & sharing (SEO)'], ['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['share.', 'Share with a friend'], ['gc.', 'Gift cards'], ['rem.', 'Gift reminders'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
@@ -2077,7 +2076,6 @@ function viewShop(cat) {
     ${promoBanners().replace('wrap promos', 'promos slim')}
     <p class="muted num" style="margin-bottom:18px" role="status">${list.length} ${list.length === 1 ? 'piece' : 'pieces'}${+SET.ritualOff ? ` · <span class="save-note">Pair any candle with an object and save ${SET.ritualOff}%</span>` : ''}</p>
     ${list.length ? `<div class="grid" style="padding-bottom:var(--s7)">${cards.join('')}</div>` : `<div class="empty" style="margin-bottom:40px"><strong>Nothing matches these filters yet.</strong><span class="muted">Clear a filter, or try Find Your Feeling for suggestions.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="clear-filters">Clear filters</button><a class="btn small ghost" href="#feeling">Find Your Feeling</a></span></div>`}
-    <div class="next-up" style="margin-bottom:80px"><span class="eyebrow">Coming later, not yet available</span><span class="muted">${FUTURE.map((f) => esc(f[0])).join(' · ')}.</span></div>
   </div>`;
 }
 
@@ -2359,8 +2357,6 @@ function viewStory() {
       <ol class="how-steps">${steps.map(([i, h, t], n) => `<li><span class="how-n num">0${n + 1}</span>${hl(i, 28)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></section>
     <section class="section" aria-labelledby="pill-h" style="padding-bottom:0"><div class="section-head"><h2 id="pill-h">What we hold to</h2></div>
       <div class="pillars">${pillars.map(([ic, h, t]) => `<div>${ICON[ic]}<strong>${h}</strong><span class="muted">${t}</span></div>`).join('')}</div></section>
-    <section class="section" aria-labelledby="next-h" style="padding-bottom:0"><div class="section-head"><h2 id="next-h">How we will grow</h2></div>
-      <ol class="grow"><li class="now"><strong>Now</strong><span>Candles and Jesmonite objects, made in small batches.</span></li>${FUTURE.map(([f, s]) => `<li><strong>${s}</strong><span>${esc(f)}. Not yet available.</span></li>`).join('')}</ol></section>
     <section class="section" style="padding-bottom:0">${discover('story-disc').replace('section wrap', '')}</section></div>`;
 }
 function viewHelp() {
@@ -3612,9 +3608,9 @@ function festiveBanner() {
 
 function spotlight(id) {
   const p = byId[String(SET.spotlight || '').trim()] || idList('featured').map((x) => byId[x])[0]; if (!p) return '';
-  const vi = p.variants.length > 1 && p.art === 'jar' ? 1 : 0; const ph = mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0];
+  const vi = p.variants.length > 1 && p.art === 'jar' ? 1 : 0; const ph = mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0]; const pic = ph ? mUrl(ph) : p.img; const picAlt = ph ? ph.alt : p.name;
   return `<section class="spot" aria-labelledby="${id}"><div class="wrap section"><div class="split">
-    <a class="spot-ph tile${ph ? ' photo-tile' : ''}" href="#p-${p.id}" aria-label="${esc(p.name)}">${ph ? `<img src="${esc(mUrl(ph))}" alt="${esc(ph.alt)}" loading="lazy">` : art(p, vi, 1.9)}</a>
+    <a class="spot-ph tile${pic ? ' photo-tile' : ''}" href="#p-${p.id}" aria-label="${esc(p.name)}">${pic ? `<img src="${esc(pic)}" alt="${esc(picAlt)}" loading="lazy">` : art(p, vi, 1.9)}</a>
     <div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow">${T('home.spotEyebrow')}</span><h2 id="${id}" style="font-size:clamp(34px,4vw,52px)">${esc(p.name)}</h2>
       ${p.smellsLike ? `<p class="spot-quote">${esc(p.smellsLike)}</p>` : ''}<p class="muted">${esc(descOf(p))}</p>
       <ul class="hl-row">${highlightsOf(p).slice(0, 3).map(([i, t]) => `<li>${hl(i, 22)}<span>${esc(t)}</span></li>`).join('')}</ul>

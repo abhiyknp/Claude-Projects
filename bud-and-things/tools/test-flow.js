@@ -11,6 +11,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     await pg.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
     pg.on('pageerror', (e) => errs.push(w + ' pageerror: ' + e.message));
     pg.on('console', (m) => { if (m.type() === 'error' && !/fonts\.g/.test(m.text()) && !/ERR_/.test(m.text())) errs.push(w + ' console: ' + m.text()); });
+    pg.on('response', (r) => { if (r.status() >= 400) console.log(w, 'HTTP', r.status(), r.url()); });
     await pg.goto(url + '#home');
     await pg.mouse.wheel(0, 1500); await pg.waitForTimeout(300);
     const over = async (tag) => { const o = await pg.evaluate(() => document.documentElement.scrollWidth - window.innerWidth); if (o > 0) errs.push(`${w} overflow ${o}px on ${tag}`); };
