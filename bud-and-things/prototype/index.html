@@ -1139,9 +1139,18 @@ let P = [
   {"id": "bnt-prd-diy-001", "name": "Paint Your Starfish", "cat": "jesmonite", "type": "DIY paint kit", "line": "Paint your own starfish.", "desc": "A do-it-yourself paint kit: a starfish to paint, with paints and a brush. About 43 g.", "variants": [{"sku": "BNT-PRD-DIY-001", "label": "43 g", "price": 69, "stock": 1}], "material": "Starfish, paints and a brush.", "size": "43 g", "weight": 43, "care": [], "mood": [], "space": [], "occ": [], "gift": true, "art": "tray", "c": "#F4ECE0", "img": "assets/catalogue/bnt-prd-diy-001.jpg"}
 ];
 let PAIRINGS = [];
-const FUTURE = [['Gift sets & curated gifting', 'Next'], ['Home décor & lifestyle objects', 'Later'], ['Celebration & corporate gifting', 'Later']];
+const FUTURE = [['Home décor & lifestyle objects', 'Later'], ['Celebration & corporate gifting', 'Later']];
 const MOODS = [['calm', 'Calm and grounded'], ['cosy', 'Warm and cosy'], ['fresh', 'Fresh and uplifting'], ['creative', 'Creative and expressive'], ['gift-ready', 'Thoughtful and gift-ready']];
 const SPACES = [['bedroom', 'Bedroom'], ['living', 'Living room'], ['workspace', 'Desk or workspace'], ['kitchen', 'Kitchen'], ['entrance', 'Entrance'], ['bathroom', 'Bathroom'], ['dining', 'Dining table']];
+// the four shop categories on sale today; each is a slice of a product group (cat) by its type
+const SUBS = {
+  glass: { label: 'Glass Candles', cat: 'candles', types: ['Glass candle', 'Murphy candle', 'Jar candle'], blurb: 'Hand-poured scented candles in glass, made in small batches.', noun: 'glass candles' },
+  tealight: { label: 'Tealight Candles', cat: 'candles', types: ['Tealight'], blurb: 'Small hand-poured tealights for diyas, holders and quiet corners.', noun: 'tealights' },
+  moulded: { label: 'Moulded Candles', cat: 'candles', types: ['Moulded candle'], blurb: 'Hand-moulded candles in playful shapes: bubbles, blooms, sunflowers and ladoos.', noun: 'moulded candles' },
+  jesmonite: { label: 'Jesmonite Trays', cat: 'jesmonite', types: ['Tray', 'Dish', 'DIY paint kit'], blurb: 'Trays, dishes and a paint-your-own kit, hand-cast in Jesmonite. Each piece varies a little in tone and texture.', noun: 'trays, dishes and kits' }
+};
+const subOf = (p) => Object.keys(SUBS).find((k) => SUBS[k].cat === p.cat && SUBS[k].types.includes(p.type)) || (p.cat === 'candles' ? 'glass' : 'jesmonite');
+const inSub = (p, k) => SUBS[k] && subOf(p) === k;
 const OCCASIONS = [['birthday', 'Birthday'], ['anniversary', 'Anniversary'], ['housewarming', 'Housewarming'], ['wedding', 'Wedding'], ['new-baby', 'New baby'], ['thank-you', 'Thank you'], ['festive', 'Festive'], ['milestone', 'A milestone'], ['self-care', 'Self-care'], ['just-because', 'Just because']];
 // the owner can rename, add or hide these choices in Owner view → Filters & quiz; products keep the short key they were tagged with
 const TAG_LISTS = { moodList: [MOODS, 'Feelings'], spaceList: [SPACES, 'Rooms'], occList: [OCCASIONS, 'Occasions'] };
@@ -1227,7 +1236,7 @@ const TEXT = {
   'bar.offers': ['Use {welcomeCode} for {welcomeOff}% off your first order|Earn {rewardPct}% back in Bud Points on every order', 'Offers bar at the top of every page (separate offers with |)'],
   'home.newEyebrow': ['Just poured', 'Home: new arrivals small line'],
   'home.new': ['New arrivals', 'Home: new arrivals heading'],
-  'home.catsSub': ['Candles and Jesmonite pieces, all made by hand in small batches.', 'Home: category text'],
+  'home.catsSub': ['Glass candles, tealights, moulded candles and Jesmonite trays, all made by hand in small batches.', 'Home: category text'],
   'home.spotEyebrow': ['In the spotlight', 'Home: spotlight small line'],
   'home.journal': ['From the journal', 'Home: journal heading'],
   'home.journalSub': ['Care guides, gifting ideas and notes from the studio.', 'Home: journal text'],
@@ -1244,7 +1253,7 @@ const TEXT = {
   'home.buyAgain': ['Buy again', 'Home: returning customer first button'],
   'home.trackIt': ['Track it', 'Home: returning customer second button'],
   'home.seeAll': ['See all {count} →', 'Home: link to the whole shop ({count} is the number of pieces)'],
-  'home.naAll': ['All|Candles|Jesmonite|Gift boxes', 'Home: new arrivals filter buttons (All|Candles|Jesmonite|Gift boxes)'],
+  'home.naAll': ['All', 'Home: new arrivals filter buttons (set by the shop categories)'],
   'promo.welcomeEyebrow': ['Welcome offer', 'Offer banner: welcome small line'],
   'promo.welcomeBtn': ['Shop now', 'Offer banner: welcome button'],
   'promo.pairEyebrow': ['Rituals', 'Offer banner: ritual small line'],
@@ -1331,8 +1340,8 @@ const TEXT = {
   'home.news': ['Hear about new pieces first', 'Newsletter: heading'],
   'home.newsText': ['Early access to every new batch, and {welcomeOff}% off your first order. One email a month; leave any time.', 'Newsletter: text'],
   'home.newsDone': ['You’re on the list. Your welcome code is {welcomeCode}: use it at checkout for {welcomeOff}% off.', 'Newsletter: thank-you message'],
-  'shop.all': ['Everything ready to order today: candles and Jesmonite objects.', 'Shop: all products line'],
-  'shop.candles': ['Five scented candles and one sculpted, unscented pillar. Poured in small batches.', 'Shop: candles line'],
+  'shop.all': ['Everything ready to order today: glass candles, tealights, moulded candles and Jesmonite trays.', 'Shop: all products line'],
+  'shop.candles': ['Glass candles, tealights and moulded candles. Poured in small batches.', 'Shop: candles line'],
   'shop.jesmonite': ['Trays, ring dishes and sculptural forms cast in Jesmonite, a water-based composite. Each piece varies a little in tone and texture.', 'Shop: Jesmonite line'],
   'shop.noteCandle': ['Why the first burn matters|Let the first burn melt the wax right to the edges, about two hours. It helps the candle burn evenly every time after.', 'Shop: candle note card (title|text)'],
   'shop.noteJes': ['Why no two trays look quite the same|Jesmonite is mixed and poured in small batches, so swirls and speckles settle a little differently each time.', 'Shop: Jesmonite note card (title|text)'],
@@ -1352,7 +1361,7 @@ const TEXT = {
   'gift.title': ['Small gift. Real feeling.', 'Gifting: heading'],
   'gift.sub': ['A thoughtful little gesture for the people who make life feel like home. Pick an occasion to see pieces that suit it.', 'Gifting: line under the heading'],
   'gift.h2': ['Chosen with thought.', 'Gifting: second heading'],
-  'gift.text': ['Every piece arrives boxed, tagged and sealed with the B&T mark, ready to give. At checkout you can send it straight to them, add a hand-written note, gift wrap it and choose when it arrives. Gift sets come later.', 'Gifting: text'],
+  'gift.text': ['Every piece is made by hand and packed with care, ready to give. At checkout you can send it straight to them, add a hand-written note, gift wrap it and choose when it arrives.', 'Gifting: text'],
   'gift.popular': ['Popular to give', 'Gifting: picks heading'],
   'story.title': ['Thoughtful objects. Meaningful moments.', 'Our Story: heading'],
   'story.lead': ['BUD & THINGS is built around the belief that the little things we choose, make, keep and give can carry a lot of meaning.', 'Our Story: lead'],
@@ -1403,7 +1412,7 @@ const TEXT = {
   'faq.a11': ['Yes, but there is no password. Enter your email and we send a code to sign in. Your account keeps your orders, tracking and Bud Points together.', 'FAQ: answer 11'],
   'bulk.eyebrow': ['Corporate & bulk gifts', 'Bulk: small line above the heading'],
   'bulk.title': ['Gifts your team and clients *will keep.*', 'Bulk: heading'],
-  'bulk.sub': ['Hand-poured candles, Jesmonite pieces and gift boxes for teams, clients, weddings and return gifts. Tell us how many and by when, and we’ll send options the same day.', 'Bulk: line under the heading'],
+  'bulk.sub': ['Hand-poured candles, Jesmonite trays for teams, clients, weddings and return gifts. Tell us how many and by when, and we’ll send options the same day.', 'Bulk: line under the heading'],
   'bulk.perks': ['Your logo on a wax seal or tag|A hand-written or printed note in every box|One box or a mix, packed to your budget|Shipped to one office or to each person|GST invoice on every order|50% to confirm, the rest before dispatch', 'Bulk: what you get (separate lines with |)'],
   'bulk.uses': ['Diwali and festive gifts|New Year and client thank-yous|Employee welcome kits|Wedding favours and return gifts|Events, speakers and VIP gifts', 'Bulk: occasions (separate lines with |)'],
   'bulk.formTitle': ['Ask for a quote', 'Bulk: form heading'],
@@ -1427,7 +1436,7 @@ const TEXT = {
 TEXT['seo.title'] = ['BUD & THINGS by Ashi', 'Search & sharing: site title (home page, browser tab)'];
 TEXT['seo.suffix'] = [' · BUD & THINGS by Ashi', 'Search & sharing: added after every other page title'];
 TEXT['seo.desc'] = ['BUD & THINGS by Ashi: thoughtful objects, meaningful moments.', 'Search & sharing: site description'];
-const SEO_PAGES = [['shop', 'All products', 'Shop all candles and objects', 'Hand-made scented candles, Jesmonite objects and gift boxes.'], ['candles', 'Candles', 'Scented candles', 'Hand-poured scented candles, made in small batches.'], ['jesmonite', 'Jesmonite objects', 'Jesmonite objects', 'Hand-cast Jesmonite trays, dishes and objects for the home.'], ['gifts', 'Gift boxes', 'Gift boxes', 'Gift boxes wrapped free, with your note hand-written on our card.'], ['under-999', 'Gifts under ₹999', 'Gifts under ₹999', 'Small, thoughtful gifts under ₹999.'], ['feeling', 'Find your feeling', 'Find your feeling', 'Tell us the mood and we will find the scent.'], ['ritual', 'Build your ritual', 'Build your ritual', 'Pair a candle with an object for a small daily ritual.'], ['gifting', 'Gifting', 'Gifting', 'Gifts for every occasion, wrapped and ready to give.'], ['story', 'Our story', 'Our story', 'How a home studio became BUD & THINGS.'], ['why', 'Why from us', 'Why people buy from us', 'Hand-made pieces, free replacement, secure payments and gift-ready parcels.'], ['journal', 'Journal', 'Journal', 'Candle care, gifting guides and notes from the studio.'], ['faq', 'FAQ', 'Questions and answers', 'Answers about orders, shipping, candles and gifts.'], ['help', 'Help', 'Help and contact', 'Contact us, track an order, or ask about anything.'], ['bulk', 'Corporate and bulk gifts', 'Corporate and bulk gifts', 'Gifts in bulk for weddings, festivals and teams.'], ['share', 'Share with a friend', 'Share with a friend', 'Share BUD & THINGS and earn Bud Points.'], ['giftcard', 'Gift cards', 'Gift cards', 'Send a BUD & THINGS gift card.'], ['track', 'Track your order', 'Track your order', 'Follow your order with your order number and mobile number.'], ['privacy', 'Privacy policy', 'Privacy policy', ''], ['terms', 'Terms and conditions', 'Terms and conditions', ''], ['shipping', 'Shipping policy', 'Shipping and delivery', ''], ['refunds', 'Replacement policy', 'Cancellations and replacements', '']];
+const SEO_PAGES = [['shop', 'All products', 'Shop all candles and objects', 'Hand-made glass candles, tealights, moulded candles and Jesmonite trays.'], ['candles', 'Candles', 'Hand-poured candles', 'Hand-poured glass candles, tealights and moulded candles, made in small batches.'], ['glass', 'Glass Candles', 'Glass candles', 'Hand-poured scented candles in glass.'], ['tealight', 'Tealight Candles', 'Tealight candles', 'Small hand-poured tealights.'], ['moulded', 'Moulded Candles', 'Moulded candles', 'Hand-moulded candles in playful shapes.'], ['jesmonite', 'Jesmonite Trays', 'Jesmonite trays', 'Hand-cast Jesmonite trays, dishes and a paint-your-own kit.'], ['under-999', 'Gifts under ₹999', 'Gifts under ₹999', 'Small, thoughtful gifts under ₹999.'], ['feeling', 'Find your feeling', 'Find your feeling', 'Tell us the mood and we will find the scent.'], ['ritual', 'Build your ritual', 'Build your ritual', 'Pair a candle with an object for a small daily ritual.'], ['gifting', 'Gifting', 'Gifting', 'Gifts for every occasion, wrapped and ready to give.'], ['story', 'Our story', 'Our story', 'How a home studio became BUD & THINGS.'], ['why', 'Why from us', 'Why people buy from us', 'Hand-made pieces, free replacement, secure payments and gift-ready parcels.'], ['journal', 'Journal', 'Journal', 'Candle care, gifting guides and notes from the studio.'], ['faq', 'FAQ', 'Questions and answers', 'Answers about orders, shipping, candles and gifts.'], ['help', 'Help', 'Help and contact', 'Contact us, track an order, or ask about anything.'], ['bulk', 'Corporate and bulk gifts', 'Corporate and bulk gifts', 'Gifts in bulk for weddings, festivals and teams.'], ['share', 'Share with a friend', 'Share with a friend', 'Share BUD & THINGS and earn Bud Points.'], ['giftcard', 'Gift cards', 'Gift cards', 'Send a BUD & THINGS gift card.'], ['track', 'Track your order', 'Track your order', 'Follow your order with your order number and mobile number.'], ['privacy', 'Privacy policy', 'Privacy policy', ''], ['terms', 'Terms and conditions', 'Terms and conditions', ''], ['shipping', 'Shipping policy', 'Shipping and delivery', ''], ['refunds', 'Replacement policy', 'Cancellations and replacements', '']];
 SEO_PAGES.forEach(([r, label, t, d]) => { TEXT['seo.t.' + r] = [t, 'Search & sharing: ' + label + ' page title']; TEXT['seo.d.' + r] = [d, 'Search & sharing: ' + label + ' page description (empty: the site description)']; });
 const TEXT_GROUPS = [['seo.', 'Search & sharing (SEO)'], ['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['share.', 'Share with a friend'], ['gc.', 'Gift cards'], ['rem.', 'Gift reminders'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
 // settings: money in ₹, lists of product ids separated by commas
@@ -1509,7 +1518,7 @@ const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !pvSee
 const pvCode = () => { try { return localStorage.getItem('bt-preview-code') || ''; } catch (e) { return ''; } };
 const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(pvCode());
 // Coming soon for single sections: pages the owner marks in Settings show a small Coming soon page instead
-const SOON_OPTS = [['shop', 'Shop (all products)'], ['candles', 'Candles'], ['jesmonite', 'Jesmonite objects'], ['gifts', 'Gift boxes'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['bulk', 'Corporate and bulk gifts'], ['giftcard', 'Gift cards'], ['journal', 'Journal'], ['share', 'Share with a friend'], ['story', 'Our Story'], ['why', 'Why buy from us']];
+const SOON_OPTS = [['shop', 'Shop (all products)'], ['glass', 'Glass Candles'], ['tealight', 'Tealight Candles'], ['moulded', 'Moulded Candles'], ['jesmonite', 'Jesmonite Trays'], ['feeling', 'Find Your Feeling'], ['ritual', 'Build Your Ritual'], ['gifting', 'Gifting'], ['bulk', 'Corporate and bulk gifts'], ['giftcard', 'Gift cards'], ['journal', 'Journal'], ['share', 'Share with a friend'], ['story', 'Our Story'], ['why', 'Why buy from us']];
 // New sections the owner adds later (a new kind of product): a name, one line, and open or still Coming soon
 const newSections = () => (Array.isArray(SET.newSections) ? SET.newSections : []).filter((x) => x && x.id && x.name);
 const secSlug = (t) => String(t).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30);
@@ -1529,8 +1538,12 @@ function normProduct(id, d) {
 }
 // the first draft range (First Light, Chai at Four, trays, gift boxes) may still sit in the database: never show it
 const DRAFT_SKU = /^BT-(CN|JS|GB)-/;
-const notDraft = (r) => !((r.data && r.data.variants) || []).some((v) => v && DRAFT_SKU.test(v.sku || ''));
+const skusOf = (r) => ((r.data && r.data.variants) || []).map((v) => (v && v.sku) || '');
+const LIVE_SKU = /^BNT-PRD-/; // the team sheet's products; once any are in the database, older sample rows are hidden
+const notDraft = (r) => !skusOf(r).some((k) => DRAFT_SKU.test(k)) && (!SHEET_ROWS || skusOf(r).some((k) => LIVE_SKU.test(k)));
+let SHEET_ROWS = false;
 function applyData() {
+  SHEET_ROWS = !!(DATA.products && DATA.products.some((r) => skusOf(r).some((k) => LIVE_SKU.test(k))));
   P = DATA.products && DATA.products.filter(notDraft).length ? DATA.products.filter(notDraft).filter((r) => r.live !== false).sort(bySort).map((r) => normProduct(r.id, r.data)).filter((p) => p.variants.length) : BASE_P.slice();
   indexProducts();
   PAIRINGS = (DATA.pairings && DATA.pairings.length ? DATA.pairings.filter((r) => r.live !== false).sort(bySort).map((r) => Object.assign({ name: r.id, why: '', items: [] }, r.data, { id: r.id })) : BASE_PAIRINGS.slice())
@@ -1698,7 +1711,7 @@ async function ovSave(value) {
   await admDo(async () => { if (value === o.def) { if (o.k in TXT) await dbDel('site_text', 'key', o.k); } else await dbPut('site_text', { key: o.k, value }); UI.ov = null; render(); }, 'Saved. It shows on the site now.');
 }
 // every page's words, found by drawing each page once out of sight, so the Owner view list is complete
-const OV_ROUTES = ['home', 'shop', 'candles', 'jesmonite', 'gifts', 'under-999', 'feeling', 'ritual', 'saved', 'cart', 'gifting', 'story', 'why', 'faq', 'help', 'bulk', 'share', 'giftcard', 'journal', 'track', 'privacy', 'terms', 'shipping', 'refunds'];
+const OV_ROUTES = ['home', 'shop', 'candles', 'glass', 'tealight', 'moulded', 'jesmonite', 'under-999', 'feeling', 'ritual', 'saved', 'cart', 'gifting', 'story', 'why', 'faq', 'help', 'bulk', 'share', 'giftcard', 'journal', 'track', 'privacy', 'terms', 'shipping', 'refunds'];
 function ovScanAll() {
   const box = document.createElement('div');
   OV_ROUTES.concat(P[0] ? ['p-' + P[0].id] : []).forEach((r) => { try { box.innerHTML = viewFor(r, false); applyText(box, r); } catch (e) { /* a page that needs the browser state is skipped */ } });
@@ -1755,7 +1768,7 @@ function phSheet() {
     <div class="ov-actions"><button class="btn" type="button" data-act="ph-save">Save photo</button><button class="btn ghost" type="button" data-act="ph-close">Cancel</button></div></div>`;
 }
 // ---------- live preview: the site beside the editor, as a phone or a laptop ----------
-const PV_PAGES = [['home', 'Home'], ['shop', 'Shop'], ['candles', 'Candles'], ['jesmonite', 'Jesmonite'], ['gifts', 'Gift boxes'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['faq', 'FAQ'], ['cart', 'Cart']];
+const PV_PAGES = [['home', 'Home'], ['shop', 'Shop'], ['glass', 'Glass Candles'], ['tealight', 'Tealight Candles'], ['moulded', 'Moulded Candles'], ['jesmonite', 'Jesmonite Trays'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['faq', 'FAQ'], ['cart', 'Cart']];
 function pvRender(r) {
   const A = UI.adm; let box = document.getElementById('pv-panel');
   const on = r === 'admin' && A && A.pv;
@@ -1848,8 +1861,8 @@ window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false;
 // menus and the FAQ: the owner edits these lists in Owner view (Menus & FAQ); the lists below are what shows until then
 const LIST_DEFAULTS = {
   navList: [['shop', 'Shop'], ['gifting', 'Gifting'], ['story', 'Our Story']],
-  menuList: [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['shop', 'All products'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['track', 'Track your order'], ['help', 'Help & contact']],
-  footList: [['Shop', [['candles', 'Candles'], ['jesmonite', 'Jesmonite Objects'], ['shop', 'All products'], ['bulk', 'Corporate & bulk gifts'], ['giftcard', 'Gift cards'], ['share', 'Share with a friend']]],
+  menuList: [['glass', 'Glass Candles'], ['tealight', 'Tealight Candles'], ['moulded', 'Moulded Candles'], ['jesmonite', 'Jesmonite Trays'], ['shop', 'All products'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['track', 'Track your order'], ['help', 'Help & contact']],
+  footList: [['Shop', [['glass', 'Glass Candles'], ['tealight', 'Tealight Candles'], ['moulded', 'Moulded Candles'], ['jesmonite', 'Jesmonite Trays'], ['shop', 'All products'], ['bulk', 'Corporate & bulk gifts'], ['giftcard', 'Gift cards'], ['share', 'Share with a friend']]],
     ['Help', [['help', 'Contact us'], ['track', 'Track your order'], ['shipping', 'Shipping & delivery'], ['refunds', 'Cancellations & replacements'], ['faq', 'FAQ'], ['journal-first-burn', 'Product care']]],
     ['About', [['story', 'Our Story'], ['why', 'Why buy from us'], ['journal', 'Journal'], ['account', 'Your account']]],
     ['Policies', [['privacy', 'Privacy policy'], ['terms', 'Terms & conditions'], ['shipping', 'Shipping policy'], ['refunds', 'Replacement policy']]]]
@@ -1871,7 +1884,7 @@ function faqItems() {
 }
 const mdText = (t) => esc(t).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
 function renderChrome() {
-  const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'jesmonite', 'collection'].includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
+  const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'collection'].concat(Object.keys(SUBS)).includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
   $('#nav').innerHTML = listOf('navList').map(([k, l]) => linkA(k, l, cur(k))).join('');
   $('#mobile-menu-inner').innerHTML = listOf('menuList').map(([k, l]) => linkA(k, l)).join('') + `<a href="#account">${S.account ? 'Your account' : 'Sign in'}</a>`;
   $('#mobile-menu').hidden = !UI.menu; $('#menu-btn').setAttribute('aria-expanded', String(UI.menu)); lockPage();
@@ -1888,7 +1901,7 @@ function renderChrome() {
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   
-  const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'jesmonite', 'collection'].includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
+  const tab = (k, l, icon, count) => `<a href="#${k}"${(r === k || (k === 'shop' && (['candles', 'collection'].concat(Object.keys(SUBS)).includes(r) || r.startsWith('p-'))) || (k === 'cart' && r === 'checkout')) ? ' aria-current="page"' : ''}>${icon}${l}${count ? `<span class="count num">${count}</span>` : ''}</a>`;
   $('#tabbar').innerHTML = tab('home', 'Home', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20V10a8 8 0 0 1 16 0v10z"/></svg>')
     + tab('shop', 'Shop', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>')
     + tab('feeling', 'Feeling', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16"/></svg>')
@@ -2041,23 +2054,23 @@ function viewNewSection(r) {
 
 function viewShop(cat) {
   const sh = UI.shop; sh.cat = cat === 'collection' ? 'all' : (cat || 'all');
-  let list = P.filter((p) => sh.cat === 'all' || (sh.cat === 'under-999' ? minPrice(p) < 999 : p.cat === sh.cat));
+  let list = P.filter((p) => sh.cat === 'all' || (SUBS[sh.cat] ? inSub(p, sh.cat) : sh.cat === 'under-999' ? minPrice(p) < 999 : p.cat === sh.cat));
   const types = [...new Set(list.map((p) => p.type))];
   if (!types.includes(sh.type)) sh.type = 'all';
   if (sh.type !== 'all') list = list.filter((p) => p.type === sh.type);
   if (sh.occ !== 'all') list = list.filter((p) => p.occ.includes(sh.occ));
   if (sh.sort === 'low') list = [...list].sort((a, b) => minPrice(a) - minPrice(b));
   if (sh.sort === 'high') list = [...list].sort((a, b) => minPrice(b) - minPrice(a));
-  const title = { candles: 'Candles', jesmonite: 'Jesmonite Objects', gifts: 'Gift Boxes', 'under-999': 'Gifts under ₹999' }[sh.cat] || 'All products';
-  const blurb = sh.cat === 'candles' ? T('shop.candles') : sh.cat === 'jesmonite' ? T('shop.jesmonite') : sh.cat === 'gifts' ? T('box.sub') : sh.cat === 'under-999' ? 'Small, thoughtful pieces that say you thought of them.' : T('shop.all');
+  const title = (SUBS[sh.cat] ? SUBS[sh.cat].label : { candles: 'Candles', 'under-999': 'Under ₹999' }[sh.cat]) || 'All products';
+  const blurb = SUBS[sh.cat] ? SUBS[sh.cat].blurb : sh.cat === 'candles' ? T('shop.candles') : sh.cat === 'under-999' ? 'Small, thoughtful pieces that say you thought of them.' : T('shop.all');
   const note = (k, href, link) => { const [h, t] = Tx(k).split('|'); return `<div class="note-card"><span class="eyebrow">A little discovery</span><h2>${esc(h)}</h2><p style="opacity:.86">${esc(t || '')}</p><a href="${href}">${link}</a></div>`; };
   const cards = list.map(card);
-  if (cards.length > 4 && sh.type === 'all' && sh.occ === 'all') cards.splice(4, 0, sh.cat === 'candles' ? note('shop.noteCandle', '#help', 'Candle care →') : note('shop.noteJes', '#story', 'Read the material note →'));
+  if (cards.length > 4 && sh.type === 'all' && sh.occ === 'all') cards.splice(4, 0, (sh.cat === 'candles' || (SUBS[sh.cat] && SUBS[sh.cat].cat === 'candles')) ? note('shop.noteCandle', '#help', 'Candle care →') : note('shop.noteJes', '#story', 'Read the material note →'));
   if (cards.length && P.some((x) => x.mood.length)) cards.push(`<a class="feel-card" href="#feeling"><span class="eyebrow" style="color:var(--terra-ink)">Not sure yet?</span><h2>Find Your Feeling</h2><span class="muted">Five short questions about your space or occasion, then pieces to match.</span><strong>Start →</strong></a>`);
   return `<div class="wrap"><div class="page-head"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a> / ${sh.cat === 'all' ? 'Shop' : `<a href="#shop">Shop</a> / ${title}`}</nav>
     <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px"><h1 tabindex="-1">${title}</h1><p class="muted" style="max-width:520px">${blurb}</p></div></div>
     <div class="toolbar"><div class="group" role="group" aria-label="Category">
-      ${[['all', 'All', 'shop'], ['candles', 'Candles', 'candles'], ['jesmonite', 'Jesmonite Objects', 'jesmonite'], ['gifts', 'Gift boxes', 'gifts'], ['under-999', 'Under ₹999', 'under-999']].filter((c) => c[0] !== 'gifts' || P.some((p) => p.cat === 'gifts')).map(([k, l, h]) => `<a class="chip" href="#${h}"${sh.cat === k ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</div>
+      ${[['all', 'All', 'shop']].concat(Object.keys(SUBS).map((k) => [k, SUBS[k].label, k])).filter((c) => c[0] === 'all' || P.some((p) => inSub(p, c[0]))).map(([k, l, h]) => `<a class="chip" href="#${h}"${sh.cat === k ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</div>
       <div class="group filters"><span class="tf"><label for="f-type">Type</label><select id="f-type" data-act="shop-filter" data-k="type"><option value="all">All types</option>${types.map((t) => `<option ${sh.type === t ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></span>
       <span class="tf"><label for="f-occ">Occasion</label><select id="f-occ" data-act="shop-filter" data-k="occ"><option value="all">Any</option>${occLive().map(([k, l]) => `<option value="${k}" ${sh.occ === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
       <span class="tf"><label for="f-sort">Sort</label><select id="f-sort" data-act="shop-filter" data-k="sort"><option value="featured" ${sh.sort === 'featured' ? 'selected' : ''}>Featured</option><option value="low" ${sh.sort === 'low' ? 'selected' : ''}>Price: low to high</option><option value="high" ${sh.sort === 'high' ? 'selected' : ''}>Price: high to low</option></select></span></div></div>
@@ -2083,7 +2096,7 @@ function viewProduct(id) {
   if (!st.viewed) { st.viewed = true; track('product_view', { id }); }
   const stockNote = left === 0 ? '<span class="pill out">Sold out</span>' : left <= 3 ? `<span class="pill low">Only ${left} left in this batch</span>` : '<span class="pill">In stock</span>';
   const own = mediaFor(id, { variant: v.label }).filter((m) => m.role !== 'packshot' || !m.variant || m.variant === v.label);
-  const packs = brandImgs('packaging', [[IMG.box, 'Gift set box', 'Gift set box'], [IMG.tag, 'Hang tag', 'Hang tag'], [IMG.seal, 'Wax seals', 'Wax seals']]);
+  const packs = brandImgs('packaging', [[IMG.box, 'Our packaging', 'Our packaging'], [IMG.tag, 'Hang tag', 'Hang tag'], [IMG.seal, 'Wax seals', 'Wax seals']]);
   const gal = own.length ? own.map((m) => ({ m, label: m.alt || m.role })) : p.img ? [{ src: p.img, label: p.name }] : [{ render: true, label: p.name + ', ' + v.label }].concat((p.cat === 'candles' ? [[IMG.jar, 'Label and lid direction']] : []).concat(packs.map((x) => [x[0], x[2]])).slice(0, 3).map(([src, label]) => ({ src, label })));
   const gi = Math.min(st.img || 0, gal.length - 1); const g = gal[gi];
   const main = g.render ? `<div class="tile" style="background:var(--linen)">${art(p, st.vi, 2.1)}<span class="hint" style="position:absolute;right:14px;bottom:10px;letter-spacing:.12em;text-transform:uppercase;font-size:12px">Render · product photo to come</span></div>`
@@ -2094,12 +2107,12 @@ function viewProduct(id) {
   const optName = p.art === 'jar' ? 'Size' : p.cat === 'candles' ? 'Colour' : 'Finish';
   const acc = (key, icon, title, body, open) => `<details class="acc"${open ? ' open' : ''} data-acc="${key}"><summary>${hl(icon, 20)}<span>${title}</span><span class="acc-ic" aria-hidden="true"></span></summary><div class="acc-body">${body}</div></details>`;
   const care = p.care.map((c) => `<li>${esc(c)}</li>`).join('') + (p.cat === 'candles' || p.cat === 'gifts' && /candle/i.test(p.material) ? `<li>${esc(p.burnTime ? 'Burn time: ' + p.burnTime + '.' : 'Burn time to be confirmed by testing.')}</li>` : '');
-  return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${p.cat === 'gifts' ? 'gifts' : p.cat}">${p.cat === 'gifts' ? 'Gift boxes' : p.cat === 'candles' ? 'Candles' : 'Jesmonite Objects'}</a> / ${esc(p.name)}</nav>
+  return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${subOf(p)}">${SUBS[subOf(p)].label}</a> / ${esc(p.name)}</nav>
   <div class="pdp"><div class="pdp-gallery"><div class="gal-main">${main}
       </div>
     <div class="thumbs" role="group" aria-label="Images">${gal.map((x, i) => `<button type="button" data-act="pdp-img" data-id="${id}" data-i="${i}" aria-pressed="${i === gi}" aria-label="${esc(x.label)}">${thumb(x)}</button>`).join('')}</div>
     </div>
-  <div class="pdp-info"><span class="eyebrow">${p.cat === 'candles' ? 'Candle' : p.cat === 'gifts' ? 'Gift box' : 'Jesmonite'} · ${p.notes ? esc(p.notes.join(', ')) : esc(p.type)}</span>
+  <div class="pdp-info"><span class="eyebrow">${p.cat === 'candles' ? SUBS[subOf(p)].label.replace(/s$/, '') : 'Jesmonite'} · ${p.notes ? esc(p.notes.join(', ')) : esc(p.type)}</span>
     <h1 tabindex="-1">${esc(p.name)}</h1>${stars(id, true)}<p class="line">${esc(p.line)}</p>
     <p class="pdp-desc">${esc(descOf(p))}</p>
     <ul class="hl-row">${highlightsOf(p).map(([i, t]) => `<li>${hl(i, 22)}<span>${esc(t)}</span></li>`).join('')}</ul>
@@ -2127,7 +2140,7 @@ function viewProduct(id) {
       <fieldset class="field rating"><legend>Your rating</legend><span>${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="rv-rating" value="${n}" ${+R.rating === n ? 'checked' : ''}> ${n}★</label>`).join('')}</span></fieldset>
       <span class="field full"><label for="rv-body">Your review</label><textarea id="rv-body" rows="4" maxlength="1500">${esc(R.body || '')}</textarea></span>${BTDB.on && !BTDB.customer() ? `<p class="muted full" style="margin:0;font-size:14px">${T('pdp.reviewVerify')}</p>` : ''}${R.err ? `<span class="err full" role="alert">${esc(R.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Send review</button></span></form>` : `<button class="btn ghost" type="button" data-act="review-open" data-id="${id}">Write a review</button>`}</section>
   ${mediaFor('brand', { role: 'packaging', kind: 'photo' }).length ? `<section class="section" aria-labelledby="box-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="box-h">How it arrives</h2><span class="muted" style="font-size:14px">Approved packaging direction; final pieces may differ.</span></div>
-    <div class="pack-grid">${brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set box.', 'Gift set box'], [IMG.tag, 'Hang tag with the tagline.', 'Hang tag'], [IMG.card, 'Candle care tag.', 'Care tag'], [IMG.seal, 'Handmade BUD & THINGS pieces.', 'Wax seals']]).slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>` : ''}
+    <div class="pack-grid">${brandImgs('packaging', [[IMG.box, 'BUD & THINGS packaging.', 'Our packaging'], [IMG.tag, 'Hang tag with the tagline.', 'Hang tag'], [IMG.card, 'Candle care tag.', 'Care tag'], [IMG.seal, 'Handmade BUD & THINGS pieces.', 'Wax seals']]).slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>` : ''}
   ${similar(p)}</div>`;
 }
 
@@ -3564,25 +3577,21 @@ function whyBand() {
 }
 
 function catTiles(id) {
-  const n = (c) => P.filter((p) => p.cat === c).length; const u999 = P.filter((p) => minPrice(p) < 999).length;
-  const candleCover = P.filter((p) => p.cat === 'candles').map((p) => mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0]).find(Boolean);
-  const jesCover = P.filter((p) => p.cat === 'jesmonite').map((p) => mediaFor(p.id, { kind: 'photo', role: 'lifestyle' })[0]).find(Boolean);
-  const img = (src, alt) => `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy">`;
-  const tiles = [
-    ['#candles', 'Candles', n('candles') + ' candles', candleCover ? img(mUrl(candleCover), candleCover.alt) : img(IMG.jar, 'Handmade BUD & THINGS pieces.'), ''],
-    ['#jesmonite', 'Jesmonite Objects', n('jesmonite') + ' trays, dishes and kits', jesCover ? img(mUrl(jesCover), jesCover.alt) : (byId['bnt-prd-jt-001'] ? art(byId['bnt-prd-jt-001'], 0, 1.25) : ''), 'alt'],
-    ['#gifts', 'Gift Boxes', n('gifts') + ' boxes, wrapped free', img(IMG.box, 'Handmade BUD & THINGS pieces.'), ''],
-    ['#ritual', 'Pairs & Rituals', 'Save ' + (+SET.ritualOff || 0) + '% on a pair', (byId['chai-at-four'] ? art(byId['chai-at-four'], 1, .6) : '') + (byId['halo-candle-plate'] ? art(byId['halo-candle-plate'], 0, .55) : ''), 'alt'],
-    ['#under-999', 'Under ₹999', u999 + ' small gifts', img(IMG.tag, 'Handmade BUD & THINGS pieces.'), '']
-  ].filter((t) => !(t[0] === '#gifts' && !n('gifts')) && !(t[0] === '#ritual' && !+SET.ritualOff));
+  const tiles = Object.keys(SUBS).map((k) => {
+    const list = P.filter((p) => inSub(p, k)); if (!list.length) return null;
+    const cover = list.find((p) => p.img) || list[0];
+    const m = list.map((p) => mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0]).find(Boolean);
+    const im = m ? `<img src="${esc(mUrl(m))}" alt="${esc(m.alt || SUBS[k].label)}" loading="lazy">` : cover.img ? `<img src="${esc(cover.img)}" alt="${esc(SUBS[k].label)}, ${esc(cover.name)}" loading="lazy">` : art(cover, 0, 1.25);
+    return ['#' + k, SUBS[k].label, list.length + ' ' + SUBS[k].noun, im, ''];
+  }).filter(Boolean);
   return `<section class="wrap section" aria-labelledby="${id}"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="${id}">${T('home.cats')}</h2><span class="muted">${T('home.catsSub')}</span></div><a href="#shop" style="font-weight:600">Shop all ${P.length} →</a></div>
-    <div class="cat-tiles">${tiles.map(([h, l, s, im, alt]) => `<a class="cat-tile" href="${h}"><span class="tile${alt ? ' alt' : ''}${/<img src/.test(im) ? ' photo-tile' : ''}">${im}</span><span class="cat-label"><strong>${l}</strong><span>${esc(s)} →</span></span></a>`).join('')}</div></section>`;
+    <div class="cat-tiles" style="grid-template-columns:repeat(${Math.min(tiles.length, 4)},minmax(0,1fr))">${tiles.map(([h, l, s, im, alt]) => `<a class="cat-tile" href="${h}"><span class="tile${alt ? ' alt' : ''}${/<img src/.test(im) ? ' photo-tile' : ''}">${im}</span><span class="cat-label"><strong>${l}</strong><span>${esc(s)} →</span></span></a>`).join('')}</div></section>`;
 }
 
 function newArrivals(id) {
   const list = idList('newIn').map((x) => byId[x]); if (!list.length) return '';
-  const nl = Tx('home.naAll').split('|'); const tabs = [['all', nl[0] || 'All']].concat([['candles', nl[1] || 'Candles'], ['jesmonite', nl[2] || 'Jesmonite'], ['gifts', nl[3] || 'Gift boxes']].filter(([k]) => list.some((p) => p.cat === k)));
-  const cur = tabs.some((t) => t[0] === UI.na) ? UI.na : 'all'; const show = list.filter((p) => cur === 'all' || p.cat === cur).slice(0, 4);
+  const tabs = [['all', 'All']].concat(Object.keys(SUBS).filter((k) => list.some((p) => inSub(p, k))).map((k) => [k, SUBS[k].label]));
+  const cur = tabs.some((t) => t[0] === UI.na) ? UI.na : 'all'; const show = list.filter((p) => cur === 'all' || inSub(p, cur)).slice(0, 4);
   return `<section class="wrap section" aria-labelledby="${id}" style="padding-top:0"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">${T('home.newEyebrow')}</span><h2 id="${id}">${T('home.new')}</h2></div>
     <div class="gh-chips" role="group" aria-label="New arrivals by category">${tabs.map(([k, l]) => `<button type="button" class="chip" data-act="na-tab" data-v="${k}" aria-pressed="${cur === k}">${l}</button>`).join('')}</div></div>
     <div class="grid">${show.map(card).join('')}</div></section>`;
@@ -3855,7 +3864,7 @@ function bestWith(p) {
 function similar(p) {
   const score = (x) => (x.type === p.type ? 3 : 0) + x.mood.filter((m) => p.mood.includes(m)).length * 2 + x.occ.filter((s) => p.occ.includes(s)).length;
   const list = P.filter((x) => x.id !== p.id && x.cat === p.cat).sort((a, b) => score(b) - score(a)).concat(P.filter((x) => x.cat !== p.cat && x.id !== p.id)).slice(0, 4);
-  return `<section class="section" aria-labelledby="rel-h" style="padding-top:var(--section-sm)"><div class="section-head"><h2 id="rel-h">${T('pdp.similar')}</h2><a href="#${p.cat === 'gifts' ? 'gifts' : p.cat}" style="font-weight:600">See all ${p.cat === 'gifts' ? 'gift boxes' : p.cat === 'candles' ? 'candles' : 'objects'} →</a></div><div class="grid">${list.map(card).join('')}</div></section>`;
+  return `<section class="section" aria-labelledby="rel-h" style="padding-top:var(--section-sm)"><div class="section-head"><h2 id="rel-h">${T('pdp.similar')}</h2><a href="#${subOf(p)}" style="font-weight:600">See all ${SUBS[subOf(p)].noun} →</a></div><div class="grid">${list.map(card).join('')}</div></section>`;
 }
 const PAY_ICONS = ['UPI', 'Visa', 'Mastercard', 'RuPay', 'Net banking', 'Wallets'];
 function payBadges() {
@@ -4007,11 +4016,11 @@ function viewGiftHome() {
   const G = UI.gh; const t = totals(); const sub = t.sub || 0; const free = +SET.freeOver || 0;
   const feat = idList('featured').map((id) => byId[id]);
   const pool = feat.concat(P.filter((p) => !feat.includes(p)));
-  const cats = [['all', 'Best sellers'], ['candles', 'Candles'], ['jesmonite', 'Jesmonite'], ['u999', 'Gifts under ₹999']];
-  const list = pool.filter((p) => G.cat === 'all' || (G.cat === 'u999' ? minPrice(p) < 999 : p.cat === G.cat)).slice(0, 8);
+  const cats = [['all', 'Best sellers']].concat(Object.keys(SUBS).map((k) => [k, SUBS[k].label]));
+  const list = pool.filter((p) => G.cat === 'all' || (SUBS[G.cat] ? inSub(p, G.cat) : p.cat === G.cat)).slice(0, 8);
   const pairs = PAIRINGS.filter((fo) => fo.items.every(([pid, vi]) => byId[pid] && byId[pid].variants[vi])).slice(0, 3);
   const hero = mediaFor('brand', { kind: 'photo', role: ['gift', 'packaging', 'lifestyle'] })[0];
-  const pack = brandImgs('packaging', [[IMG.box, 'Handmade BUD & THINGS pieces.', 'Gift set box'], [IMG.tag, 'Handmade BUD & THINGS pieces.', 'Hang tag'], [IMG.card, 'Handmade BUD & THINGS pieces.', 'Care tag'], [IMG.seal, 'Handmade BUD & THINGS pieces.', 'Wax seals']]);
+  const pack = brandImgs('packaging', [[IMG.box, 'Handmade BUD & THINGS pieces.', 'Our packaging'], [IMG.tag, 'Handmade BUD & THINGS pieces.', 'Hang tag'], [IMG.card, 'Handmade BUD & THINGS pieces.', 'Care tag'], [IMG.seal, 'Handmade BUD & THINGS pieces.', 'Wax seals']]);
   const BLOCKS = {
     hero: () => `  <section class="wrap gh-hero" aria-labelledby="gh-h">
     <div class="gh-ph"><img src="${esc(hero ? mUrl(hero) : IMG.box)}" alt="${esc(hero ? hero.alt : 'Handmade BUD & THINGS pieces.')}">
@@ -4064,7 +4073,7 @@ function viewFor(r, cs) {
   else if (r === 'home' && homeStyle() === 'gift') html = viewGiftHome();
   else if (r === 'shop') html = viewShop('all');
   else if (r === 'candles') html = viewShop('candles');
-  else if (r === 'jesmonite') html = viewShop('jesmonite');
+  else if (SUBS[r]) html = viewShop(r);
   else if (r === 'collection') html = viewShop('collection');
   else if (r.startsWith('p-')) html = viewProduct(r.slice(2));
   else if (r === 'feeling') html = viewFeeling();
@@ -4081,7 +4090,7 @@ function viewFor(r, cs) {
   else if (r === 'bulk') html = viewBulk();
   else if (r === 'share') html = viewShare();
   else if (r === 'giftcard') html = viewGiftCard();
-  else if (r === 'gifts') html = viewShop('gifts');
+  else if (r === 'gifts') html = viewShop('all');
   else if (r === 'under-999') html = viewShop('under-999');
   else if (r === 'why') html = viewWhy();
   else if (r === 'journal' || r.startsWith('journal-')) html = viewJournal(r.slice(8));
