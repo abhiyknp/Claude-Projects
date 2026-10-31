@@ -1,0 +1,129 @@
+{
+ "_source": "Google Sheet 185xZS31dZB0ZJrtpevJ0FDzjSugtvn1Dumr8-19jlvg read 2026-10-31 via Sheets connector. id: [price, Show on website]",
+ "rows": {
+  "BNT-PRD-CG-001": [
+   199,
+   "YES"
+  ],
+  "BNT-PRD-CG-002": [
+   169,
+   "YES"
+  ],
+  "BNT-PRD-CG-003": [
+   199,
+   "NO"
+  ],
+  "BNT-PRD-CG-004": [
+   169,
+   ""
+  ],
+  "BNT-PRD-CG-005": [
+   169,
+   ""
+  ],
+  "BNT-PRD-CG-006": [
+   199,
+   ""
+  ],
+  "BNT-PRD-CG-007": [
+   249,
+   ""
+  ],
+  "BNT-PRD-CG-008": [
+   249,
+   ""
+  ],
+  "BNT-PRD-CG-009": [
+   249,
+   ""
+  ],
+  "BNT-PRD-CG-010": [
+   249,
+   ""
+  ],
+  "BNT-PRD-CG-011": [
+   99,
+   ""
+  ],
+  "BNT-PRD-MC-001": [
+   29,
+   "YES"
+  ],
+  "BNT-PRD-MC-002": [
+   49,
+   "YES"
+  ],
+  "BNT-PRD-MC-003": [
+   29,
+   "YES"
+  ],
+  "BNT-PRD-MC-004": [
+   29,
+   "YES"
+  ],
+  "BNT-PRD-MC-005": [
+   29,
+   "YES"
+  ],
+  "BNT-PRD-MC-006": [
+   29,
+   "YES"
+  ],
+  "BNT-PRD-MC-007": [
+   49,
+   "YES"
+  ],
+  "BNT-PRD-MC-008": [
+   49,
+   "YES"
+  ],
+  "BNT-PRD-MC-009": [
+   49,
+   "YES"
+  ],
+  "BNT-PRD-TL-001": [
+   15,
+   "YES"
+  ],
+  "BNT-PRD-TL-002": [
+   15,
+   "YES"
+  ],
+  "BNT-PRD-TL-003": [
+   15,
+   "YES"
+  ],
+  "BNT-PRD-TL-004": [
+   15,
+   "YES"
+  ],
+  "BNT-PRD-TL-005": [
+   15,
+   "YES"
+  ],
+  "BNT-PRD-TL-006": [
+   15,
+   "YES"
+  ],
+  "BNT-PRD-JT-001": [
+   149,
+   "YES"
+  ],
+  "BNT-PRD-JT-002": [
+   149,
+   "YES"
+  ],
+  "BNT-PRD-JT-003": [
+   79,
+   "YES"
+  ],
+  "BNT-PRD-JT-004": [
+   79,
+   "YES"
+  ],
+  "BNT-PRD-JT-005": [
+   79,
+   "YES"
+  ]
+ }
+}
