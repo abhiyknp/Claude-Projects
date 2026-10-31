@@ -43,10 +43,7 @@ Check current India pricing before committing.
 
 ## Catalogue
 
-`data/catalogue.draft.json`: draft launch range of 6 candles and 6 Jesmonite objects, with
-variants, prices in ₹, sizes, materials, care, discovery tags and pairings. Every name, scent and
-price is a proposal for review, not a confirmed product. Burn times and wax type stay
-"to be confirmed" until tested.
+`data/catalogue.sheet.json`: snapshot of the team sheet (prices, weights, scent, colour, stock, Show on website). `python3 -I tools/build-shop-data.py` writes the shop's built-in products into `prototype/index.html`: only rows with Show on website = YES and a price (22 products). Photos are in `prototype/assets/catalogue/`; 10 are real photos, the rest are the sheet's temporary photos. The live site reads products from the database, so after a change use Owner view, Import from sheet (or Copy into the database).
 
 Once the database is connected, the catalogue lives there and this file is only the starting point the Owner view copies in.
 
