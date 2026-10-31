@@ -43,9 +43,10 @@ jobs:
           {
             printf '%s\n' '<!doctype html>' '<html lang="en-IN">' '<head>' '<meta charset="utf-8">' \
               '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' \
-              '<meta name="description" content="BUD & THINGS by Ashi: thoughtful objects, meaningful moments.">' \
+              '<meta name="description" content="BUD & THINGS by Ashi: handmade glass candles, tealight candles, moulded candles and Jesmonite trays, made in small batches in India.">' \
+              '<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://budandthings.com/#org","name":"BUD & THINGS by Ashi","alternateName":["BUD and THINGS","Bud & Things","Bud and Things"],"url":"https://budandthings.com/","logo":"https://budandthings.com/assets/share.jpg","description":"Handmade glass candles, tealight candles, moulded candles and Jesmonite trays, made in small batches in India."},{"@type":"WebSite","@id":"https://budandthings.com/#site","url":"https://budandthings.com/","name":"BUD & THINGS by Ashi","alternateName":["Bud & Things","Bud and Things"],"publisher":{"@id":"https://budandthings.com/#org"},"inLanguage":"en-IN"}]}</script>' \
               '<meta property="og:type" content="website">' '<meta property="og:site_name" content="BUD & THINGS by Ashi">' \
-              '<meta property="og:title" content="BUD & THINGS by Ashi">' \
+              '<meta property="og:title" content="BUD & THINGS by Ashi | Handmade Candles & Jesmonite Trays in India">' \
               '<meta property="og:description" content="Made with thought. Given with feeling.">' \
               '<meta property="og:url" content="https://budandthings.com/">' \
               '<link rel="canonical" href="https://budandthings.com/">' \
