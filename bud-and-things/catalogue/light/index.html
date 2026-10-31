@@ -4,7 +4,7 @@
 <meta name="description" content="Send Diwali lights: they light the diyas, make a wish, and your letter appears.">
 <meta name="theme-color" content="#150206">
 <link rel="canonical" href="https://budandthings.com/catalogue/light/">
-<meta property="og:type" content="website"><meta property="og:title" content="Someone lit a diya for you"><meta property="og:description" content="Happy Diwali. Light the diyas and make a wish."><meta property="og:url" content="https://budandthings.com/catalogue/light/"><meta property="og:image" content="https://budandthings.com/catalogue/share/og.png"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website"><meta property="og:title" content="Someone lit a diya for you"><meta property="og:description" content="Happy Diwali. Light the diyas and make a wish."><meta property="og:url" content="https://budandthings.com/catalogue/light/"><meta property="og:image" content="https://budandthings.com/catalogue/share/og-light.png"><meta name="twitter:card" content="summary_large_image">
 <style>
 @font-face{font-family:'Playfair Display';src:url(../../prototype/assets/fonts/playfair.woff2) format('woff2');font-weight:400 900;font-display:swap}
 @font-face{font-family:'Playfair Display';font-style:italic;src:url(../../prototype/assets/fonts/playfair-italic.woff2) format('woff2');font-weight:400 900;font-display:swap}
@@ -79,42 +79,88 @@ button{font:inherit;color:inherit}
 #blowbtn{position:absolute;left:50%;bottom:max(96px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;width:auto;padding:0 28px;min-height:48px}
 #fin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 20px 24px;overflow-y:auto;opacity:0;transition:opacity 1.2s;pointer-events:none}
 #fin.show{opacity:1;pointer-events:auto}
+#recv.done #mute{opacity:0;pointer-events:none}
+#c{transition:opacity 1.6s}#recv.done #c{opacity:.3}
+#fin .acts{background:rgba(21,2,6,.72);border:1px solid rgba(214,163,74,.35);border-radius:22px;padding:16px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 #fin>*{flex:none}
 #fin .letter{transform:translateY(40px) scale(.96);transition:transform 1.4s var(--ease)}
 #fin.show .letter{transform:none}
 #fin .acts{display:grid;gap:10px;width:min(100%,360px);margin-top:22px}
+
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.btn[disabled]{opacity:.35;pointer-events:none}
+.welcome{display:flex;flex-direction:column;min-height:100%}
+.hero{display:flex;justify-content:center;align-items:flex-end;gap:14px;height:150px;margin:18px 0 10px;position:relative}
+.hero::before{content:"";position:absolute;left:50%;bottom:-6px;width:260px;height:80px;margin-left:-130px;background:radial-gradient(ellipse at 50% 100%,rgba(240,160,48,.5),transparent 70%)}
+.hero svg{width:84px;height:auto;position:relative}.hero svg:nth-child(2){width:112px}
+.hero .fl{transform-origin:50% 100%;animation:fl 1.6s infinite ease-in-out}.hero svg:nth-child(2) .fl{animation-delay:-.5s}.hero svg:nth-child(3) .fl{animation-delay:-1s}
+@keyframes fl{0%,100%{transform:scale(1) skewX(0)}30%{transform:scale(1.06,.94) skewX(3deg)}65%{transform:scale(.95,1.07) skewX(-3deg)}}
+.how{list-style:none;padding:0;margin:20px 0 8px;display:grid;gap:14px}
+.how li{display:flex;gap:14px;align-items:flex-start;font-size:15px;line-height:1.4}
+.how b{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);display:grid;place-items:center;font:600 14px 'Playfair Display',serif}
+.how span em{display:block;font-style:normal;opacity:.65;font-size:13px}
+.err{color:#f2a3b4;font-size:13px;min-height:20px;margin:-10px 0 8px}
+.final .link{background:none;border:0;color:var(--cream);opacity:.7;text-decoration:underline;cursor:pointer;font-size:14px;padding:10px;margin:2px auto 0}
+.next{margin:22px 0 4px;font-size:13px;opacity:.7;text-align:center}
+.step.end{padding-bottom:30px}
+body.nobar .bar{display:none}
+/* receiver intro */
+#intro{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 28px;background:radial-gradient(ellipse at 50% 30%,#4a0d1f,#150206 70%);transition:opacity .9s}
+#intro.go{opacity:0;pointer-events:none}
+#intro img{width:92px;height:92px;border-radius:50%;background:var(--cream);padding:3px;box-shadow:0 0 60px rgba(214,163,74,.35)}
+#intro h2{font:600 clamp(32px,9vw,42px)/1.1 'Playfair Display',serif;margin:22px 0 6px}#intro h2 i{color:var(--gold);font-weight:500}
+#intro p{opacity:.8;max-width:30ch;margin-bottom:28px}
+#intro .tip{font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.55;margin:16px 0 0}
+.track{display:flex;justify-content:center;gap:18px;margin-top:12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.track span{opacity:.35;transition:opacity .5s,color .5s;display:flex;align-items:center;gap:6px}.track span::before{content:attr(data-n);width:20px;height:20px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;font-size:10px;letter-spacing:0}
+.track span.on{opacity:1;color:var(--gold)}.track span.done{opacity:.8}
+#mute{position:absolute;right:14px;top:max(70px,calc(env(safe-area-inset-top) + 56px));z-index:10;width:40px;height:40px;border-radius:50%;border:1px solid rgba(214,163,74,.5);background:rgba(21,2,6,.5);display:grid;place-items:center;cursor:pointer}
+#mute svg{width:20px;height:20px;stroke:var(--cream);fill:none;stroke-width:1.8;stroke-linecap:round}
+@media (prefers-reduced-motion:no-preference){#match.idle{animation:nudge 3.2s infinite var(--ease)}
+@keyframes nudge{0%,55%,100%{transform:translate(0,0)}75%{transform:translate(-26px,-20px)}}}
+#fin{justify-content:flex-start}#fin>:first-child{margin-top:auto}#fin .acts{margin-bottom:auto}
+#fin .acts .sub{font-size:13px;text-align:center;opacity:.6;margin-top:6px}
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
 </style></head><body>
 
 <!-- SENDER WIZARD -->
 <section id="send" hidden>
-<div class="top"><img src="../../prototype/assets/silk/emblem.webp" alt="BUD &amp; THINGS" width="44" height="44"><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div></div>
-<div class="steps">
- <div class="step" data-s="0"><p class="eyebrow">Diwali gift of light</p><h1>Who gets this <i>diya?</i></h1><p class="lead">They open it at night and light the diyas themselves.</p>
-  <label class="field"><span class="eyebrow">Their name</span><input id="to" maxlength="30" placeholder="Priya" autocomplete="off"></label>
-  <label class="field"><span class="eyebrow">Your name</span><input id="fr" maxlength="30" placeholder="Riya" autocomplete="off"></label></div>
- <div class="step" data-s="1"><p class="eyebrow">Your words</p><h1>Write a Diwali <i>wish</i></h1>
-  <div class="chips" id="chips"></div>
-  <label class="field"><textarea id="m" maxlength="160" placeholder="Happy Diwali! May your home be full of light."></textarea><span class="count" id="cn">0 / 160</span></label></div>
- <div class="step" data-s="2"><p class="eyebrow">The surprise</p><h1>Pick the gift <i>inside</i></h1><p class="lead">It appears in the letter once the wish is made.</p><div class="pick" id="pick"></div></div>
- <div class="step" data-s="3"><p class="eyebrow">Ready</p><h1>This is what they will <i>find</i></h1><div class="prevwrap" id="prev"></div>
+<div class="top"><img src="../../prototype/assets/silk/emblem.webp" alt="BUD &amp; THINGS" width="44" height="44"><div class="dots" id="dots"><i></i><i></i><i></i><i></i><i></i></div></div>
+<div class="steps" id="steps">
+ <div class="step" data-s="0"><div class="welcome"><p class="eyebrow">Diwali · from BUD &amp; THINGS</p>
+  <h1>Send a diya,<br><i>not just a text</i></h1>
+  <div class="hero"><svg viewBox="0 0 80 70" aria-hidden="true"><defs><linearGradient id="b1" x1="0" x2="1"><stop offset="0" stop-color="#8a5a2a"/><stop offset=".4" stop-color="#f6cf86"/><stop offset="1" stop-color="#7a4a20"/></linearGradient></defs><g class="fl"><path d="M40 36C28 28 32 14 40 2c8 12 12 26 0 34z" fill="#ffc247"/><path d="M40 36C34 30 36 22 40 14c4 8 6 16 0 22z" fill="#fff3c4"/></g><path d="M6 40h68c0 18-14 28-34 28S6 58 6 40z" fill="url(#b1)"/><ellipse cx="40" cy="40" rx="34" ry="6" fill="#ffd886"/><circle cx="26" cy="54" r="2" fill="#8F1834"/><circle cx="40" cy="58" r="2" fill="#8F1834"/><circle cx="54" cy="54" r="2" fill="#8F1834"/></svg><svg viewBox="0 0 80 70" aria-hidden="true"><defs><linearGradient id="b2" x1="0" x2="1"><stop offset="0" stop-color="#8a5a2a"/><stop offset=".4" stop-color="#f6cf86"/><stop offset="1" stop-color="#7a4a20"/></linearGradient></defs><g class="fl"><path d="M40 36C28 28 32 14 40 2c8 12 12 26 0 34z" fill="#ffc247"/><path d="M40 36C34 30 36 22 40 14c4 8 6 16 0 22z" fill="#fff3c4"/></g><path d="M6 40h68c0 18-14 28-34 28S6 58 6 40z" fill="url(#b2)"/><ellipse cx="40" cy="40" rx="34" ry="6" fill="#ffd886"/><circle cx="26" cy="54" r="2" fill="#8F1834"/><circle cx="40" cy="58" r="2" fill="#8F1834"/><circle cx="54" cy="54" r="2" fill="#8F1834"/></svg><svg viewBox="0 0 80 70" aria-hidden="true"><defs><linearGradient id="b3" x1="0" x2="1"><stop offset="0" stop-color="#8a5a2a"/><stop offset=".4" stop-color="#f6cf86"/><stop offset="1" stop-color="#7a4a20"/></linearGradient></defs><g class="fl"><path d="M40 36C28 28 32 14 40 2c8 12 12 26 0 34z" fill="#ffc247"/><path d="M40 36C34 30 36 22 40 14c4 8 6 16 0 22z" fill="#fff3c4"/></g><path d="M6 40h68c0 18-14 28-34 28S6 58 6 40z" fill="url(#b3)"/><ellipse cx="40" cy="40" rx="34" ry="6" fill="#ffd886"/><circle cx="26" cy="54" r="2" fill="#8F1834"/><circle cx="40" cy="58" r="2" fill="#8F1834"/><circle cx="54" cy="54" r="2" fill="#8F1834"/></svg></div>
+  <ol class="how"><li><b>1</b><span>You write a wish and pick a candle<em>Takes about a minute</em></span></li>
+  <li><b>2</b><span>They open your link at night and light the diyas<em>With a drag of a match</em></span></li>
+  <li><b>3</b><span>Fireworks, then your letter appears<em>With the candle you chose</em></span></li></ol></div></div>
+ <div class="step" data-s="1"><p class="eyebrow">Step 1 of 3 · Who</p><h1>Who gets this <i>diya?</i></h1><p class="lead">Their name opens the letter.</p>
+  <label class="field"><span class="eyebrow">Their name</span><input id="to" maxlength="30" placeholder="Priya" autocomplete="off" enterkeyhint="next"></label>
+  <label class="field"><span class="eyebrow">Your name</span><input id="fr" maxlength="30" placeholder="Riya" autocomplete="off" enterkeyhint="next"></label></div>
+ <div class="step" data-s="2"><p class="eyebrow">Step 2 of 3 · Wish</p><h1>Write a Diwali <i>wish</i></h1><p class="lead">Tap a line to start, then make it yours.</p>
+  <div class="chips" id="chips" role="group" aria-label="Wish ideas"></div>
+  <label class="field"><textarea id="m" maxlength="160" aria-label="Your wish"></textarea><span class="count" id="cn">0 / 160</span></label></div>
+ <div class="step" data-s="3"><p class="eyebrow">Step 3 of 3 · Gift</p><h1>Pick the gift <i>inside</i></h1><p class="lead">Their photo appears in the letter once the wish is made.</p><div class="pick" id="pick" role="radiogroup" aria-label="Candle"></div></div>
+ <div class="step end" data-s="4"><p class="eyebrow">All set</p><h1>This is what they will <i>find</i></h1><div class="prevwrap" id="prev"></div>
   <div class="final"><a class="btn" id="wa" target="_blank" rel="noopener">Send on WhatsApp</a>
   <div class="row"><button class="btn alt" id="nat" hidden>Share…</button><button class="btn alt" id="cp">Copy link</button></div>
-  <a class="btn alt" id="pv">Try it yourself first</a></div>
-  <p class="note">Everything lives inside the link. Nothing is stored.</p></div>
+  <a class="btn alt" id="pv">Try it yourself first</a><button class="link" id="ed" type="button">Change something</button></div>
+  <p class="next">They will see the diyas, not just this card. The wish and gift travel inside the link, nothing is stored.</p></div>
 </div>
-<div class="bar"><button class="btn alt back" id="bk" aria-label="Back">←</button><button class="btn" id="nx">Next</button></div>
+<div class="bar"><button class="btn alt back" id="bk" aria-label="Back">←</button><button class="btn" id="nx">Begin</button></div>
 </section>
 
 <!-- RECEIVER SCENE -->
 <section id="recv" hidden>
-<canvas id="c"></canvas>
-<div class="head" id="head"><p class="eyebrow" id="who"></p><h1 id="hi"></h1></div>
-<div id="match" role="button" tabindex="0" aria-label="Lit match. Drag it to the wick, or press Enter."></div>
-<div class="hint" id="hint"></div>
+<canvas id="c" aria-hidden="true"></canvas>
+<div class="head" id="head"><p class="eyebrow" id="who"></p><h1 id="hi"></h1><div class="track" id="track" aria-hidden="true"><span data-n="1" class="on">Light</span><span data-n="2">Wish</span><span data-n="3">Letter</span></div></div>
+<button id="mute" aria-label="Sound on" type="button"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="mw" d="M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg></button>
+<div id="match" class="idle" role="button" tabindex="0" aria-label="Lit match. Drag it to the big diya, or press Enter."></div>
+<div class="hint" id="hint" aria-live="polite"></div>
 <button class="btn alt" id="blowbtn" hidden>I have made my wish</button>
-<div id="fin"><div id="letter"></div><div class="acts"><a class="btn" href="../">See every candle</a><a class="btn alt" href="./">Light one for someone back</a></div></div>
+<div id="fin"><div id="letter"></div><div class="acts"><a class="btn" id="thx" target="_blank" rel="noopener">Say thank you on WhatsApp</a><a class="btn alt" href="../">See every candle</a><a class="btn alt" href="./">Send a diya to someone</a><p class="sub">Happy Diwali from BUD &amp; THINGS by Ashi</p></div></div>
+<div id="intro"><img src="../../prototype/assets/silk/emblem.webp" alt="BUD &amp; THINGS by Ashi" width="92" height="92"><h2 id="ih"></h2><p id="ip"></p><button class="btn" id="open" type="button">Open your gift</button><p class="tip">Best at night, with sound on</p></div>
 </section>
+<noscript><p style="padding:40px;text-align:center">This gift needs JavaScript. <a href="../" style="color:#D6A34A">See the catalogue</a></p></noscript>
 
 <script>
 (function(){
@@ -137,28 +183,43 @@ if(q.get('m')||q.get('t'))receive();else send();
 
 /* ---------- sender ---------- */
 function send(){
- var S=$('send');S.hidden=false;var cur=0,N=4,st={t:'',f:'',m:'',p:P[0][0]};
+ var S=$('send');S.hidden=false;var cur=0,N=5,st={t:'',f:'',m:WISH[0],p:P[0][0]};
  var steps=[].slice.call(document.querySelectorAll('.step')),dots=[].slice.call($('dots').children);
- var pick=$('pick');P.forEach(function(x){var b=document.createElement('button');b.type='button';b.dataset.id=x[0];b.innerHTML='<img src="../img/'+x[0]+'.jpg" alt="" loading="lazy" width="200" height="200"><b>'+x[1]+'</b>';b.onclick=function(){st.p=x[0];mark()};pick.appendChild(b)});
- function mark(){[].forEach.call(pick.children,function(b){b.classList.toggle('on',b.dataset.id===st.p)})}mark();
- var chips=$('chips');WISH.forEach(function(w){var c=document.createElement('button');c.type='button';c.className='chip';c.textContent=['Happy Diwali','Shubh Deepawali','Little joys','To your family','Thank you'][WISH.indexOf(w)];c.onclick=function(){$('m').value=w;st.m=w;cnt();[].forEach.call(chips.children,function(k){k.classList.toggle('on',k===c)})};chips.appendChild(c)});
- function cnt(){$('cn').textContent=$('m').value.length+' / 160'}
- $('to').oninput=function(){st.t=this.value};$('fr').oninput=function(){st.f=this.value};$('m').oninput=function(){st.m=this.value;cnt()};
+ var pick=$('pick');P.forEach(function(x){var b=document.createElement('button');b.type='button';b.setAttribute('role','radio');b.dataset.id=x[0];b.innerHTML='<img src="../img/'+x[0]+'.jpg" alt="" loading="lazy" width="200" height="200"><b>'+x[1]+'</b>';b.onclick=function(){st.p=x[0];mark()};pick.appendChild(b)});
+ function mark(){[].forEach.call(pick.children,function(b){var on=b.dataset.id===st.p;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)})}mark();
+ var chips=$('chips');WISH.forEach(function(w,i){var c=document.createElement('button');c.type='button';c.className='chip'+(i?'':' on');c.textContent=['Happy Diwali','Shubh Deepawali','Little joys','To your family','Thank you'][i];c.onclick=function(){$('m').value=w;st.m=w;cnt();[].forEach.call(chips.children,function(k){k.classList.toggle('on',k===c)})};chips.appendChild(c)});
+ $('m').value=st.m;
+ function cnt(){var n=$('m').value.length;$('cn').textContent=n+' / 160';valid()}
+ function valid(){var ok=true;if(cur===1)ok=!!(st.t.trim()&&st.f.trim());if(cur===2)ok=!!st.m.trim();$('nx').disabled=!ok}
+ $('to').oninput=function(){st.t=this.value;valid()};$('fr').oninput=function(){st.f=this.value;valid()};$('m').oninput=function(){st.m=this.value;[].forEach.call(chips.children,function(k){k.classList.remove('on')});cnt()};
  function link(){var u=new URLSearchParams();u.set('t',cl(st.t,30).trim());u.set('f',cl(st.f,30).trim());u.set('m',cl(st.m,160).trim());u.set('p',st.p);return 'https://budandthings.com/catalogue/light/#'+u}
- function go(n){cur=Math.max(0,Math.min(N-1,n));steps.forEach(function(s,i){s.classList.toggle('cur',i===cur);s.classList.toggle('past',i<cur)});dots.forEach(function(d,i){d.classList.toggle('on',i<=cur);d.classList.toggle('cur',i===cur)});
-  $('bk').style.visibility=cur?'visible':'hidden';$('nx').textContent=cur===N-1?'Edit again':cur===2?'See the letter':'Next';
-  if(cur===N-1){letter($('prev'),{t:st.t,f:st.f,m:st.m,p:st.p},false);var l=link();$('wa').href='https://wa.me/?text='+encodeURIComponent((st.f||'Someone')+' lit a candle for you 🕯️ Open it in the dark: '+l);$('pv').href=location.pathname+l.slice(l.indexOf('#'))}
-  var f=steps[cur].querySelector('input,textarea');if(f&&cur<2)setTimeout(function(){f.focus({preventScroll:true})},450)}
- $('nx').onclick=function(){go(cur===N-1?0:cur+1)};$('bk').onclick=function(){go(cur-1)};
+ var labels=['Begin','Next','Next','See the letter',''];
+ function go(n){cur=Math.max(0,Math.min(N-1,n));steps.forEach(function(s,i){s.classList.toggle('cur',i===cur);s.classList.toggle('past',i<cur);s.setAttribute('aria-hidden',i!==cur)});
+  dots.forEach(function(d,i){d.classList.toggle('on',i<=cur);d.classList.toggle('cur',i===cur)});
+  document.body.classList.toggle('nobar',cur===N-1);$('bk').style.visibility=cur?'visible':'hidden';$('nx').textContent=labels[cur];cnt();steps[cur].scrollTop=0;
+  if(cur===N-1){letter($('prev'),{t:st.t,f:st.f,m:st.m,p:st.p},false);var l=link();$('wa').href='https://wa.me/?text='+encodeURIComponent((st.f||'Someone')+' lit a diya for you 🪔 Happy Diwali! Open it tonight: '+l);$('pv').href=location.pathname+l.slice(l.indexOf('#'))}
+  var f=steps[cur].querySelector('input,textarea');if(f&&(cur===1||cur===2))setTimeout(function(){f.focus({preventScroll:true})},500)}
+ $('nx').onclick=function(){go(cur+1)};$('bk').onclick=function(){go(cur-1)};$('ed').onclick=function(){go(1)};
+ S.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.tagName==='INPUT'&&!$('nx').disabled){e.preventDefault();if(e.target.id==='to')$('fr').focus();else go(cur+1)}});
  $('pv').onclick=function(e){e.preventDefault();location.href=this.getAttribute('href');location.reload()};
  if(navigator.share){$('nat').hidden=false;$('nat').onclick=function(){navigator.share({title:'Diwali lights for you',text:(st.f||'Someone')+' lit a diya for you.',url:link()}).catch(function(){})}}
- $('cp').onclick=function(){var l=link(),b=this,d=function(){b.textContent='Link copied'};(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(d,function(){prompt('Copy this link',l)})};
+ $('cp').onclick=function(){var l=link(),b=this,d=function(){b.textContent='Link copied ✓'};(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(d,function(){prompt('Copy this link',l)})};
  go(0)}
 
 /* ---------- receiver ---------- */
 function receive(){
  var d={t:cl(q.get('t'),30),f:cl(q.get('f'),30),m:cl(q.get('m'),160),p:pid(q.get('p'))};
- $('recv').hidden=false;$('who').textContent=d.f?'Lit by '+d.f:'Shubh Deepawali';$('hi').textContent=d.t?'Diwali lights for '+d.t:'Diwali lights for you';
+ $('recv').hidden=false;$('ih').innerHTML=d.t?'A gift of light<br>for <i></i>':'A gift of <i>light</i>';if(d.t)$('ih').querySelector('i').textContent=d.t;$('ip').textContent=d.f?d.f+' lit a diya for you. Open it and light it yourself.':'Open it and light the diyas yourself.';
+ var AC=null,muted=false;
+ function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+ function tone(f,t0,dur,vol,type){var a=AC;if(!a||muted)return;var o=a.createOscillator(),g=a.createGain(),T=a.currentTime+t0;o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,T);g.gain.linearRampToValueAtTime(vol,T+.015);g.gain.exponentialRampToValueAtTime(.0001,T+dur);o.connect(g);g.connect(a.destination);o.start(T);o.stop(T+dur+.05)}
+ function bell(f,t0,vol){tone(f,t0,1.6,vol);tone(f*2.76,t0,.7,vol*.22);tone(f*5.4,t0,.3,vol*.08)}
+ function noise(t0,dur,vol,freq,type){var a=AC;if(!a||muted)return;var n=a.sampleRate*dur,b=a.createBuffer(1,n,a.sampleRate),dd=b.getChannelData(0);for(var i=0;i<n;i++)dd[i]=(Math.random()*2-1)*(1-i/n);var s=a.createBufferSource();s.buffer=b;var f=a.createBiquadFilter();f.type=type||'bandpass';f.frequency.value=freq;var g=a.createGain();g.gain.value=vol;s.connect(f);f.connect(g);g.connect(a.destination);s.start(a.currentTime+t0)}
+ function thump(t0){var a=AC;if(!a||muted)return;var o=a.createOscillator(),g=a.createGain(),T=a.currentTime+t0;o.frequency.setValueAtTime(140,T);o.frequency.exponentialRampToValueAtTime(38,T+.25);g.gain.setValueAtTime(.35,T);g.gain.exponentialRampToValueAtTime(.001,T+.3);o.connect(g);g.connect(a.destination);o.start(T);o.stop(T+.35)}
+ var PEN=[523.25,587.33,659.25,783.99,880];
+ $('mute').onclick=function(){muted=!muted;this.setAttribute('aria-label',muted?'Sound off':'Sound on');$('mw').style.display=muted?'none':''};
+ function track(n){[].forEach.call($('track').children,function(e,i){e.classList.toggle('on',i===n);e.classList.toggle('done',i<n)})}
+ $('who').textContent=d.f?'Lit by '+d.f:'Shubh Deepawali';$('hi').textContent=d.t?'Diwali lights for '+d.t:'Diwali lights for you';
  var cv=$('c'),x=cv.getContext('2d'),W,H,dp,cx,fy0,lastT=0,state=0,t0l=0,wishAt=0,fw=[],em=[],stars=[],DY=[];
  var match=$('match'),mx,my,drag=null,mAlpha=1,mFlame=1,L=0;
  for(var i=0;i<70;i++)stars.push({x:Math.random(),y:Math.random()*.55,r:Math.random()*1.3+.3,p:Math.random()*6});
@@ -215,22 +276,22 @@ function receive(){
  function mix2(L){return 'rgb('+mix(20,70,L)+','+mix(3,14,L)+','+mix(10,26,L)+')'}
  requestAnimationFrame(frame);
  function say(a,b){$('hint').style.opacity=0;setTimeout(function(){$('hint').innerHTML=a+(b?'<small>'+b+'</small>':'');$('hint').style.opacity=1},220)}
- say('Light the first diya','Drag the match, or tap it');
+ var started=false;$('open').onclick=function(){if(started)return;started=true;audio();bell(523.25,0,.12);bell(783.99,.25,.1);$('intro').classList.add('go');setTimeout(function(){say('Light the first diya','Drag the match to the big diya, or just tap it')},500)};
  function near(){var r=match.getBoundingClientRect();return Math.hypot(r.left+22-DY[0].x,r.top+8-(DY[0].y-DY[0].w*.2))<60}
- function light(){if(state)return;state=1;t0l=performance.now()/1000;drag=null;mAlpha=0;match.style.opacity=0;match.style.pointerEvents='none';if(navigator.vibrate)navigator.vibrate([30,60,30,60,30]);
+ function light(){if(state)return;state=1;t0l=performance.now()/1000;drag=null;mAlpha=0;match.style.opacity=0;match.style.pointerEvents='none';if(navigator.vibrate)navigator.vibrate([30,60,30,60,30]);noise(0,.5,.5,900,'lowpass');DY.forEach(function(o,i){bell(PEN[i],.1+o.at,.16)});$('match').classList.remove('idle');track(1);
   for(var i=0;i<14;i++)em.push({x:DY[0].x,y:fy0,vx:(Math.random()-.5)*90,vy:-Math.random()*80,l:1});
   say('Shubh Deepawali','One flame lights them all');setTimeout(function(){say('Make a wish','Say it softly. Never blow out a diya.')},2600);setTimeout(function(){if(state===1)$('blowbtn').hidden=false},5200)}
- match.addEventListener('pointerdown',function(e){if(state)return;e.preventDefault();match.setPointerCapture(e.pointerId);match.classList.remove('back');drag={ox:e.clientX-mx,oy:e.clientY-my,sx:e.clientX,sy:e.clientY,moved:false};match.style.cursor='grabbing'});
+ match.addEventListener('pointerdown',function(e){if(state)return;e.preventDefault();match.setPointerCapture(e.pointerId);match.classList.remove('back','idle');drag={ox:e.clientX-mx,oy:e.clientY-my,sx:e.clientX,sy:e.clientY,moved:false};match.style.cursor='grabbing'});
  match.addEventListener('pointermove',function(e){if(!drag)return;var nx=e.clientX-drag.ox,ny=e.clientY-drag.oy;if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>8)drag.moved=true;place(nx,ny);mFlame=1.15;if(near())light()});
  function end(){if(!drag)return;var was=drag;drag=null;match.style.cursor='grab';if(state)return;if(!was.moved){auto();return}match.classList.add('back');place(mx,my);mFlame=1}
  match.addEventListener('pointerup',end);match.addEventListener('pointercancel',end);
  match.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();auto()}});
  function auto(){if(state)return;match.classList.remove('back');var tx=DY[0].x,ty=DY[0].y-DY[0].w*.2,sx=mx,sy=my,t0=performance.now();(function s(n){var k=Math.min(1,(n-t0)/850),e=1-Math.pow(1-k,3);place(mix(sx,tx,e),mix(sy,ty+14,e));if(k<1&&!state)requestAnimationFrame(s);else light()})(t0)}
- function wished(){if(state!==1)return;state=2;$('blowbtn').hidden=true;$('head').style.opacity=0;say('Wish made');if(navigator.vibrate)navigator.vibrate(40);
-  var n=0;(function b(){burst(W*(.2+Math.random()*.6),H*(.14+Math.random()*.24),FC[n%FC.length]);if(++n<7)setTimeout(b,300+Math.random()*250)})();
+ function wished(){if(state!==1)return;state=2;$('blowbtn').hidden=true;$('head').style.opacity=0;say('Wish made');if(navigator.vibrate)navigator.vibrate(40);track(2);[1046,1318,1568,2093].forEach(function(f,i){bell(f,i*.12,.07)});
+  var n=0;(function b(){thump(0);noise(.1,.6,.35,3500,'highpass');burst(W*(.2+Math.random()*.6),H*(.14+Math.random()*.24),FC[n%FC.length]);if(++n<7)setTimeout(b,300+Math.random()*250)})();
   setTimeout(function(){$('hint').style.opacity=0},900);setTimeout(reveal,2200)}
  $('blowbtn').onclick=wished;
- function reveal(){letter($('letter'),d,true);$('fin').classList.add('show');var n=0;(function b(){burst(W*(.15+Math.random()*.7),H*(.08+Math.random()*.2),FC[(n+2)%FC.length]);if(++n<5)setTimeout(b,700)})()}
+ function reveal(){track(3);[523.25,659.25,783.99,1046.5].forEach(function(f,i){bell(f,i*.18,.1)});$('thx').href='https://wa.me/?text='+encodeURIComponent('Thank you'+(d.f?', '+d.f:'')+'! Your Diwali diya lit up my night 🪔 Happy Diwali!');letter($('letter'),d,true);$('fin').classList.add('show');$('recv').classList.add('done');var n=0;(function b(){burst(W*(.15+Math.random()*.7),H*(.08+Math.random()*.2),FC[(n+2)%FC.length]);if(++n<5)setTimeout(b,700)})()}
 }
 })();
 </script></body></html>
