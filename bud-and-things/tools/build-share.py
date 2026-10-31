@@ -60,21 +60,21 @@ body{{font-family:Montserrat,sans-serif;color:{CREAM}}}
 .pl{{font-family:'Playfair Display',serif}}"""
 
 story = f"""<style>{BASE}
-body{{width:1080px;height:1920px;background:radial-gradient(circle at 50% 0%,{MAROON} 0%,{MAROON_D} 70%);padding:90px 70px;text-align:center;position:relative;overflow:hidden;border:0}}
+body{{width:1080px;height:1920px;background:radial-gradient(circle at 50% 0%,{MAROON} 0%,{MAROON_D} 70%);padding:80px 70px;text-align:center;position:relative;overflow:hidden;border:0}}
 .frame{{position:absolute;inset:34px;border:3px solid {GOLD};border-radius:36px;pointer-events:none}}
-.emb{{width:230px;height:230px;border-radius:50%;background:{CREAM};padding:8px}}
-h1{{font:600 96px/1.05 'Playfair Display',serif;margin:36px 0 12px;color:{CREAM}}}
+.emb{{width:180px;height:180px;border-radius:50%;background:{CREAM};padding:8px}}
+h1{{font:600 88px/1.05 'Playfair Display',serif;margin:36px 0 12px;color:{CREAM}}}
 h1 i{{color:{GOLD};font-weight:500}}
 .sub{{font-size:30px;letter-spacing:.22em;text-transform:uppercase;color:{GOLD}}}
-.tiles{{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin:40px 0 40px}}
+.tiles{{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin:34px 0 34px}}
 figure{{background:{CREAM};border-radius:22px;padding:12px 12px 16px;border:2px solid {GOLD}}}
-figure img{{width:100%;aspect-ratio:1.55;object-fit:cover;border-radius:14px;display:block}}
+figure img{{width:100%;aspect-ratio:1.32;object-fit:cover;border-radius:14px;display:block}}
 figcaption{{font:600 28px 'Playfair Display',serif;color:{MAROON};margin-top:12px}}
 .qrbox{{display:inline-flex;align-items:center;gap:34px;background:{CREAM};border-radius:30px;padding:26px 36px 26px 26px;border:3px solid {GOLD};text-align:left}}
-.qrbox img{{width:330px;height:330px;border-radius:12px}}
+.qrbox img{{width:290px;height:290px;border-radius:12px}}
 .qrbox b{{display:block;font:600 44px/1.1 'Playfair Display',serif;color:{MAROON}}}
 .qrbox span{{display:block;color:{INK};font-size:24px;margin-top:10px}}
-.url{{margin-top:36px;font-size:34px;letter-spacing:.06em;color:{GOLD};font-weight:600}}
+.url{{margin-top:30px;font-size:34px;letter-spacing:.06em;color:{GOLD};font-weight:600}}
 .tag{{margin-top:14px;font:italic 400 30px 'Playfair Display',serif;color:{CREAM}}}
 </style><body><div class="frame"></div>
 <img class="emb" src="{EMBLEM}">
