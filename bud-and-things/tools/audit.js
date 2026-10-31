@@ -14,7 +14,7 @@ const srv = http.createServer((q, r) => {
   if (f.startsWith(root) && fs.existsSync(f) && fs.statSync(f).isFile()) { r.setHeader('content-type', types[path.extname(f)] || 'application/octet-stream'); return r.end(fs.readFileSync(f)); }
   r.setHeader('content-type', 'text/html'); r.end(page);
 });
-const ROUTES = ['home', 'shop', 'candles', 'gifts', 'story', 'faq', 'help', 'privacy', 'terms', 'journal', 'track', 'feeling', 'p-chai-at-four'];
+const ROUTES = ['home', 'shop', 'candles', 'gifts', 'story', 'faq', 'help', 'privacy', 'terms', 'journal', 'track', 'feeling', 'p-bnt-prd-cg-001'];
 const inPage = () => {
   const out = { nodes: 0, low: [], small: [], tap: [], names: [], noAlt: 0, h1: 0, skip: 0, hscroll: document.documentElement.scrollWidth > innerWidth + 1, skipLink: !!document.querySelector('.skip-link') };
   const parse = (s) => { const m = s.match(/rgba?\(([^)]+)\)/); return m ? m[1].split(',').map(Number) : null; };

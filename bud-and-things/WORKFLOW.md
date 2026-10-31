@@ -21,7 +21,7 @@ The work moved in stages, each reviewed before the next:
 |---|---|---|
 | Directions | Three visual directions on design boards | **Direction A** approved |
 | Commerce | Own site takes orders (no shop platform), payment gateway for dynamic UPI QR, UPI app or ID and cards; marketplaces run from their own panels; one codebase for web, PWA and store apps | Agreed |
-| Catalogue | A draft range of 6 candles and 6 Jesmonite objects (`data/catalogue.draft.json`), every name and price marked as a proposal | Agreed as a draft |
+| Catalogue | The real range from the team sheet: 22 products with prices in ₹ and weights (`data/catalogue.sheet.json`) | Prices from the sheet |
 | Prototype | The whole shop as a clickable prototype, with the full checkout and an owner view | Approved as the base |
 | Openings A and B | 2D canvas scroll scenes: *Through the Arches*, *The Pour* | Moved to the web-intros-and-themes repository (Oct 2026) |
 | Themes | Four themes: Silk · Maroon & Gold (default), Signature, Monsoon, Evening | Chosen by the owner in Owner view → Settings. Everyday, Festive and Gifting were removed from this site and are kept in abhiyknp/pixelpatra, kits/theme-kit |
@@ -44,7 +44,7 @@ glow are pre-calculated in Blender and stored in images (lightmaps), so the brow
 bud-and-things/
   README.md                decisions, stack, catalogue and asset notes
   WORKFLOW.md              this file
-  data/catalogue.draft.json
+  data/catalogue.sheet.json
     houselib.py            shared Blender helpers: shapes, UVs, baking, panorama, export
     foyer.py               porch + foyer (Blender script)
     bedroom.py             bedroom (Blender script)

@@ -21,10 +21,91 @@
    "sheetRow": 6
   },
   {
+   "id": "BNT-PRD-CG-003",
+   "name": "BlueBerry Swirl",
+   "type": "Glass candle",
+   "price": 199,
+   "img": "bnt-prd-cg-003.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 7
+  },
+  {
+   "id": "BNT-PRD-CG-004",
+   "name": "Strawberry Cream",
+   "type": "Glass candle",
+   "price": 169,
+   "img": "bnt-prd-cg-004.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 8
+  },
+  {
+   "id": "BNT-PRD-CG-005",
+   "name": "Cocoa Bites",
+   "type": "Glass candle",
+   "price": 169,
+   "img": "bnt-prd-cg-005.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 9
+  },
+  {
+   "id": "BNT-PRD-CG-006",
+   "name": "Angle & Amber",
+   "type": "Glass candle",
+   "price": 199,
+   "img": "bnt-prd-cg-006.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 10
+  },
+  {
+   "id": "BNT-PRD-CG-007",
+   "name": "Berry Blast",
+   "type": "Murphy candle",
+   "price": 299,
+   "img": "bnt-prd-cg-007.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 11
+  },
+  {
+   "id": "BNT-PRD-CG-008",
+   "name": "Daisy Pop",
+   "type": "Murphy Candle",
+   "price": 249,
+   "img": "bnt-prd-cg-008.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 12
+  },
+  {
+   "id": "BNT-PRD-CG-009",
+   "name": "Petal & Pour",
+   "type": "Murphy Candle",
+   "price": 249,
+   "img": "bnt-prd-cg-009.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 13
+  },
+  {
+   "id": "BNT-PRD-CG-010",
+   "name": "Sunlit Gel",
+   "type": "Murphy Candle",
+   "price": 299,
+   "img": "bnt-prd-cg-010.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 14
+  },
+  {
+   "id": "BNT-PRD-CG-011",
+   "name": "Dessert Jar",
+   "type": "Jar Candle",
+   "price": 99,
+   "img": "bnt-prd-cg-011.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 15
+  },
+  {
    "id": "BNT-PRD-MC-001",
    "name": "Mini Bubble Candle",
    "type": "Moulded candle",
-   "price": 29,
+   "price": 49,
    "img": "bnt-prd-mc-001.jpg",
    "sheetTab": "Moulded Candles",
    "sheetRow": 5
@@ -33,7 +114,7 @@
    "id": "BNT-PRD-MC-002",
    "name": "Sunflower Float",
    "type": "Moulded candle",
-   "price": 49,
+   "price": 39,
    "img": "bnt-prd-mc-002.jpg",
    "sheetTab": "Moulded Candles",
    "sheetRow": 6
@@ -51,7 +132,7 @@
    "id": "BNT-PRD-MC-004",
    "name": "Blooming Rose",
    "type": "Moulded candle",
-   "price": 29,
+   "price": 39,
    "img": "bnt-prd-mc-004.jpg",
    "sheetTab": "Moulded Candles",
    "sheetRow": 8
@@ -60,7 +141,7 @@
    "id": "BNT-PRD-MC-005",
    "name": "Mini Bubble Candle",
    "type": "Moulded candle",
-   "price": 29,
+   "price": 49,
    "img": "bnt-prd-mc-005.jpg",
    "sheetTab": "Moulded Candles",
    "sheetRow": 9
@@ -69,7 +150,7 @@
    "id": "BNT-PRD-MC-006",
    "name": "Mini Bubble Candle",
    "type": "Moulded candle",
-   "price": 29,
+   "price": 49,
    "img": "bnt-prd-mc-006.jpg",
    "sheetTab": "Moulded Candles",
    "sheetRow": 10
@@ -78,7 +159,7 @@
    "id": "BNT-PRD-MC-007",
    "name": "Sunflower Float",
    "type": "Moulded candle",
-   "price": 49,
+   "price": 39,
    "img": "bnt-prd-mc-007.jpg",
    "sheetTab": "Moulded Candles",
    "sheetRow": 11
@@ -87,7 +168,7 @@
    "id": "BNT-PRD-MC-008",
    "name": "Purple Haze",
    "type": "Moulded candle",
-   "price": 49,
+   "price": 39,
    "img": "bnt-prd-mc-008.jpg",
    "sheetTab": "Moulded Candles",
    "sheetRow": 12
@@ -96,7 +177,7 @@
    "id": "BNT-PRD-MC-009",
    "name": "Blooming Rose",
    "type": "Moulded candle",
-   "price": 49,
+   "price": 39,
    "img": "bnt-prd-mc-009.jpg",
    "sheetTab": "Moulded Candles",
    "sheetRow": 13
@@ -199,6 +280,15 @@
    "img": "bnt-prd-jt-005.jpg",
    "sheetTab": "Jesmonite Tray",
    "sheetRow": 9
+  },
+  {
+   "id": "BNT-PRD-DIY-001",
+   "name": "Paint Your Starfish",
+   "type": "DIY Paint Kit",
+   "price": 69,
+   "img": "bnt-prd-diy-001.jpg",
+   "sheetTab": "DIY Items",
+   "sheetRow": 5
   }
  ]
 }
