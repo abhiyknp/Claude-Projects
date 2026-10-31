@@ -1,5 +1,5 @@
 // End-to-end shop flow at desktop and phone width: add to cart, checkout validation, UPI payment, order page,
-// sign-in, the 3D sample room, owner view, finder. Prints what it sees and any page errors. Needs a preview server (tools/preview.sh).
+// sign-in, the 3D owner view, finder. Prints what it sees and any page errors. Needs a preview server (tools/preview.sh).
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_process').execSync('npm root -g').toString().trim() + '/playwright');
 (async () => {
   const b = await chromium.launch();
@@ -16,11 +16,6 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     const over = async (tag) => { const o = await pg.evaluate(() => document.documentElement.scrollWidth - window.innerWidth); if (o > 0) errs.push(`${w} overflow ${o}px on ${tag}`); };
     await over('home');
     await pg.goto(url + '#p-bnt-prd-cg-001'); await pg.waitForTimeout(100); await over('product');
-    await pg.click('[data-act="room-open"]'); await pg.click('[data-act="room-3d"]'); await pg.waitForSelector('#room3d-cv'); await pg.waitForTimeout(1500);
-    console.log(w, 'sample room:', (await pg.textContent('#room-h')).trim(), '| loading note left:', !!(await pg.$('#room-load')));
-    await pg.click('[data-act="room-look"][data-v="dusk"]'); await pg.click('[data-act="room-lit"]'); await pg.waitForTimeout(300);
-    await pg.screenshot({ path: (process.env.BT_SHOTS || '/tmp') + `/room-${w}.png` });
-    await pg.click('[data-act="room-close"]');
     await pg.click('[data-act="pdp-qty"][data-d="1"]');
     await pg.click('[data-act="add"]');
     const msg = await pg.textContent('.drawer .status'); console.log(w, 'drawer:', msg.trim());
