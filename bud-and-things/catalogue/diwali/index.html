@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Diwali, made by hand · BUD &amp; THINGS</title>
+<meta name="description" content="Swipe through handmade Diwali candles and Jesmonite trays by Ashi. Save your favourites and send them to us.">
+<meta name="theme-color" content="#150206">
+<link rel="canonical" href="https://budandthings.com/catalogue/diwali/">
+<meta property="og:type" content="website"><meta property="og:site_name" content="BUD &amp; THINGS by Ashi"><meta property="og:title" content="Diwali, made by hand"><meta property="og:description" content="Swipe through our handmade Diwali candles and trays. Save your favourites."><meta property="og:url" content="https://budandthings.com/catalogue/diwali/"><meta property="og:image" content="https://budandthings.com/catalogue/share/og-story.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
+<style>
+@font-face{font-family:'Playfair Display';src:url(../../prototype/assets/fonts/playfair.woff2) format('woff2');font-weight:400 900;font-display:swap}
+@font-face{font-family:'Playfair Display';font-style:italic;src:url(../../prototype/assets/fonts/playfair-italic.woff2) format('woff2');font-weight:400 900;font-display:swap}
+@font-face{font-family:'Montserrat';src:url(../../prototype/assets/fonts/montserrat.woff2) format('woff2');font-weight:100 900;font-display:swap}
+:root{--maroon:#8F1834;--maroon-d:#7A1229;--gold:#D6A34A;--cream:#F8F0E4;--ink:#150206;--ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at 50% 0,#3a0a17,#0c0104 70%);color:var(--cream);font:400 16px/1.5 Montserrat,system-ui,sans-serif;display:flex;justify-content:center;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 24px;border-radius:999px;border:1.5px solid var(--gold);background:var(--gold);color:var(--ink);font:600 15px Montserrat,sans-serif;text-decoration:none;cursor:pointer;transition:transform .2s var(--ease)}
+.btn:active{transform:scale(.97)}.btn.alt{background:transparent;color:var(--cream)}
+.reel{position:relative;width:100%;max-width:480px;height:100vh;height:100svh;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain}
+.reel::-webkit-scrollbar{display:none}
+@media(min-width:700px){.reel{margin:2vh 0;height:96vh;border-radius:28px;box-shadow:0 0 0 1px rgba(214,163,74,.4),0 30px 90px rgba(0,0,0,.6)}}
+.slide{position:relative;height:100%;min-height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:0 22px max(28px,env(safe-area-inset-bottom))}
+/* top bar */
+.top{position:sticky;top:0;z-index:30;height:0;max-width:480px;width:100%}
+.topin{position:absolute;left:0;right:0;top:0;padding:max(14px,env(safe-area-inset-top)) 16px 0;display:flex;align-items:center;gap:10px;pointer-events:none}
+.topin>*{pointer-events:auto}
+.topin img{width:38px;height:38px;border-radius:50%;background:var(--cream);padding:2px}
+.bar{flex:1;height:3px;border-radius:3px;background:rgba(248,240,228,.2);overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .4s var(--ease)}
+.chip{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(214,163,74,.55);background:rgba(21,2,6,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:13px;font-weight:600;color:var(--cream);text-decoration:none;cursor:pointer}
+.chip svg{width:16px;height:16px;fill:none;stroke:var(--gold);stroke-width:2}.chip b{color:var(--gold)}
+/* cover */
+.cover{justify-content:center;text-align:center;background:linear-gradient(#0a0105,#2b0714 60%,#150206)}
+.garland{position:absolute;left:0;right:0;top:66px;height:70px;opacity:.9}
+.stars{position:absolute;inset:0;background-image:radial-gradient(1.2px 1.2px at 12% 18%,#f8e1aa,transparent),radial-gradient(1px 1px at 30% 40%,#f8e1aa,transparent),radial-gradient(1.4px 1.4px at 72% 22%,#f8e1aa,transparent),radial-gradient(1px 1px at 88% 48%,#f8e1aa,transparent),radial-gradient(1.2px 1.2px at 55% 12%,#f8e1aa,transparent),radial-gradient(1px 1px at 20% 62%,#f8e1aa,transparent),radial-gradient(1.2px 1.2px at 80% 70%,#f8e1aa,transparent);animation:tw 4s infinite alternate}
+@keyframes tw{from{opacity:.4}to{opacity:1}}
+.cover .eyebrow{margin-top:40px}.cover h1{position:relative;font:600 clamp(42px,12vw,56px)/1.04 'Playfair Display',serif;margin:14px 0 12px}.cover h1 i{color:var(--gold);font-weight:500}
+.cover p{position:relative;opacity:.85;max-width:28ch;margin:0 auto}
+.hero{position:relative;display:flex;justify-content:center;align-items:flex-end;gap:14px;height:150px;margin:20px 0 0}
+.hero::before{content:"";position:absolute;left:50%;bottom:-10px;width:300px;height:90px;margin-left:-150px;background:radial-gradient(ellipse at 50% 100%,rgba(240,160,48,.55),transparent 70%)}
+.hero svg{width:84px;height:auto;position:relative}.hero svg:nth-child(2){width:116px}
+.fl{transform-origin:50% 100%;animation:fl 1.6s infinite ease-in-out}.hero svg:nth-child(2) .fl{animation-delay:-.5s}.hero svg:nth-child(3) .fl{animation-delay:-1s}
+@keyframes fl{0%,100%{transform:scale(1) skewX(0)}30%{transform:scale(1.06,.94) skewX(3deg)}65%{transform:scale(.95,1.07) skewX(-3deg)}}
+.swipe{position:relative;margin-top:34px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.swipe span{display:block;font-size:26px;animation:bob 1.6s infinite ease-in-out}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+/* chapter */
+.chap{justify-content:center;text-align:center;background:radial-gradient(ellipse at 50% 40%,#5a0f26,#150206 75%)}
+.chap .no{font:italic 500 120px/1 'Playfair Display',serif;color:rgba(214,163,74,.28)}
+.chap h2{font:600 clamp(36px,10vw,46px)/1.1 'Playfair Display',serif;margin-top:-34px}
+.chap p{margin-top:10px;opacity:.85}.chap .eyebrow{margin-top:18px}
+/* product */
+.prod{background:#150206}.prod .bg{position:absolute;inset:-30px;background-size:cover;background-position:center;filter:blur(34px) saturate(1.3);transform:scale(1.2);opacity:.5}
+.prod::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(21,2,6,.78),rgba(74,13,31,.55) 40%,rgba(21,2,6,.95) 100%)}
+.prod>*{position:relative;z-index:2}
+.photo{width:min(84%,60vh);aspect-ratio:1;margin:0 auto 22px;border-radius:24px;overflow:hidden;border:2px solid var(--gold);box-shadow:0 0 70px rgba(214,163,74,.3),0 24px 50px rgba(0,0,0,.5);opacity:0;transform:translateY(34px) scale(.95);transition:opacity .7s var(--ease),transform .9s var(--ease);position:relative;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;-webkit-user-drag:none}
+.slide.in .photo{opacity:1;transform:none}
+.meta{opacity:0;transform:translateY(16px);transition:opacity .6s .15s,transform .7s .15s var(--ease)}.slide.in .meta{opacity:1;transform:none}
+.meta .eyebrow{margin-bottom:4px}
+.meta h3{font:600 clamp(30px,9vw,38px)/1.1 'Playfair Display',serif}
+.row{display:flex;align-items:center;gap:12px;margin-top:14px}
+.price{font:600 28px 'Playfair Display',serif;color:var(--gold);margin-right:auto}
+.heart{width:54px;height:54px;border-radius:50%;border:1.5px solid var(--gold);background:rgba(21,2,6,.5);display:grid;place-items:center;cursor:pointer;transition:transform .25s var(--ease),background .25s}
+.heart svg{width:26px;height:26px;fill:none;stroke:var(--gold);stroke-width:2;transition:fill .2s}
+.heart[aria-pressed=true]{background:var(--gold)}.heart[aria-pressed=true] svg{fill:var(--maroon);stroke:var(--maroon)}
+.heart.pop{animation:pop .5s var(--ease)}@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+.burst{position:absolute;left:50%;top:50%;width:90px;height:90px;margin:-45px;pointer-events:none;font-size:90px;line-height:90px;text-align:center;color:var(--gold);opacity:0}
+.burst.go{animation:burst .8s var(--ease)}@keyframes burst{0%{opacity:0;transform:scale(.4)}30%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(1.6)}}
+.hintline{font-size:12px;opacity:.55;margin-top:12px;text-align:center}
+/* picks */
+.picks{justify-content:flex-start;padding-top:max(70px,calc(env(safe-area-inset-top) + 56px));overflow-y:auto;background:radial-gradient(ellipse at 50% 0,#4a0d1f,#150206 70%);scroll-snap-stop:normal}
+.picks h2{font:600 clamp(32px,9vw,40px)/1.1 'Playfair Display',serif;margin:6px 0 6px}.picks h2 i{color:var(--gold);font-weight:500}
+.picks .lead{opacity:.8;margin-bottom:18px}
+.list{display:grid;gap:10px;margin-bottom:16px}
+.it{display:flex;align-items:center;gap:12px;background:rgba(248,240,228,.06);border:1px solid rgba(214,163,74,.3);border-radius:16px;padding:8px 12px 8px 8px}
+.it img{width:56px;height:56px;border-radius:12px;object-fit:cover}.it b{font:600 17px 'Playfair Display',serif;flex:1}.it span{color:var(--gold);font-weight:600}
+.it button{background:none;border:0;opacity:.6;font-size:22px;cursor:pointer;padding:4px 8px}
+.empty{border:1.5px dashed rgba(214,163,74,.45);border-radius:16px;padding:26px 16px;text-align:center;opacity:.85;margin-bottom:16px}
+.total{display:flex;justify-content:space-between;font:600 20px 'Playfair Display',serif;margin:4px 4px 16px}.total span{color:var(--gold)}
+.acts{display:grid;gap:10px;padding-bottom:10px}
+.note{font-size:12px;opacity:.6;text-align:center;margin-top:6px}
+#toast{position:fixed;left:50%;bottom:max(30px,env(safe-area-inset-bottom));transform:translate(-50%,30px);background:var(--cream);color:var(--ink);padding:12px 20px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:.4s var(--ease);z-index:99;pointer-events:none;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}.photo,.meta{opacity:1!important;transform:none!important}}
+</style></head><body>
+<div class="reel" id="reel"><div class="top"><div class="topin"><img src="../../prototype/assets/silk/emblem.webp" alt="BUD &amp; THINGS" width="38" height="38"><div class="bar" aria-hidden="true"><i id="pb"></i></div>
+<a class="chip" href="#picks" id="pk" aria-label="Your saved picks"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.3 3.4 5 6.6 5c2 0 3.5 1.1 5.400 3.200C13.900 6.100 15.400 5 17.400 5c3.200 0 5.400 3.300 4.100 6.800C19.500 16.400 12 21 12 21z"/></svg><b id="pc">0</b></a>
+<a class="chip" href="../">All</a></div></div>
+<section class="slide cover" id="cover"><div class="stars"></div><svg class="garland" viewBox="0 0 480 70" preserveAspectRatio="none" aria-hidden="true" id="gar"></svg>
+<p class="eyebrow" style="position:relative">Shubh Deepawali · BUD &amp; THINGS by Ashi</p><h1>Diwali,<br><i>made by hand</i></h1>
+<div class="hero" aria-hidden="true">DIYA1DIYA2DIYA3</div>
+<p style="margin-top:22px" id="sub"></p><div class="swipe">Swipe up<span>↑</span></div></section>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript><p style="padding:40px;text-align:center">Please turn on JavaScript, or <a href="../" style="color:#D6A34A">open the catalogue</a>.</p></noscript>
+<script id="data" type="application/json">{"wa": "917985508939", "ig": "budandthings_official", "ch": [{"t": "Glass candles", "g": "Little jars of light", "items": [{"id": "bnt-prd-cg-001", "n": "Iced Latte", "p": 199, "i": "bnt-prd-cg-001.jpg"}, {"id": "bnt-prd-cg-002", "n": "Vanilla Gold", "p": 169, "i": "bnt-prd-cg-002.jpg"}, {"id": "bnt-prd-cg-003", "n": "BlueBerry Swirl", "p": 199, "i": "bnt-prd-cg-003.jpg"}, {"id": "bnt-prd-cg-004", "n": "Strawberry Cream", "p": 169, "i": "bnt-prd-cg-004.jpg"}, {"id": "bnt-prd-cg-005", "n": "Cocoa Bites", "p": 169, "i": "bnt-prd-cg-005.jpg"}, {"id": "bnt-prd-cg-006", "n": "Angle & Amber", "p": 199, "i": "bnt-prd-cg-006.jpg"}, {"id": "bnt-prd-cg-007", "n": "Berry Blast", "p": 299, "i": "bnt-prd-cg-007.jpg"}, {"id": "bnt-prd-cg-008", "n": "Daisy Pop", "p": 249, "i": "bnt-prd-cg-008.jpg"}, {"id": "bnt-prd-cg-009", "n": "Petal & Pour", "p": 249, "i": "bnt-prd-cg-009.jpg"}, {"id": "bnt-prd-cg-010", "n": "Sunlit Gel", "p": 299, "i": "bnt-prd-cg-010.jpg"}, {"id": "bnt-prd-cg-011", "n": "Dessert Jar", "p": 99, "i": "bnt-prd-cg-011.jpg"}]}, {"t": "Tealights", "g": "Tiny flames for every thali", "items": [{"id": "bnt-prd-tl-001", "n": "Sunflower Glow", "p": 15, "i": "bnt-prd-tl-001.jpg"}, {"id": "bnt-prd-tl-002", "n": "Midnight Sunflower", "p": 15, "i": "bnt-prd-tl-002.jpg"}, {"id": "bnt-prd-tl-003", "n": "Marrigold Glow", "p": 15, "i": "bnt-prd-tl-003.jpg"}, {"id": "bnt-prd-tl-004", "n": "Love Note", "p": 15, "i": "bnt-prd-tl-004.jpg"}, {"id": "bnt-prd-tl-005", "n": "Violet Whisper", "p": 15, "i": "bnt-prd-tl-005.jpg"}, {"id": "bnt-prd-tl-006", "n": "Rosé Whirl", "p": 15, "i": "bnt-prd-tl-006.jpg"}]}, {"t": "Moulded candles", "g": "Shapes that make you smile", "items": [{"id": "bnt-prd-mc-001", "n": "Mini Bubble Candle", "p": 49, "i": "bnt-prd-mc-001.jpg"}, {"id": "bnt-prd-mc-002", "n": "Sunflower Float", "p": 39, "i": "bnt-prd-mc-002.jpg"}, {"id": "bnt-prd-mc-003", "n": "Ladoo-shaped candle", "p": 29, "i": "bnt-prd-mc-003.jpg"}, {"id": "bnt-prd-mc-004", "n": "Blooming Rose", "p": 39, "i": "bnt-prd-mc-004.jpg"}, {"id": "bnt-prd-mc-008", "n": "Purple Haze", "p": 39, "i": "bnt-prd-mc-008.jpg"}]}, {"t": "Jesmonite trays", "g": "For sweets, keys and keepsakes", "items": [{"id": "bnt-prd-jt-001", "n": "Rose Dawn", "p": 149, "i": "bnt-prd-jt-001.jpg"}, {"id": "bnt-prd-jt-002", "n": "Ivory Gilt", "p": 149, "i": "bnt-prd-jt-002.jpg"}, {"id": "bnt-prd-jt-003", "n": "Cloud Marble", "p": 79, "i": "bnt-prd-jt-003.jpg"}, {"id": "bnt-prd-jt-004", "n": "Little Hearts", "p": 79, "i": "bnt-prd-jt-004.jpg"}, {"id": "bnt-prd-jt-005", "n": "Holi Bloom", "p": 79, "i": "bnt-prd-jt-005.jpg"}]}]}</script>
+<script>
+(function(){
+var D=JSON.parse(document.getElementById('data').textContent),$=function(i){return document.getElementById(i)},reel=$('reel');
+var DIYA='<svg viewBox="0 0 80 70" aria-hidden="true"><defs><linearGradient id="bg" x1="0" x2="1"><stop offset="0" stop-color="#8a5a2a"/><stop offset=".4" stop-color="#f6cf86"/><stop offset="1" stop-color="#7a4a20"/></linearGradient></defs><g class="fl"><path d="M40 36C28 28 32 14 40 2c8 12 12 26 0 34z" fill="#ffc247"/><path d="M40 36C34 30 36 22 40 14c4 8 6 16 0 22z" fill="#fff3c4"/></g><path d="M6 40h68c0 18-14 28-34 28S6 58 6 40z" fill="url(#bg)"/><ellipse cx="40" cy="40" rx="34" ry="6" fill="#ffd886"/><circle cx="26" cy="54" r="2" fill="#8F1834"/><circle cx="40" cy="58" r="2" fill="#8F1834"/><circle cx="54" cy="54" r="2" fill="#8F1834"/></svg>';
+document.querySelector('.hero').innerHTML=DIYA+DIYA+DIYA;
+var g='',C=['#F0A030','#D6A34A','#ff8a1f','#8F1834'];for(var i=0;i<=16;i++){var u=i/16;g+='<circle cx="'+(u*480)+'" cy="'+(10+Math.sin(u*Math.PI)*34)+'" r="7" fill="'+C[i%4]+'"/><circle cx="'+(u*480+14)+'" cy="'+(24+Math.sin(u*Math.PI)*30)+'" r="4.500" fill="'+C[(i+2)%4]+'" opacity=".8"/>'}$('gar').innerHTML=g;
+var total=D.ch.reduce(function(a,c){return a+c.items.length},0);$('sub').textContent=total+' handmade pieces. Swipe through, save what you love.';
+var ALL={};D.ch.forEach(function(c){c.items.forEach(function(p){p.c=c.t;ALL[p.id]=p})});
+var fav=[];try{fav=JSON.parse(localStorage.getItem('bt-fav')||'[]').filter(function(i){return ALL[i]})}catch(e){}
+function saveFav(){try{localStorage.setItem('bt-fav',JSON.stringify(fav))}catch(e){}}
+var rs=function(n){return '₹'+n.toLocaleString('en-IN')};
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){t.classList.remove('on')},2400)}
+var HEART='<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.3 3.4 5 6.6 5c2 0 3.500 1.100 5.400 3.200C13.900 6.100 15.400 5 17.400 5c3.200 0 5.400 3.300 4.100 6.800C19.500 16.400 12 21 12 21z"/></svg>';
+var slides=[$('cover')],n=0;
+D.ch.forEach(function(c,ci){
+ var s=document.createElement('section');s.className='slide chap';s.innerHTML='<div class="no">0'+(ci+1)+'</div><h2></h2><p></p><p class="eyebrow"></p>';s.querySelector('h2').textContent=c.t;s.querySelector('p').textContent=c.g;s.querySelector('.eyebrow').textContent=c.items.length+' pieces';reel.appendChild(s);slides.push(s);
+ c.items.forEach(function(p){var s=document.createElement('section');s.className='slide prod';s.dataset.id=p.id;
+  s.innerHTML='<div class="bg"></div><div class="photo"><img alt="" width="720" height="720"><div class="burst">♥</div></div><div class="meta"><p class="eyebrow"></p><h3></h3><div class="row"><span class="price"></span><button class="heart" type="button">'+HEART+'</button><a class="btn" target="_blank" rel="noopener">Ask about this</a></div><p class="hintline">Double-tap the photo to save</p></div>';
+  var src='../img/'+p.i;s.querySelector('.bg').style.backgroundImage='url('+src+')';var im=s.querySelector('img');im.src=src;im.alt=p.n+', '+p.c;im.loading=slides.length>5?'lazy':'eager';
+  s.querySelector('.eyebrow').textContent=c.t;s.querySelector('h3').textContent=p.n;s.querySelector('.price').textContent=rs(p.p);
+  var h=s.querySelector('.heart');h.setAttribute('aria-label','Save '+p.n);
+  h.onclick=function(){toggle(p.id)};
+  var lastTap=0;s.querySelector('.photo').addEventListener('click',function(){var t=Date.now();if(t-lastTap<350){if(fav.indexOf(p.id)<0)toggle(p.id);var b=s.querySelector('.burst');b.classList.remove('go');void b.offsetWidth;b.classList.add('go')}lastTap=t});
+  var a=s.querySelector('.btn'),msg='Hi Ashi! I saw '+p.n+' ('+rs(p.p)+') on your Diwali story. Is it available?';
+  if(D.wa){a.href='https://wa.me/'+D.wa+'?text='+encodeURIComponent(msg)}else{a.textContent='Ask on Instagram';a.href='https://ig.me/m/'+D.ig;a.addEventListener('click',function(){try{navigator.clipboard.writeText(msg);toast('Message copied. Paste it in the chat')}catch(e){}})}
+  reel.appendChild(s);slides.push(s);n++})});
+var pk=document.createElement('section');pk.className='slide picks';pk.id='picks';pk.innerHTML='<p class="eyebrow">Your picks</p><h2>Your <i>Diwali list</i></h2><p class="lead" id="pl"></p><div class="list" id="ls"></div><div id="tt"></div><div class="acts"><button class="btn" id="send" type="button"></button><a class="btn alt" href="../">Browse the full catalogue</a><button class="btn alt" id="shr" type="button">Share this story</button><a class="btn alt" href="../light/">Light a diya for someone</a></div><p class="note">Ordering opens soon. Send us your list and we will confirm stock and delivery.</p>';reel.appendChild(pk);slides.push(pk);
+function sync(){$('pc').textContent=fav.length;document.querySelectorAll('.prod').forEach(function(s){var on=fav.indexOf(s.dataset.id)>=0,h=s.querySelector('.heart');h.setAttribute('aria-pressed',on);h.setAttribute('aria-label',(on?'Remove ':'Save ')+ALL[s.dataset.id].n)});renderPicks()}
+function toggle(id){var i=fav.indexOf(id);if(i<0){fav.push(id);if(navigator.vibrate)navigator.vibrate(15)}else fav.splice(i,1);saveFav();sync();var h=document.querySelector('.prod[data-id="'+id+'"] .heart');if(h){h.classList.remove('pop');void h.offsetWidth;h.classList.add('pop')}}
+function listText(){var s='Hi Ashi! My Diwali picks from your story:\n',t=0;fav.forEach(function(id,i){var p=ALL[id];s+=(i+1)+'. '+p.n+' ('+rs(p.p)+')\n';t+=p.p});return s+'Total: '+rs(t)+'\nPlease confirm availability and delivery.'}
+function renderPicks(){var ls=$('ls');ls.innerHTML='';$('tt').innerHTML='';
+ if(!fav.length){ls.innerHTML='<div class="empty">Nothing saved yet.<br>Tap the heart, or double-tap a photo, on anything you love.</div>';$('pl').textContent='Save pieces as you swipe, then send them to us in one message.';$('send').textContent='Start swiping';$('send').onclick=function(){slides[2].scrollIntoView({behavior:'smooth'})};return}
+ var t=0;fav.forEach(function(id){var p=ALL[id];t+=p.p;var d=document.createElement('div');d.className='it';d.innerHTML='<img alt=""><b></b><span></span><button type="button" aria-label="Remove">×</button>';d.querySelector('img').src='../img/'+p.i;d.querySelector('b').textContent=p.n;d.querySelector('span').textContent=rs(p.p);d.querySelector('button').onclick=function(){toggle(id)};ls.appendChild(d)});
+ $('tt').innerHTML='<div class="total">Total<span>'+rs(t)+'</span></div>';$('pl').textContent=fav.length+(fav.length>1?' pieces':' piece')+' saved. Send them to us and we will reply with stock and delivery.';
+ $('send').textContent=D.wa?'Send my list on WhatsApp':'Send my list on Instagram';
+ $('send').onclick=function(){var m=listText();if(D.wa){window.open('https://wa.me/'+D.wa+'?text='+encodeURIComponent(m),'_blank')}else{var go=function(){toast('List copied. Paste it in the chat');setTimeout(function(){window.open('https://ig.me/m/'+D.ig,'_blank')},900)};(navigator.clipboard?navigator.clipboard.writeText(m):Promise.reject()).then(go,function(){prompt('Copy your list',m)})}}}
+var SHARE='https://budandthings.com/catalogue/diwali/';
+$('shr').onclick=function(){var t='Look what Ashi is making this Diwali 🪔 Swipe through';if(navigator.share)navigator.share({title:'Diwali, made by hand',text:t,url:SHARE+'?utm_source=share'}).catch(function(){});else window.open('https://wa.me/?text='+encodeURIComponent(t+': '+SHARE+'?utm_source=whatsapp'),'_blank')};
+sync();
+// in-view + progress
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');var i=slides.indexOf(e.target);$('pb').style.width=(i/(slides.length-1)*100)+'%'}})},{root:reel,threshold:.55});slides.forEach(function(s){io.observe(s)});
+document.addEventListener('keydown',function(e){if(/INPUT|TEXTAREA/.test(e.target.tagName))return;var cur=Math.round(reel.scrollTop/reel.clientHeight),k={ArrowDown:1,PageDown:1,ArrowUp:-1,PageUp:-1,' ':1}[e.key];if(k){e.preventDefault();slides[Math.max(0,Math.min(slides.length-1,cur+k))].scrollIntoView({behavior:'smooth'})}});
+$('pk').onclick=function(e){e.preventDefault();pk.scrollIntoView({behavior:'smooth'})};
+})();
+</script></body></html>

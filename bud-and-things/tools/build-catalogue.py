@@ -59,6 +59,12 @@ page = f'''<!doctype html>
 <html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BUD &amp; THINGS · Catalogue</title>
 <meta name="description" content="Handmade candles and Jesmonite pieces by Ashi. Catalogue with prices in rupees.">
+<meta name="theme-color" content="#7A1229">
+<link rel="canonical" href="https://budandthings.com/catalogue/">
+<meta property="og:type" content="website"><meta property="og:site_name" content="BUD &amp; THINGS by Ashi">
+<meta property="og:title" content="BUD &amp; THINGS · Our catalogue"><meta property="og:description" content="Handmade glass, tealight and moulded candles and Jesmonite trays by Ashi. Browse prices in rupees.">
+<meta property="og:url" content="https://budandthings.com/catalogue/"><meta property="og:image" content="https://budandthings.com/catalogue/share/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="BUD &amp; THINGS · Our catalogue"><meta name="twitter:description" content="Handmade candles and Jesmonite trays by Ashi."><meta name="twitter:image" content="https://budandthings.com/catalogue/share/og.png">
 <style>
 @font-face{{font-family:'Playfair Display';src:url(../prototype/assets/fonts/playfair.woff2) format('woff2');font-weight:400 900;font-display:swap}}
 @font-face{{font-family:'Montserrat';src:url(../prototype/assets/fonts/montserrat.woff2) format('woff2');font-weight:100 900;font-display:swap}}
@@ -77,11 +83,20 @@ h2{{font:600 26px 'Playfair Display',serif;color:var(--maroon);border-bottom:1px
 .card img{{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;background:var(--cream)}}
 .card h3{{font:600 18px 'Playfair Display',serif;margin:12px 8px 2px}}
 .price{{margin:0;font-weight:600;color:var(--maroon)}}
+.share{{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:18px 16px 0}}
+.share a,.share button{{font:600 14px Montserrat,system-ui,sans-serif;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1.5px solid var(--maroon);background:var(--maroon);color:var(--cream);text-decoration:none;cursor:pointer}}
+.share a.alt,.share button.alt{{background:transparent;color:var(--maroon)}}
+.share a.gold{{background:var(--gold);border-color:var(--gold);color:var(--ink)}}
+.share [hidden]{{display:none}}
 footer{{background:var(--maroon-d);color:var(--cream);text-align:center;padding:20px 16px;font-size:14px}}
 footer b{{color:var(--gold)}}
 </style></head><body>
 <header><img src="../prototype/assets/silk/logo-horizontal.webp" alt="BUD &amp; THINGS by Ashi" width="280" height="64"></header>
 <div class="intro"><h1>Our catalogue</h1><p>Handmade candles and Jesmonite pieces. Prices in rupees.</p></div>
+<nav class="share" aria-label="Share this catalogue"><button id="nat" hidden>Share</button><a class="gold" id="wa" href="https://wa.me/?text=Have%20a%20look%20at%20the%20BUD%20%26%20THINGS%20catalogue%3A%20https%3A%2F%2Fbudandthings.com%2Fcatalogue%2F%3Futm_source%3Dwhatsapp" target="_blank" rel="noopener">Send on WhatsApp</a><button class="alt" id="cp">Copy link</button><a class="alt" href="diwali/">Diwali story</a><a class="alt" href="light/">Send a Diwali diya</a><a class="alt" href="share/">QR &amp; story card</a></nav>
+<script>(function(){{var u='https://budandthings.com/catalogue/',n=document.getElementById('nat'),c=document.getElementById('cp');
+if(navigator.share){{n.hidden=false;n.onclick=function(){{navigator.share({{title:'BUD & THINGS catalogue',text:'Have a look at the BUD & THINGS catalogue',url:u+'?utm_source=share'}}).catch(function(){{}})}}}}
+c.onclick=function(){{var d=function(){{c.textContent='Link copied'}};(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(d,function(){{prompt('Copy this link',u)}})}}}})()</script>
 <main>{sec}</main>
 <footer><b>BUD &amp; THINGS</b> by Ashi · Browse only, ordering opens soon. Photos are temporary.</footer>
 </body></html>
