@@ -1538,8 +1538,12 @@ function normProduct(id, d) {
 }
 // the first draft range (First Light, Chai at Four, trays, gift boxes) may still sit in the database: never show it
 const DRAFT_SKU = /^BT-(CN|JS|GB)-/;
-const notDraft = (r) => !((r.data && r.data.variants) || []).some((v) => v && DRAFT_SKU.test(v.sku || ''));
+const skusOf = (r) => ((r.data && r.data.variants) || []).map((v) => (v && v.sku) || '');
+const LIVE_SKU = /^BNT-PRD-/; // the team sheet's products; once any are in the database, older sample rows are hidden
+const notDraft = (r) => !skusOf(r).some((k) => DRAFT_SKU.test(k)) && (!SHEET_ROWS || skusOf(r).some((k) => LIVE_SKU.test(k)));
+let SHEET_ROWS = false;
 function applyData() {
+  SHEET_ROWS = !!(DATA.products && DATA.products.some((r) => skusOf(r).some((k) => LIVE_SKU.test(k))));
   P = DATA.products && DATA.products.filter(notDraft).length ? DATA.products.filter(notDraft).filter((r) => r.live !== false).sort(bySort).map((r) => normProduct(r.id, r.data)).filter((p) => p.variants.length) : BASE_P.slice();
   indexProducts();
   PAIRINGS = (DATA.pairings && DATA.pairings.length ? DATA.pairings.filter((r) => r.live !== false).sort(bySort).map((r) => Object.assign({ name: r.id, why: '', items: [] }, r.data, { id: r.id })) : BASE_PAIRINGS.slice())
