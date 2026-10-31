@@ -1,126 +1,243 @@
 <!doctype html>
 <html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Light a candle for someone · BUD &amp; THINGS</title>
-<meta name="description" content="Send a wish. They light the candle, make a wish, blow it out, and a gift from BUD &amp; THINGS appears.">
+<meta name="description" content="Write a wish. They carry a flame to the wick, make a wish, blow it out, and your letter appears.">
 <meta name="theme-color" content="#150206">
 <link rel="canonical" href="https://budandthings.com/catalogue/light/">
-<meta property="og:type" content="website"><meta property="og:title" content="Someone lit a candle for you"><meta property="og:description" content="Open it in the dark. Hold the wick to light it. Make a wish."><meta property="og:url" content="https://budandthings.com/catalogue/light/"><meta property="og:image" content="https://budandthings.com/catalogue/share/og.png"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website"><meta property="og:title" content="Someone lit a candle for you"><meta property="og:description" content="Open it in the dark. Carry the flame to the wick. Make a wish."><meta property="og:url" content="https://budandthings.com/catalogue/light/"><meta property="og:image" content="https://budandthings.com/catalogue/share/og.png"><meta name="twitter:card" content="summary_large_image">
 <style>
 @font-face{font-family:'Playfair Display';src:url(../../prototype/assets/fonts/playfair.woff2) format('woff2');font-weight:400 900;font-display:swap}
 @font-face{font-family:'Playfair Display';font-style:italic;src:url(../../prototype/assets/fonts/playfair-italic.woff2) format('woff2');font-weight:400 900;font-display:swap}
 @font-face{font-family:'Montserrat';src:url(../../prototype/assets/fonts/montserrat.woff2) format('woff2');font-weight:100 900;font-display:swap}
-:root{--maroon:#8F1834;--maroon-d:#7A1229;--gold:#D6A34A;--cream:#F8F0E4;--ink:#150206}
+@font-face{font-family:'Signature';src:url(../../prototype/assets/fonts/signature.woff2) format('woff2');font-display:swap}
+:root{--maroon:#8F1834;--maroon-d:#7A1229;--gold:#D6A34A;--cream:#F8F0E4;--ink:#150206;--ease:cubic-bezier(.2,.8,.2,1)}
 *{box-sizing:border-box;margin:0}
-html,body{height:100%}
-body{background:var(--ink);color:var(--cream);font:400 16px/1.5 Montserrat,system-ui,sans-serif;text-align:center;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--ink);color:var(--cream);font:400 16px/1.5 Montserrat,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
-.glow{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 46%,rgba(214,163,74,.55),rgba(143,24,52,.35) 38%,transparent 70%);opacity:0;transition:opacity 1.6s}
-body.lit .glow{opacity:1}body.lit{background:#1d0409}
-main{position:relative;min-height:100%;max-width:520px;margin:0 auto;padding:max(28px,env(safe-area-inset-top)) 20px 36px;display:flex;flex-direction:column;align-items:center}
-h1{font:600 30px/1.15 'Playfair Display',serif}h1 i{color:var(--gold);font-weight:500}
-.sub{color:var(--gold);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin:8px 0 22px}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:999px;border:1.5px solid var(--gold);background:var(--gold);color:var(--ink);font:600 15px Montserrat,sans-serif;text-decoration:none;cursor:pointer}
-.btn.alt{background:transparent;color:var(--cream)}
-/* sender */
-form{width:100%;text-align:left;display:grid;gap:12px}
-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
-input,textarea,select{width:100%;margin-top:4px;background:rgba(248,240,228,.08);border:1px solid rgba(214,163,74,.5);border-radius:12px;color:var(--cream);font:400 16px Montserrat,sans-serif;padding:12px}
-select option{color:#150206}
-textarea{min-height:84px;resize:vertical}
-.out{display:grid;gap:10px;width:100%;margin-top:22px}
-.row{display:flex;gap:10px}.row .btn{flex:1}
-/* candle */
-.stage{position:relative;width:100%;height:330px;margin:6px 0 10px;touch-action:none;user-select:none;-webkit-user-select:none}
-.candle{position:absolute;left:50%;bottom:0;width:92px;height:190px;margin-left:-46px;border-radius:10px 10px 14px 14px;background:linear-gradient(90deg,#c98a97,#f3dfd0 45%,#c98a97);box-shadow:0 12px 40px rgba(0,0,0,.6)}
-.candle::before{content:"";position:absolute;top:-6px;left:0;right:0;height:16px;border-radius:50%;background:#f8e9dc}
-.wick{position:absolute;left:50%;bottom:188px;width:4px;height:22px;margin-left:-2px;background:#2a1a14;border-radius:2px;z-index:2}
-.ring{position:absolute;left:50%;bottom:170px;width:56px;height:56px;margin-left:-28px;border-radius:50%;border:2px solid var(--gold);opacity:0;transform:scale(.4)}
-.hold .ring{animation:ring 1.1s linear forwards}
-@keyframes ring{0%{opacity:.9;transform:scale(1.9)}100%{opacity:.9;transform:scale(.5)}}
-.flame{position:absolute;left:50%;bottom:206px;width:34px;height:70px;margin-left:-17px;transform-origin:50% 100%;opacity:0;transform:scale(0);transition:opacity .4s,transform .6s;z-index:3;filter:drop-shadow(0 0 22px rgba(214,163,74,.9))}
-.flame::before{content:"";position:absolute;inset:0;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(ellipse at 50% 78%,#fff6d6 0%,#ffd66e 35%,#e8892a 70%,rgba(143,24,52,.0) 100%)}
-body.lit .flame{opacity:1;transform:scale(1);animation:flick 1.3s infinite ease-in-out}
-body.out .flame{opacity:0;transform:scale(.2);transition:opacity .5s,transform .5s;animation:none}
-@keyframes flick{0%,100%{transform:scale(1) skewX(0)}25%{transform:scale(1.04,.96) skewX(2deg)}50%{transform:scale(.97,1.05) skewX(-2deg)}75%{transform:scale(1.03,.98) skewX(1deg)}}
-.smoke{position:absolute;left:50%;bottom:206px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:rgba(248,240,228,.5);filter:blur(5px);opacity:0}
-body.out .smoke{animation:smoke 3s ease-out forwards}.smoke:nth-of-type(2){animation-delay:.4s!important;margin-left:6px}
-@keyframes smoke{0%{opacity:.7;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-140px) scale(9)}}
-.hint{min-height:48px;font:italic 400 22px/1.3 'Playfair Display',serif;color:var(--cream)}
-.small{font-size:13px;opacity:.75;margin-top:10px}
-.gift{width:100%;animation:rise 1.4s ease both}
-@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
-.gift img{width:min(280px,70vw);aspect-ratio:1;object-fit:cover;border-radius:18px;border:2px solid var(--gold);box-shadow:0 0 60px rgba(214,163,74,.35)}
-.gift .note{font:italic 500 24px/1.35 'Playfair Display',serif;margin:20px 6px 4px;white-space:pre-wrap;overflow-wrap:anywhere}
-.gift .from{color:var(--gold);letter-spacing:.12em;text-transform:uppercase;font-size:12px;margin-bottom:22px}
-.gift .name{font:600 20px 'Playfair Display',serif;margin-top:16px}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
-</style></head><body><div class="glow"></div>
-<main>
-<!-- SENDER -->
-<section id="send" hidden style="width:100%">
-<h1>Light a candle<br><i>for someone</i></h1><p class="sub">A gift link from BUD &amp; THINGS</p>
-<form id="f">
-<div><label for="to">Their name</label><input id="to" maxlength="30" placeholder="Priya" autocomplete="off"></div>
-<div><label for="fr">Your name</label><input id="fr" maxlength="30" placeholder="Riya" autocomplete="off"></div>
-<div><label for="m">Your wish for them</label><textarea id="m" maxlength="180" placeholder="Happy birthday! May this year glow."></textarea></div>
-<div><label for="p">Candle they will find</label><select id="p"></select></div>
-</form>
-<div class="out">
-<a class="btn" id="wa" target="_blank" rel="noopener">Send on WhatsApp</a>
-<div class="row"><button class="btn alt" id="nat" hidden>Share…</button><button class="btn alt" id="cp">Copy link</button></div>
-<a class="btn alt" id="pv">Preview it</a>
-<p class="small">Their name, your wish and the candle live inside the link. Nothing is stored anywhere.</p>
-</div></section>
-<!-- RECEIVER -->
-<section id="recv" hidden style="width:100%">
-<h1 id="hi"></h1><p class="sub" id="who"></p>
-<div class="stage" id="stage"><div class="candle"></div><div class="wick"></div><div class="ring"></div><div class="flame"></div><div class="smoke"></div><div class="smoke"></div></div>
-<p class="hint" id="hint">Hold the wick to light it.</p>
-<p class="small" id="sm">Best in a dim room.</p>
-<div class="gift" id="gift" hidden><img id="gi" alt=""><p class="note" id="gn"></p><p class="from" id="gf"></p>
-<a class="btn" href="../">See the whole catalogue</a><p class="name" id="gname"></p>
-<p class="small" style="margin-top:22px"><a class="btn alt" id="again" href="./">Light one for someone back</a></p></div>
+button{font:inherit;color:inherit}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:0 26px;border-radius:999px;border:1.5px solid var(--gold);background:var(--gold);color:var(--ink);font:600 15px Montserrat,sans-serif;text-decoration:none;cursor:pointer;transition:transform .2s var(--ease),opacity .2s}
+.btn:active{transform:scale(.97)}.btn.alt{background:transparent;color:var(--cream)}.btn[disabled]{opacity:.4}
+.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+
+/* ============ SENDER ============ */
+#send{position:fixed;inset:0;display:flex;flex-direction:column;max-width:560px;margin:0 auto;background:radial-gradient(ellipse at 50% 0,#3a0a17 0,#150206 62%)}
+.top{display:flex;align-items:center;justify-content:space-between;padding:max(16px,env(safe-area-inset-top)) 22px 6px}
+.top img{width:44px;height:44px;border-radius:50%;background:var(--cream);padding:2px}
+.dots{display:flex;gap:6px}.dots i{width:22px;height:3px;border-radius:3px;background:rgba(248,240,228,.2);transition:background .4s,width .4s var(--ease)}.dots i.on{background:var(--gold)}.dots i.cur{width:38px}
+.steps{position:relative;flex:1;overflow:hidden}
+.step{position:absolute;inset:0;padding:18px 22px 10px;overflow-y:auto;opacity:0;transform:translateX(40px);pointer-events:none;transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.step.cur{opacity:1;transform:none;pointer-events:auto}.step.past{transform:translateX(-40px)}
+.step h1{font:600 clamp(32px,9vw,42px)/1.08 'Playfair Display',serif;margin:14px 0 10px}.step h1 i{color:var(--gold);font-weight:500}
+.step p.lead{opacity:.8;margin-bottom:26px;max-width:34ch}
+.field{display:block;margin-bottom:22px}
+.field span{display:block;margin-bottom:6px}
+.field input,.field textarea{width:100%;background:transparent;border:0;border-bottom:1.5px solid rgba(214,163,74,.55);border-radius:0;color:var(--cream);font:italic 500 28px/1.25 'Playfair Display',serif;padding:6px 0 10px;outline:none;transition:border-color .3s}
+.field input:focus,.field textarea:focus{border-color:var(--gold)}
+.field textarea{font-size:23px;min-height:128px;resize:none}
+.field input::placeholder,.field textarea::placeholder{color:rgba(248,240,228,.28)}
+.count{float:right;font-size:12px;opacity:.5;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{border:1px solid rgba(214,163,74,.55);background:transparent;border-radius:999px;padding:9px 16px;font-size:14px;cursor:pointer;transition:background .2s,color .2s}
+.chip:active,.chip.on{background:var(--gold);color:var(--ink)}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-bottom:16px}
+.pick button{position:relative;padding:0;border:2px solid transparent;border-radius:18px;overflow:hidden;background:#241017;cursor:pointer;text-align:left;transition:border-color .25s,transform .25s var(--ease)}
+.pick button img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.pick button b{display:block;padding:9px 12px 11px;font:600 15px 'Playfair Display',serif}
+.pick button.on{border-color:var(--gold);transform:scale(1.02)}
+.pick button.on::after{content:"✓";position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-weight:700}
+.bar{display:flex;gap:10px;padding:12px 22px max(18px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#150206 30%)}
+.bar .btn{flex:1}.bar .back{flex:0 0 54px;padding:0}
+.final{display:grid;gap:10px;margin-top:20px}
+.final .row{display:flex;gap:10px}.final .row .btn{flex:1}
+.note{font-size:12px;opacity:.55;text-align:center;margin-top:12px}
+
+/* ============ LETTER (shared) ============ */
+.letter{position:relative;width:min(100%,360px);margin:0 auto;background:linear-gradient(180deg,#fbf5ea,#f3e6d1);color:var(--ink);border-radius:6px;padding:46px 26px 26px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(214,163,74,.7),inset 0 0 0 7px #f8f0e4,inset 0 0 0 8px rgba(214,163,74,.7)}
+.letter .seal{position:absolute;left:50%;top:-34px;width:68px;height:68px;margin-left:-34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b3304f,#7A1229 70%);box-shadow:0 6px 16px rgba(0,0,0,.45);display:grid;place-items:center}
+.letter .seal img{width:54px;height:54px;border-radius:50%;background:var(--cream)}
+.letter .to{font:400 38px/1.1 Signature,'Playfair Display',cursive;color:var(--maroon);margin-bottom:12px}
+.letter .msg{font:italic 500 20px/1.45 'Playfair Display',serif;color:#2b1016;min-height:2.9em;white-space:pre-wrap;overflow-wrap:anywhere}
+.letter .pol{width:158px;margin:18px auto 6px;background:#fff;padding:8px 8px 10px;box-shadow:0 8px 22px rgba(0,0,0,.28);transform:rotate(-3deg)}
+.letter .pol img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.letter .pol span{display:block;font:italic 500 13px 'Playfair Display',serif;color:#4a2a2f;margin-top:6px}
+.letter .from{font:400 30px/1 Signature,'Playfair Display',cursive;color:var(--maroon);margin-top:10px}
+.letter .by{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8a6a2c;margin-top:6px}
+.prevwrap{margin:44px auto 6px;transform-origin:top center}
+
+/* ============ RECEIVER ============ */
+#recv{position:fixed;inset:0;overflow:hidden}
+#c{position:absolute;inset:0;width:100%;height:100%;display:block}
+.head{position:absolute;left:0;right:0;top:max(26px,env(safe-area-inset-top));text-align:center;pointer-events:none;transition:opacity 1s}
+.head h1{font:600 clamp(32px,9vw,44px)/1.1 'Playfair Display',serif;margin-top:8px}
+.hint{position:absolute;left:0;right:0;bottom:max(30px,env(safe-area-inset-bottom));text-align:center;padding:0 24px;font:italic 400 24px/1.3 'Playfair Display',serif;pointer-events:none;transition:opacity .5s}
+.hint small{display:block;font:400 12px Montserrat,sans-serif;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-top:8px;font-style:normal}
+#match{position:absolute;width:44px;height:120px;margin:0 0 0 -22px;touch-action:none;cursor:grab;z-index:5;transition:opacity .6s}
+#match::before{content:"";position:absolute;left:19px;top:16px;width:6px;bottom:0;border-radius:3px;background:linear-gradient(90deg,#8a5a2a,#d9a763,#8a5a2a);box-shadow:0 8px 20px rgba(0,0,0,.5)}
+#match::after{content:"";position:absolute;left:15px;top:6px;width:14px;height:18px;border-radius:50% 50% 45% 45%;background:radial-gradient(circle at 40% 30%,#c13a58,#6e0f26)}
+#match.back{transition:transform .5s var(--ease)}
+#blowbtn{position:absolute;left:50%;bottom:max(96px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;width:auto;padding:0 28px;min-height:48px}
+#fin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 20px 24px;overflow-y:auto;opacity:0;transition:opacity 1.2s;pointer-events:none}
+#fin.show{opacity:1;pointer-events:auto}
+#fin>*{flex:none}
+#fin .letter{transform:translateY(40px) scale(.96);transition:transform 1.4s var(--ease)}
+#fin.show .letter{transform:none}
+#fin .acts{display:grid;gap:10px;width:min(100%,360px);margin-top:22px}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
+</style></head><body>
+
+<!-- SENDER WIZARD -->
+<section id="send" hidden>
+<div class="top"><img src="../../prototype/assets/silk/emblem.webp" alt="BUD &amp; THINGS" width="44" height="44"><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div></div>
+<div class="steps">
+ <div class="step" data-s="0"><p class="eyebrow">A gift of light</p><h1>Who gets the <i>candle?</i></h1><p class="lead">They will open it in the dark and light it themselves.</p>
+  <label class="field"><span class="eyebrow">Their name</span><input id="to" maxlength="30" placeholder="Priya" autocomplete="off"></label>
+  <label class="field"><span class="eyebrow">Your name</span><input id="fr" maxlength="30" placeholder="Riya" autocomplete="off"></label></div>
+ <div class="step" data-s="1"><p class="eyebrow">Your words</p><h1>Write them a <i>wish</i></h1>
+  <div class="chips" id="chips"></div>
+  <label class="field"><textarea id="m" maxlength="160" placeholder="Happy birthday! May this year glow."></textarea><span class="count" id="cn">0 / 160</span></label></div>
+ <div class="step" data-s="2"><p class="eyebrow">The surprise</p><h1>Pick the candle <i>inside</i></h1><p class="lead">It appears in the letter once the wish is made.</p><div class="pick" id="pick"></div></div>
+ <div class="step" data-s="3"><p class="eyebrow">Ready</p><h1>This is what they will <i>find</i></h1><div class="prevwrap" id="prev"></div>
+  <div class="final"><a class="btn" id="wa" target="_blank" rel="noopener">Send on WhatsApp</a>
+  <div class="row"><button class="btn alt" id="nat" hidden>Share…</button><button class="btn alt" id="cp">Copy link</button></div>
+  <a class="btn alt" id="pv">Try it yourself first</a></div>
+  <p class="note">Everything lives inside the link. Nothing is stored.</p></div>
+</div>
+<div class="bar"><button class="btn alt back" id="bk" aria-label="Back">←</button><button class="btn" id="nx">Next</button></div>
 </section>
-</main>
+
+<!-- RECEIVER SCENE -->
+<section id="recv" hidden>
+<canvas id="c"></canvas>
+<div class="head" id="head"><p class="eyebrow" id="who"></p><h1 id="hi"></h1></div>
+<div id="match" role="button" tabindex="0" aria-label="Lit match. Drag it to the wick, or press Enter."></div>
+<div class="hint" id="hint"></div>
+<button class="btn alt" id="blowbtn" hidden>Tap to blow it out</button>
+<div id="fin"><div id="letter"></div><div class="acts"><a class="btn" href="../">See every candle</a><a class="btn alt" href="./">Light one for someone back</a></div></div>
+</section>
+
 <script>
 (function(){
-var P=[['bnt-prd-cg-001','Iced Latte glass candle'],['bnt-prd-cg-002','Vanilla Gold glass candle'],['bnt-prd-cg-004','Strawberry Cream glass candle'],['bnt-prd-cg-008','Daisy Pop glass candle'],['bnt-prd-mc-004','Blooming Rose moulded candle'],['bnt-prd-mc-002','Sunflower Float moulded candle'],['bnt-prd-tl-004','Love Note tealight'],['bnt-prd-tl-005','Violet Whisper tealight'],['bnt-prd-jt-001','Rose Dawn Jesmonite tray'],['bnt-prd-jt-003','Cloud Marble Jesmonite tray']];
-var $=function(i){return document.getElementById(i)},BASE=location.origin+location.pathname;
-var q=new URLSearchParams(location.hash.slice(1)),has=q.get('m')||q.get('t');
-if(has)receive();else send();
-function clean(s,n){return String(s||'').slice(0,n)}
+var P=[['bnt-prd-cg-001','Iced Latte'],['bnt-prd-cg-002','Vanilla Gold'],['bnt-prd-cg-004','Strawberry Cream'],['bnt-prd-cg-008','Daisy Pop'],['bnt-prd-mc-004','Blooming Rose'],['bnt-prd-mc-002','Sunflower Float'],['bnt-prd-tl-004','Love Note'],['bnt-prd-tl-005','Violet Whisper'],['bnt-prd-jt-001','Rose Dawn tray'],['bnt-prd-jt-003','Cloud Marble tray']];
+var WISH=['Happy birthday! May this year glow.','Happy Diwali! May your home be full of light.','Thank you, you made my day brighter.','Thinking of you. Light this and take a breath.','Congratulations! So proud of you.'];
+var $=function(i){return document.getElementById(i)},RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var q=new URLSearchParams(location.hash.slice(1));
+var cl=function(s,n){return String(s||'').slice(0,n)};
+function pname(id){var r=P.filter(function(x){return x[0]===id})[0];return r?r[1]:''}
+function pid(v){return /^bnt-prd-[a-z]{2,3}-\d{3}$/.test(v||'')?v:P[0][0]}
+function letter(el,d,typed){el.innerHTML='';var L=document.createElement('div');L.className='letter';
+ L.innerHTML='<div class="seal"><img src="../../prototype/assets/silk/emblem.webp" alt=""></div><div class="to"></div><div class="msg"></div><div class="pol"><img alt=""><span></span></div><div class="from"></div><div class="by">BUD &amp; THINGS by Ashi</div>';
+ L.querySelector('.to').textContent=d.t?'Dear '+d.t:'Dear you';L.querySelector('.from').textContent=d.f?'— '+d.f:'';
+ var im=L.querySelector('img:not(.seal img)');var pi=L.querySelector('.pol img');pi.src='../img/'+d.p+'.jpg';pi.alt=pname(d.p);L.querySelector('.pol span').textContent=pname(d.p);
+ var msg=d.m||'Wishing you a little light.',mm=L.querySelector('.msg');el.appendChild(L);
+ if(!typed||RM){mm.textContent=msg;return}
+ var i=0;(function t(){mm.textContent=msg.slice(0,++i);if(i<msg.length)setTimeout(t,34)})()}
+
+if(q.get('m')||q.get('t'))receive();else send();
+
+/* ---------- sender ---------- */
 function send(){
-$('send').hidden=false;document.body.style.background='#150206';
-var sel=$('p');P.forEach(function(x){var o=document.createElement('option');o.value=x[0];o.textContent=x[1];sel.appendChild(o)});
-function link(){var u=new URLSearchParams();u.set('t',clean($('to').value,30));u.set('f',clean($('fr').value,30));u.set('m',clean($('m').value,180));u.set('p',sel.value);return 'https://budandthings.com/catalogue/light/#'+u}
-function upd(){var l=link(),t=($('fr').value||'Someone')+' lit a candle for you. Open it in the dark: '+l;
-$('wa').href='https://wa.me/?text='+encodeURIComponent(t);$('pv').href=BASE+l.slice(l.indexOf('#'))}
-['to','fr','m','p'].forEach(function(i){$(i).addEventListener('input',upd)});upd();
-if(navigator.share){$('nat').hidden=false;$('nat').onclick=function(){navigator.share({title:'A candle for you',text:($('fr').value||'Someone')+' lit a candle for you.',url:link()}).catch(function(){})}}
-$('cp').onclick=function(){var l=link(),d=function(){$('cp').textContent='Link copied'};(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(d,function(){prompt('Copy this link',l)})}}
+ var S=$('send');S.hidden=false;var cur=0,N=4,st={t:'',f:'',m:'',p:P[0][0]};
+ var steps=[].slice.call(document.querySelectorAll('.step')),dots=[].slice.call($('dots').children);
+ var pick=$('pick');P.forEach(function(x){var b=document.createElement('button');b.type='button';b.dataset.id=x[0];b.innerHTML='<img src="../img/'+x[0]+'.jpg" alt="" loading="lazy" width="200" height="200"><b>'+x[1]+'</b>';b.onclick=function(){st.p=x[0];mark()};pick.appendChild(b)});
+ function mark(){[].forEach.call(pick.children,function(b){b.classList.toggle('on',b.dataset.id===st.p)})}mark();
+ var chips=$('chips');WISH.forEach(function(w){var c=document.createElement('button');c.type='button';c.className='chip';c.textContent=w.split(/[!.,]/)[0];c.onclick=function(){$('m').value=w;st.m=w;cnt();[].forEach.call(chips.children,function(k){k.classList.toggle('on',k===c)})};chips.appendChild(c)});
+ function cnt(){$('cn').textContent=$('m').value.length+' / 160'}
+ $('to').oninput=function(){st.t=this.value};$('fr').oninput=function(){st.f=this.value};$('m').oninput=function(){st.m=this.value;cnt()};
+ function link(){var u=new URLSearchParams();u.set('t',cl(st.t,30).trim());u.set('f',cl(st.f,30).trim());u.set('m',cl(st.m,160).trim());u.set('p',st.p);return 'https://budandthings.com/catalogue/light/#'+u}
+ function go(n){cur=Math.max(0,Math.min(N-1,n));steps.forEach(function(s,i){s.classList.toggle('cur',i===cur);s.classList.toggle('past',i<cur)});dots.forEach(function(d,i){d.classList.toggle('on',i<=cur);d.classList.toggle('cur',i===cur)});
+  $('bk').style.visibility=cur?'visible':'hidden';$('nx').textContent=cur===N-1?'Edit again':cur===2?'See the letter':'Next';
+  if(cur===N-1){letter($('prev'),{t:st.t,f:st.f,m:st.m,p:st.p},false);var l=link();$('wa').href='https://wa.me/?text='+encodeURIComponent((st.f||'Someone')+' lit a candle for you 🕯️ Open it in the dark: '+l);$('pv').href=location.pathname+l.slice(l.indexOf('#'))}
+  var f=steps[cur].querySelector('input,textarea');if(f&&cur<2)setTimeout(function(){f.focus({preventScroll:true})},450)}
+ $('nx').onclick=function(){go(cur===N-1?0:cur+1)};$('bk').onclick=function(){go(cur-1)};
+ $('pv').onclick=function(e){e.preventDefault();location.href=this.getAttribute('href');location.reload()};
+ if(navigator.share){$('nat').hidden=false;$('nat').onclick=function(){navigator.share({title:'A candle for you',text:(st.f||'Someone')+' lit a candle for you.',url:link()}).catch(function(){})}}
+ $('cp').onclick=function(){var l=link(),b=this,d=function(){b.textContent='Link copied'};(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(d,function(){prompt('Copy this link',l)})};
+ go(0)}
+
+/* ---------- receiver ---------- */
 function receive(){
-$('recv').hidden=false;
-var t=clean(q.get('t'),30),f=clean(q.get('f'),30),m=clean(q.get('m'),180),p=q.get('p')||P[0][0];
-if(!/^bnt-prd-[a-z]{2,3}-\d{3}$/.test(p))p=P[0][0];
-$('hi').textContent=t?'For '+t:'A candle for you';
-$('who').textContent=f?'Lit by '+f:'From BUD & THINGS';
-var stage=$('stage'),hold=null,state=0,mic=null;
-function lit(){if(state)return;state=1;document.body.classList.add('lit');$('hint').textContent='Make a wish. Then blow it out.';$('sm').textContent='Blow on your phone, or tap the flame.';if(navigator.vibrate)navigator.vibrate(30);listen()}
-function down(e){if(state)return;e.preventDefault();stage.classList.remove('hold');void stage.offsetWidth;stage.classList.add('hold');$('hint').textContent='Keep holding…';hold=setTimeout(lit,1100)}
-function up(){clearTimeout(hold);if(!state){stage.classList.remove('hold');$('hint').textContent='Hold the wick to light it.'}}
-stage.addEventListener('pointerdown',function(e){if(state==1){blow();return}down(e)});
-stage.addEventListener('pointerup',up);stage.addEventListener('pointerleave',up);stage.addEventListener('pointercancel',up);
-document.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();state?blow():lit()}});
-function listen(){try{navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
-var C=new (window.AudioContext||window.webkitAudioContext)(),a=C.createAnalyser();a.fftSize=512;C.createMediaStreamSource(s).connect(a);mic={s:s,C:C};
-var d=new Uint8Array(a.fftSize),n=0;(function tick(){if(state!==1)return;a.getByteTimeDomainData(d);var r=0;for(var i=0;i<d.length;i++){var v=(d[i]-128)/128;r+=v*v}r=Math.sqrt(r/d.length);n=r>.12?n+1:0;if(n>5){blow();return}requestAnimationFrame(tick)})()}).catch(function(){})}catch(e){}}
-function blow(){if(state!==1)return;state=2;document.body.classList.remove('lit');document.body.classList.add('out');
-if(mic){mic.s.getTracks().forEach(function(x){x.stop()});try{mic.C.close()}catch(e){}}
-$('hint').textContent='Wish made.';$('sm').hidden=true;if(navigator.vibrate)navigator.vibrate([20,40,20]);
-setTimeout(function(){stage.hidden=true;$('hint').hidden=true;reveal()},1900)}
-function reveal(){var g=$('gift');g.hidden=false;document.body.classList.add('lit');
-var im=$('gi');im.src='../img/'+p+'.jpg';var nm=(P.filter(function(x){return x[0]===p})[0]||[0,''])[1];im.alt=nm;$('gname').textContent=nm;
-$('gn').textContent=m?'“'+m+'”':'Wishing you a little light.';$('gf').textContent=f?'— '+f:''}
+ var d={t:cl(q.get('t'),30),f:cl(q.get('f'),30),m:cl(q.get('m'),160),p:pid(q.get('p'))};
+ $('recv').hidden=false;$('who').textContent=d.f?'Lit by '+d.f:'A gift of light';$('hi').textContent=d.t?'For '+d.t:'A candle for you';
+ var cv=$('c'),x=cv.getContext('2d'),W,H,dp,cw,ch,cx,by,top,fx,fy,lastT=0;
+ var state=0,L=0,blow=0,blowT=0,outAt=0,sm=[],em=[],dust=[];
+ var match=$('match'),mx,my,drag=null,mAlpha=1,mFlame=1;
+ for(var i=0;i<40;i++)dust.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.4,s:Math.random()*.02+.005,p:Math.random()*6});
+ function size(){dp=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dp;cv.height=H*dp;x.setTransform(dp,0,0,dp,0,0);
+  cw=Math.min(W*.25,108);ch=Math.min(H*.27,235);cx=W/2;by=H*.72;top=by-ch;fx=cx;fy=top-10;
+  if(!drag&&state===0){mx=Math.min(W-40,cx+Math.min(W*.28,120));my=H*.66;place()}}
+ function place(tx,ty){match.style.left=(tx==null?mx:tx)+'px';match.style.top=((ty==null?my:ty)-6)+'px'}
+ addEventListener('resize',size);size();
+ function mix(a,b,t){return a+(b-a)*t}
+ function flame(px,py,h,lean,t,al){if(al<=0.01||h<2)return;var w=h*.27,fl=Math.sin(t*9)*.05+Math.sin(t*23+1)*.035+Math.sin(t*5.3)*.03,tipx=px+lean*h*.55+fl*h*.5,tipy=py-h*(1+fl*.5-Math.abs(lean)*.18);
+  x.save();x.globalCompositeOperation='lighter';var g=x.createRadialGradient(px,py-h*.4,0,px,py-h*.4,h*3.4);g.addColorStop(0,'rgba(255,170,70,'+.42*al+')');g.addColorStop(.35,'rgba(214,120,50,'+.16*al+')');g.addColorStop(1,'rgba(143,24,52,0)');x.fillStyle=g;x.fillRect(px-h*4,py-h*4,h*8,h*8);x.restore();
+  x.save();x.globalAlpha=al;x.beginPath();x.moveTo(px,py);x.bezierCurveTo(px-w,py-h*.12,px-w*.85,py-h*.62,tipx,tipy);x.bezierCurveTo(px+w*.85,py-h*.62,px+w,py-h*.12,px,py);
+  var f=x.createLinearGradient(0,py,0,tipy);f.addColorStop(0,'#fff3c4');f.addColorStop(.35,'#ffc247');f.addColorStop(.75,'#e8731f');f.addColorStop(1,'rgba(200,50,30,0)');x.fillStyle=f;x.fill();
+  x.beginPath();x.moveTo(px,py);x.bezierCurveTo(px-w*.5,py-h*.08,px-w*.42,py-h*.4,px+lean*h*.25+fl*h*.2,py-h*.62);x.bezierCurveTo(px+w*.42,py-h*.4,px+w*.5,py-h*.08,px,py);x.fillStyle='rgba(255,252,232,.9)';x.fill();
+  x.beginPath();x.ellipse(px,py-h*.03,w*.42,h*.07,0,0,7);x.fillStyle='rgba(110,140,255,.55)';x.fill();x.restore()}
+ function frame(ts){var t=ts/1000,dt=Math.min(.05,t-lastT);lastT=t;
+  var target=state===1?1:state===2?Math.max(0,1-(t-outAt)*.7):0;L+=(target-L)*Math.min(1,dt*3);
+  var fk=1+Math.sin(t*9)*.05+Math.sin(t*23)*.03;
+  x.clearRect(0,0,W,H);x.fillStyle='#150206';x.fillRect(0,0,W,H);
+  // room light
+  if(L>.01){var g=x.createRadialGradient(fx,fy,0,fx,fy,Math.max(W,H)*.95);g.addColorStop(0,'rgba(214,140,60,'+.55*L*fk+')');g.addColorStop(.3,'rgba(143,24,52,'+.38*L+')');g.addColorStop(1,'rgba(21,2,6,0)');x.fillStyle=g;x.fillRect(0,0,W,H)}
+  // table
+  var tg=x.createLinearGradient(0,by,0,H);tg.addColorStop(0,'rgba(60,18,26,'+(.55+.25*L)+')');tg.addColorStop(1,'#0c0104');x.fillStyle=tg;x.fillRect(0,by,W,H-by);
+  x.fillStyle='rgba(214,163,74,'+(.12+.35*L)+')';x.fillRect(0,by,W,1);
+  if(L>.01){var rg=x.createRadialGradient(cx,by+6,0,cx,by+6,cw*2.6);rg.addColorStop(0,'rgba(255,170,70,'+.38*L*fk+')');rg.addColorStop(1,'rgba(255,170,70,0)');x.save();x.scale(1,.28);x.translate(0,(by+6)*(1/.28-1));x.fillStyle=rg;x.fillRect(cx-cw*3,by-60,cw*6,200);x.restore()}
+  // dust
+  dust.forEach(function(p){p.y-=p.s*dt;if(p.y<0)p.y=1;var px=(p.x+Math.sin(t*.3+p.p)*.02)*W,py=p.y*H,dd=Math.hypot(px-fx,py-fy)/(H*.6),a=Math.max(0,1-dd)*L*.7;if(a>.02){x.fillStyle='rgba(255,215,150,'+a+')';x.beginPath();x.arc(px,py,p.r,0,7);x.fill()}});
+  // candle
+  var r=10,lx=cx-cw/2,cg=x.createLinearGradient(lx,0,lx+cw,0),k=.55+.45*L;
+  cg.addColorStop(0,'rgb('+(110*k|0)+','+(52*k|0)+','+(66*k|0)+')');cg.addColorStop(.35,'rgb('+mix(70,246,L)+','+mix(40,222,L)+','+mix(48,205,L)+')');cg.addColorStop(.7,'rgb('+(200*k|0)+','+(130*k|0)+','+(140*k|0)+')');cg.addColorStop(1,'rgb('+(90*k|0)+','+(40*k|0)+','+(52*k|0)+')');
+  x.fillStyle=cg;x.beginPath();x.roundRect?x.roundRect(lx,top,cw,ch,[6,6,12,12]):x.rect(lx,top,cw,ch);x.fill();
+  // drips
+  x.fillStyle='rgba(255,236,220,'+(.35+.4*L)+')';[[.18,.2],[.62,.3],[.82,.14]].forEach(function(d){x.beginPath();x.roundRect?x.roundRect(lx+cw*d[0],top,cw*.09,ch*d[1],6):x.rect(lx+cw*d[0],top,cw*.09,ch*d[1]);x.fill()});
+  // wax pool
+  var pg=x.createRadialGradient(cx,top,0,cx,top,cw*.5);pg.addColorStop(0,'rgba(255,225,160,'+(.35+.65*L)+')');pg.addColorStop(1,'rgba(240,205,185,'+(.35+.4*L)+')');x.fillStyle=pg;x.beginPath();x.ellipse(cx,top,cw/2,cw*.1,0,0,7);x.fill();
+  // wick
+  x.strokeStyle='#1a0d09';x.lineWidth=3;x.lineCap='round';x.beginPath();x.moveTo(cx,top);x.lineTo(cx,top-16);x.stroke();
+  if(state===2&&t-outAt<3){x.fillStyle='rgba(255,120,40,'+Math.max(0,1-(t-outAt)/2.6)*(.6+.4*Math.sin(t*20))+')';x.beginPath();x.arc(cx,top-16,2.6,0,7);x.fill()}
+  // flame
+  if(state===1){var lean=Math.min(1,blow*2.2),h=ch*.38*(1-lean*.25)*mix(.2,1,Math.min(1,L*1.4));flame(fx,top-14,h*fk,lean,t,1)}
+  // match flame
+  if(mAlpha>.02&&state===0){var r2=match.getBoundingClientRect();flame(r2.left+22,r2.top+8,mFlame*34,0,t*1.4,mAlpha)}
+  // embers
+  if(state===1&&Math.random()<dt*2.5)em.push({x:fx+(Math.random()-.5)*14,y:fy+10,vx:(Math.random()-.5)*14,vy:-26-Math.random()*30,l:1});
+  em=em.filter(function(e){e.x+=e.vx*dt;e.y+=e.vy*dt;e.l-=dt*.6;if(e.l<=0)return false;x.fillStyle='rgba(255,190,90,'+e.l+')';x.beginPath();x.arc(e.x,e.y,1.5,0,7);x.fill();return true});
+  // smoke
+  if(state===2&&t-outAt<1.8&&Math.random()<dt*40)sm.push({x:cx,y:top-18,vx:(Math.random()-.5)*10,vy:-40-Math.random()*30,r:4,a:.5,s:Math.random()*3});
+  sm=sm.filter(function(s){s.x+=s.vx*dt+Math.sin(t*2+s.s)*18*dt;s.y+=s.vy*dt;s.r+=dt*26;s.a-=dt*.2;if(s.a<=0)return false;var g=x.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r);g.addColorStop(0,'rgba(235,225,215,'+s.a*.5+')');g.addColorStop(1,'rgba(235,225,215,0)');x.fillStyle=g;x.fillRect(s.x-s.r,s.y-s.r,s.r*2,s.r*2);return true});
+  requestAnimationFrame(frame)}
+ requestAnimationFrame(frame);
+ function say(a,b){$('hint').style.opacity=0;setTimeout(function(){$('hint').innerHTML=a+(b?'<small>'+b+'</small>':'');$('hint').style.opacity=1},220)}
+ say('Carry the flame to the wick','Drag the match, or tap it');
+
+ /* match drag */
+ function near(){var r=match.getBoundingClientRect();return Math.hypot(r.left+22-fx,r.top+8-(top-14))<64}
+ function light(){if(state)return;state=1;drag=null;mAlpha=0;match.style.opacity=0;match.style.pointerEvents='none';if(navigator.vibrate)navigator.vibrate(30);
+  for(var i=0;i<14;i++)em.push({x:fx,y:fy+16,vx:(Math.random()-.5)*90,vy:-Math.random()*80,l:1});
+  say('Make a wish','Then blow it out, or tap the flame');setTimeout(listen,500);setTimeout(function(){if(state===1)$('blowbtn').hidden=false},4500)}
+ match.addEventListener('pointerdown',function(e){if(state)return;e.preventDefault();match.setPointerCapture(e.pointerId);match.classList.remove('back');drag={ox:e.clientX-mx,oy:e.clientY-my,sx:e.clientX,sy:e.clientY,moved:false};match.style.cursor='grabbing'});
+ match.addEventListener('pointermove',function(e){if(!drag)return;var nx=e.clientX-drag.ox,ny=e.clientY-drag.oy;if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>8)drag.moved=true;place(nx,ny);mFlame=1.15;if(near())light()});
+ function end(){if(!drag)return;var was=drag;drag=null;match.style.cursor='grab';if(state)return;if(!was.moved){auto();return}
+  match.classList.add('back');place(mx,my);mFlame=1}
+ match.addEventListener('pointerup',end);match.addEventListener('pointercancel',end);
+ match.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();auto()}});
+ function auto(){if(state)return;match.classList.add('back');var tx=fx,ty=top-14-8+0,sx=mx,sy=my,t0=performance.now();(function s(n){var k=Math.min(1,(n-t0)/800),e=1-Math.pow(1-k,3);match.classList.remove('back');place(mix(sx,tx,e),mix(sy,ty+10,e));if(k<1&&!state)requestAnimationFrame(s);else light()})(t0)}
+
+ /* blow */
+ var mic=null;
+ function listen(){try{navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}).then(function(s){
+  var C=new (window.AudioContext||window.webkitAudioContext)(),a=C.createAnalyser();a.fftSize=512;C.createMediaStreamSource(s).connect(a);mic={s:s,C:C};var dat=new Uint8Array(a.fftSize),acc=0,last=performance.now();
+  (function tick(){if(state!==1)return;var n=performance.now(),dt=(n-last)/1000;last=n;a.getByteTimeDomainData(dat);var r=0;for(var i=0;i<dat.length;i++){var v=(dat[i]-128)/128;r+=v*v}r=Math.sqrt(r/dat.length);
+   var lv=Math.min(1,Math.max(0,(r-.03)*5));blow+=(lv-blow)*Math.min(1,dt*12);if(r>.11)acc+=dt;else acc=Math.max(0,acc-dt*2);if(acc>.28){out();return}requestAnimationFrame(tick)})()}).catch(function(){$('blowbtn').hidden=false})}catch(e){$('blowbtn').hidden=false}}
+ function out(){if(state!==1)return;state=2;outAt=performance.now()/1000;blow=0;$('blowbtn').hidden=true;if(mic){mic.s.getTracks().forEach(function(t){t.stop()});try{mic.C.close()}catch(e){}}
+  if(navigator.vibrate)navigator.vibrate([20,50,20]);say('Wish made');$('head').style.opacity=0;setTimeout(function(){$('hint').style.opacity=0},900);setTimeout(reveal,2300)}
+ $('blowbtn').onclick=out;
+ cv.addEventListener('pointerdown',function(e){if(state===1&&Math.hypot(e.clientX-fx,e.clientY-fy)<110)out()});
+ document.addEventListener('keydown',function(e){if(state===1&&(e.key==='b'||e.key==='B'))out()});
+ function reveal(){letter($('letter'),d,true);$('fin').classList.add('show');for(var i=0;i<30;i++)em.push({x:W/2+(Math.random()-.5)*W*.7,y:H*.9,vx:(Math.random()-.5)*20,vy:-40-Math.random()*90,l:1+Math.random()})}
 }
 })();
 </script></body></html>
