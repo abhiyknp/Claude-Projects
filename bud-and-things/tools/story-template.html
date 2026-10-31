@@ -83,15 +83,48 @@ body{background:radial-gradient(ellipse at 50% 0,#3a0a17,#0c0104 70%);color:var(
 .note{font-size:12px;opacity:.6;text-align:center;margin-top:6px}
 #toast{position:fixed;left:50%;bottom:max(30px,env(safe-area-inset-bottom));transform:translate(-50%,30px);background:var(--cream);color:var(--ink);padding:12px 20px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:.4s var(--ease);z-index:99;pointer-events:none;max-width:90vw;text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,0)}
+
+.chip.dm{padding:0 12px}.chip.dm svg{width:18px;height:18px;fill:var(--gold);stroke:none}
+.mini{position:relative;display:flex;justify-content:center;gap:8px;margin-top:16px}
+.mini span{width:30px;height:30px;opacity:.35;transition:opacity .6s,transform .6s var(--ease)}.mini span.on{opacity:1;transform:scale(1.12)}
+.mini span:not(.on) .fl{opacity:0}.mini svg{width:100%;height:auto}
+.trail,.quiz,.reward{justify-content:flex-start;padding-top:max(76px,calc(env(safe-area-inset-top) + 60px));overflow-y:auto;background:radial-gradient(ellipse at 50% 0,#4a0d1f,#150206 72%)}
+.trail h2,.quiz h2,.reward h2{font:600 clamp(30px,9vw,38px)/1.1 'Playfair Display',serif;margin:6px 0 8px}.trail h2 i,.quiz h2 i,.reward h2 i{color:var(--gold);font-weight:500}
+.lead{opacity:.8;margin-bottom:16px}
+.tk{display:flex;align-items:center;gap:12px;background:rgba(248,240,228,.06);border:1px solid rgba(214,163,74,.3);border-radius:16px;padding:12px 14px;margin-bottom:9px;transition:background .5s,border-color .5s}
+.tk .ic{flex:none;width:34px;height:34px}.tk .ic svg{width:100%}.tk:not(.ok) .ic .fl{opacity:0}.tk:not(.ok) .ic{opacity:.4}
+.tk b{display:block;font:600 16px 'Playfair Display',serif}.tk small{opacity:.65;font-size:12px}
+.tk .go{margin-left:auto;font-size:12px;font-weight:600;color:var(--gold);text-decoration:none;border:0;background:none;cursor:pointer;white-space:nowrap}
+.tk.ok{background:rgba(214,163,74,.14);border-color:var(--gold)}.tk.ok .go{display:none}
+.tk.ok::after{content:"\2713";margin-left:auto;color:var(--gold);font-weight:700}
+.prog{height:6px;border-radius:6px;background:rgba(248,240,228,.15);margin:4px 0 16px;overflow:hidden}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#F0A030);width:0;transition:width .8s var(--ease)}
+.qbox{background:rgba(248,240,228,.06);border:1px solid rgba(214,163,74,.3);border-radius:20px;padding:18px}
+.qbox .qn{font-size:11px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}.qbox h3{font:600 24px/1.2 'Playfair Display',serif;margin:6px 0 14px}
+.opt{display:block;width:100%;text-align:left;padding:14px 16px;margin-bottom:9px;border-radius:14px;border:1px solid rgba(214,163,74,.45);background:transparent;cursor:pointer;font-size:15px;transition:background .2s,color .2s}
+.opt:active,.opt:hover{background:var(--gold);color:var(--ink)}
+.res{text-align:center}.res img{width:min(60%,220px);aspect-ratio:1;object-fit:cover;border-radius:20px;border:2px solid var(--gold);box-shadow:0 0 50px rgba(214,163,74,.3);margin:6px auto 12px;display:block}
+.res h3{font:600 28px 'Playfair Display',serif;color:var(--gold)}.res p{opacity:.85;margin:6px 0 14px}.res .acts{display:grid;gap:9px}
+.cardx{margin-bottom:16px}.cardx .lab{display:flex;justify-content:space-between;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.scr{position:relative;height:132px;border-radius:18px;overflow:hidden;border:1.5px solid var(--gold);background:radial-gradient(circle at 50% 40%,#fff4d4,#f0c76a)}
+.scr .prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#3a0a17;text-align:center;padding:8px}
+.scr .prize b{font:600 28px 'Playfair Display',serif;letter-spacing:.06em}.scr .prize span{font-size:13px;font-weight:600}
+.scr canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:pointer}
+.scr .lock{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(135deg,#3a0a17,#150206);color:var(--cream);text-align:center;font-size:14px;padding:12px}
+.scr .lock b{color:var(--gold);display:block;font:600 18px 'Playfair Display',serif}
+.cardx .cp{margin-top:8px;width:100%}
+.terms{font-size:11px;opacity:.55;text-align:center;margin:6px 0 10px}
+.gd{position:absolute;right:10px;top:10px;width:44px;height:44px;z-index:5;cursor:pointer;filter:drop-shadow(0 0 12px rgba(255,200,60,.9));animation:gd 2.4s infinite ease-in-out;background:none;border:0;padding:0}
+.gd svg{width:100%;height:auto}@keyframes gd{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.18) rotate(8deg)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}.photo,.meta{opacity:1!important;transform:none!important}}
 </style></head><body>
 <div class="reel" id="reel"><div class="top"><div class="topin"><img src="../../prototype/assets/silk/emblem.webp" alt="BUD &amp; THINGS" width="38" height="38"><div class="bar" aria-hidden="true"><i id="pb"></i></div>
+<a class="chip dm" href="#trail" id="dm" aria-label="Your diya trail"><svg viewBox="0 0 80 70"><path d="M40 36C28 28 32 14 40 2c8 12 12 26 0 34z"/><path d="M6 40h68c0 18-14 28-34 28S6 58 6 40z"/></svg><b id="dn">1/5</b></a>
 <a class="chip" href="#picks" id="pk" aria-label="Your saved picks"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.3 3.4 5 6.6 5c2 0 3.5 1.1 5.400 3.200C13.900 6.100 15.400 5 17.400 5c3.200 0 5.400 3.300 4.100 6.800C19.500 16.400 12 21 12 21z"/></svg><b id="pc">0</b></a>
 <a class="chip" href="../">All</a></div></div>
 <section class="slide cover" id="cover"><div class="stars"></div><svg class="garland" viewBox="0 0 480 70" preserveAspectRatio="none" aria-hidden="true" id="gar"></svg>
 <p class="eyebrow" style="position:relative">Shubh Deepawali · BUD &amp; THINGS by Ashi</p><h1>Diwali,<br><i>made by hand</i></h1>
 <div class="hero" aria-hidden="true">DIYA1DIYA2DIYA3</div>
-<p style="margin-top:22px" id="sub"></p><div class="swipe">Swipe up<span>↑</span></div></section>
+<p style="margin-top:22px" id="sub"></p><div class="mini" id="mini" aria-hidden="true"></div><p class="eyebrow" style="position:relative;margin-top:8px">Light 5 diyas. Win a reward.</p><div class="swipe">Swipe up<span>↑</span></div></section>
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 <noscript><p style="padding:40px;text-align:center">Please turn on JavaScript, or <a href="../" style="color:#D6A34A">open the catalogue</a>.</p></noscript>
@@ -110,6 +143,31 @@ var rs=function(n){return '₹'+n.toLocaleString('en-IN')};
 function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(function(){t.classList.remove('on')},2400)}
 var HEART='<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.3 3.4 5 6.6 5c2 0 3.500 1.100 5.400 3.200C13.900 6.100 15.400 5 17.400 5c3.200 0 5.400 3.300 4.100 6.800C19.500 16.400 12 21 12 21z"/></svg>';
 var slides=[$('cover')],n=0;
+/* ---- Diya Trail state ---- */
+var T={days:[],quiz:null,gifts:0,golden:false,gi:-1,sA:null,sB:null};
+try{Object.assign(T,JSON.parse(localStorage.getItem('bt-trail')||'{}'));T.gifts=Math.max(T.gifts||0,+localStorage.getItem('bt-gifts')||0)}catch(e){}
+var today=new Date().toLocaleDateString('en-CA');if(T.days.indexOf(today)<0)T.days.push(today);
+if(T.gi<0)T.gi=3+Math.floor(Math.random()*14);
+function saveT(){try{localStorage.setItem('bt-trail',JSON.stringify(T))}catch(e){}}saveT();
+var DIYAI=DIYA.replace('id="bg"','id="bgx"').replace('url(#bg)','url(#bgx)');
+var tsec=document.createElement('section');tsec.className='slide trail';tsec.id='trail';
+tsec.innerHTML='<p class="eyebrow">The Diya Trail</p><h2>Light all <i>five diyas</i></h2><p class="lead">Do five little things. Win a Diwali reward from Ashi.</p><div class="prog"><i id="tp"></i></div><div id="tl"></div><p class="terms">Rewards are confirmed by Ashi on WhatsApp. One reward per customer.</p>';
+reel.appendChild(tsec);slides.push(tsec);
+var QS=[['Your perfect Diwali evening?',[['Family, mithai and lots of laughter','playful'],['A quiet corner, chai and fairy lights','cozy'],['Rangoli, new clothes, photos with everyone','artful'],['Every window open, lights everywhere','bright']]],
+ ['Pick a mood for your home',[['Warm and cosy','cozy'],['Sunny and cheerful','bright'],['Fun and a bit quirky','playful'],['Elegant and calm','artful']]],
+ ['The gift you love to give',[['Something beautiful to keep','artful'],['Something that makes them smile','playful'],['Warm and thoughtful','cozy'],['Bright, to lift their day','bright']]]];
+var AR={cozy:{t:'Cosy Glow',id:'bnt-prd-cg-002',d:'Warm, steady, the heart of every gathering.'},bright:{t:'Sunny Spark',id:'bnt-prd-tl-001',d:'You bring the light into every room.'},playful:{t:'Playful Pop',id:'bnt-prd-mc-001',d:'Fun, curious and always up to something sweet.'},artful:{t:'Quiet Artist',id:'bnt-prd-jt-001',d:'You love a thing made beautifully, by hand.'}};
+var qsec=document.createElement('section');qsec.className='slide quiz';qsec.id='quiz';qsec.innerHTML='<p class="eyebrow">30-second quiz</p><h2>Which Diwali candle <i>are you?</i></h2><div id="qb"></div>';reel.appendChild(qsec);slides.push(qsec);
+var qa=[],QSTEP=0;
+function renderQ(){var b=$('qb');b.innerHTML='';
+ if(T.quiz&&QSTEP===0){var a=AR[T.quiz],p=ALL[a.id];b.innerHTML='<div class="qbox res"><p class="qn">Your result</p><img alt=""><h3></h3><p></p><div class="acts"><button class="btn" id="qs" type="button"></button><button class="btn alt" id="qsh" type="button">Share my result</button><button class="btn alt" id="qr" type="button">Retake</button></div></div>';
+  b.querySelector('img').src='../img/'+p.i;b.querySelector('img').alt=p.n;b.querySelector('h3').textContent=a.t+' · '+p.n;b.querySelector('.res p:not(.qn)').textContent=a.d+' '+p.n+' is '+rs(p.p)+'.';
+  var sv=$('qs');sv.textContent=fav.indexOf(a.id)>=0?'Saved to your list':'Save '+p.n;sv.onclick=function(){if(fav.indexOf(a.id)<0)toggle(a.id);sv.textContent='Saved to your list'};
+  $('qsh').onclick=function(){var t='I am "'+a.t+'" 🪔 '+p.n+' is my Diwali candle. Find yours: https://budandthings.com/catalogue/diwali/?utm_source=quiz';if(navigator.share)navigator.share({text:t}).catch(function(){});else window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};
+  $('qr').onclick=function(){T.quiz=null;qa=[];QSTEP=0;saveT();renderQ();recalc()};return}
+ var q=QS[QSTEP];b.innerHTML='<div class="qbox"><p class="qn">Question '+(QSTEP+1)+' of 3</p><h3></h3></div>';b.querySelector('h3').textContent=q[0];
+ q[1].forEach(function(o){var x=document.createElement('button');x.type='button';x.className='opt';x.textContent=o[0];x.onclick=function(){qa.push(o[1]);if(QSTEP<2){QSTEP++;renderQ()}else{var c={};qa.forEach(function(k){c[k]=(c[k]||0)+1});var best=Object.keys(c).sort(function(a,b){return c[b]-c[a]})[0];T.quiz=best;QSTEP=0;saveT();renderQ();recalc()}};b.firstChild.appendChild(x)})}
+
 D.ch.forEach(function(c,ci){
  var s=document.createElement('section');s.className='slide chap';s.innerHTML='<div class="no">0'+(ci+1)+'</div><h2></h2><p></p><p class="eyebrow"></p>';s.querySelector('h2').textContent=c.t;s.querySelector('p').textContent=c.g;s.querySelector('.eyebrow').textContent=c.items.length+' pieces';reel.appendChild(s);slides.push(s);
  c.items.forEach(function(p){var s=document.createElement('section');s.className='slide prod';s.dataset.id=p.id;
@@ -118,23 +176,55 @@ D.ch.forEach(function(c,ci){
   s.querySelector('.eyebrow').textContent=c.t;s.querySelector('h3').textContent=p.n;s.querySelector('.price').textContent=rs(p.p);
   var h=s.querySelector('.heart');h.setAttribute('aria-label','Save '+p.n);
   h.onclick=function(){toggle(p.id)};
+  if(n===T.gi&&!T.golden){var gd=document.createElement('button');gd.className='gd';gd.type='button';gd.setAttribute('aria-label','A golden diya! Tap it');gd.innerHTML=DIYA.replace('#ffc247','#ffd23c').replace('id="bg"','id="bgg"').replace('url(#bg)','url(#bgg)');gd.onclick=function(e){e.stopPropagation();T.golden=true;saveT();gd.remove();toast('You found the golden diya! Mystery ticket added');if(navigator.vibrate)navigator.vibrate([20,40,20]);recalc()};s.querySelector('.photo').appendChild(gd)}
   var lastTap=0;s.querySelector('.photo').addEventListener('click',function(){var t=Date.now();if(t-lastTap<350){if(fav.indexOf(p.id)<0)toggle(p.id);var b=s.querySelector('.burst');b.classList.remove('go');void b.offsetWidth;b.classList.add('go')}lastTap=t});
   var a=s.querySelector('.btn'),msg='Hi Ashi! I saw '+p.n+' ('+rs(p.p)+') on your Diwali story. Is it available?';
   if(D.wa){a.href='https://wa.me/'+D.wa+'?text='+encodeURIComponent(msg)}else{a.textContent='Ask on Instagram';a.href='https://ig.me/m/'+D.ig;a.addEventListener('click',function(){try{navigator.clipboard.writeText(msg);toast('Message copied. Paste it in the chat')}catch(e){}})}
   reel.appendChild(s);slides.push(s);n++})});
+var rw=document.createElement('section');rw.className='slide reward';rw.id='reward';
+rw.innerHTML='<p class="eyebrow">Your rewards</p><h2>Scratch to <i>reveal</i></h2><p class="lead">Light more diyas to unlock bigger rewards.</p><div class="cardx" id="cA"></div><div class="cardx" id="cB"></div><p class="terms" id="rt"></p>';reel.appendChild(rw);slides.push(rw);
+function pickOut(list){var t=list.reduce(function(a,o){return a+o.w},0),r=Math.random()*t;for(var i=0;i<list.length;i++){r-=list[i].w;if(r<=0)return list[i]}return list[0]}
+function findOut(code){var all=D.rw.a.concat(D.rw.b);return all.filter(function(o){return o.c===code})[0]}
+function card(el,key,need,title,list,lit){
+ var tk=T[key]||null,open=lit>=need;el.innerHTML='<div class="lab"><span></span><span></span></div><div class="scr"></div>';el.querySelector('.lab span').textContent=title;el.querySelectorAll('.lab span')[1].textContent=need+' diyas';
+ var box=el.querySelector('.scr');
+ if(!open){box.innerHTML='<div class="lock"><div><b>Locked</b>Light '+(need-lit)+' more diya'+(need-lit>1?'s':'')+'</div></div>';return}
+ if(!tk){var o=pickOut(list);if(T.golden&&key==='sB'){var o2=pickOut(list);if(o2.w<o.w)o=o2}T[key]=o.c;tk=o.c;saveT()}
+ var o=findOut(tk);box.innerHTML='<div class="prize"><b></b><span></span></div><canvas></canvas>';box.querySelector('b').textContent=o.c;box.querySelector('span').textContent=o.t;
+ var cv=box.querySelector('canvas'),done=T[key+'d'];
+ function reveal(){cv.style.transition='opacity .6s';cv.style.opacity=0;setTimeout(function(){cv.remove()},700);T[key+'d']=1;saveT();var b=document.createElement('button');b.className='btn cp';b.type='button';b.textContent='Copy code '+o.c;b.onclick=function(){try{navigator.clipboard.writeText(o.c)}catch(e){}toast('Code copied. Add it to your WhatsApp message')};el.appendChild(b);if(navigator.vibrate)navigator.vibrate([30,50,30]);recalc()}
+ if(done){cv.remove();var b=document.createElement('button');b.className='btn cp';b.type='button';b.textContent='Copy code '+o.c;b.onclick=function(){try{navigator.clipboard.writeText(o.c)}catch(e){}toast('Code copied. Add it to your WhatsApp message')};el.appendChild(b);return}
+ requestAnimationFrame(function(){var w=box.clientWidth,h=box.clientHeight,d=Math.min(devicePixelRatio||1,2);cv.width=w*d;cv.height=h*d;var x=cv.getContext('2d');x.scale(d,d);
+  var g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#b88a2c');g.addColorStop(.5,'#f3d27a');g.addColorStop(1,'#a87820');x.fillStyle=g;x.fillRect(0,0,w,h);
+  x.fillStyle='rgba(60,20,10,.55)';x.font='600 15px Montserrat,sans-serif';x.textAlign='center';x.fillText('SCRATCH HERE',w/2,h/2+5);
+  for(var i=0;i<40;i++){x.fillStyle='rgba(255,255,255,'+Math.random()*.35+')';x.beginPath();x.arc(Math.random()*w,Math.random()*h,Math.random()*2,0,7);x.fill()}
+  var down=false,mv=0;function pt(e){var r=cv.getBoundingClientRect();x.globalCompositeOperation='destination-out';x.beginPath();x.arc(e.clientX-r.left,e.clientY-r.top,22,0,7);x.fill();if(++mv%6===0)chk()}
+  function chk(){var im=x.getImageData(0,0,cv.width,cv.height).data,c=0,t=0;for(var i=3;i<im.length;i+=64){t++;if(im[i]<20)c++}if(c/t>.4&&!T[key+'d']){down=false;reveal()}}
+  cv.addEventListener('pointerdown',function(e){down=true;cv.setPointerCapture(e.pointerId);pt(e)});cv.addEventListener('pointermove',function(e){if(down)pt(e)});cv.addEventListener('pointerup',function(){down=false});cv.addEventListener('pointercancel',function(){down=false})})}
+var prev=1;
+function steps(){return [true,fav.length>=3,!!T.quiz,T.gifts>0,T.days.length>=2]}
+function recalc(){var st=steps(),lit=st.filter(Boolean).length;
+ $('dn').textContent=lit+'/5';$('tp').style.width=(lit/5*100)+'%';
+ var ms=$('mini');if(!ms.children.length)for(var i=0;i<5;i++){var sp=document.createElement('span');sp.innerHTML=DIYA.replace(/id="bg"/,'id="bm'+i+'"').replace('url(#bg)','url(#bm'+i+')');ms.appendChild(sp)}
+ [].forEach.call(ms.children,function(c,i){c.classList.toggle('on',st[i])});
+ var rows=[['Open the story','You are in. First diya lit.',null],['Save 3 favourites',fav.length+' of 3 saved. Tap the heart on pieces you love.','#chap1'],['Take the candle quiz','Which Diwali candle are you?','#quiz'],['Send a diya to a friend','Write a wish, pick a candle, send it.','../light/'],['Come back on another day','Nights visited: '+T.days.length+'. Return tomorrow.',null]],tl=$('tl');tl.innerHTML='';
+ rows.forEach(function(r,i){var d=document.createElement('div');d.className='tk'+(st[i]?' ok':'');d.innerHTML='<span class="ic">'+DIYA.replace(/id="bg"/,'id="bt'+i+'"').replace('url(#bg)','url(#bt'+i+')')+'</span><div><b></b><small></small></div>'+(r[2]&&!st[i]?'<a class="go">Go</a>':'');d.querySelector('b').textContent=r[0];d.querySelector('small').textContent=r[1];var a=d.querySelector('.go');if(a){if(r[2].charAt(0)==='#'){a.href=r[2];a.onclick=function(e){e.preventDefault();var el=r[2]==='#chap1'?slides[3]:$(r[2].slice(1));el.scrollIntoView({behavior:'smooth'})}}else a.href=r[2]}tl.appendChild(d)});
+ if(lit>prev&&rw.isConnected)toast('Diya '+lit+' lit! '+(lit===3?'Scratch card unlocked':lit===5?'Golden scratch card unlocked':'Keep going'));prev=lit;
+ card($('cA'),'sA',3,'Scratch card',D.rw.a,lit);card($('cB'),'sB',5,T.golden?'Golden scratch card + mystery ticket':'Golden scratch card',D.rw.b,lit);$('rt').textContent=D.rw.terms;rw.querySelector('.lead').textContent=lit>=5?'All five diyas lit. Scratch both cards.':lit>=3?'Scratch your card. Light all 5 diyas for the golden one.':'Light 3 diyas to unlock your first scratch card.'}
+function codes(){var c=[];if(T.sAd)c.push(T.sA);if(T.sBd)c.push(T.sB);return c}
 var pk=document.createElement('section');pk.className='slide picks';pk.id='picks';pk.innerHTML='<p class="eyebrow">Your picks</p><h2>Your <i>Diwali list</i></h2><p class="lead" id="pl"></p><div class="list" id="ls"></div><div id="tt"></div><div class="acts"><button class="btn" id="send" type="button"></button><a class="btn alt" href="../">Browse the full catalogue</a><button class="btn alt" id="shr" type="button">Share this story</button><a class="btn alt" href="../light/">Light a diya for someone</a></div><p class="note">Ordering opens soon. Send us your list and we will confirm stock and delivery.</p>';reel.appendChild(pk);slides.push(pk);
-function sync(){$('pc').textContent=fav.length;document.querySelectorAll('.prod').forEach(function(s){var on=fav.indexOf(s.dataset.id)>=0,h=s.querySelector('.heart');h.setAttribute('aria-pressed',on);h.setAttribute('aria-label',(on?'Remove ':'Save ')+ALL[s.dataset.id].n)});renderPicks()}
+function sync(){$('pc').textContent=fav.length;if(window.__rd)recalc();document.querySelectorAll('.prod').forEach(function(s){var on=fav.indexOf(s.dataset.id)>=0,h=s.querySelector('.heart');h.setAttribute('aria-pressed',on);h.setAttribute('aria-label',(on?'Remove ':'Save ')+ALL[s.dataset.id].n)});renderPicks()}
 function toggle(id){var i=fav.indexOf(id);if(i<0){fav.push(id);if(navigator.vibrate)navigator.vibrate(15)}else fav.splice(i,1);saveFav();sync();var h=document.querySelector('.prod[data-id="'+id+'"] .heart');if(h){h.classList.remove('pop');void h.offsetWidth;h.classList.add('pop')}}
-function listText(){var s='Hi Ashi! My Diwali picks from your story:\n',t=0;fav.forEach(function(id,i){var p=ALL[id];s+=(i+1)+'. '+p.n+' ('+rs(p.p)+')\n';t+=p.p});return s+'Total: '+rs(t)+'\nPlease confirm availability and delivery.'}
+function listText(){var s='Hi Ashi! My Diwali picks from your story:\n',t=0;fav.forEach(function(id,i){var p=ALL[id];s+=(i+1)+'. '+p.n+' ('+rs(p.p)+')\n';t+=p.p});var cs=codes();return s+'Total: '+rs(t)+(cs.length?'\nMy Diwali reward code: '+cs.join(', '):'')+'\nDiya Trail: '+steps().filter(Boolean).length+'/5 lit.\nPlease confirm availability and delivery.'}
 function renderPicks(){var ls=$('ls');ls.innerHTML='';$('tt').innerHTML='';
- if(!fav.length){ls.innerHTML='<div class="empty">Nothing saved yet.<br>Tap the heart, or double-tap a photo, on anything you love.</div>';$('pl').textContent='Save pieces as you swipe, then send them to us in one message.';$('send').textContent='Start swiping';$('send').onclick=function(){slides[2].scrollIntoView({behavior:'smooth'})};return}
+ if(!fav.length){ls.innerHTML='<div class="empty">Nothing saved yet.<br>Tap the heart, or double-tap a photo, on anything you love.</div>';$('pl').textContent='Save pieces as you swipe, then send them to us in one message.';$('send').textContent='Start swiping';$('send').onclick=function(){slides[3].scrollIntoView({behavior:'smooth'})};return}
  var t=0;fav.forEach(function(id){var p=ALL[id];t+=p.p;var d=document.createElement('div');d.className='it';d.innerHTML='<img alt=""><b></b><span></span><button type="button" aria-label="Remove">×</button>';d.querySelector('img').src='../img/'+p.i;d.querySelector('b').textContent=p.n;d.querySelector('span').textContent=rs(p.p);d.querySelector('button').onclick=function(){toggle(id)};ls.appendChild(d)});
  $('tt').innerHTML='<div class="total">Total<span>'+rs(t)+'</span></div>';$('pl').textContent=fav.length+(fav.length>1?' pieces':' piece')+' saved. Send them to us and we will reply with stock and delivery.';
  $('send').textContent=D.wa?'Send my list on WhatsApp':'Send my list on Instagram';
  $('send').onclick=function(){var m=listText();if(D.wa){window.open('https://wa.me/'+D.wa+'?text='+encodeURIComponent(m),'_blank')}else{var go=function(){toast('List copied. Paste it in the chat');setTimeout(function(){window.open('https://ig.me/m/'+D.ig,'_blank')},900)};(navigator.clipboard?navigator.clipboard.writeText(m):Promise.reject()).then(go,function(){prompt('Copy your list',m)})}}}
 var SHARE='https://budandthings.com/catalogue/diwali/';
 $('shr').onclick=function(){var t='Look what Ashi is making this Diwali 🪔 Swipe through';if(navigator.share)navigator.share({title:'Diwali, made by hand',text:t,url:SHARE+'?utm_source=share'}).catch(function(){});else window.open('https://wa.me/?text='+encodeURIComponent(t+': '+SHARE+'?utm_source=whatsapp'),'_blank')};
-sync();
+renderQ();window.__rd=1;prev=steps().filter(Boolean).length;sync();
 // in-view + progress
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');var i=slides.indexOf(e.target);$('pb').style.width=(i/(slides.length-1)*100)+'%'}})},{root:reel,threshold:.55});slides.forEach(function(s){io.observe(s)});
 document.addEventListener('keydown',function(e){if(/INPUT|TEXTAREA/.test(e.target.tagName))return;var cur=Math.round(reel.scrollTop/reel.clientHeight),k={ArrowDown:1,PageDown:1,ArrowUp:-1,PageUp:-1,' ':1}[e.key];if(k){e.preventDefault();slides[Math.max(0,Math.min(slides.length-1,cur+k))].scrollIntoView({behavior:'smooth'})}});
