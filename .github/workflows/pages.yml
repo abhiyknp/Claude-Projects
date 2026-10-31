@@ -60,12 +60,14 @@ jobs:
             printf '%s\n' '</body>' '</html>'
           } > _site/index.html
           touch _site/.nojekyll
-      - name: Add the catalogue page (budandthings.com/catalogue/)
+      - name: Add the catalogue pages (budandthings.com/catalogue/, /share/, /light/, /diwali/)
         run: |
           mkdir -p _site/catalogue
-          cp -r bud-and-things/catalogue/index.html bud-and-things/catalogue/img _site/catalogue/
-          # the page is written to sit next to prototype/; on the site the assets live one level up
-          sed -i 's#\.\./prototype/assets/#../assets/#g' _site/catalogue/index.html
+          cp -r bud-and-things/catalogue/index.html bud-and-things/catalogue/img bud-and-things/catalogue/share \
+                bud-and-things/catalogue/light bud-and-things/catalogue/diwali _site/catalogue/
+          # the pages are written to sit next to prototype/; on the site the assets live one level up
+          # (this also turns ../../prototype/assets/ in the share, light and diwali pages into ../../assets/)
+          find _site/catalogue -name '*.html' -exec sed -i 's#\.\./prototype/assets/#../assets/#g' {} +
       - name: Add product pages and Pinterest feeds
         run: node bud-and-things/tools/build-pinterest.js _site
       - name: Move the app script into its own minified file
