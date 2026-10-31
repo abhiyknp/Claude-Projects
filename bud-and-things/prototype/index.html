@@ -1098,11 +1098,8 @@ body.app .why-band { padding-bottom: 96px; }
 
 // ---------- catalogue (draft) ----------
 // Launch range: candles and Jesmonite objects. Names, scents and prices are drafts until testing is complete.
-const IMG = { box: 'assets/pack-box.webp', jar: 'assets/pack-jar.webp', tag: 'assets/pack-tag.webp', card: 'assets/pack-card.webp', pouch: 'assets/pack-pouch.webp', seal: 'assets/pack-seal.webp', leather: 'assets/pack-leather.webp', logoPhoto: 'assets/logo-photo.webp' };
+const IMG = { box: 'assets/catalogue/bnt-prd-jt-001.jpg', jar: 'assets/catalogue/bnt-prd-cg-001.jpg', tag: 'assets/catalogue/bnt-prd-jt-002.jpg', card: 'assets/catalogue/bnt-prd-tl-001.jpg', pouch: 'assets/catalogue/bnt-prd-jt-004.jpg', seal: 'assets/catalogue/bnt-prd-jt-005.jpg', leather: 'assets/catalogue/bnt-prd-mc-002.jpg', logoPhoto: 'assets/catalogue/bnt-prd-jt-003.jpg' };
 const CANDLE_CARE = ['Let the first burn melt to the edges (about 2 hours).', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.'];
-const JAR_MAT = 'Scented candle in a speckled stone-finish jar with a wooden lid, cotton wick. Wax type to be confirmed after testing.';
-const JAR_SIZE = '120 g jar: 7 × 7.5 cm · 220 g jar: 8.5 × 9 cm';
-const twoSizes = (code) => [{ sku: 'BT-CN-' + code + '-120', label: '120 g', price: 899 }, { sku: 'BT-CN-' + code + '-220', label: '220 g', price: 1399 }];
 const PILLAR_COL = { 'Ivory': '#F6EDDF', 'Terracotta': '#C45A3A', 'Olive': '#5B6B46' };
 const FIN = { 'Ivory': '#F1E8DA', 'Ivory Terrazzo': '#EFE7DA', 'Sand': '#DCC9AE', 'Terracotta': '#B0644A', 'Caramel Swirl': '#C99A6C', 'Caramel': '#C99A6C', 'Olive': '#6B6B43', 'Mixed Earth · set of 4': '#6B6B43', 'All Ivory · set of 4': '#F1E8DA' };
 const JES_CARE = ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Keep away from long contact with water.'];
@@ -1230,7 +1227,7 @@ const TEXT = {
   'bar.offers': ['Use {welcomeCode} for {welcomeOff}% off your first order|Earn {rewardPct}% back in Bud Points on every order', 'Offers bar at the top of every page (separate offers with |)'],
   'home.newEyebrow': ['Just poured', 'Home: new arrivals small line'],
   'home.new': ['New arrivals', 'Home: new arrivals heading'],
-  'home.catsSub': ['Candles, objects and ready-to-give boxes, all made by hand in small batches.', 'Home: category text'],
+  'home.catsSub': ['Candles and Jesmonite pieces, all made by hand in small batches.', 'Home: category text'],
   'home.spotEyebrow': ['In the spotlight', 'Home: spotlight small line'],
   'home.journal': ['From the journal', 'Home: journal heading'],
   'home.journalSub': ['Care guides, gifting ideas and notes from the studio.', 'Home: journal text'],
@@ -1467,7 +1464,8 @@ const LEGAL_KEYS = ['bizName', 'bizAddress', 'gstin', 'grievanceName', 'grievanc
 const fill = (s) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k === 'year' ? String(new Date().getFullYear()) : LEGAL_KEYS.includes(k) && !String(SET[k] || '').trim() ? '[to add]' : k in SET ? (/Fee|Price|Over/.test(k) ? inr(SET[k]) : String(SET[k])) : m));
 const Tx = (k) => fill(k in TXT ? TXT[k] : (TEXT[k] ? TEXT[k][0] : ''));
 const T = (k) => esc(Tx(k)).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
-const idList = (k) => String(SET[k] || '').split(',').map((x) => x.trim()).filter((id) => byId[id]);
+const pickIds = (v) => String(v || '').split(',').map((x) => x.trim()).filter((id) => byId[id]);
+const idList = (k) => { const own = pickIds(SET[k]); return own.length || k === 'newIn' ? own : pickIds(SET_DEFAULTS[k]); }; // stale ids saved earlier fall back to the built-in picks
 
 // ---------- coming soon: until launch, visitors to the live site see one page (database mode only) ----------
 // #admin always opens; the signed-in owner and testers who opened ?preview=<code> see the shop. ?preview=off ends it.
@@ -1529,8 +1527,11 @@ function normProduct(id, d) {
   return Object.assign({ name: id, type: cat === 'candles' ? 'Scented candle' : 'Object', line: '', material: '', size: '', care: [], mood: [], space: [], occ: [], gift: true, art: cat === 'candles' ? 'jar' : 'tray', c: '#DCC9AE' }, d,
     { id, cat, variants: (d.variants || []).filter((v) => v && v.sku), care: d.care || [], mood: d.mood || [], space: d.space || [], occ: d.occ || [] });
 }
+// the first draft range (First Light, Chai at Four, trays, gift boxes) may still sit in the database: never show it
+const DRAFT_SKU = /^BT-(CN|JS|GB)-/;
+const notDraft = (r) => !((r.data && r.data.variants) || []).some((v) => v && DRAFT_SKU.test(v.sku || ''));
 function applyData() {
-  P = DATA.products && DATA.products.length ? DATA.products.filter((r) => r.live !== false).sort(bySort).map((r) => normProduct(r.id, r.data)).filter((p) => p.variants.length) : BASE_P.slice();
+  P = DATA.products && DATA.products.filter(notDraft).length ? DATA.products.filter(notDraft).filter((r) => r.live !== false).sort(bySort).map((r) => normProduct(r.id, r.data)).filter((p) => p.variants.length) : BASE_P.slice();
   indexProducts();
   PAIRINGS = (DATA.pairings && DATA.pairings.length ? DATA.pairings.filter((r) => r.live !== false).sort(bySort).map((r) => Object.assign({ name: r.id, why: '', items: [] }, r.data, { id: r.id })) : BASE_PAIRINGS.slice())
     .filter((x) => x.items.length === 2 && x.items.every(([pid, vi]) => byId[pid] && byId[pid].variants[vi]));
@@ -2095,7 +2096,7 @@ function viewProduct(id) {
   const care = p.care.map((c) => `<li>${esc(c)}</li>`).join('') + (p.cat === 'candles' || p.cat === 'gifts' && /candle/i.test(p.material) ? `<li>${esc(p.burnTime ? 'Burn time: ' + p.burnTime + '.' : 'Burn time to be confirmed by testing.')}</li>` : '');
   return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${p.cat === 'gifts' ? 'gifts' : p.cat}">${p.cat === 'gifts' ? 'Gift boxes' : p.cat === 'candles' ? 'Candles' : 'Jesmonite Objects'}</a> / ${esc(p.name)}</nav>
   <div class="pdp"><div class="pdp-gallery"><div class="gal-main">${main}
-      <button class="room-try" type="button" data-act="room-open" data-id="${id}">${hl('home', 18)}${T('pdp.room')}</button></div>
+      </div>
     <div class="thumbs" role="group" aria-label="Images">${gal.map((x, i) => `<button type="button" data-act="pdp-img" data-id="${id}" data-i="${i}" aria-pressed="${i === gi}" aria-label="${esc(x.label)}">${thumb(x)}</button>`).join('')}</div>
     </div>
   <div class="pdp-info"><span class="eyebrow">${p.cat === 'candles' ? 'Candle' : p.cat === 'gifts' ? 'Gift box' : 'Jesmonite'} · ${p.notes ? esc(p.notes.join(', ')) : esc(p.type)}</span>
@@ -2126,7 +2127,7 @@ function viewProduct(id) {
       <fieldset class="field rating"><legend>Your rating</legend><span>${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="rv-rating" value="${n}" ${+R.rating === n ? 'checked' : ''}> ${n}★</label>`).join('')}</span></fieldset>
       <span class="field full"><label for="rv-body">Your review</label><textarea id="rv-body" rows="4" maxlength="1500">${esc(R.body || '')}</textarea></span>${BTDB.on && !BTDB.customer() ? `<p class="muted full" style="margin:0;font-size:14px">${T('pdp.reviewVerify')}</p>` : ''}${R.err ? `<span class="err full" role="alert">${esc(R.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Send review</button></span></form>` : `<button class="btn ghost" type="button" data-act="review-open" data-id="${id}">Write a review</button>`}</section>
   ${mediaFor('brand', { role: 'packaging', kind: 'photo' }).length ? `<section class="section" aria-labelledby="box-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="box-h">How it arrives</h2><span class="muted" style="font-size:14px">Approved packaging direction; final pieces may differ.</span></div>
-    <div class="pack-grid">${brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set box.', 'Gift set box'], [IMG.tag, 'Hang tag with the tagline.', 'Hang tag'], [IMG.card, 'Candle care tag.', 'Care tag'], [IMG.seal, 'BUD & THINGS wax seals in brand colours.', 'Wax seals']]).slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>` : ''}
+    <div class="pack-grid">${brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set box.', 'Gift set box'], [IMG.tag, 'Hang tag with the tagline.', 'Hang tag'], [IMG.card, 'Candle care tag.', 'Care tag'], [IMG.seal, 'Handmade BUD & THINGS pieces.', 'Wax seals']]).slice(0, 4).map(([src, alt, cap]) => `<figure><img src="${esc(src)}" alt="${esc(alt)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('')}</div></section>` : ''}
   ${similar(p)}</div>`;
 }
 
@@ -2324,17 +2325,17 @@ function viewOrder(id) {
     <aside class="checkout-side"><strong>${o.id}</strong>${o.items.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.name)} · ${esc(l.label)} × ${l.qty}</span><span class="num">${inr(l.price * l.qty)}</span></div>`).join('')}
       <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${o.pointsUsed ? row('Bud Points', '−' + inr(o.pointsUsed), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${o.cardOff ? row('Gift card ' + esc(o.card || ''), '−' + inr(o.cardOff), 'save') : ''}${row(cod ? 'To pay on delivery' : unpaid || gone ? 'Total' : 'Paid', inr(o.total), 'grand')}</div>
       ${giftSummary(o.gift)}
-      <figure class="photo" style="margin:0"><img src="${esc((brandImgs('gift', [[IMG.tag]])[0] || [IMG.tag])[0])}" alt="Rustic gift tag with the logo and olive leaf." loading="lazy"><figcaption>${o.gift && o.gift.on ? 'Your note goes on this tag' : 'A thank-you note goes in with orders where we can include one'}</figcaption></figure><span class="muted" style="font-size:14px">To ${o.gift && o.gift.on ? esc(o.gift.name) + ', ' : ''}${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
+      <span class="muted" style="font-size:14px">To ${o.gift && o.gift.on ? esc(o.gift.name) + ', ' : ''}${esc(o.address.line1)}, ${esc(o.address.city)} ${esc(o.address.pin)}, ${esc(o.address.state)}</span></aside></div></div>`;
 }
 
 function viewStory() {
   const pillars = [['leaf', 'Thoughtful Design', 'Thought goes into the things we make.'], ['sun', 'Everyday Moments', 'The everyday deserves beautiful things too.'], ['arch', 'Gifting With Feeling', 'Give something that feels chosen, not simply bought.'], ['flow', 'Contemporary Indian Soul', 'Rooted in India. Designed for contemporary living.'], ['spark', 'Made to Be Kept', 'Some things become special because we keep them.']];
-  const founder = mediaFor('brand', { role: 'founder' })[0]; const side = brandImgs('process', [[IMG.seal, 'BUD & THINGS wax seals in brand colours.'], [IMG.leather, 'Made with thought, given with feeling.']]);
+  const founder = mediaFor('brand', { role: 'founder' })[0]; const side = brandImgs('process', [[IMG.seal, 'Handmade BUD & THINGS pieces.'], [IMG.leather, 'Made with thought, given with feeling.']]);
   const steps = [['spark', 'Thought', 'Every piece starts with a moment we want to make room for: tea at four, rings at night, a lamp at the door.'], ['hand', 'Object', 'Candles are poured and Jesmonite cast by hand in small batches, then cured, checked and finished.'], ['flame', 'Feeling', 'Each order is wrapped in tissue with a care card and, for gifts, a note written by hand.'], ['star', 'Memory', 'The best part is when a piece becomes part of someone’s everyday. That is what we make them for.']];
   return `<section class="story-top" aria-labelledby="story-h1"><div class="wrap story-top-in">
     <div class="story-top-copy"><span class="eyebrow">Our Story</span><h1 id="story-h1" tabindex="-1">${T('story.title')}</h1><p class="lead">${T('story.lead')}</p>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn light" href="#shop">Shop the collection</a></span></div>
-    <div class="story-collage">${founder ? `<div class="c1">${mediaEl(founder)}</div>` : `<img class="c1" src="${IMG.box}" alt="A BUD &amp; THINGS gift box tied with ribbon." loading="lazy">`}<img class="c2" src="${IMG.jar}" alt="A BUD &amp; THINGS candle among dried botanicals." loading="lazy"><img class="c3" src="${IMG.seal}" alt="BUD &amp; THINGS wax seals." loading="lazy"><span class="mark monogram c4" aria-hidden="true"></span></div></div></section>
+    <div class="story-collage">${founder ? `<div class="c1">${mediaEl(founder)}</div>` : `<img class="c1" src="${IMG.box}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy">`}<img class="c2" src="${IMG.jar}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"><img class="c3" src="${IMG.seal}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"><span class="mark monogram c4" aria-hidden="true"></span></div></div></section>
   <div class="wrap" style="padding-bottom:var(--section)">
     <section class="section" aria-labelledby="name-h"><div class="split" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:18px;max-width:640px">
       <span class="eyebrow">The name</span><h2 id="name-h" style="font-size:clamp(30px,3.4vw,44px)">A bud is a small beginning.</h2>
@@ -2416,13 +2417,12 @@ function viewBulk() {
 }
 function viewGifting() {
   const picks = idList('giftPicks').map((id) => byId[id]);
-  const gimg = brandImgs('gift', [[IMG.tag, 'Rustic gift tag with the logo and olive leaf.', 'Your note, hand-written on our tag']]);
+  const gimg = brandImgs('gift', [[IMG.tag, 'Handmade BUD & THINGS pieces.', '']]);
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Gifting</span><h1 tabindex="-1">${T('gift.title')}</h1><p class="muted" style="max-width:620px">${T('gift.sub')}</p></div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div>
     <div class="split" style="margin-bottom:48px"><figure class="photo" style="margin:0"><img src="${esc(gimg[0][0])}" alt="${esc(gimg[0][1] || '')}" loading="lazy"><figcaption>${esc(gimg[0][2] || '')}</figcaption></figure>
       <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">${T('gift.h2')}</h2><p class="muted">${T('gift.text')}</p>
-      <ul class="trust">${[`Hand-written note on our card`, `Gift wrap${+SET.wrapFee ? ' for ' + inr(SET.wrapFee) : ''}`, 'Send it straight to them, with no prices in the parcel', 'Choose the day it should arrive by'].map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
-      <figure class="photo" style="margin:0;max-width:260px"><img src="${IMG.pouch}" alt="BUD &amp; THINGS gift bag with tissue and botanicals." loading="lazy"><figcaption>Gift bag · coming with gift sets</figcaption></figure></div></div>
+      <ul class="trust">${[`Hand-written note on our card`, `Gift wrap${+SET.wrapFee ? ' for ' + inr(SET.wrapFee) : ''}`, 'Send it straight to them, with no prices in the parcel', 'Choose the day it should arrive by'].map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div></div>
     <div class="section-head"><h2>${T('gift.popular')}</h2></div><div class="grid">${picks.map((p, i) => card(p, i)).join('')}</div>
     <p class="muted" style="margin-top:36px">Gifting 10 or more? <a href="#bulk">See corporate &amp; bulk gifts</a>.${csvList(SET.giftCards).length ? ' Can’t choose? <a href="#giftcard">Give a gift card</a>.' : ''}</p>${reminderForm()}</div>`;
 }
@@ -2497,7 +2497,7 @@ function viewAdmin() {
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
   const body = { start: admStart, orders: admOrders, products: admProducts, import: admImport, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
-  const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Chai at Four, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span><button class="btn small ghost" type="button" data-act="pv-toggle" aria-pressed="${A.pv ? 'true' : 'false'}">${A.pv ? 'Close live preview' : 'Live preview'}</button></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
+  const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Iced Latte, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span><button class="btn small ghost" type="button" data-act="pv-toggle" aria-pressed="${A.pv ? 'true' : 'false'}">${A.pv ? 'Close live preview' : 'Live preview'}</button></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
   return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${find}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
@@ -2630,7 +2630,7 @@ function admProductForm(r) {
     ${newSections().length ? `<span class="field"><label for="ap-sec">New section (optional)</label><select id="ap-sec" name="sec"><option value="">None</option>${newSections().map((x) => `<option value="${esc(x.id)}" ${d.sec === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span>` : ''}
     ${f('type', 'Type', d.type, { hint: 'for example Scented candle, Tray' })}${f('line', 'One-line description', d.line, { full: true })}
     <fieldset class="field full adm-vars"><legend>Options, prices and SKUs <span class="hint">clear an SKU to remove that option; fill the empty row to add one</span></legend>
-      ${vs.map((v, i) => `<span class="adm-var"><label class="sr" for="ap-vs${i}">SKU ${i + 1}</label><input id="ap-vs${i}" name="v-sku-${i}" placeholder="SKU, for example BT-CN-RO-220" value="${esc(v.sku)}"><label class="sr" for="ap-vl${i}">Option name ${i + 1}</label><input id="ap-vl${i}" name="v-label-${i}" placeholder="Option, for example 220 g" value="${esc(v.label)}"><label class="sr" for="ap-vp${i}">Price ${i + 1}</label><input id="ap-vp${i}" name="v-price-${i}" type="number" min="0" placeholder="Price ₹" value="${esc(v.price)}">${v.sku && S.stock[v.sku] != null ? `<span class="muted num" style="align-self:center">${stockOf(v.sku)} in stock</span>` : `<label class="sr" for="ap-vq${i}">Opening stock ${i + 1}</label><input id="ap-vq${i}" name="v-qty-${i}" type="number" min="0" max="9999" placeholder="Stock now" value=""></span>`}`).join('')}</fieldset>
+      ${vs.map((v, i) => `<span class="adm-var"><label class="sr" for="ap-vs${i}">SKU ${i + 1}</label><input id="ap-vs${i}" name="v-sku-${i}" placeholder="SKU, for example BNT-PRD-CG-001" value="${esc(v.sku)}"><label class="sr" for="ap-vl${i}">Option name ${i + 1}</label><input id="ap-vl${i}" name="v-label-${i}" placeholder="Option, for example 170 g" value="${esc(v.label)}"><label class="sr" for="ap-vp${i}">Price ${i + 1}</label><input id="ap-vp${i}" name="v-price-${i}" type="number" min="0" placeholder="Price ₹" value="${esc(v.price)}">${v.sku && S.stock[v.sku] != null ? `<span class="muted num" style="align-self:center">${stockOf(v.sku)} in stock</span>` : `<label class="sr" for="ap-vq${i}">Opening stock ${i + 1}</label><input id="ap-vq${i}" name="v-qty-${i}" type="number" min="0" max="9999" placeholder="Stock now" value=""></span>`}`).join('')}</fieldset>
     ${f('notes', 'Scent notes', (d.notes || []).join(', '), { hint: 'comma separated; leave empty for objects' })}
     ${f('smellsLike', 'Smells like', d.smellsLike, { full: true, area: true, rows: 2, hint: 'the scent story, one or two sentences' })}
     ${f('pz-top', 'Top notes', (pz.top || []).join(', '))}${f('pz-heart', 'Heart notes', (pz.heart || []).join(', '))}${f('pz-base', 'Base notes', (pz.base || []).join(', '))}${f('burnTime', 'Burn time', d.burnTime, { hint: 'for example 40 hours' })}
@@ -2685,7 +2685,7 @@ function admMedia() {
       <span class="field"><label for="up-prod">For</label><select id="up-prod" name="prod" data-act="adm-up-prod">${owners.map(([k, l]) => `<option value="${esc(k)}" ${k === pid ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></span>
       <span class="field"><label for="up-role">What it shows</label><select id="up-role" name="role">${roleOpts(A.upRole)}</select></span>
       ${pid !== 'brand' && p ? `<span class="field"><label for="up-var">Option</label><select id="up-var" name="variant"><option value="">Every option</option>${(p.variants || []).map((v) => `<option>${esc(v.label)}</option>`).join('')}</select></span>` : ''}
-      <span class="field"><label for="up-alt">Describe it <span class="hint">for people using screen readers</span></label><input id="up-alt" name="alt" placeholder="Chai at Four lit on a brass tray, evening light"></span>
+      <span class="field"><label for="up-alt">Describe it <span class="hint">for people using screen readers</span></label><input id="up-alt" name="alt" placeholder="Iced Latte lit on a table, evening light"></span>
       <span class="field full"><label for="up-file">Files <span class="hint">JPG, PNG or WebP photos, MP4 or WebM videos. Large photos are resized to 2000 px.</span></label><input id="up-file" name="files" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" multiple></span>
       ${A.upMsg ? `<span class="full status" role="status">${esc(A.upMsg)}</span>` : ''}<span class="full"><button class="btn" type="submit">Upload</button></span></form>
     <div class="adm-card"><h2 style="font-size:24px">Checklist</h2><p class="muted">What each product needs, from the photo brief. A tick means at least one is uploaded.</p>
@@ -3004,7 +3004,7 @@ function admReviews() {
     ${rows.length ? `<div class="adm-bar"><label class="check"><input type="checkbox" data-act="adm-rv-all" ${nSel && nSel === rows.length ? 'checked' : ''}> Select all ${rows.length} shown</label>${nSel ? `<span style="display:flex;gap:8px;flex-wrap:wrap"><span class="muted">${nSel} selected</span><button class="btn small" type="button" data-act="adm-rv-bulk" data-v="publish">Publish</button><button class="btn small ghost" type="button" data-act="adm-rv-bulk" data-v="unpublish">Unpublish</button><button class="btn small ghost danger" type="button" data-act="adm-rv-bulk" data-v="delete">Delete</button></span>` : ''}</div>
       <div class="adm-stack">${rows.map(card).join('')}</div>` : `<p class="muted">${list.length ? 'Nothing here. Try another tab or filter.' : 'No reviews yet.'}</p>`}
     <details class="adm-group"><summary>Add a review by hand</summary><form class="form" data-form="adm-rv-add" style="padding:18px" novalidate><p class="muted full" style="margin:0">For kind words sent on Instagram, WhatsApp or email. Copy them as written, and only with the customer’s permission.</p>
-      <span class="field"><label for="ra-prod">Piece</label><select id="ra-prod">${P.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></span><span class="field"><label for="ra-name">Their name, as it should show</label><input id="ra-name" maxlength="60" placeholder="Priya, Bengaluru"></span>
+      <span class="field"><label for="ra-prod">Piece</label><select id="ra-prod">${P.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></span><span class="field"><label for="ra-name">Their name, as it should show</label><input id="ra-name" maxlength="60" placeholder="Name, city"></span>
       <span class="field"><label for="ra-rating">Stars</label><select id="ra-rating">${[5, 4, 3, 2, 1].map((n) => `<option value="${n}">${n}★</option>`).join('')}</select></span><span class="field"><label for="ra-src">Where it came from</label><select id="ra-src">${['Instagram', 'WhatsApp', 'Email', 'In person', 'Other'].map((v) => `<option>${v}</option>`).join('')}</select></span>
       <span class="field full"><label for="ra-body">What they said</label><textarea id="ra-body" rows="3" maxlength="1500"></textarea></span><label class="check full"><input id="ra-pub" type="checkbox" checked> Publish it now</label>${A.rvErr ? `<span class="err full" role="alert">${esc(A.rvErr)}</span>` : ''}<span class="full"><button class="btn small" type="submit">Add the review</button></span></form></details>
     <div class="form adm-card"><h3 class="full" style="font-size:22px">Asking and thanking</h3>${setF('reviewAskDays')}${setF('reviewPoints')}<p class="muted full" style="margin:0">The review request is an email with a button straight to the piece, sent once per order. Bud Points go to signed-in writers when you publish their review.</p></div>
@@ -3569,11 +3569,11 @@ function catTiles(id) {
   const jesCover = P.filter((p) => p.cat === 'jesmonite').map((p) => mediaFor(p.id, { kind: 'photo', role: 'lifestyle' })[0]).find(Boolean);
   const img = (src, alt) => `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy">`;
   const tiles = [
-    ['#candles', 'Candles', n('candles') + ' scents and studies', candleCover ? img(mUrl(candleCover), candleCover.alt) : img(IMG.jar, 'A BUD & THINGS candle with its label among dried botanicals.'), ''],
-    ['#jesmonite', 'Jesmonite Objects', n('jesmonite') + ' trays, dishes and forms', jesCover ? img(mUrl(jesCover), jesCover.alt) : (byId['ghat-tray'] ? art(byId['ghat-tray'], 1, 1.25) : ''), 'alt'],
-    ['#gifts', 'Gift Boxes', n('gifts') + ' boxes, wrapped free', img(IMG.box, 'A BUD & THINGS gift box tied with ribbon.'), ''],
+    ['#candles', 'Candles', n('candles') + ' candles', candleCover ? img(mUrl(candleCover), candleCover.alt) : img(IMG.jar, 'Handmade BUD & THINGS pieces.'), ''],
+    ['#jesmonite', 'Jesmonite Objects', n('jesmonite') + ' trays, dishes and kits', jesCover ? img(mUrl(jesCover), jesCover.alt) : (byId['bnt-prd-jt-001'] ? art(byId['bnt-prd-jt-001'], 0, 1.25) : ''), 'alt'],
+    ['#gifts', 'Gift Boxes', n('gifts') + ' boxes, wrapped free', img(IMG.box, 'Handmade BUD & THINGS pieces.'), ''],
     ['#ritual', 'Pairs & Rituals', 'Save ' + (+SET.ritualOff || 0) + '% on a pair', (byId['chai-at-four'] ? art(byId['chai-at-four'], 1, .6) : '') + (byId['halo-candle-plate'] ? art(byId['halo-candle-plate'], 0, .55) : ''), 'alt'],
-    ['#under-999', 'Under ₹999', u999 + ' small gifts', img(IMG.tag, 'A BUD & THINGS hang tag.'), '']
+    ['#under-999', 'Under ₹999', u999 + ' small gifts', img(IMG.tag, 'Handmade BUD & THINGS pieces.'), '']
   ].filter((t) => !(t[0] === '#gifts' && !n('gifts')) && !(t[0] === '#ritual' && !+SET.ritualOff));
   return `<section class="wrap section" aria-labelledby="${id}"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="${id}">${T('home.cats')}</h2><span class="muted">${T('home.catsSub')}</span></div><a href="#shop" style="font-weight:600">Shop all ${P.length} →</a></div>
     <div class="cat-tiles">${tiles.map(([h, l, s, im, alt]) => `<a class="cat-tile" href="${h}"><span class="tile${alt ? ' alt' : ''}${/<img src/.test(im) ? ' photo-tile' : ''}">${im}</span><span class="cat-label"><strong>${l}</strong><span>${esc(s)} →</span></span></a>`).join('')}</div></section>`;
@@ -3677,7 +3677,7 @@ function viewJournal(id) {
 function storyBand(id) {
   const m = mediaFor('brand', { role: ['founder', 'story', 'process'] })[0];
   return `<section class="story-band" aria-labelledby="${id}"><div class="wrap section"><div class="split">
-    <div class="story-band-ph">${m ? mediaEl(m) : `<img src="${IMG.jar}" alt="A BUD &amp; THINGS candle among dried botanicals." loading="lazy"><img class="inset" src="${IMG.seal}" alt="BUD &amp; THINGS wax seals." loading="lazy">`}</div>
+    <div class="story-band-ph">${m ? mediaEl(m) : `<img src="${IMG.jar}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"><img class="inset" src="${IMG.seal}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy">`}</div>
     <div style="display:flex;flex-direction:column;gap:18px"><span class="eyebrow">Our Story</span><h2 id="${id}" style="font-size:clamp(34px,4vw,52px)">${T('home.storyBand')}</h2><p class="muted" style="font-size:17px;max-width:540px">${T('home.storyBandText')}</p>
       <span class="signature">— Ashi</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#story">Read our story</a><a class="btn ghost" href="#journal">From the journal</a></span></div></div></div></section>`;
 }
@@ -3694,7 +3694,7 @@ function discover(id) {
 function viewWhy() {
   return `<div class="wrap" style="padding-bottom:var(--s7)"><div class="page-head"><span class="eyebrow">Why from us</span><h1 tabindex="-1">${T('why.title')}</h1><p class="muted" style="max-width:620px">${T('why.lead')}</p></div>
     <ul class="why-grid big">${whyItems().map(([i, h, t]) => `<li><span class="why-ic">${hl(i, 30)}</span><strong>${esc(h)}</strong><span>${esc(t)}</span></li>`).join('')}</ul>
-    <div class="split" style="margin-top:var(--section-sm)"><figure class="photo" style="margin:0"><img src="${IMG.box}" alt="A BUD &amp; THINGS gift box tied with ribbon." loading="lazy"><figcaption>How it arrives</figcaption></figure>
+    <div class="split" style="margin-top:var(--section-sm)"><figure class="photo" style="margin:0"><img src="${IMG.box}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"></figure>
       <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">Small batches, real care</h2><p class="muted">We are not a factory. Every candle is poured and every tray is cast by hand, then checked, wrapped and packed in our studio. If something is not right when it reaches you, we put it right.</p>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#story">Read our story</a><a class="btn ghost" href="#shipping">Shipping &amp; delivery</a></span></div></div></div>`;
 }
@@ -4011,10 +4011,10 @@ function viewGiftHome() {
   const list = pool.filter((p) => G.cat === 'all' || (G.cat === 'u999' ? minPrice(p) < 999 : p.cat === G.cat)).slice(0, 8);
   const pairs = PAIRINGS.filter((fo) => fo.items.every(([pid, vi]) => byId[pid] && byId[pid].variants[vi])).slice(0, 3);
   const hero = mediaFor('brand', { kind: 'photo', role: ['gift', 'packaging', 'lifestyle'] })[0];
-  const pack = brandImgs('packaging', [[IMG.box, 'The BUD & THINGS gift set: candles in a ribbon-tied box.', 'Gift set box'], [IMG.tag, 'Rustic hang tag with the logo and olive leaf.', 'Hang tag'], [IMG.card, 'Candle care tag with burn instructions.', 'Care tag'], [IMG.seal, 'BUD & THINGS wax seals in brand colours.', 'Wax seals']]);
+  const pack = brandImgs('packaging', [[IMG.box, 'Handmade BUD & THINGS pieces.', 'Gift set box'], [IMG.tag, 'Handmade BUD & THINGS pieces.', 'Hang tag'], [IMG.card, 'Handmade BUD & THINGS pieces.', 'Care tag'], [IMG.seal, 'Handmade BUD & THINGS pieces.', 'Wax seals']]);
   const BLOCKS = {
     hero: () => `  <section class="wrap gh-hero" aria-labelledby="gh-h">
-    <div class="gh-ph"><img src="${esc(hero ? mUrl(hero) : IMG.box)}" alt="${esc(hero ? hero.alt : 'The BUD & THINGS gift set: candles in a ribbon-tied box.')}">
+    <div class="gh-ph"><img src="${esc(hero ? mUrl(hero) : IMG.box)}" alt="${esc(hero ? hero.alt : 'Handmade BUD & THINGS pieces.')}">
       <span class="gh-badge"><svg width="14" height="18" viewBox="0 0 14 18" aria-hidden="true"><path d="M7 1C9 5 13 7 13 11.5A6 6 0 0 1 1 11.5C1 8 4 7 4 4c1.5 1 2 2.5 2 4C7 6 7 3 7 1z" fill="#C9A227"/></svg>${T('ghome.badge')}</span></div>
     <div style="display:flex;flex-direction:column;gap:16px">
       <h1 id="gh-h" class="gh-rise">${T('ghome.title')}</h1>
