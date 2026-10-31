@@ -11,6 +11,8 @@ on:
       - 'bud-and-things/tools/build-pinterest.js'
       - 'bud-and-things/tools/add-csp.js'
       - 'bud-and-things/tools/split-js.js'
+      - 'bud-and-things/tools/build-catalogue.js'
+      - 'bud-and-things/data/catalogue.public.json'
   # once a day, so product, price, stock and photo changes made in the Owner view reach the Pinterest feeds
   schedule:
     - cron: '17 1 * * *'
@@ -67,6 +69,8 @@ jobs:
           npm init -y >/dev/null && npm i esbuild@0.24.0 >/dev/null
           cd "$GITHUB_WORKSPACE"
           ESBUILD_PATH="$RUNNER_TEMP/esbuild/node_modules/esbuild" node bud-and-things/tools/split-js.js _site
+      - name: Add the Our pieces list
+        run: node bud-and-things/tools/build-catalogue.js _site
       - name: Add the security policy to every page
         run: node bud-and-things/tools/add-csp.js _site
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1

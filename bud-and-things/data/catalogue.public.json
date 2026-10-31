@@ -1,0 +1,172 @@
+[
+ {
+  "sku": "BNT-PRD-CG-001",
+  "name": "Iced Latte",
+  "type": "Glass candle",
+  "scent": "Coffee",
+  "colour": "Brown + White",
+  "grams": 170,
+  "price": 199,
+  "image": "assets/catalogue/BNT-PRD-CG-001.webp"
+ },
+ {
+  "sku": "BNT-PRD-CG-002",
+  "name": "Vanilla Gold",
+  "type": "Glass candle",
+  "scent": "Vanilla",
+  "colour": "White + Gold",
+  "grams": 160,
+  "price": 169,
+  "image": "assets/catalogue/BNT-PRD-CG-002.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-001",
+  "name": "Mini Bubble Candle",
+  "type": "Moulded candle",
+  "scent": "",
+  "colour": "Yellow",
+  "grams": 34,
+  "price": 29,
+  "image": "assets/catalogue/BNT-PRD-MC-001.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-002",
+  "name": "Sunflower Float",
+  "type": "Moulded candle",
+  "scent": "Mithai",
+  "colour": "Yellow + Brown",
+  "grams": 17,
+  "price": 49,
+  "image": "assets/catalogue/BNT-PRD-MC-002.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-003",
+  "name": "Ladoo-shaped Candle",
+  "type": "Moulded candle",
+  "scent": "Mithai",
+  "colour": "Yellow",
+  "grams": 28,
+  "price": 29,
+  "image": "assets/catalogue/BNT-PRD-MC-003.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-004",
+  "name": "Blooming Rose",
+  "type": "Moulded candle",
+  "scent": "Flower",
+  "colour": "Purple + white",
+  "grams": 20,
+  "price": 29,
+  "image": "assets/catalogue/BNT-PRD-MC-004.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-005",
+  "name": "Mini Bubble Candle",
+  "type": "Moulded candle",
+  "scent": "White Oud",
+  "colour": "Baby Pink",
+  "grams": 35,
+  "price": 29,
+  "image": "assets/catalogue/BNT-PRD-MC-005.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-006",
+  "name": "Mini Bubble Candle",
+  "type": "Moulded candle",
+  "scent": "Ocean Breeze",
+  "colour": "Pink",
+  "grams": 35,
+  "price": 29,
+  "image": "assets/catalogue/BNT-PRD-MC-006.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-007",
+  "name": "Sunflower Float",
+  "type": "Moulded candle",
+  "scent": "White Oud",
+  "colour": "Orange",
+  "grams": 18,
+  "price": 49,
+  "image": "assets/catalogue/BNT-PRD-MC-007.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-008",
+  "name": "Purple Haze",
+  "type": "Moulded candle",
+  "scent": "Ocean Breeze",
+  "colour": "Purple + white",
+  "grams": 18,
+  "price": 49,
+  "image": "assets/catalogue/BNT-PRD-MC-008.webp"
+ },
+ {
+  "sku": "BNT-PRD-MC-009",
+  "name": "Blooming Rose",
+  "type": "Moulded candle",
+  "scent": "Ocean Breeze",
+  "colour": "Red + White",
+  "grams": 20,
+  "price": 49,
+  "image": "assets/catalogue/BNT-PRD-MC-009.webp"
+ },
+ {
+  "sku": "BNT-PRD-TL-001",
+  "name": "Sunflower Glow",
+  "type": "Tealight candle",
+  "scent": "",
+  "colour": "Yellow",
+  "grams": 12,
+  "price": 15,
+  "image": "assets/catalogue/BNT-PRD-TL-001.webp"
+ },
+ {
+  "sku": "BNT-PRD-TL-002",
+  "name": "Midnight Sunflower",
+  "type": "Tealight candle",
+  "scent": "",
+  "colour": "Blue + Yellow",
+  "grams": 12,
+  "price": 15,
+  "image": "assets/catalogue/BNT-PRD-TL-002.webp"
+ },
+ {
+  "sku": "BNT-PRD-TL-003",
+  "name": "Marigold Glow",
+  "type": "Tealight candle",
+  "scent": "",
+  "colour": "Orange + White",
+  "grams": 12,
+  "price": 15,
+  "image": "assets/catalogue/BNT-PRD-TL-003.webp"
+ },
+ {
+  "sku": "BNT-PRD-TL-004",
+  "name": "Love Note",
+  "type": "Tealight candle",
+  "scent": "",
+  "colour": "Red + White",
+  "grams": 12,
+  "price": 15,
+  "image": "assets/catalogue/BNT-PRD-TL-004.webp"
+ },
+ {
+  "sku": "BNT-PRD-TL-005",
+  "name": "Violet Whisper",
+  "type": "Tealight candle",
+  "scent": "",
+  "colour": "Purple + White",
+  "grams": 12,
+  "price": 15,
+  "image": "assets/catalogue/BNT-PRD-TL-005.webp"
+ },
+ {
+  "sku": "BNT-PRD-TL-006",
+  "name": "Rosé Whirl",
+  "type": "Tealight candle",
+  "scent": "",
+  "colour": "Pink + White",
+  "grams": 12,
+  "price": 15,
+  "image": "assets/catalogue/BNT-PRD-TL-006.webp"
+ }
+]
