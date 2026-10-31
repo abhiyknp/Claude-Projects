@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - 'bud-and-things/prototype/**'
+      - 'bud-and-things/catalogue/**'
       - '.github/workflows/pages.yml'
       - 'bud-and-things/tools/build-pinterest.js'
       - 'bud-and-things/tools/add-csp.js'
@@ -59,6 +60,12 @@ jobs:
             printf '%s\n' '</body>' '</html>'
           } > _site/index.html
           touch _site/.nojekyll
+      - name: Add the catalogue page (budandthings.com/catalogue/)
+        run: |
+          mkdir -p _site/catalogue
+          cp -r bud-and-things/catalogue/index.html bud-and-things/catalogue/img _site/catalogue/
+          # the page is written to sit next to prototype/; on the site the assets live one level up
+          sed -i 's#\.\./prototype/assets/#../assets/#g' _site/catalogue/index.html
       - name: Add product pages and Pinterest feeds
         run: node bud-and-things/tools/build-pinterest.js _site
       - name: Move the app script into its own minified file
