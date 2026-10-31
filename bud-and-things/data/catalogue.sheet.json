@@ -30,7 +30,7 @@
   "grams": 165,
   "price": 199,
   "stock": 0,
-  "show": "NO"
+  "show": "YES"
  },
  {
   "id": "BNT-PRD-CG-004",
@@ -41,7 +41,7 @@
   "grams": 165,
   "price": 169,
   "stock": 0,
-  "show": ""
+  "show": "YES"
  },
  {
   "id": "BNT-PRD-CG-005",
@@ -52,7 +52,7 @@
   "grams": 165,
   "price": 169,
   "stock": 0,
-  "show": ""
+  "show": "YES"
  },
  {
   "id": "BNT-PRD-CG-006",
@@ -63,7 +63,7 @@
   "grams": 172,
   "price": 199,
   "stock": 1,
-  "show": ""
+  "show": "YES"
  },
  {
   "id": "BNT-PRD-CG-007",
@@ -72,9 +72,10 @@
   "scent": "Berries",
   "colour": "Red + Blue + Transperent",
   "grams": 223,
-  "price": 249,
+  "price": 299,
   "stock": 1,
-  "show": ""
+  "show": "YES",
+  "note": "price 299 per owner message 2026-10-31; sheet (4) still says 249"
  },
  {
   "id": "BNT-PRD-CG-008",
@@ -85,7 +86,7 @@
   "grams": 200,
   "price": 249,
   "stock": 1,
-  "show": ""
+  "show": "YES"
  },
  {
   "id": "BNT-PRD-CG-009",
@@ -96,7 +97,7 @@
   "grams": 216,
   "price": 249,
   "stock": 1,
-  "show": ""
+  "show": "YES"
  },
  {
   "id": "BNT-PRD-CG-010",
@@ -105,9 +106,10 @@
   "scent": "Vanilla",
   "colour": "Yellow+White",
   "grams": 240,
-  "price": 249,
+  "price": 299,
   "stock": 1,
-  "show": ""
+  "show": "YES",
+  "note": "price 299 per owner message 2026-10-31; sheet (4) still says 249"
  },
  {
   "id": "BNT-PRD-CG-011",
@@ -118,7 +120,7 @@
   "grams": 78,
   "price": 99,
   "stock": 1,
-  "show": ""
+  "show": "YES"
  },
  {
   "id": "BNT-PRD-MC-001",
@@ -127,7 +129,7 @@
   "scent": "N/A",
   "colour": "Yellow",
   "grams": 34,
-  "price": 29,
+  "price": 49,
   "stock": 1,
   "show": "YES"
  },
@@ -138,7 +140,7 @@
   "scent": "Mithai ",
   "colour": "Yellow+Brown",
   "grams": 17,
-  "price": 49,
+  "price": 39,
   "stock": 4,
   "show": "YES"
  },
@@ -160,7 +162,7 @@
   "scent": "Flower",
   "colour": "Purple+white",
   "grams": 20,
-  "price": 29,
+  "price": 39,
   "stock": 2,
   "show": "YES"
  },
@@ -171,7 +173,7 @@
   "scent": "Whit Oud",
   "colour": "Baby Pink",
   "grams": 35,
-  "price": 29,
+  "price": 49,
   "stock": 1,
   "show": "YES"
  },
@@ -182,7 +184,7 @@
   "scent": "Ocean Breeze",
   "colour": "Pink",
   "grams": 35,
-  "price": 29,
+  "price": 49,
   "stock": 1,
   "show": "YES"
  },
@@ -193,7 +195,7 @@
   "scent": "White Oud",
   "colour": "Orange",
   "grams": 18,
-  "price": 49,
+  "price": 39,
   "stock": 1,
   "show": "YES"
  },
@@ -204,7 +206,7 @@
   "scent": "Ocean Breeze",
   "colour": "Purple+white",
   "grams": 18,
-  "price": 49,
+  "price": 39,
   "stock": 1,
   "show": "YES"
  },
@@ -215,7 +217,7 @@
   "scent": "Ocean Breeze",
   "colour": "Red+White",
   "grams": 20,
-  "price": 49,
+  "price": 39,
   "stock": 1,
   "show": "YES"
  },
@@ -347,8 +349,8 @@
   "scent": "N/A",
   "colour": "White",
   "grams": 43,
-  "price": null,
-  "stock": null,
-  "show": ""
+  "price": 69,
+  "stock": 1,
+  "show": "YES"
  }
 ]

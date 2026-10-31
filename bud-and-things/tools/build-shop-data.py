@@ -8,7 +8,7 @@ H = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 rows = json.load(open(H + '/data/catalogue.sheet.json'))
 fix = {'Vanila': 'Vanilla', 'Whit Oud': 'White Oud', 'Marrigold Glow': 'Marigold Glow'}  # spelling fixes in public text only
 def tidy(s): s = (s or '').strip(); return fix.get(s, s)
-def cols(c): return re.sub(r'\s*\+\s*', ' and ', c.strip()).lower().replace('multi color', 'multicolour')
+def cols(c): c = c.replace('Transperent', 'Transparent'); return re.sub(r'\s*\+\s*', ' and ', c.strip()).lower().replace('multi color', 'multicolour')
 names = {}
 for r in rows:
     if r['show'] == 'YES' and r['price']: names.setdefault(r['name'], []).append(r)
@@ -24,7 +24,14 @@ for r in rows:
     elif scent.lower().startswith('any'): notes = ['Assorted scent']
     else: notes = [scent]
     c = cols(r['colour'])
-    if jes:
+    diy = kind.startswith('diy')
+    if diy:
+        desc = f'A do-it-yourself paint kit: a starfish to paint, with paints and a brush. About {g} g.'
+        line = 'Paint your own starfish.'
+        mat = 'Starfish, paints and a brush.'
+        care = []
+        cat, typ, art = 'jesmonite', 'DIY paint kit', 'tray'
+    elif jes:
         what = 'tray' if 'tray' in kind else 'dish'
         desc = f'A hand-cast Jesmonite {what} in {c}. About {g} g. Each piece varies a little in colour and pattern.'
         line = f'Hand-cast {what}, {c}.'
@@ -32,13 +39,13 @@ for r in rows:
         care = ['Wipe with a soft, damp cloth.', 'Not dishwasher-safe and not for food.', 'Keep away from long contact with water.']
         cat, typ, art = 'jesmonite', 'Tray' if what == 'tray' else 'Dish', what if what == 'dish' else 'tray'
     else:
-        word = {'glass candle': 'hand-poured glass candle', 'moulded candle': 'hand-moulded candle', 'tealight candle': 'hand-poured tealight'}.get(kind, 'hand-poured candle')
+        word = {'glass candle': 'hand-poured glass candle', 'murphy candle': 'hand-poured Murphy candle', 'jar candle': 'hand-poured jar candle', 'moulded candle': 'hand-moulded candle', 'tealight candle': 'hand-poured tealight'}.get(kind, 'hand-poured candle')
         sc = f'{notes[0]} scent' if notes and not notes[0].startswith('Assorted') else ('Assorted scent' if notes else '')
         desc = f'A {word}{", " + sc.lower() if sc else ""}, in {c}. About {g} g.'
         line = f'{sc + " · " if sc else ""}{c.capitalize()}'
-        mat = {'glass candle': 'Hand-poured candle in a glass.', 'moulded candle': 'Hand-moulded candle.', 'tealight candle': 'Hand-poured tealight.'}.get(kind, 'Hand-poured candle.')
+        mat = {'glass candle': 'Hand-poured candle in a glass.', 'murphy candle': 'Hand-poured Murphy candle.', 'jar candle': 'Hand-poured candle in a jar.', 'moulded candle': 'Hand-moulded candle.', 'tealight candle': 'Hand-poured tealight.'}.get(kind, 'Hand-poured candle.')
         care = ['Let the first burn melt to the edges.', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.']
-        cat, typ, art = 'candles', {'glass candle': 'Glass candle', 'moulded candle': 'Moulded candle', 'tealight candle': 'Tealight'}.get(kind, 'Candle'), 'jar'
+        cat, typ, art = 'candles', {'glass candle': 'Glass candle', 'murphy candle': 'Murphy candle', 'jar candle': 'Jar candle', 'moulded candle': 'Moulded candle', 'tealight candle': 'Tealight'}.get(kind, 'Candle'), 'jar'
     pid = sku.lower()
     o = {'id': pid, 'name': n, 'cat': cat, 'type': typ, 'line': line, 'desc': desc}
     if notes: o['notes'] = notes

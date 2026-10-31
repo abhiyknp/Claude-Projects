@@ -1,5 +1,5 @@
 {
- "_source": "Google Sheet 185xZS31dZB0ZJrtpevJ0FDzjSugtvn1Dumr8-19jlvg read 2026-10-31 via Sheets connector. id: [price, Show on website]",
+ "_source": "sheet (4) 2026-10-31 + owner price update CG-007, CG-010 = 299",
  "rows": {
   "BNT-PRD-CG-001": [
    199,
@@ -11,46 +11,46 @@
   ],
   "BNT-PRD-CG-003": [
    199,
-   "NO"
+   "YES"
   ],
   "BNT-PRD-CG-004": [
    169,
-   ""
+   "YES"
   ],
   "BNT-PRD-CG-005": [
    169,
-   ""
+   "YES"
   ],
   "BNT-PRD-CG-006": [
    199,
-   ""
+   "YES"
   ],
   "BNT-PRD-CG-007": [
-   249,
-   ""
+   299,
+   "YES"
   ],
   "BNT-PRD-CG-008": [
    249,
-   ""
+   "YES"
   ],
   "BNT-PRD-CG-009": [
    249,
-   ""
+   "YES"
   ],
   "BNT-PRD-CG-010": [
-   249,
-   ""
+   299,
+   "YES"
   ],
   "BNT-PRD-CG-011": [
    99,
-   ""
+   "YES"
   ],
   "BNT-PRD-MC-001": [
-   29,
+   49,
    "YES"
   ],
   "BNT-PRD-MC-002": [
-   49,
+   39,
    "YES"
   ],
   "BNT-PRD-MC-003": [
@@ -58,27 +58,27 @@
    "YES"
   ],
   "BNT-PRD-MC-004": [
-   29,
+   39,
    "YES"
   ],
   "BNT-PRD-MC-005": [
-   29,
+   49,
    "YES"
   ],
   "BNT-PRD-MC-006": [
-   29,
+   49,
    "YES"
   ],
   "BNT-PRD-MC-007": [
-   49,
+   39,
    "YES"
   ],
   "BNT-PRD-MC-008": [
-   49,
+   39,
    "YES"
   ],
   "BNT-PRD-MC-009": [
-   49,
+   39,
    "YES"
   ],
   "BNT-PRD-TL-001": [
@@ -123,6 +123,10 @@
   ],
   "BNT-PRD-JT-005": [
    79,
+   "YES"
+  ],
+  "BNT-PRD-DIY-001": [
+   69,
    "YES"
   ]
  }
