@@ -1,0 +1,204 @@
+{
+ "currency": "INR",
+ "source": "Team Master Source of Truth workbook (photos are temporary)",
+ "products": [
+  {
+   "id": "BNT-PRD-CG-001",
+   "name": "Iced Latte",
+   "type": "Glass candle",
+   "price": 199,
+   "img": "bnt-prd-cg-001.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 5
+  },
+  {
+   "id": "BNT-PRD-CG-002",
+   "name": "Vanilla Gold",
+   "type": "Glass candle",
+   "price": 169,
+   "img": "bnt-prd-cg-002.jpg",
+   "sheetTab": "Glass Candles",
+   "sheetRow": 6
+  },
+  {
+   "id": "BNT-PRD-MC-001",
+   "name": "Mini Bubble Candle",
+   "type": "Moulded candle",
+   "price": 29,
+   "img": "bnt-prd-mc-001.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 5
+  },
+  {
+   "id": "BNT-PRD-MC-002",
+   "name": "Sunflower Float",
+   "type": "Moulded candle",
+   "price": 49,
+   "img": "bnt-prd-mc-002.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 6
+  },
+  {
+   "id": "BNT-PRD-MC-003",
+   "name": "Ladoo-shaped candle",
+   "type": "Moulded candle",
+   "price": 29,
+   "img": "bnt-prd-mc-003.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 7
+  },
+  {
+   "id": "BNT-PRD-MC-004",
+   "name": "Blooming Rose",
+   "type": "Moulded candle",
+   "price": 29,
+   "img": "bnt-prd-mc-004.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 8
+  },
+  {
+   "id": "BNT-PRD-MC-005",
+   "name": "Mini Bubble Candle",
+   "type": "Moulded candle",
+   "price": 29,
+   "img": "bnt-prd-mc-005.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 9
+  },
+  {
+   "id": "BNT-PRD-MC-006",
+   "name": "Mini Bubble Candle",
+   "type": "Moulded candle",
+   "price": 29,
+   "img": "bnt-prd-mc-006.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 10
+  },
+  {
+   "id": "BNT-PRD-MC-007",
+   "name": "Sunflower Float",
+   "type": "Moulded candle",
+   "price": 49,
+   "img": "bnt-prd-mc-007.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 11
+  },
+  {
+   "id": "BNT-PRD-MC-008",
+   "name": "Purple Haze",
+   "type": "Moulded candle",
+   "price": 49,
+   "img": "bnt-prd-mc-008.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 12
+  },
+  {
+   "id": "BNT-PRD-MC-009",
+   "name": "Blooming Rose",
+   "type": "Moulded candle",
+   "price": 49,
+   "img": "bnt-prd-mc-009.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": 13
+  },
+  {
+   "id": "BNT-PRD-TL-001",
+   "name": "Sunflower Glow",
+   "type": "Tealight candle",
+   "price": 15,
+   "img": "bnt-prd-tl-001.jpg",
+   "sheetTab": "Tealight Candles",
+   "sheetRow": 5
+  },
+  {
+   "id": "BNT-PRD-TL-002",
+   "name": "Midnight Sunflower",
+   "type": "Tealight candle",
+   "price": 15,
+   "img": "bnt-prd-tl-002.jpg",
+   "sheetTab": "Tealight Candles",
+   "sheetRow": 6
+  },
+  {
+   "id": "BNT-PRD-TL-003",
+   "name": "Marrigold Glow",
+   "type": "Tealight candle",
+   "price": 15,
+   "img": "bnt-prd-tl-003.jpg",
+   "sheetTab": "Tealight Candles",
+   "sheetRow": 7
+  },
+  {
+   "id": "BNT-PRD-TL-004",
+   "name": "Love Note",
+   "type": "Tealight candle",
+   "price": 15,
+   "img": "bnt-prd-tl-004.jpg",
+   "sheetTab": "Tealight Candles",
+   "sheetRow": 8
+  },
+  {
+   "id": "BNT-PRD-TL-005",
+   "name": "Violet Whisper",
+   "type": "Tealight candle",
+   "price": 15,
+   "img": "bnt-prd-tl-005.jpg",
+   "sheetTab": "Tealight Candles",
+   "sheetRow": 9
+  },
+  {
+   "id": "BNT-PRD-TL-006",
+   "name": "Rosé Whirl",
+   "type": "Tealight candle",
+   "price": 15,
+   "img": "bnt-prd-tl-006.jpg",
+   "sheetTab": "Tealight Candles",
+   "sheetRow": 10
+  },
+  {
+   "id": "BNT-PRD-JT-001",
+   "name": "Rose Dawn",
+   "type": "Jesmonite tray",
+   "price": 149,
+   "img": "bnt-prd-jt-001.jpg",
+   "sheetTab": "Jesmonite Tray",
+   "sheetRow": 5
+  },
+  {
+   "id": "BNT-PRD-JT-002",
+   "name": "Ivory Gilt",
+   "type": "Jesmonite tray",
+   "price": 149,
+   "img": "bnt-prd-jt-002.jpg",
+   "sheetTab": "Jesmonite Tray",
+   "sheetRow": 6
+  },
+  {
+   "id": "BNT-PRD-JT-003",
+   "name": "Cloud Marble",
+   "type": "Jesmonite dish",
+   "price": 79,
+   "img": "bnt-prd-jt-003.jpg",
+   "sheetTab": "Jesmonite Tray",
+   "sheetRow": 7
+  },
+  {
+   "id": "BNT-PRD-JT-004",
+   "name": "Little Hearts",
+   "type": "Jesmonite dish",
+   "price": 79,
+   "img": "bnt-prd-jt-004.jpg",
+   "sheetTab": "Jesmonite Tray",
+   "sheetRow": 8
+  },
+  {
+   "id": "BNT-PRD-JT-005",
+   "name": "Holi Bloom",
+   "type": "Jesmonite dish",
+   "price": 79,
+   "img": "bnt-prd-jt-005.jpg",
+   "sheetTab": "Jesmonite Tray",
+   "sheetRow": 9
+  }
+ ]
+}
