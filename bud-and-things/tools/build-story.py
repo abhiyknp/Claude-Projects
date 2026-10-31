@@ -4,7 +4,7 @@
 Set WA_NUMBER below (digits with country code, e.g. 919XXXXXXXXX) to send picks straight to the shop WhatsApp."""
 import json, os
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-WA_NUMBER = ''                      # shop WhatsApp, digits only with country code. Empty: picks go via Instagram DM
+WA_NUMBER = '917985508939'                      # shop WhatsApp, digits only with country code. Empty: picks go via Instagram DM
 IG = 'budandthings_official'
 CH = [('Glass Candles', 'Glass candles', 'Little jars of light'), ('Tealight Candles', 'Tealights', 'Tiny flames for every thali'),
       ('Moulded Candles', 'Moulded candles', 'Shapes that make you smile'), ('Jesmonite Tray', 'Jesmonite trays', 'For sweets, keys and keepsakes')]
