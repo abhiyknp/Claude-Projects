@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Share the BUD &amp; THINGS catalogue</title>
+<meta name="description" content="QR code, WhatsApp link and Instagram story card for the BUD &amp; THINGS catalogue.">
+<meta name="theme-color" content="#7A1229">
+<link rel="canonical" href="https://budandthings.com/catalogue/share/">
+<meta property="og:type" content="website"><meta property="og:title" content="BUD &amp; THINGS · Our catalogue"><meta property="og:description" content="Handmade candles and Jesmonite trays by Ashi."><meta property="og:url" content="https://budandthings.com/catalogue/"><meta property="og:image" content="https://budandthings.com/catalogue/share/og.png"><meta name="twitter:card" content="summary_large_image">
+<style>
+@font-face{font-family:'Playfair Display';src:url(../../prototype/assets/fonts/playfair.woff2) format('woff2');font-weight:400 900;font-display:swap}
+@font-face{font-family:'Montserrat';src:url(../../prototype/assets/fonts/montserrat.woff2) format('woff2');font-weight:100 900;font-display:swap}
+:root{--maroon:#8F1834;--maroon-d:#7A1229;--gold:#D6A34A;--cream:#F8F0E4;--ink:#150206}
+*{box-sizing:border-box}
+body{margin:0;background:var(--maroon-d);color:var(--cream);font:400 16px/1.5 Montserrat,system-ui,sans-serif;text-align:center}
+main{max-width:460px;margin:0 auto;padding:36px 16px 48px}
+.emb{width:112px;height:112px;border-radius:50%;background:var(--cream);padding:4px}
+h1{font:600 34px/1.1 'Playfair Display',serif;margin:18px 0 4px}h1 i{color:var(--gold);font-weight:500}
+.sub{margin:0 0 26px;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;font-size:12px}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;margin:0 0 12px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--cream);font:600 15px Montserrat,system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.btn.main{background:var(--gold);color:var(--ink)}
+.btn[hidden]{display:none}
+.qr{background:var(--cream);border:2px solid var(--gold);border-radius:22px;padding:18px;margin:26px 0 12px;color:var(--maroon)}
+.qr img{width:100%;max-width:300px;height:auto;display:block;margin:0 auto 8px}
+.qr b{font:600 20px 'Playfair Display',serif}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.dl a{color:var(--cream);font-size:13px;text-decoration:none;border:1px solid rgba(214,163,74,.5);border-radius:12px;padding:12px 8px}
+.dl a span{display:block;color:var(--gold);font-size:11px}
+p.tip{font-size:13px;opacity:.85;margin:22px 0 0}
+</style></head><body><main>
+<img class="emb" src="../../prototype/assets/silk/emblem.webp" alt="BUD &amp; THINGS by Ashi" width="112" height="112">
+<h1>Our <i>catalogue</i></h1><p class="sub">Handmade candles · Jesmonite</p>
+<a class="btn main" href="../">Browse the catalogue</a>
+<button class="btn" id="nat" hidden>Share…</button>
+<a class="btn" id="wa" href="https://wa.me/?text=Have%20a%20look%20at%20the%20BUD%20%26%20THINGS%20catalogue%3A%20https%3A%2F%2Fbudandthings.com%2Fcatalogue%2F%3Futm_source%3Dwhatsapp" target="_blank" rel="noopener">Send on WhatsApp</a>
+<button class="btn" id="cp">Copy link</button>
+<div class="qr"><img src="qr.svg" alt="QR code to open the catalogue" width="300" height="300"><b>Scan to browse</b></div>
+<div class="dl">
+<a href="story-1080x1920.png" download>Instagram story card<span>1080 × 1920</span></a>
+<a href="square-1080.png" download>WhatsApp / post card<span>1080 × 1080</span></a>
+<a href="qr.png" download>QR code, PNG<span>1000 × 1000</span></a>
+<a href="qr.svg" download>QR code, SVG<span>for print</span></a>
+</div>
+<p class="tip">Instagram: put <b>budandthings.com/catalogue</b> in your bio, or add a link sticker to the story card.</p>
+</main>
+<script>(function(){var u='https://budandthings.com/catalogue/',n=document.getElementById('nat'),c=document.getElementById('cp');
+if(navigator.share){n.hidden=false;n.onclick=function(){navigator.share({title:'BUD & THINGS catalogue',text:'Have a look at the BUD & THINGS catalogue',url:u+'?utm_source=share'}).catch(function(){})}}
+c.onclick=function(){var d=function(){c.textContent='Link copied'};(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(d,function(){prompt('Copy this link',u)})}})()</script>
+</body></html>
