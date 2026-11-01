@@ -99,6 +99,7 @@ function placeOrder(o, em) {
   if (!c.name || c.name.length > 80) bad('name'); if (!normPhone(c.phone)) bad('phone'); c.phone = normPhone(c.phone);
   if (!a.line1 || !/^[1-9]\d{5}$/.test(a.pin || '') || !a.city || !a.state) bad('address');
   if (!['Online', 'UPI QR', 'Gift card or points', 'Cash on delivery'].includes(o.method)) bad('method');
+  if (o.method === 'Online' && !setting('onlineOn', false)) bad('online_off');
   if (o.method === 'UPI QR' && !(setting('upiQrOn', false) && /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(setting('upiId', ''))))) bad('upi_off');
   if (o.method === 'Cash on delivery' && !setting('codOn', false)) bad('cod_off');
   if (!Array.isArray(o.items) || !o.items.length || o.items.length > 20) bad('items');
