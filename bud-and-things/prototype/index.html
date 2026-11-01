@@ -1550,7 +1550,7 @@ const notDraft = (r) => !skusOf(r).some((k) => DRAFT_SKU.test(k)) && (!SHEET_ROW
 let SHEET_ROWS = false;
 function applyData() {
   SHEET_ROWS = !!(DATA.products && DATA.products.some((r) => skusOf(r).some((k) => LIVE_SKU.test(k))));
-  P = DATA.products && DATA.products.filter(notDraft).length ? DATA.products.filter(notDraft).filter((r) => r.live !== false).sort(bySort).map((r) => normProduct(r.id, r.data)).filter((p) => p.variants.length) : BASE_P.slice();
+  P = DATA.products && DATA.products.filter(notDraft).length ? DATA.products.filter(notDraft).filter((r) => r.live !== false && !(r.data && r.data.upcoming)).sort(bySort).map((r) => normProduct(r.id, r.data)).filter((p) => p.variants.length) : BASE_P.slice();
   indexProducts();
   PAIRINGS = (DATA.pairings && DATA.pairings.length ? DATA.pairings.filter((r) => r.live !== false).sort(bySort).map((r) => Object.assign({ name: r.id, why: '', items: [] }, r.data, { id: r.id })) : BASE_PAIRINGS.slice())
     .filter((x) => x.items.length === 2 && x.items.every(([pid, vi]) => byId[pid] && byId[pid].variants[vi]));
@@ -2660,7 +2660,7 @@ function admProductForm(r) {
     <span class="field"><label for="ap-art">Drawing until photos arrive</label><select id="ap-art" name="art">${ARTS.map(([k, l]) => `<option value="${k}" ${d.art === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
     ${f('c', 'Drawing colour', d.c || '#DCC9AE', { type: 'color' })}
     ${f('sort', 'Order on the site', r ? r.sort : (prodRows().length * 10), { type: 'number' })}
-    <span class="field adm-flags"><label><input type="checkbox" name="gift" ${d.gift !== false ? 'checked' : ''}> Good as a gift</label></span><span class="full status" role="note">${!r || r.live === false ? '<strong>Draft:</strong> customers cannot see this product yet. Fill every detail, add photos under Photos and videos, then press Publish.' : '<strong>Published:</strong> customers can see this product.'}</span>
+    <span class="field adm-flags"><label><input type="checkbox" name="gift" ${d.gift !== false ? 'checked' : ''}> Good as a gift</label><label><input type="checkbox" name="upcoming" ${d.upcoming ? 'checked' : ''}> Upcoming (catalogue only): not in the shop yet</label></span><span class="full status" role="note">${!r || r.live === false ? '<strong>Draft:</strong> customers cannot see this product yet. Fill every detail, add photos under Photos and videos, then press Publish.' : '<strong>Published:</strong> customers can see this product.'}</span>
     ${UI.adm.formErr ? `<span class="err full" role="alert">${esc(UI.adm.formErr)}</span>` : ''}
     <span class="full" style="display:flex;gap:10px;flex-wrap:wrap">${!r || r.live === false ? '<button class="btn ghost" type="submit" data-live="0">Save as draft</button><button class="btn" type="submit" data-live="1">Publish to the site</button>' : '<button class="btn" type="submit" data-live="1">Save changes</button><button class="btn ghost" type="submit" data-live="0">Move back to draft</button>'}${r ? `<button class="btn ghost" type="button" data-act="adm-media-for" data-id="${esc(r.id)}">Photos and videos</button><button class="btn ghost danger" type="button" data-act="adm-del-product" data-id="${esc(r.id)}">Delete</button>` : ''}</span></form>`;
 }
@@ -2669,6 +2669,7 @@ function readProductForm(form, live) {
   const all = (n) => [...form.querySelectorAll(`[name="${n}"]:checked`)].map((x) => x.value);
   const variants = []; for (let i = 0; form.elements['v-sku-' + i]; i++) { const sku = v('v-sku-' + i).toUpperCase(); if (sku) variants.push({ sku, label: v('v-label-' + i), price: Math.round(+v('v-price-' + i)) }); }
   const d = { name: v('name'), cat: v('cat'), type: v('type'), line: v('line'), variants, size: v('size'), material: v('material'), care: lineList(v('care')), mood: all('mood'), space: all('space'), occ: all('occ'), gift: form.elements.gift.checked, art: v('art'), c: v('c') };
+  if (form.elements.upcoming && form.elements.upcoming.checked) d.upcoming = true;
   if (v('sec')) d.sec = v('sec');
   if (d.cat === 'gifts') { const old = form.dataset.id && byId[form.dataset.id]; d.img = (old && old.img) || IMG.box; if (old && old.popular) d.popular = true; }
   if (v('notes')) d.notes = csvList(v('notes'));

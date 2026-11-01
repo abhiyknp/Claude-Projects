@@ -69,6 +69,8 @@ jobs:
           # the pages are written to sit next to prototype/; on the site the assets live one level up
           # (this also turns ../../prototype/assets/ in the share, light and diwali pages into ../../assets/)
           find _site/catalogue -name '*.html' -exec sed -i 's#\.\./prototype/assets/#../assets/#g' {} +
+      - name: Rebuild the catalogue list from the live database (sheet snapshot is the back-up)
+        run: node bud-and-things/tools/catalogue-live.js _site/catalogue
       - name: Add product pages and Pinterest feeds
         run: node bud-and-things/tools/build-pinterest.js _site
       - name: Move the app script into its own minified file
