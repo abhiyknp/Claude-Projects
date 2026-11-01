@@ -3624,7 +3624,7 @@ function festiveBanner() {
 
 function spotlight(id) {
   const p = byId[String(SET.spotlight || '').trim()] || idList('featured').map((x) => byId[x])[0]; if (!p) return '';
-  const vi = p.variants.length > 1 && p.art === 'jar' ? 1 : 0; const ph = mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0]; const pic = ph ? mUrl(ph) : p.img; const picAlt = ph ? ph.alt : p.name;
+  const vi = p.variants.length > 1 && p.art === 'jar' ? 1 : 0; const ph = mediaFor(p.id, { kind: 'photo', role: ['lifestyle', 'lit'] })[0] || coverOf(p, vi); const pic = ph ? mUrl(ph) : p.img; const picAlt = ph ? ph.alt : p.name;
   return `<section class="spot" aria-labelledby="${id}"><div class="wrap section"><div class="split">
     <a class="spot-ph tile${pic ? ' photo-tile' : ''}" href="#p-${p.id}" aria-label="${esc(p.name)}">${pic ? `<img src="${esc(pic)}" alt="${esc(picAlt)}" loading="lazy">` : art(p, vi, 1.9)}</a>
     <div style="display:flex;flex-direction:column;gap:16px"><span class="eyebrow">${T('home.spotEyebrow')}</span><h2 id="${id}" style="font-size:clamp(34px,4vw,52px)">${esc(p.name)}</h2>
