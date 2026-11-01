@@ -613,7 +613,8 @@ body.cs main { padding-bottom: 0; }
 /* Silk: the Coming soon page is deep maroon velvet with gold, like the header and footer. Every text pair is at least 4.5:1. */
 :root[data-skin="silk"] .soon { background: var(--velvet), radial-gradient(ellipse at 85% 10%, #1C0309, #150206 55%, #080102); background-size: 1024px 768px, auto; color: #FBE9C2; animation: silk-drift2 70s linear infinite; }
 :root[data-skin="silk"] .soon h1 { color: #FBE9C2; }
-:root[data-skin="silk"] .soon .soon-cat a { color: #D6A34A; }
+:root[data-skin="silk"] .soon .soon-cat a.btn { background: transparent; color: #D6A34A; border: 1px solid #D6A34A; text-decoration: none; padding: 0 22px; }
+:root[data-skin="silk"] .soon .soon-cat a.btn:hover { background: #D6A34A; color: #080102; }
 :root[data-skin="silk"] .soon h1 em, :root[data-skin="silk"] .soon .eyebrow { color: #D6A34A; }
 :root[data-skin="silk"] .soon p, :root[data-skin="silk"] .soon label, :root[data-skin="silk"] .soon .muted, :root[data-skin="silk"] .soon #news-msg { color: #FBE9C2; }
 :root[data-skin="silk"] .soon input { background: rgba(248,240,228,.96); color: #150206; border-color: #D6A34A; }
@@ -2041,7 +2042,7 @@ function ritualPrice(items) { const lines = items.map(([p, vi]) => ({ p, v: p.va
 function viewComingSoon() {
   return `<section class="soon" aria-labelledby="soon-h"><span class="mark lockup" role="img" aria-label="BUD &amp; THINGS by Ashi"></span><span class="eyebrow">${T('soon.eyebrow')}</span><h1 id="soon-h" tabindex="-1">${T('soon.title')}</h1><p class="muted">${T('soon.text')}</p>
     <form data-form="news" data-src="coming-soon" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 220px;min-width:0"><button class="btn" type="submit">${T('soon.cta')}</button><span id="news-msg" style="flex:1 1 100%"></span></form>
-    <p class="soon-cat"><a href="catalogue/">See our pieces and prices</a></p>
+    <p class="soon-cat"><a class="btn ghost" href="catalogue/">See our pieces and prices</a></p>
     ${socialLinks()}</section>`;
 }
 
