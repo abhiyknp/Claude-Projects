@@ -2,10 +2,11 @@
 // home page HTML stays small. The source page is not changed (it is also published as a Claude artifact, which needs the
 // script inline); this runs on the built site only.
 //   node bud-and-things/tools/split-js.js _site            (run by .github/workflows/pages.yml, before add-csp.js)
+//   node bud-and-things/tools/split-js.js <folder> page.html   (tools/preview.sh: the local preview and the tests load the page the way the site does)
 // ESBUILD_PATH points at an installed esbuild; without it the script is moved as it is, not minified.
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const dir = process.argv[2]; if (!dir) { console.error('usage: split-js.js <site folder>'); process.exit(1); }
-const file = path.join(dir, 'index.html');
+const file = path.join(dir, process.argv[3] || 'index.html'); // page.html in the local preview
 const html = fs.readFileSync(file, 'utf8');
 // the app script is the one plain <script> block that holds the app itself (the others are tiny or have attributes)
 const blocks = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].filter((m) => m[1].length > 100000);
