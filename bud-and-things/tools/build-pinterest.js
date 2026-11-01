@@ -45,7 +45,7 @@ async function load({ url, key }) {
 function prepare(d, fileUrl) {
   const qty = Object.fromEntries(d.stock.map((r) => [r.sku, r.qty]));
   const set = Object.fromEntries(d.settings.map((r) => [r.key, r.value]));
-  const products = d.products.map((r) => {
+  const products = d.products.filter((r) => !(r.data && r.data.upcoming)).map((r) => {
     const p = Object.assign({ name: r.id, cat: 'candles', line: '', material: '', size: '', variants: [] }, r.data, { id: r.id });
     p.variants = (p.variants || []).filter((v) => v && v.sku && v.price > 0);
     p.photos = d.media.filter((m) => m.product_id === p.id && m.kind === 'photo' && ROLE_ORDER.includes(m.role))

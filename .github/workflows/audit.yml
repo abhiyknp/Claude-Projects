@@ -7,6 +7,7 @@ on:
     paths:
       - 'bud-and-things/prototype/**'
       - 'bud-and-things/tools/audit.js'
+      - 'bud-and-things/tools/catalogue-live.js'
       - 'bud-and-things/tools/test-*.js'
       - '.github/workflows/audit.yml'
   workflow_dispatch:
@@ -33,6 +34,7 @@ jobs:
         run: |
           node bud-and-things/tools/test-import.js
           node bud-and-things/tools/test-invoice.js
+          node bud-and-things/tools/test-catalogue-live.js
       - name: Run the shop flow test
         run: |
           sh bud-and-things/tools/preview.sh >/dev/null 2>&1 &
