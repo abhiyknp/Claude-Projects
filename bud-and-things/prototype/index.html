@@ -269,6 +269,9 @@ body.app .site-foot { display: none; }
 .grid > .card > .tile { margin: -1px -1px 4px; }
 .badge { position: absolute; left: 12px; top: 12px; padding: 4px 10px; background: var(--ivory); font-size: 12px; font-weight: 600; letter-spacing: .06em; }
 .badge.out { background: var(--choc); color: var(--ivory); }
+:root[data-skin="silk"] .badge.out { background: #150206; color: #F8F0E4; }
+.card .tile.is-out > img.fill, .card .tile.is-out > svg { filter: grayscale(1); opacity: .5; }
+.soldnote { margin: 0; font-size: 15px; }
 .swatches { display: flex; gap: 6px; }
 .swatches span { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--line2); }
 .obj { display: block; flex-shrink: 0; }
@@ -1349,6 +1352,7 @@ const TEXT = {
   'pdp.repour': ['Burned to the end? Send the jar back and we re-pour it for {repourPrice}.', 'Product: re-pour offer on candles'],
   'pdp.reviewsEmpty': ['No reviews yet. If you have this piece, tell others what you think.', 'Product: no reviews yet'],
   'pdp.reviewThanks': ['Thank you. Your review will show here once we have read it.', 'Product: after a review is sent'],
+  'pdp.soldout': ['A new batch is being prepared.', 'Product: sold-out note'],
   'pdp.restock': ['Leave your email or WhatsApp number and we’ll tell you when the next batch is poured.', 'Product: restock alert text'],
   'cart.freeShip': ['Add {gap} more for free shipping', 'Cart: free shipping nudge'],
   'cart.freeShipDone': ['You’ve unlocked free shipping', 'Cart: free shipping reached'],
@@ -2016,7 +2020,7 @@ function tileArt(p, vi, sc) { const m = coverOf(p, vi); return m ? `<img class="
 function card(p, i) {
   const saved = S.saved.includes(p.id); const out = !inStock(p); const ph = mediaFor(p.id, { kind: 'photo' });
   const sw = p.art === 'jar' ? '' : `<span class="swatches" role="img" aria-label="${p.variants.length} options">${p.variants.map((v, vi) => `<span style="background:${colorFor(p, vi)}"></span>`).join('')}</span>`;
-  return `<div class="card"><a class="tile${i % 2 ? ' alt' : ''}${ph.length ? ' has-ph' : ''}" href="#p-${p.id}" aria-label="${esc(p.name)}">${tileArt(p, 0, 1)}${ph[1] ? `<img class="fill hover-ph" src="${esc(mUrl(ph[1]))}" alt="" loading="lazy">` : ''}${out ? '<span class="badge out">Sold out</span>' : isNew(p) ? '<span class="badge new">New</span>' : ''}</a>
+  return `<div class="card"><a class="tile${i % 2 ? ' alt' : ''}${ph.length ? ' has-ph' : ''}${out ? ' is-out' : ''}" href="#p-${p.id}" aria-label="${esc(p.name)}">${tileArt(p, 0, 1)}${ph[1] ? `<img class="fill hover-ph" src="${esc(mUrl(ph[1]))}" alt="" loading="lazy">` : ''}${out ? '<span class="badge out">Sold out</span>' : isNew(p) ? '<span class="badge new">New</span>' : ''}</a>
     <span class="eyebrow">${esc(p.type)}</span>
     <a class="name" href="#p-${p.id}">${esc(p.name)}</a>${stars(p.id)}${sw}
     <span class="row"><span class="num" style="font-weight:600">${priceFrom(p)}</span><span style="display:flex;gap:4px"><button class="icon-btn" type="button" data-act="save" data-id="${p.id}" aria-pressed="${saved}" aria-label="${saved ? 'Remove ' + esc(p.name) + ' from saved' : 'Save ' + esc(p.name)}">${HEART(saved)}</button>${out ? '' : `<button class="btn ghost small" type="button" data-act="quick-add" data-id="${p.id}">Add</button>`}</span></span></div>`;
@@ -2118,6 +2122,7 @@ function viewProduct(id) {
     <p class="pdp-desc">${esc(descOf(p))}</p>
     <ul class="hl-row">${highlightsOf(p).map(([i, t]) => `<li>${hl(i, 22)}<span>${esc(t)}</span></li>`).join('')}</ul>
     <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="price num">${inr(v.price)}</span>${stockNote}${batchLine(p, left)}<span class="muted" style="font-size:13px">Inclusive of all taxes</span></div>
+    ${left === 0 ? `<p class="soldnote"><strong>Sold out.</strong> ${T('pdp.soldout')}</p>` : ''}
     ${one ? '' : `<div role="radiogroup" aria-label="${optName}" style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">${optName}</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${p.variants.map((x, i) => `<button class="chip" type="button" role="radio" aria-checked="${i === st.vi}" data-act="variant" data-id="${id}" data-i="${i}">${p.art !== 'jar' && x.label !== 'Set of 3' ? `<span style="width:14px;height:14px;border-radius:50%;margin-right:8px;background:${colorFor(p, i)};border:1px solid var(--line2)"></span>` : ''}${esc(x.label)}${new Set(p.variants.map((y) => y.price)).size > 1 ? ' · ' + inr(x.price) : ''}${stockOf(x.sku) === 0 ? ' · sold out' : ''}</button>`).join('')}</div></div>`}
     <div class="buy">${left > 0 ? `<span class="qty"><button type="button" data-act="pdp-qty" data-id="${id}" data-d="-1" aria-label="Decrease quantity">−</button><span class="num" aria-live="polite">${st.qty}</span><button type="button" data-act="pdp-qty" data-id="${id}" data-d="1" aria-label="Increase quantity">+</button></span><button class="btn add" type="button" data-act="add" data-id="${id}">Add to cart · <span class="num">${inr(v.price * st.qty)}</span></button>` : `<button class="btn add ${S.notify[v.sku] ? 'ghost' : ''}" type="button" data-act="notify" data-sku="${v.sku}">${S.notify[v.sku] ? 'We’ll tell you when it’s back' : 'Notify me when it’s back'}</button>`}
