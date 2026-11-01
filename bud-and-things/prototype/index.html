@@ -3649,7 +3649,7 @@ function productLD(p, rv) {
     ld.aggregateRating = { '@type': 'AggregateRating', ratingValue: +(real.reduce((a, r) => a + r.rating, 0) / real.length).toFixed(1), reviewCount: real.length };
     ld.review = real.slice(0, 5).map((r) => ({ '@type': 'Review', author: { '@type': 'Person', name: r.name }, reviewRating: { '@type': 'Rating', ratingValue: r.rating }, reviewBody: r.body, datePublished: String(r.created_at || '').slice(0, 10) }));
   }
-  return `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}<\/script>`;
+  return '<scr' + `ipt type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}<\/scr` + 'ipt>';
 }
 function homeReviews(id) {
   const list = reviewPool().slice().sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).slice(0, 6);
