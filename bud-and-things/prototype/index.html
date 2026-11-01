@@ -1537,10 +1537,14 @@ const soonFor = (r) => {
 const DATA = { products: null, pairings: null, text: {}, settings: {}, stock: null, media: [], reviews: [] };
 const DB = { state: BTDB.on ? 'loading' : 'local', error: null, stale: false };
 const bySort = (a, b) => (a.sort || 0) - (b.sort || 0);
+// until a product has its own photos in Owner view, show the temporary photo from the catalogue (site/catalogue/img/<sku>.jpg)
+const SNAP_IMG = new Set(["BNT-PRD-CG-001", "BNT-PRD-CG-002", "BNT-PRD-CG-003", "BNT-PRD-CG-004", "BNT-PRD-CG-005", "BNT-PRD-CG-006", "BNT-PRD-CG-007", "BNT-PRD-CG-008", "BNT-PRD-CG-009", "BNT-PRD-CG-010", "BNT-PRD-CG-011", "BNT-PRD-MC-001", "BNT-PRD-MC-002", "BNT-PRD-MC-003", "BNT-PRD-MC-004", "BNT-PRD-MC-005", "BNT-PRD-MC-006", "BNT-PRD-MC-007", "BNT-PRD-MC-008", "BNT-PRD-MC-009", "BNT-PRD-TL-001", "BNT-PRD-TL-002", "BNT-PRD-TL-003", "BNT-PRD-TL-004", "BNT-PRD-TL-005", "BNT-PRD-TL-006", "BNT-PRD-JT-001", "BNT-PRD-JT-002", "BNT-PRD-JT-003", "BNT-PRD-JT-004", "BNT-PRD-JT-005", "BNT-PRD-DIY-001"]);
 function normProduct(id, d) {
   d = d || {}; const cat = d.cat || 'candles';
-  return Object.assign({ name: id, type: cat === 'candles' ? 'Scented candle' : 'Object', line: '', material: '', size: '', care: [], mood: [], space: [], occ: [], gift: true, art: cat === 'candles' ? 'jar' : 'tray', c: '#DCC9AE' }, d,
+  const n = Object.assign({ name: id, type: cat === 'candles' ? 'Scented candle' : 'Object', line: '', material: '', size: '', care: [], mood: [], space: [], occ: [], gift: true, art: cat === 'candles' ? 'jar' : 'tray', c: '#DCC9AE' }, d,
     { id, cat, variants: (d.variants || []).filter((v) => v && v.sku), care: d.care || [], mood: d.mood || [], space: d.space || [], occ: d.occ || [] });
+  const k = n.variants[0] && String(n.variants[0].sku).toUpperCase(); if (!n.img && k && SNAP_IMG.has(k)) n.img = 'catalogue/img/' + k.toLowerCase() + '.jpg';
+  return n;
 }
 // the first draft range (First Light, Chai at Four, trays, gift boxes) may still sit in the database: never show it
 const DRAFT_SKU = /^BT-(CN|JS|GB)-/;
