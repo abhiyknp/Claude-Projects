@@ -333,7 +333,7 @@ alter table orders add column if not exists method text;
 create or replace function release_unpaid() returns void language plpgsql security definer set search_path = public as $$
 declare r record; it jsonb;
 begin
-  for r in select id, data from orders where status = 'Awaiting payment'
+  for r in select id, data from orders where status = 'Awaiting payment' and not (data ? 'utr') -- a customer who sent a payment reference is waiting on the owner, not abandoned
       and created_at < now() - make_interval(mins => greatest(cfg_num('payHoldMins', 120), 5)::int) for update skip locked loop
     for it in select * from jsonb_array_elements(r.data -> 'items') loop
       update stock set qty = qty + (it ->> 'qty')::int, updated_at = now() where sku = it ->> 'sku';
@@ -425,6 +425,8 @@ begin
   if length(coalesce(a ->> 'city', '')) not between 1 and 80 or length(coalesce(a ->> 'state', '')) not between 1 and 60 then raise exception 'bad_order:address'; end if;
   -- Online: paid through Razorpay (functions/pay). Gift card or points: only when they cover the whole total.
   if method is null or method not in ('Online', 'UPI QR', 'Gift card or points', 'Cash on delivery') then raise exception 'bad_order:method'; end if;
+  -- Online (Razorpay) is only offered once the owner turns it on in Settings (onlineOn); until then checkout shows UPI QR only
+  if method = 'Online' and not cfg_on('onlineOn', false) then raise exception 'bad_order:online_off'; end if;
   -- UPI QR is the owner's manual fallback while the gateway is not live: only when switched on and a UPI ID is set
   if method = 'UPI QR' and not (cfg_on('upiQrOn', false) and cfg_text('upiId', '') ~ '^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$') then raise exception 'bad_order:upi_off'; end if;
   -- the shop is prepaid: cash on delivery stays off unless the owner turns it on in Settings

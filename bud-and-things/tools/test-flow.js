@@ -10,6 +10,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     // config.js now points at the live project, where the Coming soon page hides the shop; this flow runs on the built-in draft content
     await pg.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
     pg.on('pageerror', (e) => errs.push(w + ' pageerror: ' + e.message));
+    pg.on('response', (r) => { if (r.status() === 404) errs.push(w + ' 404: ' + r.url()); });
     pg.on('console', (m) => { if (m.type() === 'error' && !/fonts\.g/.test(m.text()) && !/ERR_/.test(m.text())) errs.push(w + ' console: ' + m.text()); });
     pg.on('response', (r) => { if (r.status() >= 400) console.log(w, 'HTTP', r.status(), r.url()); });
     await pg.goto(url + '#home');
