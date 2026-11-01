@@ -5,6 +5,7 @@ set -e
 HERE=$(cd "$(dirname "$0")/.." && pwd)
 OUT=${OUT:-$HERE/.preview}
 rm -rf "$OUT" && mkdir -p "$OUT" && cp -r "$HERE/prototype/." "$OUT/"
+mkdir -p "$OUT/catalogue" && cp -r "$HERE/catalogue/img" "$OUT/catalogue/img"
 # the page is written as page content (it is also published as a Claude artifact); give it a document shell
 { printf '%s' '<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>[hidden]{display:none!important}body{margin:0}</style></head><body>'
   cat "$HERE/prototype/index.html"
