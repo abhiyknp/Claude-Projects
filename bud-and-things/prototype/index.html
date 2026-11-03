@@ -1093,7 +1093,7 @@ body.app .why-band { padding-bottom: 96px; }
 <div class="sr" aria-live="polite" id="live"></div>
 
 <script src="config.js"></script>
-<script src="vendor/qrcode/qrcode.js" defer></script>
+<link rel="preload" as="image" href="assets/silk/velvet.webp" type="image/webp" fetchpriority="high">
 <script src="invoice.js"></script>
 <script src="db.js?v=9"></script>
 <script src="import.js"></script>
@@ -4945,3 +4945,4 @@ render(false);
 track('page_view', { page: pageName(route()) });
 })();
 </script>
+<script>/* the QR drawing code is only used at checkout, on invoices and in 2-step set-up: fetch it once the page is idle, not while the first screen loads */addEventListener('load', () => setTimeout(() => { const s = document.createElement('script'); s.src = 'vendor/qrcode/qrcode.js'; document.head.appendChild(s); }, 400));</script>
