@@ -2109,7 +2109,7 @@ function batchLine(p, left) {
 function packDetails(p, v) {
   const w = +p.weight > 0 ? Math.round(+p.weight) : 0; const candle = p.cat === 'candles';
   const net = candle ? (w ? `1 candle, ${w} g` : '1 candle') : (w ? `1 piece, about ${w} g` : '1 piece');
-  const bd = p.batch && p.batch.poured ? new Date(p.batch.poured) : null;
+  const bd = p.batch && (p.batch.packed || p.batch.poured) ? new Date(p.batch.packed || p.batch.poured) : null;
   const packed = bd && !isNaN(bd) ? bd.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : 'Month and year are printed on each pack';
   const biz = [fill('{bizName}'), fill('{bizAddress}')].filter(Boolean).join(', ');
   return `<dl class="spec"><dt>Common name</dt><dd>${esc(p.type)}</dd><dt>Net quantity</dt><dd>${esc(net)}</dd><dt>MRP</dt><dd>${inr(v.price)} (incl. of all taxes)</dd><dt>Packed</dt><dd>${esc(packed)}</dd><dt>Made and packed by</dt><dd>${esc(biz)}, India</dd><dt>Consumer care</dt><dd>${esc(fill('{grievanceName}'))}, ${esc(fill('{grievancePhone}'))}, ${esc(fill('{email}'))}</dd></dl>`;
@@ -2677,7 +2677,7 @@ function admProductForm(r) {
     ${f('smellsLike', 'Smells like', d.smellsLike, { full: true, area: true, rows: 2, hint: 'the scent story, one or two sentences' })}
     ${f('pz-top', 'Top notes', (pz.top || []).join(', '))}${f('pz-heart', 'Heart notes', (pz.heart || []).join(', '))}${f('pz-base', 'Base notes', (pz.base || []).join(', '))}${f('burnTime', 'Burn time', d.burnTime, { hint: 'for example 40 hours' })}
     ${f('size', 'Size', d.size, { full: true })}${f('weight', 'Weight (grams)', d.weight, { type: 'number', hint: 'one piece, packed' })}${f('mrpMarket', 'Marketplace price (₹)', d.mrpMarket, { type: 'number', hint: 'for Amazon and other marketplaces; empty means the site price' })}${f('dimL', 'Package length (cm)', d.dims && d.dims.l, { type: 'number', hint: 'packed, for couriers and marketplaces' })}${f('dimB', 'Package breadth (cm)', d.dims && d.dims.b, { type: 'number' })}${f('dimH', 'Package height (cm)', d.dims && d.dims.h, { type: 'number' })}${f('gtin', 'Barcode (EAN / GTIN)', d.gtin, { hint: 'optional until a marketplace asks' })}${f('material', 'Material', d.material, { full: true, area: true, rows: 2 })}${f('care', 'Care', (d.care || []).join('\n'), { full: true, area: true, rows: 3, hint: 'one line each' })}
-    ${f('batch-no', 'Batch number', b.no, { type: 'number' })}${f('batch-poured', 'Poured or cast on', b.poured, { type: 'date' })}${f('batch-size', 'Pieces in this batch', b.size, { type: 'number' })}
+    ${f('batch-no', 'Batch number', b.no, { type: 'number' })}${f('batch-poured', 'Poured or cast on', b.poured, { type: 'date' })}${f('batch-packed', 'Packed on (month and year show on the product page)', b.packed, { type: 'date' })}${f('batch-size', 'Pieces in this batch', b.size, { type: 'number' })}
     ${checks('mood', 'Feelings it suits', MOODS, d.mood)}${checks('space', 'Rooms it suits', SPACES, d.space)}${checks('occ', 'Occasions', OCCASIONS, d.occ)}
     <span class="field"><label for="ap-art">Drawing until photos arrive</label><select id="ap-art" name="art">${ARTS.map(([k, l]) => `<option value="${k}" ${d.art === k ? 'selected' : ''}>${l}</option>`).join('')}</select></span>
     ${f('c', 'Drawing colour', d.c || '#DCC9AE', { type: 'color' })}
@@ -2703,7 +2703,7 @@ function readProductForm(form, live) {
   if (+v('dimL') > 0 && +v('dimB') > 0 && +v('dimH') > 0) d.dims = { l: +v('dimL'), b: +v('dimB'), h: +v('dimH') };
   if (v('gtin')) { const g = BTImport.cleanGtin(v('gtin')); if (g) d.gtin = g; }
   d.openStock = {}; for (let i = 0; form.elements['v-sku-' + i]; i++) { const sku = v('v-sku-' + i).toUpperCase(); if (sku && form.elements['v-qty-' + i]) d.openStock[sku] = Math.max(0, parseInt(v('v-qty-' + i), 10) || 0); }
-  if (v('batch-no') || v('batch-poured') || v('batch-size')) d.batch = { no: +v('batch-no') || null, poured: v('batch-poured') || null, size: +v('batch-size') || null };
+  if (v('batch-no') || v('batch-poured') || v('batch-packed') || v('batch-size')) d.batch = { no: +v('batch-no') || null, poured: v('batch-poured') || null, packed: v('batch-packed') || null, size: +v('batch-size') || null };
   return { id: form.dataset.id || slug(v('id')), data: d, sort: Math.round(+v('sort') || 0), live: live, isNew: !form.dataset.id };
 }
 
@@ -2917,10 +2917,12 @@ function launchItems() {
   const photos = (id) => media.filter((m) => m.product_id === id && m.published !== false).length; const brand = (role) => media.some((m) => m.product_id === 'brand' && m.role === role);
   const noPhoto = live.filter((r) => !photos(r.id)); const noPrice = live.filter((r) => (r.data.variants || []).some((v) => !(v.price > 0)));
   const inStock = live.filter((r) => (r.data.variants || []).some((v) => stockOf(v.sku) > 0));
+  const noRow = BTDB.on && DATA.stock ? live.filter((r) => (r.data.variants || []).some((v) => !(v.sku in DATA.stock))) : [];
   return [
     ['Products', 'At least one published product', live.length > 0, 'products', 'Add a product, then press Publish'],
     ['Products', 'Every published product has a photo', live.length > 0 && !noPhoto.length, 'media', noPhoto.length ? noPhoto.length + ' without a photo: ' + noPhoto.slice(0, 3).map((r) => r.data.name || r.id).join(', ') : ''],
     ['Products', 'Every price is filled in', live.length > 0 && !noPrice.length, 'products', noPrice.length ? noPrice.length + ' with a missing price' : ''],
+    ['Products', 'Every option has a stock row (a missing row shows Sold out)', live.length > 0 && !noRow.length, 'stock', noRow.length ? noRow.length + ' without a stock row: ' + noRow.slice(0, 3).map((r) => r.data.name || r.id).join(', ') : ''],
     ['Products', 'Stock counted for at least one option of each product', live.length > 0 && inStock.length === live.length, 'stock', live.length - inStock.length ? (live.length - inStock.length) + ' products show Sold out' : ''],
     ['Business details', 'Business name and address', has('bizName') && has('bizAddress'), 'settings', 'Settings → Policies'],
     ['Business details', 'Grievance officer name and phone', has('grievanceName') && has('grievancePhone'), 'settings', 'Settings → Policies'],

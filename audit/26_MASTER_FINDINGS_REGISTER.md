@@ -31,10 +31,10 @@ Columns: ID, domain, where, severity, priority (P0 now, P1 before launch, P2 pla
 | A-02 | SEO/A11y | /catalogue/light/ | Low | P3 | 6 H1 elements | Use one H1, others H2 | XS | OPEN, VERIFIED |
 | A-03 | SEO | sitemap | Info | P2 | Product pages not in sitemap while Coming soon is on | Retest after launch | — | EXPECTED |
 | A-04 | Perf | LCP | Medium | P2 | Mobile LCP 6.0 s this run | As F-19 | M | OPEN |
-| A-05 | Security | CSP | Low | P3 | `style-src 'unsafe-inline'`, `img-src https:` | Tighten after launch | S | OPEN |
-| A-06 | Data | Stock | Low | P2 | New product with no stock row shows Sold out in shop and catalogue | Owner enters stock; consider an Owner-view warning | S | BY DESIGN, noted |
+| A-05 | Security | CSP | Low | P3 | `style-src 'unsafe-inline'`, `img-src https:` | Tighten after launch | S | PARTLY FIXED: img and media now limited to the site, its database, Cloudinary, Google and the ad pixels; `unsafe-inline` styles stay (inline styles used throughout). Retest after deploy: photos load |
+| A-06 | Data | Stock | Low | P2 | New product with no stock row shows Sold out in shop and catalogue | Owner enters stock; consider an Owner-view warning | S | FIXED IN CODE: Owner launch checklist now has "Every option has a stock row". Retest after deploy |
 | A-07 | Quality | Hard-coded SKU list | Low | P3 | SNAP_IMG goes stale | Replace with real photos in Owner view | XS | OPEN |
-| A-08 | Brief | Facts | Info | P3 | Brief says Terracotta/Chocolate palette, Cashfree/PayU; repo is Silk Maroon & Gold, Razorpay | Update the brief | XS | OPEN |
+| A-08 | Brief | Facts | Info | P3 | Brief says Terracotta/Chocolate palette, Cashfree/PayU; repo is Silk Maroon & Gold, Razorpay | Update the brief | XS | CLOSED: corrected facts in `BRIEF_FACTS.md` |
 | A-09 | Test | Cross-browser | Medium | P2 | Only Chromium run | Test Safari/Firefox/Edge before launch | S | NOT TESTED |
 | A-10 | Evidence | Live DB probe | Medium | P1 | Blocked by production-read guard | Owner runs anon-key read of orders/customers/coupons | XS | NOT TESTED |
 

@@ -15,13 +15,15 @@ const ads = { script: ['https://connect.facebook.net', 'https://www.googletagman
 // Razorpay's checkout: its script, the payment window it opens over the page, and the calls it makes
 const pay = { script: ['https://checkout.razorpay.com'], frame: ['https://api.razorpay.com', 'https://checkout.razorpay.com'], connect: ['https://*.razorpay.com'], form: ['https://*.razorpay.com'] };
 const media = ["'self'", 'data:', 'blob:', db && new URL(db).origin].filter(Boolean);
+// pictures and videos only from the site, its database, Cloudinary (owner uploads) and Google (sheet import previews); BT_CSP_IMG adds more
+const images = [...media, 'https://res.cloudinary.com', 'https://*.googleusercontent.com', ...ads.connect, ...(process.env.BT_CSP_IMG || '').split(/\s+/)].filter(Boolean);
 
 function policy(html) {
   const hashes = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)]
     .map((m) => `'sha256-${crypto.createHash('sha256').update(m[1], 'utf8').digest('base64')}'`);
   return [`default-src 'self'`, `script-src 'self' ${[...ads.script, ...pay.script].join(' ')} ${[...new Set(hashes)].join(' ')}`.trim(),
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, `font-src 'self' https://fonts.gstatic.com`,
-    `img-src ${media.join(' ')} https:`, `media-src ${media.join(' ')} https:`, `connect-src ${[...connect, ...ads.connect, ...pay.connect].join(' ')}`, `frame-src ${pay.frame.join(' ')}`,
+    `img-src ${images.join(' ')}`, `media-src ${images.join(' ')}`, `connect-src ${[...connect, ...ads.connect, ...pay.connect].join(' ')}`, `frame-src ${pay.frame.join(' ')}`,
     `object-src 'none'`, `base-uri 'self'`, `form-action 'self' ${pay.form.join(' ')}`, `upgrade-insecure-requests`].join('; ');
 }
 
