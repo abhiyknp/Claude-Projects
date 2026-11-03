@@ -79,3 +79,10 @@ CHECK: whether small packs or a home-based packer must register with the state L
 6. Wording of refund policy against the E-Commerce Rules.
 
 Reuse `CA_review_pack.docx` and `email_to_CA.txt` in this folder.
+
+## 6. Uttar Pradesh / Greater Noida West notes (web search 2026-11-03; sources are mostly consultant blogs, CONFIRM on official portals)
+- **Shop and Establishment:** UP Dookan aur Vanijya Adhishthan Adhiniyam, 1962 covers Noida and Greater Noida. Sources say home-based and online businesses with a fixed place of work should register. Deadline reported as 30 days or 3 months after starting. A business run only by family members may be exempt. Amended in 2025. Register on the UP labour department portal. CHECK exact rule for a one-person home business.
+- **Trade licence:** sources conflict. Some say Noida Authority issues one. One says there is no trade licence in Noida or Greater Noida. CHECK with the Authority (GNIDA) or CA.
+- **Fire NOC:** UP Fire and Emergency Services Act, 2022. One vendor says a NOC is needed above 250 sq m, below that a fire extinguisher. Not official. CHECK with the UP fire service.
+- **Professional tax:** one source says UP has none.
+- Check the society (Amarpali Verona Heights) rules: many societies bar commercial activity or storage of stock. Ask the RWA.

@@ -5,7 +5,7 @@ Not legal advice. CA to confirm. Reuse these for every label and product page.
 - Maker/packer name to print: **BUD & THINGS by Ashi**
 - Address to print: **Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318, India**
 - Consumer care: **Abhishek Yadav, 9839176160, budandthingsofficial@gmail.com**
-- Burn time: small candles (moulded) 2 to 4 h; glass and murphy 8 to 18 h; tealight 1.5 to 3 h. Jar candle (78 g) not given yet.
+- Burn time: small candles (moulded) 2 to 4 h; glass and murphy 8 to 18 h; tealight 1.5 to 3 h. Jar candle (78 g) 12 to 18 h.
 - Blank policy fields: option B. Keep "[to add]" until owner fills Settings.
 - Care lines: keep the draft below.
 - Net quantity: use catalogue grams per item (`bud-and-things/data/catalogue.sheet.json`).
@@ -13,7 +13,6 @@ Not legal advice. CA to confirm. Reuse these for every label and product page.
 - Packing month and year: auto picked from the packing date (format MM/YYYY).
 
 ## Still needed from owner
-- Burn time for jar candle (78 g).
 - Burn time for Jesmonite items and DIY kit: none needed (not candles), confirm.
 
 ## Catalogue summary (from catalogue.sheet.json, 32 items)
@@ -46,3 +45,12 @@ Never leave a burning candle unattended. Keep away from children, pets,
 curtains and anything that can catch fire. Place on a heat-safe, flat surface.
 Stop burning when 1 cm of wax is left.
 ```
+
+## Settings values to enter (owner Settings, Policies section)
+- Registered business name: BUD & THINGS by Ashi (proprietor: Shivani Yadav)
+- Registered address: Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318 (Settings adds ", India")
+- GSTIN: leave blank while unregistered
+- Grievance officer name: Abhishek Yadav
+- Grievance officer phone: 9839176160
+- Court city: to confirm (Gautam Buddha Nagar / Greater Noida?)
+- Policy date: day of go-live
