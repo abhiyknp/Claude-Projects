@@ -52,5 +52,5 @@ Stop burning when 1 cm of wax is left.
 - GSTIN: leave blank while unregistered
 - Grievance officer name: Abhishek Yadav
 - Grievance officer phone: 9839176160
-- Court city: to confirm (Gautam Buddha Nagar / Greater Noida?)
+- Court city: Greater Noida
 - Policy date: day of go-live
