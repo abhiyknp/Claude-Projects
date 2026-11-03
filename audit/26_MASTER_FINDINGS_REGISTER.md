@@ -24,7 +24,7 @@ Columns: ID, domain, where, severity, priority (P0 now, P1 before launch, P2 pla
 | F-17 | Quality | Vendor libs | Low | P3 | No versions | Add VERSIONS file; check CVEs | XS | OPEN |
 | F-19 | Perf | Home mobile | Medium | P2 | 55→65, LCP 6.0 s, TBT 500 ms | Defer JS, lighter first render for Coming soon | M | IMPROVED, OPEN |
 | F-20 | SEO | Sitemap | Low | P2 | Home only | Lists products after launch | — | EXPECTED |
-| F-21 | Function | Live shop | High→Medium | P1 | Live shop data not testable from sandbox | Allow supabase/razorpay/cloudinary hosts, new session, or owner test | S | OPEN (access) |
+| F-21 | Function | Live shop | High→Medium | P1 | Live shop data not testable from sandbox | Allow supabase/razorpay/cloudinary hosts, new session, or owner test | S | PARTLY CLOSED: rows 1-12, 14 pass (owner-reported, 2026-11-03); rows 13, 16 open |
 | F-22 | Quality | A11y/BP | Info | — | Lighthouse 100/96/100 | — | — | PASS |
 | F-23 | Content | Social links | Low | P3 | Unchecked | Click-test | XS | PASS (owner ran rls-probe.js, 2026-11-03) |
 | A-01 | Audit method | Sandbox | Info | — | Console errors and broken catalogue images in this sweep are ERR_TUNNEL_CONNECTION_FAILED to the data host and Cloudinary (sandbox allow-list) | Not a site defect; add hosts or test elsewhere | — | FALSE POSITIVE, closed |
@@ -35,7 +35,7 @@ Columns: ID, domain, where, severity, priority (P0 now, P1 before launch, P2 pla
 | A-06 | Data | Stock | Low | P2 | New product with no stock row shows Sold out in shop and catalogue | Owner enters stock; consider an Owner-view warning | S | BY DESIGN, noted |
 | A-07 | Quality | Hard-coded SKU list | Low | P3 | SNAP_IMG goes stale | Replace with real photos in Owner view | XS | OPEN |
 | A-08 | Brief | Facts | Info | P3 | Brief says Terracotta/Chocolate palette, Cashfree/PayU; repo is Silk Maroon & Gold, Razorpay | Update the brief | XS | OPEN |
-| A-09 | Test | Cross-browser | Medium | P2 | Only Chromium run | Test Safari/Firefox/Edge before launch | S | NOT TESTED |
+| A-09 | Test | Cross-browser | Medium | P2 | Only Chromium run | Test Safari/Firefox/Edge before launch | S | PARTLY CLOSED: Safari and Firefox pass (owner-reported); Edge not tested |
 | A-10 | Evidence | Live DB probe | Medium | P1 | Blocked by production-read guard | Owner runs anon-key read of orders/customers/coupons | XS | NOT TESTED |
 
 Retest criteria: F-03 → 25 rapid `start` calls return 429; F-05 → request from another origin is refused; F-07 → owner sign-in asks for code; F-12 → restore test succeeds; F-13 → paid order + webhook + refund IDs shown; A-10 → anon read of private tables returns nothing.
