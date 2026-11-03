@@ -42,3 +42,13 @@ Retest criteria: F-03 → 25 rapid `start` calls return 429; F-05 → request fr
 
 ## Independent validation note (2026-11-03)
 Re-rated by the validation pass: A-02 Low → Informational; F-06/F-18 confidence High → Medium; F-02 stays High pending key regeneration (cannot be checked); F-13 and F-21 stay as evidence gaps, not defects. A-01 CONFIRMED false positive. See `INDEPENDENT_VALIDATION_REPORT.md`.
+
+## Owner update (2026-11-03, owner-reported, NOT independently verified)
+| ID | Owner statement | Register status | Still needed to close |
+|---|---|---|---|
+| F-13 | Live payment test with refund done | OWNER-REPORTED DONE | Payment id, webhook delivery log, refund id, matched amount |
+| F-02 | Razorpay key regenerated | OWNER-REPORTED DONE | None from the auditor; cannot be checked here |
+| F-03 | `pay` deployed | OWNER-REPORTED DONE | Retest: about 25 rapid `start` calls return 429 |
+| F-05 | `SITE_ORIGINS` set | OWNER-REPORTED DONE | Retest: request from another origin is refused |
+| F-12 | Backups and uptime monitor: in progress | OPEN, guide issued (`backup-and-uptime-guide.md`) | Pro on, daily backup listed, restore test pass, monitors and test alert |
+| F-07 | Owner two-step: to be done last | OPEN, scheduled last | Turn on `ownerTwoStep` and the database function |
