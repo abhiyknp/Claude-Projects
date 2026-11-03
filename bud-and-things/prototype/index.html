@@ -1470,7 +1470,7 @@ const HOME_STYLES = { gift: 'Gift shop: products and gifts first' };
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'gift'; };
 const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, onlineOn: false, upiQrOn: false, upiId: '', upiName: 'Bud & Things', codFee: 49, wrapFee: 99, ritualOff: 0, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'bnt-prd-cg-001, bnt-prd-cg-002, bnt-prd-jt-001, bnt-prd-jt-004', giftPicks: 'bnt-prd-jt-001, bnt-prd-jt-002, bnt-prd-jt-004, bnt-prd-cg-001', homeRitual: '', newIn: 'bnt-prd-jt-005, bnt-prd-jt-003, bnt-prd-tl-001, bnt-prd-tl-002, bnt-prd-mc-002, bnt-prd-mc-001', spotlight: 'bnt-prd-cg-001', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, ownerWhatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
-  bizName: '', bizAddress: '', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, invTerms: '', invSignName: 'Ashi', hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '',
+  bizName: 'BUD & THINGS by Ashi', bizAddress: 'Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, invTerms: '', invSignName: 'Ashi', hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: 'Abhishek Yadav', grievancePhone: '9839176160', courtCity: 'Greater Noida', policyDate: '3 November 2026',
   reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
   theme: 'silk', homeStyle: 'gift', comingSoon: true, homeHide: ['boxes', 'feel', 'occasions', 'rituals', 'festive', 'packaging'], previewHash: '', soonPages: [], newSections: [] };
 let SET = Object.assign({}, SET_DEFAULTS);
@@ -2267,7 +2267,7 @@ function viewCheckout() {
     main = `<h1 tabindex="-1" style="font-size:40px">Contact</h1><p class="muted">Signed in as <strong>${esc(S.account.email)}</strong>. We use these only for your delivery and order updates.</p>
       <form data-form="contact" class="form" novalidate>${field('name', 'Full name', co.contact.name || (S.account && S.account.name) || '', { ac: 'name', full: true })}${field('phone', 'Mobile number', co.contact.phone, { type: 'tel', mode: 'tel', ac: 'tel-national', max: 20, hint: '10 digits, for delivery and WhatsApp updates' })}
       <label class="check full"><input type="checkbox" data-co="optin" ${co.optin ? 'checked' : ''}> ${T('co.optin')}</label>
-      <p class="full muted" style="font-size:14px;margin:0">We use your details only to deliver your order. By continuing you agree to our <a href="#terms">terms</a> and <a href="#privacy">privacy policy</a>.</p>
+      <label class="check full" style="font-size:14px"><input type="checkbox" id="co-agree" ${co.agree ? 'checked' : ''}> <span>I agree to the <a href="#terms">terms</a> and <a href="#privacy">privacy policy</a>. We use my details only to deliver my order.</span></label>
       <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue to delivery</button><a class="btn ghost" href="#cart">Back to cart</a></span></form>`;
   } else if (co.step === 'address') {
     const err = co.errors.state;
@@ -3823,7 +3823,8 @@ function signInBox(next) {
       <span class="field"><label for="acct-code">Code from the email</label><input id="acct-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" ${A.err ? 'aria-invalid="true" aria-describedby="acct-err"' : ''}></span>${A.err ? `<span class="err" id="acct-err" role="alert">${esc(A.err)}</span>` : ''}
       <span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">${A.busy ? 'Checking…' : 'Sign in'}</button><button class="btn ghost" type="button" data-act="acct-resend">Send a new code</button></span></form>`
     : `<form data-form="acct-email" data-next="${esc(next || '')}" class="form" style="grid-template-columns:1fr" novalidate><span class="field"><label for="acct-email">Email</label><input id="acct-email" type="email" autocomplete="email" value="${esc(A.email || '')}" ${A.err ? 'aria-invalid="true" aria-describedby="acct-err"' : ''}></span>${A.err ? `<span class="err" id="acct-err" role="alert">${esc(A.err)}</span>` : ''}
-      <button class="btn" type="submit">${A.busy ? 'Sending…' : 'Email me a code'}</button><span class="hint">By signing in you agree to our <a href="#terms">terms</a> and <a href="#privacy">privacy policy</a>.</span></form>`}</div>`;
+      <label class="check" style="font-size:14px"><input type="checkbox" id="acct-agree" ${A.agree ? 'checked' : ''}> <span>I agree to the <a href="#terms">terms</a> and <a href="#privacy">privacy policy</a>.</span></label>
+      <button class="btn" type="submit">${A.busy ? 'Sending…' : 'Email me a code'}</button></form>`}</div>`;
 }
 function viewAccount() {
   const a = S.account;
@@ -4894,7 +4895,7 @@ document.addEventListener('submit', (e) => {
     render();
     saveProfile({ name: P.name, phone: ph, addresses, prefs }).then(() => { UI.profForm = { saved: true }; track('profile_save', {}); render(); }, (err) => { UI.profForm = Object.assign(P, { busy: false, err: { msg: /bad_profile:address/.test(err.message) ? 'That address doesn’t look right. Check the PIN code and state.' : /sign_in/.test(err.message) ? 'Please sign in again.' : 'We couldn’t save just now (' + err.message + ').' } }); render(); });
     return; }
-  if (kind === 'acct-email') { const em = $('#acct-email').value.trim().toLowerCase(); if (!isEmail(em)) { UI.acct = { email: em, next: f.dataset.next, err: 'Enter an email like name@example.com.' }; render(); $('#acct-email')?.focus(); return; } acctSend(em, f.dataset.next); return; }
+  if (kind === 'acct-email') { const em = $('#acct-email').value.trim().toLowerCase(); if (!isEmail(em)) { UI.acct = { email: em, next: f.dataset.next, err: 'Enter an email like name@example.com.' }; render(); $('#acct-email')?.focus(); return; } if (!$('#acct-agree') || !$('#acct-agree').checked) { UI.acct = { email: em, next: f.dataset.next, err: 'Please tick the box to agree to the terms and privacy policy.' }; render(); $('#acct-agree')?.focus(); return; } acctSend(em, f.dataset.next); return; }
   if (kind === 'acct-code') { const A = UI.acct; const code = $('#acct-code').value.replace(/\D/g, ''); if (code.length < 6 || code.length > 10) { A.err = 'Enter the code from the email.'; render(); $('#acct-code')?.focus(); return; }
     if (!BTDB.on) { if (code === A.demo) acctIn(A.email, f.dataset.next); else { A.err = 'That code doesn’t match. Check it and try again.'; render(); $('#acct-code')?.focus(); } return; }
     A.busy = true; render(); BTDB.verifyEmailCode(A.email, code).then(() => acctIn(A.email, f.dataset.next), () => { A.busy = false; A.err = 'That code didn’t work or has expired. Check it, or send a new one.'; render(); $('#acct-code')?.focus(); });
@@ -4913,7 +4914,8 @@ document.addEventListener('submit', (e) => {
     const ph = asPhone(c.phone || ''); if (!ph) co.errors.phone = 'Check the country code and number. For +91, enter 10 digits starting with 6, 7, 8 or 9.'; else c.phone = ph;
     c.email = S.account ? S.account.email : c.email; if (!c.name && S.account && S.account.name) c.name = S.account.name;
     if (Object.keys(co.errors).length) { render(); focusFirstError(); return; }
-    co.step = 'address'; track('checkout_step', { step: 'delivery' }); render(true); return;
+    if (!$('#co-agree') || !$('#co-agree').checked) { say('Please tick the box to agree to the terms and privacy policy.'); $('#co-agree')?.focus(); return; }
+    co.agree = true; co.step = 'address'; track('checkout_step', { step: 'delivery' }); render(true); return;
   }
   if (kind === 'address') {
     const ad = co.address; if (!ad.line1) co.errors.line1 = 'Enter the house, street and area.';
