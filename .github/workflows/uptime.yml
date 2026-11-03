@@ -1,0 +1,45 @@
+# A second line of defence next to the uptime monitor (see bud-and-things/audit-reports/backup-and-uptime-guide.md):
+# every 15 minutes GitHub opens the site and the catalogue. If either fails twice in a row it opens an issue named
+# "Site check failed" (one at a time) and closes it again when the site is back. GitHub can delay scheduled runs by some
+# minutes, so this is a backup, not a replacement for a 5-minute monitor. No secrets are used.
+name: Site check
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open the site and the catalogue
+        id: probe
+        run: |
+          ok=true
+          for u in https://budandthings.com/ https://budandthings.com/catalogue/; do
+            good=false
+            for i in 1 2; do
+              code=$(curl -s -o /tmp/body -w '%{http_code}' -m 20 "$u" || true)
+              if [ "$code" = "200" ] && [ -s /tmp/body ]; then good=true; break; fi
+              sleep 20
+            done
+            echo "$u -> $code"
+            $good || ok=false
+          done
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+      - name: Open or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OK: ${{ steps.probe.outputs.ok }}
+        run: |
+          n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"Site check failed" in:title' --json number --jq '.[0].number // empty')
+          if [ "$OK" = "true" ]; then
+            [ -n "$n" ] && gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "The site answers again ($(date -u +%FT%TZ))."
+          else
+            [ -n "$n" ] || gh issue create --repo "$GITHUB_REPOSITORY" --title "Site check failed" --body "budandthings.com or /catalogue/ did not answer with 200 twice in a row at $(date -u +%FT%TZ). Open the site; check the Pages deploy and Supabase status."
+          fi

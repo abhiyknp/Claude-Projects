@@ -8,6 +8,7 @@ on:
       - 'bud-and-things/prototype/**'
       - 'bud-and-things/tools/audit.js'
       - 'bud-and-things/tools/catalogue-live.js'
+      - 'bud-and-things/tools/scan-secrets.js'
       - 'bud-and-things/tools/test-*.js'
       - '.github/workflows/audit.yml'
   workflow_dispatch:
@@ -23,6 +24,8 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
+      - name: Scan for committed secrets
+        run: node bud-and-things/tools/scan-secrets.js
       - name: Install a browser
         run: |
           mkdir -p "$RUNNER_TEMP/audit" && cd "$RUNNER_TEMP/audit"
@@ -40,3 +43,4 @@ jobs:
           sh bud-and-things/tools/preview.sh >/dev/null 2>&1 &
           sleep 3
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-flow.js
+          PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-photo-fallback.js
