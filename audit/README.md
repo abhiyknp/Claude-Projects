@@ -40,3 +40,5 @@ F-13, F-02, F-03, F-05 reported done by the owner; not independently verified. B
 
 ## Fixes 2026-11-03
 See the end of `26_MASTER_FINDINGS_REGISTER.md`: vendor versions, secret scan in CI, photo fallback in every slot, 15-minute site check. Remaining items need the owner or an unrestricted network.
+
+Close-out after the owner steps: `28_CLOSEOUT_STATUS.md`.

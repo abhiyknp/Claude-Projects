@@ -72,6 +72,10 @@ jobs:
       - name: Rebuild the catalogue list from the live database (sheet snapshot is the back-up)
         run: node bud-and-things/tools/catalogue-live.js _site/catalogue
       - name: Add product pages and Pinterest feeds
+        # the daily rebuild stops if the database cannot be read (after 3 tries), so the last good site stays online
+        # instead of being replaced by one without product pages, feeds or sitemap
+        env:
+          BT_REQUIRE_DB: ${{ github.event_name == 'schedule' && '1' || '' }}
         run: node bud-and-things/tools/build-pinterest.js _site
       - name: Move the app script into its own minified file
         run: |
