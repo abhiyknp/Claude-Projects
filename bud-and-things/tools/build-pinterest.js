@@ -158,10 +158,19 @@ function catalog(items, qty) {
 (async () => {
   const c = config();
   if (!c.url || !c.key) { console.log('Pinterest: no database in config.js, nothing to build.'); return; }
-  let d;
-  try { d = await load(c); } catch (e) {
-    console.log('::warning::Pinterest pages and feeds were not built: the database could not be read (' + e.message + ').');
-    return; // never block the site deploy over the feeds
+  let d, lastErr;
+  // the database can answer 503 for a minute (waking up, a short outage): try three times before giving up
+  for (let i = 0; i < 3 && !d; i++) {
+    try { d = await load(c); } catch (e) { lastErr = e; if (i < 2) await new Promise((r) => setTimeout(r, +process.env.BT_RETRY_WAIT_MS || 20000)); }
+  }
+  if (!d) {
+    console.log('::warning::Pinterest pages and feeds were not built: the database could not be read (' + lastErr.message + ').');
+    // Google's files must never disappear because the database was down at build time
+    write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
+    write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<url><loc>${SITE}/</loc></url>\n</urlset>\n`);
+    // the daily rebuild sets BT_REQUIRE_DB: then stop here, so the last good site (with product pages and feeds) stays up
+    if (process.env.BT_REQUIRE_DB) { console.log('::error::Stopping so the last good site stays online.'); process.exit(1); }
+    return; // a push that changes code still deploys
   }
   const fileUrl = (p) => (/^https?:/.test(p) ? p : /^assets\//.test(p) ? SITE + '/' + p : c.url + '/storage/v1/object/public/media/' + p.split('/').map(encodeURIComponent).join('/'));
   const { products, qty, comingSoon } = prepare(d, fileUrl);

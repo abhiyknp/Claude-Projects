@@ -77,3 +77,10 @@ Sandbox note: the probe could not be run here (production-read guard); it was te
 ## Evidence log: database privacy probe (A-10, F-16), 2026-11-03
 Run by the owner from a Mac on their own network with the public key, using `tools/rls-probe.js` (read only, prints no rows). Result: PASS. 18 private tables: 16 answered HTTP 200 with 0 rows, 2 (invoice_counters, hits) answered HTTP 401. Public tables returned rows as designed (products, settings, stock, media: 3 each, the probe asks for at most 3).
 Limits of this evidence: (1) the probe reads only, so it says nothing about who can write; (2) HTTP 200 with 0 rows would also appear if a table were simply empty. It is meaningful for `owners` and `orders`, which are known to hold rows (owner account, the live test order), so RLS is hiding them. For the other tables the empty result is consistent with RLS but not proof. Not independently reproduced by the auditor (the output was pasted by the owner).
+
+## Update 2026-11-03 (close-out, see 28_CLOSEOUT_STATUS.md)
+| ID | Domain | Where | Severity | Priority | Finding | Fix | Effort | Status |
+|---|---|---|---|---|---|---|---|---|
+| F-22 | SEO/Infra | Pages build | Medium | P1 | A build while Supabase answered 503 shipped a site without robots.txt, sitemap.xml, product pages and feeds (live 404 on 2026-11-03) | Retry, always write robots and a home sitemap, daily rebuild fails instead of degrading | S | FIXED IN CODE, live after next deploy |
+| F-23 | Infra | Monitoring | Low | P2 | Uptime monitor does not see a database outage | GitHub 15-minute check reads one public row | XS | FIXED IN CODE, first live run after merge |
+| F-12 | Infra | Backups, monitor | High | P1 | Monitor done (email only). Backups: none on Free; owner will go Pro at about 50 orders or launch | Weekly export script until then; restore test still to do | S | PARTLY OPEN |

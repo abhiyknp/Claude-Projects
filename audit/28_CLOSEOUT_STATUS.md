@@ -1,0 +1,22 @@
+# 28 Close-out status (2026-11-03, after the owner steps)
+
+Evidence rules as before: VERIFIED = checked by me in this session; OWNER-REPORTED = shown to me by the owner (screenshot or pasted output), not reproducible from my sandbox; NOT ASSESSABLE = no evidence.
+
+## Closed or improved since the validation report
+| ID | Item | Status | Evidence |
+|---|---|---|---|
+| A-10 / F-16 | Database privacy: can a visitor read private tables | **PASS (OWNER-REPORTED)** | Owner ran `rls-probe.js` from their own Mac: 16 private tables 200 with 0 rows, 2 answered 401. Limits: read only; "0 rows" also fits an empty table, but `owners` and `orders` hold rows, so rules are hiding them. Not tested: who can write. |
+| F-12 (monitor part) | Uptime monitor | **DONE, email only (OWNER-REPORTED)** | Two UptimeRobot monitors (home, catalogue keyword). Test alert, a real down alert (keyword set the wrong way round, fixed) and the "up again" alert all reached email. Push and phone alerts: owner chose email only. Limit: it watches the static site, not the database (see F-22). |
+| F-19 / A-04 | Mobile first paint | **IMPROVED (VERIFIED locally, not live)** | Preload of the first-screen picture and idle-time QR code load. Slow-phone emulation, gzip, 4x CPU: largest paint 4.3 s to 2.9 s. Live Lighthouse not re-run (my sandbox cannot run it against the live site). The 3D room code was already lazy-loaded. |
+| New F-22 | Daily/any build while the database answers 503 removed `robots.txt`, `sitemap.xml`, product pages and Pinterest feeds from the live site | **FIXED IN CODE (VERIFIED by test), live files return at next deploy** | Run 41647298565 (13:46 UTC): "database not reached (media 503)" and "products: HTTP 503"; the build still succeeded and replaced the site. Live check at 14:5x UTC: `/robots.txt`, `/sitemap.xml`, `/pinterest/products.xml` all 404. Fix: 3 tries with waits; `robots.txt` and a home-only `sitemap.xml` always written; the scheduled daily rebuild fails instead of deploying a degraded site (last good site stays online). Test: `tools/test-build-fallback.js`. Cause of the 503 itself: NOT ASSESSABLE (Free-plan project waking or a short outage; no Supabase status evidence). |
+| New F-23 | Uptime monitor cannot see a database outage | **FIXED IN CODE (not run live)** | The 15-minute GitHub site check now also reads one public settings row; it counts as database activity (helps avoid the Free-plan pause) and opens an issue if it fails twice. Workflow syntax checked; first live run happens after merge. |
+| F-12 (backup part) | Backups and restore test | **OPEN, interim control added** | Owner stays on Supabase Free for now (no backups; projects pause after 1 week idle). Added `tools/backup-export.sh` (weekly file from `pg_dump`, refuses an empty dump, never prints the password) with test `tools/test-backup-export.sh`. Not run against the real database (needs the owner's connection string). Restore test not done. Owner plan: Pro at about 50 orders or launch day, whichever is first; I advise exporting weekly from the first real order. |
+
+## Checks re-run in this pass (VERIFIED)
+Secret scan (1505 files) pass; sheet import, invoice, live-catalogue, backup-export and build-fallback tests pass; page audit (13 pages, 2 widths), shop flow and photo-fallback tests pass; live site: `/` 200, `/catalogue/` 200 and contains "Our catalogue"; security headers from my network: only the GitHub Pages defaults (no HSTS, X-Frame-Options, CSP header) as before.
+
+## Still open, needs the owner or an unrestricted network
+F-06/F-18 security headers (Cloudflare and a DNS change: ask first). F-07 owner two-step (scheduled last). F-12 backups plan decision, restore test. F-14 legal review. F-21 live shop test from a normal network (checklist in `owner-pack/03`). A-09 other browsers. Product safety, cost and batch records (templates in `owner-pack/templates`). Live Lighthouse re-run. F-04 phone check on `verify` (left as is).
+
+## Decision
+**NOT READY for public launch (unchanged).** No critical defect is known. The decision stays because evidence is missing, not because something is known broken: no backups yet, no restore test, no security headers, owner two-step off, legal and safety records not provided, live shop test not run from a normal network. READY WITH CONDITIONS would need at least: a first backup file plus a restore test, the live test checklist rows 1 to 16 passing, and two-step on.

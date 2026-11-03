@@ -1,5 +1,5 @@
 # A second line of defence next to the uptime monitor (see bud-and-things/audit-reports/backup-and-uptime-guide.md):
-# every 15 minutes GitHub opens the site and the catalogue. If either fails twice in a row it opens an issue named
+# every 15 minutes GitHub opens the site, the catalogue and reads one public row from the database. If either fails twice in a row it opens an issue named
 # "Site check failed" (one at a time) and closes it again when the site is back. GitHub can delay scheduled runs by some
 # minutes, so this is a backup, not a replacement for a 5-minute monitor. No secrets are used.
 name: Site check
@@ -17,7 +17,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Open the site and the catalogue
+      - uses: actions/checkout@v4
+      - name: Open the site, the catalogue and the database
         id: probe
         run: |
           ok=true
@@ -31,6 +32,18 @@ jobs:
             echo "$u -> $code"
             $good || ok=false
           done
+          # the database too: one small read of public settings with the public key. It also counts as activity, so a
+          # Free Supabase project is not paused for a quiet week.
+          url=$(sed -n "s/.*url: *'\(https:[^']*\)'.*/\1/p" bud-and-things/prototype/config.js | head -1)
+          key=$(sed -n "s/.*anonKey: *'\([^']*\)'.*/\1/p" bud-and-things/prototype/config.js | head -1)
+          good=false
+          for i in 1 2; do
+            code=$(curl -s -o /tmp/db -w '%{http_code}' -m 20 -H "apikey: $key" -H "Authorization: Bearer $key" "$url/rest/v1/settings?select=key&limit=1" || true)
+            if [ "$code" = "200" ]; then good=true; break; fi
+            sleep 20
+          done
+          echo "database -> $code"
+          $good || ok=false
           echo "ok=$ok" >> "$GITHUB_OUTPUT"
       - name: Open or close the issue
         env:
@@ -41,5 +54,5 @@ jobs:
           if [ "$OK" = "true" ]; then
             [ -n "$n" ] && gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "The site answers again ($(date -u +%FT%TZ))."
           else
-            [ -n "$n" ] || gh issue create --repo "$GITHUB_REPOSITORY" --title "Site check failed" --body "budandthings.com or /catalogue/ did not answer with 200 twice in a row at $(date -u +%FT%TZ). Open the site; check the Pages deploy and Supabase status."
+            [ -n "$n" ] || gh issue create --repo "$GITHUB_REPOSITORY" --title "Site check failed" --body "budandthings.com, /catalogue/ or the database did not answer with 200 twice in a row at $(date -u +%FT%TZ). Open the site; check the Pages deploy and Supabase status."
           fi
