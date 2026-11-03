@@ -83,7 +83,7 @@ Limits of this evidence: (1) the probe reads only, so it says nothing about who 
 |---|---|---|---|---|---|---|---|---|
 | F-22 | SEO/Infra | Pages build | Medium | P1 | A build while Supabase answered 503 shipped a site without robots.txt, sitemap.xml, product pages and feeds (live 404 on 2026-11-03) | Retry, always write robots and a home sitemap, daily rebuild fails instead of degrading | S | FIXED IN CODE, live after next deploy |
 | F-23 | Infra | Monitoring | Low | P2 | Uptime monitor does not see a database outage | GitHub 15-minute check reads one public row | XS | FIXED IN CODE, first live run after merge |
-| F-12 | Infra | Backups, monitor | High | P1 | Monitor done (email only). Backups: none on Free; owner will go Pro at about 50 orders or launch | Weekly export script until then; restore test still to do | S | PARTLY OPEN |
+| F-12 | Infra | Backups, monitor | High | P1 | Monitor done (email only). Backups: none on Free; owner will go Pro at about 50 orders or launch | Weekly export script until then; restore test PASS (owner-reported, 2026-11-03: orders, products, stock counts matched); auto backups only with Pro | S | PARTLY OPEN |
 
 ## Incident log 2026-11-03: database password pasted into chat (I-01)
 While making the first backup, the owner pasted the full database connection string, including the real database password, into the project chat and into a Terminal prompt (so also into Terminal history). No other party is known to have seen it. Treated as exposed.
