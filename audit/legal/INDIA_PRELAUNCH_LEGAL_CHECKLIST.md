@@ -86,3 +86,18 @@ Reuse `CA_review_pack.docx` and `email_to_CA.txt` in this folder.
 - **Fire NOC:** UP Fire and Emergency Services Act, 2022. One vendor says a NOC is needed above 250 sq m, below that a fire extinguisher. Not official. CHECK with the UP fire service.
 - **Professional tax:** one source says UP has none.
 - Check the society (Amarpali Verona Heights) rules: many societies bar commercial activity or storage of stock. Ask the RWA.
+
+## 7. Ready-to-send enquiries (copy, fill the gaps, send)
+**To the UP Labour Department (Shop and Establishment), by the portal helpdesk, or through your CA:**
+"I run a one-person, home-based online business selling hand-made candles and Jesmonite trays from Amarpali Verona Heights, Tech Zone 4, Greater Noida West, Gautam Buddha Nagar, UP 201318. I have no employees. Do I need to register under the UP Dookan aur Vanijya Adhishthan Adhiniyam, 1962 (as amended 2025)? If yes, what is the deadline and the fee?"
+
+**To the Greater Noida Authority (GNIDA) business or licensing desk:**
+"Is a trade licence or a home-based business permission required for hand-making candles in a residential flat and selling only online? If yes, which department and which form?"
+
+**To the UP Fire Service (district fire office, Gautam Buddha Nagar):**
+"I make small batches of candles at home (wax, fragrance oil, wicks, glass jars). Is a fire NOC or any fire licence required for a residential flat at this scale? What fire safety equipment do you advise?"
+
+**To the housing society (Amarpali Verona Heights RWA):**
+"Do the society rules allow a home-based, online-only candle-making business with small stock and courier pickups?"
+
+Keep the written replies. Send them to the CA with the pack.
