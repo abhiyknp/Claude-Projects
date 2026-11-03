@@ -157,7 +157,7 @@ body.nobar .bar{display:none}
 <div id="match" class="idle" role="button" tabindex="0" aria-label="Lit match. Drag it to the big diya, or press Enter."></div>
 <div class="hint" id="hint" aria-live="polite"></div>
 <button class="btn alt" id="blowbtn" hidden>I have made my wish</button>
-<div id="fin"><div id="letter"></div><div class="acts"><a class="btn" id="thx" target="_blank" rel="noopener">Say thank you on WhatsApp</a><a class="btn alt" href="../">See every candle</a><a class="btn alt" href="./">Send a diya to someone</a><p class="sub">Happy Diwali from BUD &amp; THINGS by Ashi</p></div></div>
+<div id="fin"><div id="letter"></div><div class="acts"><a class="btn" id="thx" target="_blank" rel="noopener">Say thank you on WhatsApp</a><a class="btn alt" href="../">See every candle</a><a class="btn alt" href="./">Send a diya to someone</a><a class="btn alt" href="../diwali/">Open the Diwali story</a><p class="sub">Happy Diwali from BUD &amp; THINGS by Ashi</p></div></div>
 <div id="intro"><img src="../../prototype/assets/silk/emblem.webp" alt="BUD &amp; THINGS by Ashi" width="92" height="92"><h2 id="ih"></h2><p id="ip"></p><button class="btn" id="open" type="button">Open your gift</button><p class="tip">Best at night, with sound on</p></div>
 </section>
 <noscript><p style="padding:40px;text-align:center">This gift needs JavaScript. <a href="../" style="color:#D6A34A">See the catalogue</a></p></noscript>
@@ -194,16 +194,17 @@ function send(){
  $('to').oninput=function(){st.t=this.value;valid()};$('fr').oninput=function(){st.f=this.value;valid()};$('m').oninput=function(){st.m=this.value;[].forEach.call(chips.children,function(k){k.classList.remove('on')});cnt()};
  function link(){var u=new URLSearchParams();u.set('t',cl(st.t,30).trim());u.set('f',cl(st.f,30).trim());u.set('m',cl(st.m,160).trim());u.set('p',st.p);return 'https://budandthings.com/catalogue/light/#'+u}
  var labels=['Begin','Next','Next','See the letter',''];
+ function bump(){try{localStorage.setItem('bt-gifts',(+localStorage.getItem('bt-gifts')||0)+1)}catch(e){}}
  function go(n){cur=Math.max(0,Math.min(N-1,n));steps.forEach(function(s,i){s.classList.toggle('cur',i===cur);s.classList.toggle('past',i<cur);s.setAttribute('aria-hidden',i!==cur)});
   dots.forEach(function(d,i){d.classList.toggle('on',i<=cur);d.classList.toggle('cur',i===cur)});
   document.body.classList.toggle('nobar',cur===N-1);$('bk').style.visibility=cur?'visible':'hidden';$('nx').textContent=labels[cur];cnt();steps[cur].scrollTop=0;
   if(cur===N-1){letter($('prev'),{t:st.t,f:st.f,m:st.m,p:st.p},false);var l=link();$('wa').href='https://wa.me/?text='+encodeURIComponent((st.f||'Someone')+' lit a diya for you 🪔 Happy Diwali! Open it tonight: '+l);$('pv').href=location.pathname+l.slice(l.indexOf('#'))}
   var f=steps[cur].querySelector('input,textarea');if(f&&(cur===1||cur===2))setTimeout(function(){f.focus({preventScroll:true})},500)}
- $('nx').onclick=function(){go(cur+1)};$('bk').onclick=function(){go(cur-1)};$('ed').onclick=function(){go(1)};
+ $('wa').addEventListener('click',bump);$('nx').onclick=function(){go(cur+1)};$('bk').onclick=function(){go(cur-1)};$('ed').onclick=function(){go(1)};
  S.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.tagName==='INPUT'&&!$('nx').disabled){e.preventDefault();if(e.target.id==='to')$('fr').focus();else go(cur+1)}});
  $('pv').onclick=function(e){e.preventDefault();location.href=this.getAttribute('href');location.reload()};
- if(navigator.share){$('nat').hidden=false;$('nat').onclick=function(){navigator.share({title:'Diwali lights for you',text:(st.f||'Someone')+' lit a diya for you.',url:link()}).catch(function(){})}}
- $('cp').onclick=function(){var l=link(),b=this,d=function(){b.textContent='Link copied ✓'};(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(d,function(){prompt('Copy this link',l)})};
+ if(navigator.share){$('nat').hidden=false;$('nat').onclick=function(){navigator.share({title:'Diwali lights for you',text:(st.f||'Someone')+' lit a diya for you.',url:link()}).then(bump).catch(function(){})}}
+ $('cp').onclick=function(){var l=link(),b=this,d=function(){bump();b.textContent='Link copied ✓'};(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(d,function(){prompt('Copy this link',l)})};
  go(0)}
 
 /* ---------- receiver ---------- */
