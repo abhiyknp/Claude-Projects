@@ -2267,6 +2267,7 @@ function viewCheckout() {
     main = `<h1 tabindex="-1" style="font-size:40px">Contact</h1><p class="muted">Signed in as <strong>${esc(S.account.email)}</strong>. We use these only for your delivery and order updates.</p>
       <form data-form="contact" class="form" novalidate>${field('name', 'Full name', co.contact.name || (S.account && S.account.name) || '', { ac: 'name', full: true })}${field('phone', 'Mobile number', co.contact.phone, { type: 'tel', mode: 'tel', ac: 'tel-national', max: 20, hint: '10 digits, for delivery and WhatsApp updates' })}
       <label class="check full"><input type="checkbox" data-co="optin" ${co.optin ? 'checked' : ''}> ${T('co.optin')}</label>
+      <p class="full muted" style="font-size:14px;margin:0">We use your details only to deliver your order. By continuing you agree to our <a href="#terms">terms</a> and <a href="#privacy">privacy policy</a>.</p>
       <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue to delivery</button><a class="btn ghost" href="#cart">Back to cart</a></span></form>`;
   } else if (co.step === 'address') {
     const err = co.errors.state;
