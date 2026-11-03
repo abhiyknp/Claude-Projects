@@ -2112,7 +2112,7 @@ function packDetails(p, v) {
   const bd = p.batch && (p.batch.packed || p.batch.poured) ? new Date(p.batch.packed || p.batch.poured) : null;
   const packed = bd && !isNaN(bd) ? bd.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : 'Month and year are printed on each pack';
   const biz = [fill('{bizName}'), fill('{bizAddress}')].filter(Boolean).join(', ');
-  return `<dl class="spec"><dt>Common name</dt><dd>${esc(p.type)}</dd><dt>Net quantity</dt><dd>${esc(net)}</dd><dt>MRP</dt><dd>${inr(v.price)} (incl. of all taxes)</dd><dt>Packed</dt><dd>${esc(packed)}</dd><dt>Made and packed by</dt><dd>${esc(biz)}, India</dd><dt>Consumer care</dt><dd>${esc(fill('{grievanceName}'))}, ${esc(fill('{grievancePhone}'))}, ${esc(fill('{email}'))}</dd></dl>`;
+  return `<dl class="spec"><dt>Common name</dt><dd>${esc(p.type)}</dd><dt>Net quantity</dt><dd>${esc(net)}</dd><dt>MRP</dt><dd>${inr(v.price)} (incl. of all taxes)</dd><dt>Packed</dt><dd>${esc(packed)}</dd><dt>Country of origin</dt><dd>India</dd><dt>Made and packed by</dt><dd>${esc(biz)}, India</dd><dt>Consumer care</dt><dd>${esc(fill('{grievanceName}'))}, ${esc(fill('{grievancePhone}'))}, ${esc(fill('{email}'))}</dd></dl>`;
 }
 function viewProduct(id) {
   const p = byId[id]; if (!p) return viewNotFound('product');
@@ -2395,7 +2395,7 @@ function viewStory() {
 function viewHelp() {
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">We usually reply within a working day.</p></div>
     <div class="help-cards"><a href="#track">${hl('box', 26)}<strong>Track your order</strong><span>Order number and mobile number</span></a><a href="#shipping">${hl('truck', 26)}<strong>Shipping &amp; delivery</strong><span>Charges, times and gifts</span></a><a href="#refunds">${hl('shield', 26)}<strong>Cancellations &amp; replacements</strong><span>Damaged items replaced free</span></a><a href="#faq">${hl('note', 26)}<strong>FAQs</strong><span>Quick answers</span></a></div>
-    <div class="facts" style="border-top:0;margin-top:32px"><div><strong>Contact us</strong>${SET.email ? `<span class="muted sel">${esc(SET.email)}</span>` : ''}${String(SET.whatsapp || '').replace(/\D/g, '').slice(-10).length === 10 ? `<span class="muted sel">WhatsApp: +91 ${esc(String(SET.whatsapp).replace(/\D/g, '').slice(-10))}</span>` : ''}${SET.bizName ? `<span class="muted sel">${esc(SET.bizName)}${SET.bizAddress ? ', ' + esc(SET.bizAddress) + ', India' : ''}</span>` : ''}${socialLinks()}</div>
+    <div class="facts" style="border-top:0;margin-top:32px"><div><strong>Contact us</strong>${SET.email ? `<span class="muted sel">${esc(SET.email)}</span>` : ''}${String(SET.whatsapp || '').replace(/\D/g, '').slice(-10).length === 10 ? `<span class="muted sel">WhatsApp: +91 ${esc(String(SET.whatsapp).replace(/\D/g, '').slice(-10))}</span>` : ''}${SET.bizName ? `<span class="muted sel">${esc(SET.bizName)}${SET.bizAddress ? ', ' + esc(SET.bizAddress) + ', India' : ''}</span>` : ''}${SET.grievanceName && SET.grievancePhone ? `<span class="muted sel">Customer care and grievance officer: ${esc(SET.grievanceName)}, ${esc(SET.grievancePhone)}</span>` : ''}${socialLinks()}</div>
     <div><strong>Shipping &amp; delivery</strong><span class="muted">${T('help.shipping')}</span></div>
     ${SET.codOn ? `<div><strong>Cash on delivery</strong><span class="muted">${T('co.cod')}</span></div>` : ''}
     <div><strong>Replacements</strong><span class="muted">${T('help.exchanges')}</span></div>

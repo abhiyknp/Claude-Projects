@@ -17,7 +17,7 @@ const label = (r) => {
 <h2>${esc(r.name)}</h2><p class="sub">${esc(r.type)}${r.scent ? ' · ' + esc(r.scent) + ' scent' : ''}</p>
 <div class="key"><div><small>Net quantity</small><b>${esc(net)}</b></div><div><small>MRP (incl. of all taxes)</small><b>₹${r.price}</b></div><div><small>Packed</small><b>${packed}</b></div>${b ? `<div><small>Burn time</small><b>about ${b}</b></div>` : ''}</div>
 ${candle ? '<p class="care"><b>Care:</b> Trim wick to 5 mm. Burn 2 to 3 h at a time. Never leave burning unattended. Keep away from children, pets and curtains. Use on a flat, heat-safe surface. Stop at 1 cm of wax.</p>' : '<p class="care"><b>Care:</b> Decorative item. Handle with care.</p>'}
-<p class="small"><b>Made and packed by:</b> ${esc(MAKER)}</p><p class="small"><b>Consumer care:</b> ${esc(CARE)}</p></div>`;
+<p class="small"><b>Country of origin:</b> India. <b>Made and packed by:</b> ${esc(MAKER)}</p><p class="small"><b>Consumer care:</b> ${esc(CARE)}</p></div>`;
 };
 fs.writeFileSync(out, `<!doctype html><meta charset="utf-8"><title>Labels ${packed}</title><style>
 @page{size:A4;margin:8mm}*{box-sizing:border-box}body{font:9pt/1.35 Arial,Helvetica,sans-serif;margin:0;color:#150206}
