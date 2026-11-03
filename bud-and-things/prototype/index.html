@@ -1628,9 +1628,10 @@ async function visitorSend(table, row) {
 // ---------- photos and videos ----------
 const ROLE_ORDER = ['packshot', 'lifestyle', 'lit', 'detail', 'hand', 'loop', 'packaging', 'gift', 'unboxing', 'ritual', 'founder', 'process', 'story', 'cutout', 'logo-wide', 'logo-stack', 'logo-leaf', 'favicon', 'share', 'signature'];
 const mUrl = (m) => BTDB.fileUrl(m.path);
+const BAD_PHOTO = new Set(); let badTimer = 0; // photo addresses that failed to load this visit
 function mediaFor(pid, o) {
   o = o || {};
-  return DATA.media.filter((m) => m.published !== false && m.product_id === pid && (!o.kind || m.kind === o.kind) && (o.role ? [].concat(o.role).includes(m.role) : m.role !== 'cutout') && (!o.variant || !m.variant || m.variant === o.variant))
+  return DATA.media.filter((m) => m.published !== false && !BAD_PHOTO.has(mUrl(m)) && m.product_id === pid && (!o.kind || m.kind === o.kind) && (o.role ? [].concat(o.role).includes(m.role) : m.role !== 'cutout') && (!o.variant || !m.variant || m.variant === o.variant))
     .sort((a, b) => (o.variant ? (b.variant === o.variant) - (a.variant === o.variant) : 0) || ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role) || (a.sort || 0) - (b.sort || 0));
 }
 const coverOf = (p, vi) => mediaFor(p.id, { kind: 'photo', variant: p.variants[vi || 0] && p.variants[vi || 0].label })[0];
@@ -2035,6 +2036,13 @@ function card(p, i) {
 // a photo that fails to load (deleted file, bad link) falls back to the drawn product instead of a broken-image icon
 document.addEventListener('error', (e) => {
   const im = e.target; if (!im || im.tagName !== 'IMG') return;
+  // any slot: remember the failed photo address and draw the page again without it, so the next choice (another photo, the
+  // catalogue photo or the drawn product) shows instead of a broken-image icon. Never while someone is typing.
+  const src = im.getAttribute('src');
+  if (src && !BAD_PHOTO.has(src) && (DATA.media || []).some((m) => mUrl(m) === src)) {
+    BAD_PHOTO.add(src); clearTimeout(badTimer);
+    badTimer = setTimeout(() => { const el = document.activeElement; if (!el || !/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) render(); }, 50);
+  }
   const t = im.closest('.card .tile'); if (!t) return;
   im.remove(); if (!t.querySelector('img.fill')) t.classList.remove('has-ph');
 }, true);
