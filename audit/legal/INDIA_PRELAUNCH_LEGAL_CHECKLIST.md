@@ -47,7 +47,7 @@ CHECK: whether small packs or a home-based packer must register with the state L
 - Threshold for goods: Rs 40 lakh a year (Rs 20 lakh in some special-category states, CHECK yours). Counted on all-India turnover for one PAN.
 - **Inter-state sales:** small goods sellers under the threshold are normally exempt from registration for inter-state supply (central exemption notification). Candles are not on the excluded list. CHECK with CA.
 - **Marketplaces (Amazon, Flipkart, Meesho):** the law has relief for small goods sellers on e-commerce platforms, but platforms usually ask for a GSTIN to onboard, and they collect TCS from registered sellers. So registering is likely **needed in practice** for marketplaces. Ask your CA.
-- **Your own website only:** no registration under the threshold. Issue a **bill of supply**, charge **no GST** and show no GST line. Terms say "prices include GST". While unregistered, that is not accurate. Change it to "prices are in INR, inclusive of all charges". CA to confirm wording.
+- **Your own website only:** no registration under the threshold. Issue a **bill of supply**, charge **no GST** and show no GST line. Terms wording fixed (PR #99): no longer says "include GST". Bulk page now says "Invoice on every order". Once registered, add "inclusive of GST" back. CA to confirm wording.
 - **When to start charging:** once turnover crosses Rs 40 lakh. Apply within 30 days of crossing. Tax is due from the date you cross. Watch the running total monthly. Set an alert at Rs 35 lakh.
 - **Rate and HSN:** candles are usually HSN 3406 at 18%. Jesmonite or plaster trays need their own HSN. App defaults are 18%. CHECK both.
 - Voluntary registration lets you claim input tax on supplies but adds monthly filings. Optional.
