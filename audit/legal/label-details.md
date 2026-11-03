@@ -4,11 +4,11 @@ Not legal advice. CA to confirm. Reuse these for every label and product page.
 ## Confirmed by owner
 - Maker/packer name to print: **BUD & THINGS by Ashi**
 - Address to print: **Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318, India**
-- Consumer care: **Abhishek Yadav, 9839176160, budandthingsofficial@gmail.com**
+- Consumer care: **Abhishek Yadav, 9839176160, hello@budandthings.com**
 - Burn time: small candles (moulded) 2 to 4 h; glass and murphy 8 to 18 h; tealight 1.5 to 3 h. Jar candle (78 g) 12 to 18 h.
 - Blank policy fields: option B. Keep "[to add]" until owner fills Settings.
 - Care lines: keep the draft below.
-- Net quantity: use catalogue grams per item (`bud-and-things/data/catalogue.sheet.json`).
+- Net quantity: use catalogue grams per item (owner confirmed: candle content weight, not packed weight) (`bud-and-things/data/catalogue.sheet.json`).
 - MRP: use catalogue price, printed "MRP Rs ___ (incl. of all taxes)".
 - Packing month and year: auto picked from the packing date (format MM/YYYY).
 
@@ -37,7 +37,7 @@ Packed: [MM/YYYY]
 Made and packed by: BUD & THINGS by Ashi,
 Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar,
 Greater Noida West, Uttar Pradesh 201318, India
-Consumer care: Abhishek Yadav, 9839176160, budandthingsofficial@gmail.com
+Consumer care: Abhishek Yadav, 9839176160, hello@budandthings.com
 Burn time: approx [hours] h
 
 Care: Trim the wick to 5 mm before every burn. Burn 2 to 3 hours at a time.
