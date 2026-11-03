@@ -1,0 +1,33 @@
+sku,product_name,wax_type_and_supplier,wick_type_and_size,fragrance_name_and_supplier,fragrance_load_percent,fragrance_sds_or_ifra_file,container_type,container_heat_rating_source,test_date,burn_time_hours,melt_pool_full_after_hours,flame_height_mm,max_glass_temp_c,soot_or_mushrooming,tunnelling,warnings_printed_on_label,label_photo_file,test_photos_folder,tester_name,decision_note
+BNT-PRD-CG-001,Iced Latte,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-002,Vanilla Gold,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-003,BlueBerry Swirl,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-004,Strawberry Cream,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-005,Cocoa Bites,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-006,Angle & Amber,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-007,Berry Blast,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-008,Daisy Pop,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-009,Petal & Pour,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-010,Sunlit Gel,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 8 to 18 h, NOT TESTED"
+BNT-PRD-CG-011,Dessert Jar,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 12 to 18 h, NOT TESTED"
+BNT-PRD-MC-001,Mini Bubble Candle,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-MC-002,Sunflower Float,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-MC-003,Ladoo-shaped candle,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-MC-004,Blooming Rose,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-MC-005,Mini Bubble Candle,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-MC-006,Mini Bubble Candle,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-MC-007,Sunflower Float,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-MC-008,Purple Haze,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-MC-009,Blooming Rose,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 2 to 4 h, NOT TESTED"
+BNT-PRD-TL-001,Sunflower Glow,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 1.5 to 3 h, NOT TESTED"
+BNT-PRD-TL-002,Midnight Sunflower,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 1.5 to 3 h, NOT TESTED"
+BNT-PRD-TL-003,Marrigold Glow,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 1.5 to 3 h, NOT TESTED"
+BNT-PRD-TL-004,Love Note,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 1.5 to 3 h, NOT TESTED"
+BNT-PRD-TL-005,Violet Whisper,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 1.5 to 3 h, NOT TESTED"
+BNT-PRD-TL-006,Rosé Whirl,,,,,,,,,,,,,,,,,,,"Owner-claimed burn time 1.5 to 3 h, NOT TESTED"
+BNT-PRD-JT-001,Rose Dawn,,,,,,,,,,,,,,,,,,,Not a candle
+BNT-PRD-JT-002,Ivory Gilt,,,,,,,,,,,,,,,,,,,Not a candle
+BNT-PRD-JT-003,Cloud Marble,,,,,,,,,,,,,,,,,,,Not a candle
+BNT-PRD-JT-004,Little Hearts,,,,,,,,,,,,,,,,,,,Not a candle
+BNT-PRD-JT-005,Holi Bloom,,,,,,,,,,,,,,,,,,,Not a candle
+BNT-PRD-DIY-001,Paint Your Starfish,,,,,,,,,,,,,,,,,,,Not a candle

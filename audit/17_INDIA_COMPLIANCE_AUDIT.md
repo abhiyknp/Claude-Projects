@@ -4,7 +4,7 @@
 
 | Requirement | Applicability | Current evidence | Gap | Action |
 |---|---|---|---|---|
-| Consumer Protection (E-Commerce) Rules 2020: seller details, grievance officer, price inclusive of taxes, return terms | Applies to online sale | Policy templates include business details, grievance officer, 48-hour acknowledgement; prices show "Inclusive of all taxes" (VERIFIED in app text) | Real names, address, phone are owner settings, not verified | Owner fills settings; CA/lawyer review |
+| Consumer Protection (E-Commerce) Rules 2020: seller details, grievance officer, price inclusive of taxes, return terms | Applies to online sale | Policy templates include business details, grievance officer, 48-hour acknowledgement; the "Inclusive of all taxes" wording claimed earlier was NOT found in the site text (corrected 2026-11-03). Terms no longer say "include GST". Product pages now show "MRP ... (incl. of all taxes)" under Pack details (PR #99) | Real names, address, phone are owner settings, not verified | Owner fills settings; CA/lawyer review |
 | DPDP Act 2023 | Applies (collects emails, phones, addresses) | Privacy page exists (`#privacy`), customer data delete function in Owner view (STATIC) | Consent wording, retention, breach process not reviewed | Legal review |
 | GST | Owner position: not registered, below threshold, invoices are bills of supply | Settings `gstOn:false` | Marketplace (Amazon) sales may require GSTIN regardless of turnover — confirm | Ask CA |
 | Legal Metrology (Packaged Commodities) | Likely applies to pre-packed candles sold by net quantity | Size/weight fields exist | Label content (net quantity, MRP, maker, month/year) NOT ASSESSABLE | CA/legal; check packaging |
