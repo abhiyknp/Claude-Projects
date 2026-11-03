@@ -24,13 +24,16 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     await pg.click('.drawer a[href="#checkout"]'); await pg.waitForTimeout(100);
     // checkout asks for sign-in first; the preview shows the emailed code on screen
     console.log(w, 'checkout gate:', (await pg.textContent('.signin h2')).trim());
-    await pg.fill('#acct-email', 'meera@example.com'); await pg.click('form[data-form="acct-email"] button[type="submit"]'); await pg.waitForTimeout(100);
+    await pg.fill('#acct-email', 'meera@example.com'); await pg.check('#acct-agree'); await pg.click('form[data-form="acct-email"] button[type="submit"]'); await pg.waitForTimeout(100);
     await pg.fill('#acct-code', '000000'); await pg.click('form[data-form="acct-code"] button[type="submit"]'); await pg.waitForTimeout(100);
     console.log(w, 'wrong code:', (await pg.textContent('#acct-err')).trim());
     await pg.fill('#acct-code', (await pg.textContent('.signin .status strong')).trim()); await pg.click('form[data-form="acct-code"] button[type="submit"]'); await pg.waitForTimeout(150);
     await pg.click('form[data-form="contact"] button[type="submit"]');
     console.log(w, 'contact errors:', await pg.$$eval('.err', (e) => e.map((x) => x.textContent)));
     await pg.fill('#co-name', 'Meera Rao'); await pg.fill('#co-phone', '9876543210');
+    await pg.click('form[data-form="contact"] button[type="submit"]');
+    if (await pg.$('#co-line1')) throw new Error('checkout moved on without the agree tick');
+    await pg.check('#co-agree');
     await pg.click('form[data-form="contact"] button[type="submit"]');
     await pg.fill('#co-line1', '12 Lake View Road'); await pg.fill('#co-pin', '560001'); await pg.fill('#co-city', 'Bengaluru'); await pg.selectOption('#co-state', 'Karnataka');
     await pg.click('form[data-form="address"] button[type="submit"]'); await over('payment');
