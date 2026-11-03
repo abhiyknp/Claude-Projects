@@ -20,13 +20,13 @@ Columns: ID, domain, where, severity, priority (P0 now, P1 before launch, P2 pla
 | F-13 | E-commerce | Razorpay live | High | P1 | Live flow unverified by auditor; owner reports test+refund today | Provide payment id, webhook log, refund id as evidence | S | OPEN (evidence) |
 | F-14 | Compliance | Policies | Info | P1 | Drafts, not legally reviewed | CA/lawyer review | M | OPEN |
 | F-15 | Security | Secrets | Info | — | None found | — | — | PASS |
-| F-16 | Security | RLS | Info | — | 25 tables RLS (static) | Owner runs anon probe | XS | PASS (static) |
+| F-16 | Security | RLS | Info | — | 25 tables RLS (static) | Owner runs anon probe | XS | PASS (static + live probe 2026-11-03) |
 | F-17 | Quality | Vendor libs | Low | P3 | No versions | Add VERSIONS file; check CVEs | XS | OPEN |
 | F-19 | Perf | Home mobile | Medium | P2 | 55→65, LCP 6.0 s, TBT 500 ms | Defer JS, lighter first render for Coming soon | M | IMPROVED, OPEN |
 | F-20 | SEO | Sitemap | Low | P2 | Home only | Lists products after launch | — | EXPECTED |
 | F-21 | Function | Live shop | High→Medium | P1 | Live shop data not testable from sandbox | Allow supabase/razorpay/cloudinary hosts, new session, or owner test | S | OPEN (access) |
 | F-22 | Quality | A11y/BP | Info | — | Lighthouse 100/96/100 | — | — | PASS |
-| F-23 | Content | Social links | Low | P3 | Unchecked | Click-test | XS | NOT TESTED |
+| F-23 | Content | Social links | Low | P3 | Unchecked | Click-test | XS | PASS (owner ran rls-probe.js, 2026-11-03) |
 | A-01 | Audit method | Sandbox | Info | — | Console errors and broken catalogue images in this sweep are ERR_TUNNEL_CONNECTION_FAILED to the data host and Cloudinary (sandbox allow-list) | Not a site defect; add hosts or test elsewhere | — | FALSE POSITIVE, closed |
 | A-02 | SEO/A11y | /catalogue/light/ | Low | P3 | 6 H1 elements | Use one H1, others H2 | XS | OPEN, VERIFIED |
 | A-03 | SEO | sitemap | Info | P2 | Product pages not in sitemap while Coming soon is on | Retest after launch | — | EXPECTED |
@@ -73,3 +73,7 @@ F-06/F-18 headers on GitHub Pages (needs Cloudflare and a DNS change: ask first)
 | F-21 live shop test | 17-step checklist (03) | Table filled and logged |
 | Product safety, costs, inventory | Guide and three CSV templates (04) | Records filled and reviewed |
 Sandbox note: the probe could not be run here (production-read guard); it was tested against a local fake server for pass, fail and no-answer cases only.
+
+## Evidence log: database privacy probe (A-10, F-16), 2026-11-03
+Run by the owner from a Mac on their own network with the public key, using `tools/rls-probe.js` (read only, prints no rows). Result: PASS. 18 private tables: 16 answered HTTP 200 with 0 rows, 2 (invoice_counters, hits) answered HTTP 401. Public tables returned rows as designed (products, settings, stock, media: 3 each, the probe asks for at most 3).
+Limits of this evidence: (1) the probe reads only, so it says nothing about who can write; (2) HTTP 200 with 0 rows would also appear if a table were simply empty. It is meaningful for `owners` and `orders`, which are known to hold rows (owner account, the live test order), so RLS is hiding them. For the other tables the empty result is consistent with RLS but not proof. Not independently reproduced by the auditor (the output was pasted by the owner).
