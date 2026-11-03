@@ -37,3 +37,6 @@ Owner: F-02, F-03 deploy, F-05, A-10 probe, F-12, F-07. Then re-run the live che
 
 ## Update 2026-11-03 (owner-reported)
 F-13, F-02, F-03, F-05 reported done by the owner; not independently verified. Backups and uptime monitor are next (guide: `bud-and-things/audit-reports/backup-and-uptime-guide.md` in the project files). Owner two-step last. Decision stays NOT READY until evidence is logged.
+
+## Fixes 2026-11-03
+See the end of `26_MASTER_FINDINGS_REGISTER.md`: vendor versions, secret scan in CI, photo fallback in every slot, 15-minute site check. Remaining items need the owner or an unrestricted network.

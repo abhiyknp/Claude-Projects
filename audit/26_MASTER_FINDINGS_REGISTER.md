@@ -52,3 +52,15 @@ Re-rated by the validation pass: A-02 Low → Informational; F-06/F-18 confidenc
 | F-05 | `SITE_ORIGINS` set | OWNER-REPORTED DONE | Retest: request from another origin is refused |
 | F-12 | Backups and uptime monitor: in progress | OPEN, guide issued (`backup-and-uptime-guide.md`) | Pro on, daily backup listed, restore test pass, monitors and test alert |
 | F-07 | Owner two-step: to be done last | OPEN, scheduled last | Turn on `ownerTwoStep` and the database function |
+
+## Fixes made 2026-11-03 (in this PR; re-test after merge and deploy)
+| ID | Change | Evidence |
+|---|---|---|
+| F-17 | `prototype/vendor/VERSIONS.md` records three.js r160 and qrcode-generator 2.0.4; advisory check is manual | file in PR |
+| F-10 | `tools/scan-secrets.js` runs in CI on every PR (payment keys, private keys, service-role tokens); proven to fail on a planted key and pass on the repo | local run |
+| FE-03 | A photo that fails to load is remembered and the page draws again without it, in every slot (spotlight, product page, tiles). `tools/test-photo-fallback.js` fails before the fix and passes after | local run, in CI |
+| F-12 (part) | `.github/workflows/uptime.yml` checks the site and catalogue every 15 minutes and opens or closes an issue. Second line only; the 5-minute monitor and backups stay owner steps | runs after merge |
+| A-02 | Not changed: the six headings sit in separate wizard screens, one visible at a time. Re-check with a screen reader | validation note |
+
+## Cannot be fixed in code (owner or access needed)
+F-06/F-18 headers on GitHub Pages (needs Cloudflare and a DNS change: ask first); F-07 owner two-step (scheduled last); F-12 Pro plan, backups, restore test, monitor; F-14 legal review; A-09 other browsers; A-10 database privacy probe; F-21 live shop test from an unrestricted network; product safety, costs and inventory records; F-04 `verify` phone check (changes how the shop and the function talk and needs a redeploy; low value, left as is); mobile LCP about 6 s (needs splitting the owner and 3D code out of the main script, a larger change, proposed as its own PR).
