@@ -58,10 +58,10 @@ CHECK: whether small packs or a home-based packer must register with the state L
 | Item | Tag | Note |
 |---|---|---|
 | PAN, bank account, Razorpay KYC | **MUST. Owner says done (2026-11-03).** | Gateway asks for PAN, bank and live policy pages. |
-| Shop and Establishment registration | **CHECK, state-specific** | Many states want it for any commercial place, including home-based. Some exempt very small or home units. Ask your state labour department or CA. |
+| Shop and Establishment registration | **CHECK, state-specific. Owner says "will be done soon" (2026-11-03).** | Many states want it for any commercial place, including home-based. Some exempt very small or home units. Ask your state labour department or CA. |
 | Udyam (MSME) registration | **OPTIONAL** | Free. Helps with loans and some marketplaces. Not a legal need. |
-| Trade or business licence (municipal) | **CHECK, city-specific** | Often needed for making goods from a premises. Home-based low-risk units may be exempt. Ask your municipal office. |
-| Candle fire and safety | **CHECK** | No central licence for small candle making. Local fire rules may apply if you store wax, fragrance oil or stock in quantity. Keep an extinguisher, store oils away from heat, keep an SDS from your fragrance supplier. |
+| Trade or business licence (municipal) | **CHECK, city-specific. Owner says "will be done soon" (2026-11-03).** | Often needed for making goods from a premises. Home-based low-risk units may be exempt. Ask your municipal office. |
+| Candle fire and safety | **CHECK. Owner will follow the extinguisher and storage steps and ask the CA or fire office (2026-11-03).** | No central licence for small candle making. Local fire rules may apply if you store wax, fragrance oil or stock in quantity. Keep an extinguisher, store oils away from heat, keep an SDS from your fragrance supplier. |
 | Pollution board consent | **CHECK** | Usually not needed for micro scale. Ask if you scale up. |
 | Product liability insurance | **SHOULD** | Candles can cause fires. Get a quote. |
 | BIS mark | **N/A** | No mandatory BIS standard for hand-made decorative candles to my knowledge. CHECK. |
