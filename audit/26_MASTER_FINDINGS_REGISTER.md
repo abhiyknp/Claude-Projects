@@ -64,3 +64,12 @@ Re-rated by the validation pass: A-02 Low → Informational; F-06/F-18 confidenc
 
 ## Cannot be fixed in code (owner or access needed)
 F-06/F-18 headers on GitHub Pages (needs Cloudflare and a DNS change: ask first); F-07 owner two-step (scheduled last); F-12 Pro plan, backups, restore test, monitor; F-14 legal review; A-09 other browsers; A-10 database privacy probe; F-21 live shop test from an unrestricted network; product safety, costs and inventory records; F-04 `verify` phone check (changes how the shop and the function talk and needs a redeploy; low value, left as is); mobile LCP about 6 s (needs splitting the owner and 3D code out of the main script, a larger change, proposed as its own PR).
+
+## Owner pack added 2026-11-03 (`audit/owner-pack/`)
+| Item | What was added | Closes when |
+|---|---|---|
+| F-06/F-18 headers | Cloudflare step-by-step with rollback (01) | `curl -I` shows HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy |
+| A-10 / F-16 database privacy | `bud-and-things/tools/rls-probe.js` (read-only, prints no data) and guide (02) | Owner runs it: RESULT PASS |
+| F-21 live shop test | 17-step checklist (03) | Table filled and logged |
+| Product safety, costs, inventory | Guide and three CSV templates (04) | Records filled and reviewed |
+Sandbox note: the probe could not be run here (production-read guard); it was tested against a local fake server for pass, fail and no-answer cases only.
