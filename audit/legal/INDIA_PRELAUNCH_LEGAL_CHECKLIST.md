@@ -57,7 +57,7 @@ CHECK: whether small packs or a home-based packer must register with the state L
 
 | Item | Tag | Note |
 |---|---|---|
-| PAN, current bank account in the business name, Razorpay KYC | **MUST** | Gateway asks for PAN, bank and live policy pages. |
+| PAN, bank account, Razorpay KYC | **MUST. Owner says done (2026-11-03).** | Gateway asks for PAN, bank and live policy pages. |
 | Shop and Establishment registration | **CHECK, state-specific** | Many states want it for any commercial place, including home-based. Some exempt very small or home units. Ask your state labour department or CA. |
 | Udyam (MSME) registration | **OPTIONAL** | Free. Helps with loans and some marketplaces. Not a legal need. |
 | Trade or business licence (municipal) | **CHECK, city-specific** | Often needed for making goods from a premises. Home-based low-risk units may be exempt. Ask your municipal office. |
