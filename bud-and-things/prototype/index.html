@@ -3924,7 +3924,7 @@ function viewPay(code) {
 // the ready-to-send WhatsApp message for an offline order: first name, what is left to pay, and the link
 function billMessage(o, url) {
   const first = String((o.contact || {}).name || '').trim().split(/\s+/)[0] || 'there'; const sub = o.items.reduce((a, l) => a + l.qty * l.price, 0); const total = sub + (o.ship || 0) - Math.min(o.codeOff || 0, sub); const left = Math.max(0, total - (o.paid || 0));
-  return `Hi ${first} 🪔\nThank you for shopping with BUD & THINGS, we loved being part of your Diwali.\n${left > 0 ? 'Here is your invoice, with a quick way to pay.\nPay now: ' : 'Here is your invoice: '}${url}\nWe would love to serve you again. Do try more of our candles and florals next time, and tell us what you liked.\nShop now: https://budandthings.com\nHappy Diwali to you and your family! ✨\nInstagram: instagram.com/budandthings_offical`;
+  return `Hi ${first} 🪔\nThank you for shopping with BUD & THINGS. ${left > 0 ? 'Here is your invoice, with a quick way to pay.\nPay now: ' : 'Here is your invoice.\n'}${url}\nShop now: https://budandthings.com\nHappy Diwali! ✨`;
 }
 async function billShort(o, kind) {
   const full = billLink(o, kind); if (!BTDB.on) return full;
