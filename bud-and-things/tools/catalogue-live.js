@@ -52,7 +52,7 @@ function renderMain(list) {
       const badge = p.status === 'upcoming' ? '<span class="badge soon">Coming soon</span>' : '';
       const note = p.status === 'upcoming' ? '<p class="note">Not on the shop yet.</p>' : '';
       const img = p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy" width="360" height="360">` : '<div class="noimg" role="img" aria-label="Photo coming"></div>';
-      return `<li class="card${p.status === 'upcoming' ? ' upcoming' : ''}">${badge}${img}<h3>${esc(p.name)}</h3>${p.line ? `<p class="line">${esc(p.line)}</p>` : ''}${p.details && p.details.length ? `<p class="spec">${p.details.map(esc).join(' · ')}</p>` : ''}${p.price > 0 ? `<p class="price">₹${p.price.toLocaleString('en-IN')}</p>` : ''}${note}</li>`;
+      return `<li class="card${p.status === 'upcoming' ? ' upcoming' : ''}">${badge}${img}<h3>${esc(p.name)}</h3>${p.line ? `<p class="line">${esc(p.line)}</p>` : ''}${p.details && p.details.length ? `<p class="spec">${p.details.map(esc).join(' · ')}</p>` : ''}${note}</li>`;
     }).join('')}</ul></section>`;
   }).join('') + '</main>';
 }

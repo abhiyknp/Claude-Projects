@@ -30,3 +30,5 @@ console.log('Live catalogue checks passed.');
 
 assert.ok(html.includes('Warm chai candle.') && html.includes('Size: 8 cm') && html.includes('Material: Soy wax') && html.includes('Scent: Chai, Cardamom') && html.includes('Colour: Cream'), 'filled sheet details show on the catalogue');
 console.log('Catalogue-live details check passed.');
+assert.ok(!html.includes('class="price"') && !html.includes('₹'), 'the catalogue shows no prices; the shop has them');
+console.log('Catalogue shows no prices.');
