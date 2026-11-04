@@ -48,3 +48,4 @@ jobs:
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-photo-fallback.js
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-consent.js
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-publish-popup.js
+          PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-offline-order.js
