@@ -3921,6 +3921,11 @@ function viewPay(code) {
   <p class="pay-ft">Made with thought. Given with feeling.</p></div></div>`;
 }
 // With the database on, the link is short (#i-CODE for the WhatsApp page, #b-CODE for the invoice); otherwise the whole invoice is carried in the link.
+// the ready-to-send WhatsApp message for an offline order: first name, what is left to pay, and the link
+function billMessage(o, url) {
+  const first = String((o.contact || {}).name || '').trim().split(/\s+/)[0] || 'there'; const sub = o.items.reduce((a, l) => a + l.qty * l.price, 0); const total = sub + (o.ship || 0) - Math.min(o.codeOff || 0, sub); const left = Math.max(0, total - (o.paid || 0));
+  return `Hi ${first} 🪔\nThank you for shopping with BUD & THINGS, we loved being part of your Diwali.\n${left > 0 ? 'Your invoice has ₹' + left.toLocaleString('en-IN') + ' left to pay, with a quick UPI option.\nPay now: ' : 'Your invoice: '}${url}\nWe would love to serve you again. Do try more of our candles and florals next time, and tell us what you liked.\nShop now: https://budandthings.com\nHappy Diwali to you and your family! ✨\nInstagram: instagram.com/budandthings_offical`;
+}
 async function billShort(o, kind) {
   const full = billLink(o, kind); if (!BTDB.on) return full;
   try {
@@ -4739,8 +4744,8 @@ document.addEventListener('click', (e) => {
     case 'imp-copy': impCopy(); break;
     case 'adm-offline': offlineOrderModal(); break;
     case 'bill-copy-upi': { const done = () => say('UPI ID copied.'); try { navigator.clipboard.writeText(d.upi).then(done, () => say('UPI ID: ' + d.upi)); } catch (e) { say('UPI ID: ' + d.upi); } break; }
-    case 'adm-bill-link': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const say2 = d.kind === 'pay' ? 'WhatsApp link copied. Paste it in the chat.' : 'Invoice link copied. Send it by email.';
-      billShort(o, d.kind).then((url) => { const done = () => say(say2); try { navigator.clipboard.writeText(url).then(done, () => { prompt('Copy this link', url); }); } catch (e) { prompt('Copy this link', url); } }); break; }
+    case 'adm-bill-link': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const say2 = d.kind === 'pay' ? 'WhatsApp message copied. Paste it in the chat.' : 'Invoice link copied. Send it by email.';
+      billShort(o, d.kind).then((url) => { const text = d.kind === 'pay' ? billMessage(o, url) : url; const done = () => say(say2); try { navigator.clipboard.writeText(text).then(done, () => { prompt('Copy this message', text); }); } catch (e) { prompt('Copy this message', text); } }); break; }
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
