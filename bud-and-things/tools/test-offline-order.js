@@ -21,6 +21,11 @@ const expect = (label, got, want) => { console.log(label, got === want ? 'ok' : 
   expect('form closes', await p.locator('.pm-box').count(), 0);
   expect('order listed', await p.locator('tbody tr').count(), before + 1);
   expect('offline id shown', /BT-OFF-\d{6}-[A-Z0-9]{4}/.test(await p.textContent('tbody')), true);
+  await p.click('[data-act="adm-tab"][data-v="invoices"]'); await p.waitForTimeout(300);
+  await p.click('[data-act="adm-inv-view"]'); await p.waitForTimeout(300);
+  const inv = await p.textContent('#inv-sheet'); console.log(inv.replace(/\s+/g, ' ').slice(-400));
+  expect('invoice shows paid so far', /Paid so far/.test(inv) && /₹120\.00/.test(inv), true);
+  expect('invoice shows left to pay', /Left to pay/.test(inv), true);
   expect('no page errors', errs.length, 0);
   await b.close(); if (fails.length) { console.log('FAILED:', fails.join(', ')); process.exit(1); } console.log('Offline order checks passed.');
 })();
