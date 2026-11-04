@@ -26,12 +26,12 @@ const expect = (label, got, want) => { console.log(label, got === want ? 'ok' : 
   const inv = await p.textContent('#inv-sheet'); console.log(inv.replace(/\s+/g, ' ').slice(-400));
   expect('invoice shows paid so far', /Paid so far/.test(inv) && /₹120\.00/.test(inv), true);
   expect('invoice shows left to pay', /Left to pay/.test(inv), true);
-  await p.click('[data-act="adm-tab"][data-v="orders"]'); await p.waitForTimeout(300); await p.click('[data-act="adm-bill-link"]'); await p.waitForTimeout(300);
+  await p.click('[data-act="adm-tab"][data-v="orders"]'); await p.waitForTimeout(300); await p.evaluate(() => { document.querySelector('.nx-share').open = true; }); await p.click('[data-act="adm-bill-link"]:not([data-kind])'); await p.waitForTimeout(300);
   const link = await p.evaluate(() => navigator.clipboard.readText()); expect('link copied', /#bill-/.test(link), true);
   const q = await ctx.newPage(); const qerrs = []; q.on('pageerror', (e) => qerrs.push(e.message)); await q.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
   await q.goto(link.replace(/^https?:\/\/[^/]+/, 'http://localhost:8765')); await q.waitForTimeout(800); const bt = await q.textContent('#app'); console.log(bt.replace(/\s+/g, ' ').slice(0, 300));
   expect('link page has name', /Himanshu/.test(bt), true); expect('link page has left to pay', /Left to pay/.test(bt) && /₹507\.00/.test(bt), true); expect('link page no errors', qerrs.length, 0);
-  await p.click('[data-act="adm-bill-link"][data-kind="pay"]'); await p.waitForTimeout(300);
+  await p.evaluate(() => { document.querySelector('.nx-share').open = true; }); await p.click('[data-act="adm-bill-link"][data-kind="pay"]'); await p.waitForTimeout(300);
   const plink = await p.evaluate(() => navigator.clipboard.readText()); expect('whatsapp link copied', /#pay-/.test(plink), true);
   await q.goto(plink.replace(/^https?:\/\/[^/]+/, 'http://localhost:8765')); await q.reload(); await q.waitForTimeout(1200); const pt = await q.textContent('#app');
   expect('whatsapp page greets', /Happy Diwali/.test(pt) && /Himanshu/.test(pt), true); expect('whatsapp page left to pay', /Left to pay/i.test(pt) && /₹507/.test(pt), true); expect('whatsapp page no errors', qerrs.length, 0);
