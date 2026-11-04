@@ -70,6 +70,10 @@ create table if not exists points_log (id uuid primary key default gen_random_uu
 create index if not exists points_log_email on points_log (email);
 -- invoices and credit notes. Numbers run one after the other within a financial year (April to March) and are never
 -- reused: a cancelled invoice stays here marked Void. Made only by issue_invoice() and void_invoice() below.
+-- short links to an invoice page (budandthings.com/#i-CODE): the owner makes them, anyone with the code can open one
+create table if not exists bills (
+  code text primary key, order_id text, data jsonb not null, created_at timestamptz not null default now()
+);
 create table if not exists invoice_counters (fy text not null, kind text not null, last int not null default 0, primary key (fy, kind));
 create table if not exists invoices (
   id text primary key,
@@ -191,6 +195,7 @@ alter table settings enable row level security;
 alter table stock enable row level security;
 alter table media enable row level security;
 alter table orders enable row level security;
+alter table bills enable row level security;
 alter table reviews enable row level security;
 alter table subscribers enable row level security;
 alter table restock_requests enable row level security;
@@ -243,6 +248,7 @@ create policy "owner" on settings for all using (is_owner()) with check (is_owne
 create policy "owner" on stock for all using (is_owner()) with check (is_owner());
 create policy "owner" on media for all using (is_owner()) with check (is_owner());
 create policy "owner" on orders for all using (is_owner()) with check (is_owner());
+drop policy if exists "owner" on bills; create policy "owner" on bills for all using (is_owner()) with check (is_owner());
 create policy "owner" on reviews for all using (is_owner()) with check (is_owner());
 create policy "owner" on subscribers for all using (is_owner()) with check (is_owner());
 create policy "owner" on restock_requests for all using (is_owner()) with check (is_owner());
@@ -514,6 +520,11 @@ begin
 end $$;
 
 -- a customer can look up their own order with its number and their phone number (20 tries an hour per connection)
+-- the page behind a short invoice link; the code is 8 random characters, so it cannot be guessed
+create or replace function get_bill(code_in text) returns jsonb language sql security definer set search_path = public as $$
+  select data from bills where code = upper(trim(code_in)) limit 1
+$$;
+
 drop function if exists get_order(text, text);
 create function get_order(order_id text, phone_no text) returns jsonb language plpgsql security definer set search_path = public as $$
 begin
@@ -1079,6 +1090,7 @@ revoke execute on function client_key() from public, anon, authenticated;
 revoke execute on function guard_visitor() from public, anon, authenticated;
 revoke execute on function place_order(jsonb) from public, anon;
 revoke execute on function get_order(text, text) from public;
+revoke execute on function get_bill(text) from public;
 revoke execute on function note_payment(text, text, text) from public;
 revoke execute on function get_invoice(text, text) from public;
 revoke execute on function cancel_order(text) from public, anon;
@@ -1096,6 +1108,7 @@ revoke execute on function points_of(text) from public, anon, authenticated;
 revoke execute on function my_orders() from public, anon;
 grant execute on function my_orders() to authenticated;
 grant execute on function get_order(text, text) to anon, authenticated;
+grant execute on function get_bill(text) to anon, authenticated;
 grant execute on function note_payment(text, text, text) to anon, authenticated;
 grant execute on function get_invoice(text, text) to anon, authenticated;
 grant execute on function cancel_order(text) to authenticated;

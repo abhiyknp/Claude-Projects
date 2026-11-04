@@ -17,8 +17,8 @@ const custOf = (auth) => { try { const p = JSON.parse(Buffer.from(auth.replace(/
 const CUST_CODE = '111111';
 const custSession = (email) => ({ access_token: custJwt(email), refresh_token: 'r.' + Buffer.from(email).toString('base64url'), expires_in: 3600, token_type: 'bearer', user: { email } });
 const TWO_STEP = process.env.TWO_STEP === '1'; // matches ownerTwoStep in config.js; off until launch
-const KEYS = { site_text: 'key', settings: 'key', stock: 'sku', coupons: 'code', invoices: 'id', customer_meta: 'contact', review_authors: 'review_id' };
-const T = { coupons: [{ code: 'HELLO10', kind: 'percent', amount: 10, min_order: 0, max_off: 0, starts_on: null, ends_on: null, max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true, created_at: new Date().toISOString() }], invoices: [], points_log: [], products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], review_authors: [], customer_meta: [], events: [], notifications: [], profiles: [] };
+const KEYS = { site_text: 'key', settings: 'key', stock: 'sku', coupons: 'code', invoices: 'id', bills: 'code', customer_meta: 'contact', review_authors: 'review_id' };
+const T = { bills: [], coupons: [{ code: 'HELLO10', kind: 'percent', amount: 10, min_order: 0, max_off: 0, starts_on: null, ends_on: null, max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true, created_at: new Date().toISOString() }], invoices: [], points_log: [], products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], review_authors: [], customer_meta: [], events: [], notifications: [], profiles: [] };
 const FILES = {};
 let orderNo = 1001;
 const uuid = () => 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
@@ -217,6 +217,7 @@ http.createServer((req, res) => {
         ['subscribers', 'restock_requests', 'reminders', 'customer_meta', 'referrers'].forEach((t) => { T[t] = T[t].filter((r) => !c.includes(r.contact)); }); T.review_authors = T.review_authors.filter((r) => !c.includes(r.email));
         T.profiles.filter((p) => c.includes(p.email)).forEach((p) => Object.assign(p, { name: '', phone: '', addresses: [], prefs: {} })); return send(res, 200, null);
       }
+      if (m && m[1] === 'get_bill') { const b = T.bills.find((x) => x.code === String(json().code_in || '').trim().toUpperCase()); return send(res, 200, b ? b.data : null); }
       if (m && m[1] === 'get_invoice') { const a = json(); const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === normPhone(a.phone_no)); return send(res, 200, (o && T.invoices.find((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued')) || null); }
       if (m && m[1] === 'note_payment') { const a = json(), ref = String(a.utr || '').trim().toUpperCase(); if (!/^[A-Z0-9]{8,22}$/.test(ref)) return send(res, 400, { message: 'bad_utr' });
         const o = T.orders.find((x) => x.id === String(a.order_id).trim().toUpperCase() && x.phone === normPhone(a.phone_no) && x.method === 'UPI QR' && x.status === 'Awaiting payment');

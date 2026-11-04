@@ -11,7 +11,7 @@ const key = process.env.BT_KEY || (cfg.match(/anonKey:\s*'([^']+)'/) || [])[1];
 if (!base || !key) { console.error('No project address or public key found.'); process.exit(2); }
 // public by design (see supabase/schema.sql): published or public rows only
 const PUBLIC = ['products', 'pairings', 'site_text', 'settings', 'stock', 'media', 'reviews'];
-const PRIVATE = ['owners', 'orders', 'subscribers', 'restock_requests', 'reminders', 'gift_cards', 'coupons', 'points_log', 'invoice_counters', 'invoices', 'referrers', 'profiles', 'notifications', 'review_authors', 'customer_meta', 'events', 'hits', 'change_log'];
+const PRIVATE = ['owners', 'orders', 'subscribers', 'restock_requests', 'reminders', 'gift_cards', 'coupons', 'points_log', 'invoice_counters', 'invoices', 'bills', 'referrers', 'profiles', 'notifications', 'review_authors', 'customer_meta', 'events', 'hits', 'change_log'];
 async function probe(t) {
   try {
     const r = await fetch(`${base}/rest/v1/${t}?select=*&limit=3`, { headers: { apikey: key, Authorization: 'Bearer ' + key } });
