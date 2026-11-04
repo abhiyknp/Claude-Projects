@@ -3,7 +3,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
 const fails = [];
 const expect = (label, got, want) => { console.log(label, got === want ? 'ok' : 'FAIL (got ' + got + ', want ' + want + ')'); if (got !== want) fails.push(label); };
 (async () => {
-  const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1000, height: 900 } }); const p = await ctx.newPage();
+  const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1000, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] }); const p = await ctx.newPage();
   const errs = []; p.on('pageerror', (e) => errs.push(e.message));
   await p.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
   await p.goto('http://localhost:8765/page.html#admin'); await p.waitForTimeout(800);
@@ -21,6 +21,16 @@ const expect = (label, got, want) => { console.log(label, got === want ? 'ok' : 
   expect('form closes', await p.locator('.pm-box').count(), 0);
   expect('order listed', await p.locator('tbody tr').count(), before + 1);
   expect('offline id shown', /BT-OFF-\d{6}-[A-Z0-9]{4}/.test(await p.textContent('tbody')), true);
+  await p.click('[data-act="adm-tab"][data-v="invoices"]'); await p.waitForTimeout(300);
+  await p.click('[data-act="adm-inv-view"]'); await p.waitForTimeout(300);
+  const inv = await p.textContent('#inv-sheet'); console.log(inv.replace(/\s+/g, ' ').slice(-400));
+  expect('invoice shows paid so far', /Paid so far/.test(inv) && /₹120\.00/.test(inv), true);
+  expect('invoice shows left to pay', /Left to pay/.test(inv), true);
+  await p.click('[data-act="adm-tab"][data-v="orders"]'); await p.waitForTimeout(300); await p.click('[data-act="adm-bill-link"]'); await p.waitForTimeout(300);
+  const link = await p.evaluate(() => navigator.clipboard.readText()); expect('link copied', /#bill-/.test(link), true);
+  const q = await ctx.newPage(); const qerrs = []; q.on('pageerror', (e) => qerrs.push(e.message)); await q.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
+  await q.goto(link.replace(/^https?:\/\/[^/]+/, 'http://localhost:8765')); await q.waitForTimeout(800); const bt = await q.textContent('#app'); console.log(bt.replace(/\s+/g, ' ').slice(0, 300));
+  expect('link page has name', /Himanshu/.test(bt), true); expect('link page has left to pay', /Left to pay/.test(bt) && /₹507\.00/.test(bt), true); expect('link page no errors', qerrs.length, 0);
   expect('no page errors', errs.length, 0);
   await b.close(); if (fails.length) { console.log('FAILED:', fails.join(', ')); process.exit(1); } console.log('Offline order checks passed.');
 })();

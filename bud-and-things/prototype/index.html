@@ -1537,7 +1537,7 @@ async function pvCheck() {
   if (ok !== PV_OK) { PV_OK = ok; if (typeof render === 'function' && !UI.adm.pending) render(); }
 }
 const pvSeesAll = () => !!BTDB.owner() || PV_OK;
-const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !pvSeesAll();
+const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !route().startsWith('bill-') && !pvSeesAll();
 // the preview code is shown once, when it is made; this browser keeps it so the owner can copy the link again here
 const pvCode = () => { try { return localStorage.getItem('bt-preview-code') || ''; } catch (e) { return ''; } };
 const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(pvCode());
@@ -2590,7 +2590,7 @@ const DELAY_REASONS = ['Courier is running late', 'Bad weather', 'Festival rush'
 const canDelay = (o) => ['Placed', 'Packed', 'Shipped'].includes(o.status);
 const delayText = (dl) => `${esc(dl.reason)}${dl.note ? ': ' + esc(dl.note) : ''}${dl.until ? ' · now expected by ' + niceDay(dl.until) : ''}`;
 const delayNote = (o) => (o.delay ? `<span style="display:block;margin-top:6px"><span class="pill out">Delayed</span> <span class="muted" style="font-size:13px">${delayText(o.delay)}</span></span>` : '')
-  + `<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${canDelay(o) ? `<button class="btn small ghost" type="button" data-act="adm-delay-open" data-id="${esc(o.id)}">${o.delay ? 'Change delay' : 'Mark delayed'}</button>${o.delay ? `<button class="btn small ghost" type="button" data-act="adm-delay-clear" data-id="${esc(o.id)}">Clear delay</button>` : ''}` : ''}${invoiceBtn(o)}</span>`;
+  + `<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${canDelay(o) ? `<button class="btn small ghost" type="button" data-act="adm-delay-open" data-id="${esc(o.id)}">${o.delay ? 'Change delay' : 'Mark delayed'}</button>${o.delay ? `<button class="btn small ghost" type="button" data-act="adm-delay-clear" data-id="${esc(o.id)}">Clear delay</button>` : ''}` : ''}${invoiceBtn(o)}${o.channel === 'offline' ? `<button class="btn small" type="button" data-act="adm-bill-link" data-id="${esc(o.id)}">Copy invoice link</button>` : ''}</span>`;
 function delayForm(list) {
   const id = UI.adm.delayFor; const o = id && list.find((x) => x.id === id); if (!o) return '';
   const cur = o.delay || {}; const known = DELAY_REASONS.slice(0, -1).includes(cur.reason); const sel = cur.reason ? (known ? cur.reason : 'Something else') : DELAY_REASONS[0];
@@ -3323,7 +3323,7 @@ function invoiceSnap(o) {
     buyer: { name: (o.contact || {}).name || '', phone: (o.contact || {}).phone || '', email: (o.contact || {}).email || '', line1: a.line1 || '', line2: a.line2 || '', city: a.city || '', pin: a.pin || '', state: a.state || '' } };
 }
 // The invoice follows the Silk · Maroon & Gold look: a maroon band with gold lettering over cream. "Print in black and white" drops the colour bands.
-const INV_CSS = `.inv{--band:#7A1229;--band-ink:#F8F0E4;--gold:#D6A34A;--maroon:#8F1834;--ink:#150206;--soft:#5b3a42;--cream:#F8F0E4;--line:#E0CBB0;--rule:#C9A56F;--dgold:#7A5A18;font:13px/1.5 Montserrat,Arial,sans-serif;color:var(--ink);background:var(--cream);max-width:860px;margin:0 auto;box-sizing:border-box;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv *{box-sizing:border-box}
+const INV_CSS = `.inv{--band:#7A1229;--band-ink:#F8F0E4;--gold:#D6A34A;--maroon:#8F1834;--ink:#150206;--soft:#5b3a42;--cream:#F8F0E4;--line:#E0CBB0;--rule:#C9A56F;--dgold:#7A5A18;font:13px/1.5 Montserrat,Arial,sans-serif;color:var(--ink);background:var(--cream);max-width:860px;margin:0 auto;box-sizing:border-box;position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}.inv *{box-sizing:border-box}.inv .iv-pay{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:14px 0;padding:14px;border:1.5px solid var(--rule);background:#fff}.inv .iv-pay h2{margin:0 0 4px}.inv .iv-pay p{margin:2px 0}.inv .iv-left{font:700 26px Georgia,serif;color:var(--maroon)}.inv .iv-pay a{color:var(--maroon);font-weight:600}.inv .iv-upiqr{text-align:center}.inv .iv-upiqr svg{width:132px;height:132px;display:block;margin:0 auto 4px}.inv .iv-upiqr small{color:var(--soft)}
 .inv .iv-band{background:var(--band);color:var(--band-ink);padding:22px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.inv .iv-band img{height:46px;width:auto;display:block}.inv .iv-title{text-align:right}.inv .iv-title h1{font:600 28px/1.1 'Playfair Display',Georgia,serif;margin:0;color:var(--gold);letter-spacing:.04em;text-transform:uppercase}.inv .iv-title span{font-size:12px;letter-spacing:.12em;color:var(--band-ink)}
 .inv .iv-body{padding:20px 28px 8px}.inv .iv-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:1px solid var(--rule);background:#fff;margin-bottom:18px}.inv .iv-meta div{padding:8px 12px;border-right:1px solid var(--line)}.inv .iv-meta div:last-child{border-right:0}.inv .iv-meta small{display:block;font:700 10px/1.4 Montserrat,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dgold)}.inv .iv-meta strong{font:600 14px/1.3 Montserrat,Arial,sans-serif;font-variant-numeric:tabular-nums}.inv .iv-meta .iv-no strong{color:var(--maroon);font-size:16px}
 .inv .iv-parties{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:18px}.inv .iv-parties>div{flex:1 1 220px;min-width:0}.inv h2{font:700 10px/1.4 Montserrat,Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;margin:0 0 5px;color:var(--dgold);border-bottom:1px solid var(--rule);padding-bottom:3px}.inv .iv-parties p{margin:0}
@@ -3350,6 +3350,13 @@ function invoiceHTML(inv) {
   const sigImg = brandUrl('signature'); const code = (() => { try { return window.BTInvoice ? BTInvoice.code128Svg(inv.id, { module: 2, height: 40 }) : ''; } catch (e) { return ''; } })();
   const qr = (() => { try { if (!window.qrcode) return ''; const q = window.qrcode(0, 'M'); q.addData(location.href.split('#')[0] + '#track'); q.make(); return q.createSvgTag(3, 0); } catch (e) { return ''; } })();
   const paid = d.method ? (d.method === 'Cash on delivery' ? 'Pay on delivery' : 'Paid · ' + esc(d.method)) : '';
+  // an order sold offline can be part-paid: show what was paid, what is left (worked out from the invoice total), and a UPI code for the rest
+  const oo = !cn && ((admData('orders') || []).find((x) => x.id === d.orderId) || (S.orders || []).find((x) => x.id === d.orderId)); const off = oo && oo.channel === 'offline' ? oo : null;
+  const paidSoFar = off ? Math.min(+off.paid || 0, t.total / 100) : 0; const left = off ? Math.max(0, Math.round(t.total / 100 - paidSoFar)) : 0;
+  const upiOn = left > 0 && /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(SET.upiId || ''));
+  const upiLink = upiOn ? 'upi://pay?pa=' + encodeURIComponent(SET.upiId) + '&pn=' + encodeURIComponent(String(SET.upiName || 'Bud & Things').slice(0, 30)) + '&am=' + left.toFixed(2) + '&cu=INR&tn=' + encodeURIComponent('Invoice ' + inv.id) : '';
+  const upiQr = (() => { try { if (!upiOn || !window.qrcode) return ''; const q = window.qrcode(0, 'M'); q.addData(upiLink); q.make(); return q.createSvgTag(4, 0); } catch (e) { return ''; } })();
+  const payBox = off && left > 0 ? `<div class="iv-pay"><div><h2>Pay the rest</h2><p class="iv-left">${rs(left * 100)}</p>${upiOn ? `<p>UPI: <strong>${esc(SET.upiId)}</strong></p><p><a href="${esc(upiLink)}">Pay in your UPI app</a></p>` : '<p>Please pay in cash or by UPI to the number below.</p>'}</div>${upiQr ? `<div class="iv-upiqr">${upiQr}<small>Scan with any UPI app</small></div>` : ''}</div>` : '';
   return `<style>${INV_CSS}</style><div class="inv" id="inv-sheet">${void_ ? '<div class="inv-void" aria-hidden="true">VOID</div>' : ''}
     <div class="iv-band"><img src="${esc(logo)}" alt="BUD &amp; THINGS"><div class="iv-title"><h1>${esc(title)}</h1><span>${cn ? 'AGAINST ' + esc(inv.against || d.against || '') : 'ORIGINAL FOR RECIPIENT'}</span></div></div>
     <div class="iv-body">
@@ -3360,7 +3367,7 @@ function invoiceHTML(inv) {
     <div class="inv-tw"><table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${d.lines.map(row).join('')}</tbody></table></div>
     <div class="iv-two"><div><p class="iv-words"><strong>Amount in words:</strong> ${esc(window.BTInvoice ? BTInvoice.amountInWords(t.total) : '')}</p>${cn ? `<p class="iv-note"><strong>Reason:</strong> ${esc(d.reason || '')}</p>` : ''}${void_ ? `<p class="iv-note"><strong>Cancelled:</strong> ${esc(inv.void_reason || '')}</p>` : ''}
       <p class="iv-note">${gst ? 'Prices include GST. Tax payable on reverse charge: No.' : 'Issued by a supplier not registered under GST. No tax is charged.'} ${d.method === 'Cash on delivery' ? 'To be paid on delivery.' : ''}</p><h2 style="margin-top:12px">Terms</h2><p class="iv-note">${esc(terms)}</p></div>
-      <div class="iv-sum">${t.discount && gst ? sum('Discounts already taken off', '−' + rs(t.discount)) : ''}${gst ? sum('Taxable value', rs(t.taxable)) : ''}${gst && !d.inter ? sum('CGST', rs(t.cgst)) + sum('SGST', rs(t.sgst)) : ''}${gst && d.inter ? sum('IGST', rs(t.igst)) : ''}${sum(cn ? 'Total credited' : 'Total', rs(t.total), 'grand')}</div></div>
+      <div class="iv-sum">${t.discount && gst ? sum('Discounts already taken off', '−' + rs(t.discount)) : ''}${gst ? sum('Taxable value', rs(t.taxable)) : ''}${gst && !d.inter ? sum('CGST', rs(t.cgst)) + sum('SGST', rs(t.sgst)) : ''}${gst && d.inter ? sum('IGST', rs(t.igst)) : ''}${sum(cn ? 'Total credited' : 'Total', rs(t.total), 'grand')}${off ? sum('Paid so far', '−' + rs(Math.round(paidSoFar * 100))) + sum(left > 0 ? 'Left to pay' : 'Fully paid', left > 0 ? rs(left * 100) : rs(0), 'grand') : ''}</div></div>${payBox}
     <div class="iv-codes"><div class="iv-bar">${code}<small>${esc(inv.id)} · scan to look this invoice up</small></div>${qr ? `<div class="iv-qr">${qr}<small>Scan to track your order</small></div>` : ''}
       <div class="iv-sign"><div class="iv-stamp">${sigImg ? `<img src="${esc(new URL(sigImg, location.href).href)}" alt="Signature and seal">` : INV_SEAL + `<span class="iv-sig-name">${esc(SET.invSignName || 'Ashi')}</span>`}</div><small>For ${esc(sl.name)}<br>Authorised signatory</small></div></div>
     </div>
@@ -3872,6 +3879,29 @@ function ptsBox(t) {
 function orderRows(list) {
   return list.length ? `<ul class="order-list">${list.map((o) => `<li><a href="#order-${esc(o.id)}"><strong>${esc(o.id)}</strong><span class="muted">${new Date(o.placedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} · ${o.items.length} piece${o.items.length === 1 ? '' : 's'} · <span class="num">${inr(o.total)}</span></span><span class="pill ${esc(String(o.status).split(' ')[0])}">${esc(o.status)}</span></a></li>`).join('')}</ul>` : '<p class="muted">No orders yet.</p>';
 }
+// A shareable invoice link for an order sold offline. The invoice is carried inside the link itself (no database lookup), so it needs no login and nothing to switch on.
+const b64u = (str) => btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const unb64u = (str) => decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/'))));
+function billLink(o) {
+  const ok = /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(SET.upiId || ''));
+  const pay = { i: o.id, n: (o.contact || {}).name || '', d: String(o.placedAt || '').slice(0, 10), l: o.items.map((l) => [l.name + (l.label ? ' · ' + l.label : ''), l.qty, l.price]), s: o.ship || 0, o: o.codeOff || 0, p: o.paid || 0, u: ok ? SET.upiId : '', un: String(SET.upiName || 'Bud & Things').slice(0, 30) };
+  return location.origin + location.pathname + '#bill-' + b64u(JSON.stringify(pay));
+}
+function viewBill(code) {
+  let b; try { b = JSON.parse(unb64u(code)); if (!b || !Array.isArray(b.l)) throw 0; } catch (e) { return '<div class="wrap" style="padding:40px 0"><h1>This invoice link is not complete</h1><p>Please ask BUD &amp; THINGS to send it again.</p></div>'; }
+  const sub = b.l.reduce((a, l) => a + (+l[1] || 0) * (+l[2] || 0), 0); const off = Math.min(+b.o || 0, sub); const total = sub + (+b.s || 0) - off; const paid = Math.min(+b.p || 0, total); const left = Math.max(0, total - paid);
+  const upi = left > 0 && b.u && /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(b.u)) ? 'upi://pay?pa=' + encodeURIComponent(b.u) + '&pn=' + encodeURIComponent(String(b.un || 'Bud & Things').slice(0, 30)) + '&am=' + left.toFixed(2) + '&cu=INR&tn=' + encodeURIComponent('Invoice ' + b.i) : '';
+  let qr = ''; if (upi) { if (window.qrcode) { try { const q = window.qrcode(0, 'M'); q.addData(upi); q.make(); qr = q.createSvgTag(4, 0); } catch (e) { /* no QR; the UPI ID is still shown */ } } else setTimeout(() => { if (route().startsWith('bill-')) render(); }, 1500); }
+  const when = b.d ? new Date(b.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  const sum = (l, v, c) => `<div${c ? ` class="${c}"` : ''}><span>${l}</span><span>${v}</span></div>`; const R = (n) => rs(Math.round(n * 100));
+  return `<div class="wrap" style="padding:20px 0 40px"><style>${INV_CSS}</style><div class="inv">
+    <div class="iv-band"><div class="iv-title" style="text-align:left"><h1>Invoice</h1><span>BUD &amp; THINGS</span></div></div>
+    <div class="iv-body"><div class="iv-meta"><div class="iv-no"><small>Invoice no.</small><strong>${esc(b.i)}</strong></div>${when ? `<div><small>Date</small><strong>${when}</strong></div>` : ''}<div><small>For</small><strong>${esc(b.n)}</strong></div></div>
+    <div class="inv-tw"><table><thead><tr><th>No.</th><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead><tbody>${b.l.map((l, i) => `<tr><td>${i + 1}</td><td>${esc(l[0])}</td><td>${+l[1]}</td><td>${R(+l[2])}</td><td>${R(l[1] * l[2])}</td></tr>`).join('')}</tbody></table></div>
+    <div class="iv-two"><div></div><div class="iv-sum">${sum('Items', R(sub))}${b.s > 0 ? sum('Delivery', R(+b.s)) : ''}${off > 0 ? sum('Discount', '−' + R(off)) : ''}${sum('Total', R(total), 'grand')}${paid > 0 ? sum('Paid so far', '−' + R(paid)) : ''}${sum(left > 0 ? 'Left to pay' : 'Fully paid', R(left), 'grand')}</div></div>
+    ${left > 0 ? `<div class="iv-pay"><div><h2>Pay the rest</h2><p class="iv-left">${R(left)}</p>${upi ? `<p>UPI: <strong>${esc(b.u)}</strong></p><p><a href="${esc(upi)}">Pay in your UPI app</a></p>` : '<p>Please pay in cash or by UPI as agreed.</p>'}</div>${qr ? `<div class="iv-upiqr">${qr}<small>Scan with any UPI app</small></div>` : ''}</div>` : ''}
+    </div><div class="iv-foot"><em>Made with thought. Given with feeling.</em><span>Thank you for choosing BUD &amp; THINGS</span></div></div></div>`;
+}
 function viewTrack() {
   const tr = UI.track || {}; loadMine();
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Orders</span><h1 tabindex="-1">${T('track.title')}</h1><p class="muted" style="max-width:620px">${T('track.sub')}</p></div>
@@ -4200,7 +4230,8 @@ function viewGiftHome() {
 
 function viewFor(r, cs) {
   let html;
-  if (cs) html = viewComingSoon();
+  if (r.startsWith('bill-')) html = viewBill(r.slice(5));
+  else if (cs) html = viewComingSoon();
   else if (soonFor(r)) html = viewSoonSection(soonFor(r));
   else if (r.startsWith('s-')) html = viewNewSection(r);
   else if (r === 'home' && homeStyle() === 'gift') html = viewGiftHome();
@@ -4651,6 +4682,8 @@ document.addEventListener('click', (e) => {
     case 'imp-fetch': impFetch(); break;
     case 'imp-copy': impCopy(); break;
     case 'adm-offline': offlineOrderModal(); break;
+    case 'adm-bill-link': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const url = billLink(o); const done = () => say('Invoice link copied. Send it to the customer.');
+      try { navigator.clipboard.writeText(url).then(done, () => { prompt('Copy this link', url); }); } catch (e) { prompt('Copy this link', url); } break; }
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
