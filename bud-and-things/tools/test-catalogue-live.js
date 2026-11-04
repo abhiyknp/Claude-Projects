@@ -1,4 +1,4 @@
-// Checks how the live catalogue is put together: sold out, upcoming, back-up from the sheet, no drafts, safe text.
+// Checks how the live catalogue is put together: sold-out pieces listed with no label, upcoming, back-up from the sheet, no drafts, safe text.
 const { merge, renderMain, apply } = require('./catalogue-live.js');
 const assert = require('assert');
 const rows = {
@@ -22,7 +22,8 @@ assert.strictEqual(by('Lotus tray').status, 'upcoming');
 assert.ok(!by('Draft piece') && !by('Old sample'), 'drafts stay out');
 assert.ok(by('Pour kit') && !by('Tulip'), 'sheet-only piece kept, matched piece not doubled');
 const html = apply('<style>a{}</style><main>old</main>', list);
-assert.ok(html.includes('Sold out') && html.includes('Coming soon') && html.includes('A new batch is being prepared.'));
+assert.ok(html.includes('Coming soon') && html.includes('Chai'), 'sold-out pieces stay listed');
+assert.ok(!/sold out/i.test(html) && !html.includes('A new batch is being prepared.'), 'the catalogue never says sold out');
 assert.ok(!html.includes('<b>') && html.includes('Tulip &lt;b&gt;'), 'names are escaped');
 assert.ok(!html.includes('₹0'), 'no zero price');
 console.log('Live catalogue checks passed.');

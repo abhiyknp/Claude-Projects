@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Rebuilds the product list on the catalogue page from the live database, so the catalogue always has everything on the website
-// (in stock and sold out) plus pieces marked "Upcoming (catalogue only)" in Owner view.
+// (every piece, with no sold-out label; that stays on the shop) plus pieces marked "Upcoming (catalogue only)" in Owner view.
 // The sheet snapshot (catalogue/products.json) is the back-up: pieces only it knows stay listed, and if the database cannot be
 // reached the page is left exactly as it is.
 //   node tools/catalogue-live.js <catalogue folder to change, default bud-and-things/catalogue>
@@ -46,10 +46,11 @@ function renderMain(list) {
   return '<main>' + GROUPS.map(([k, title]) => {
     const ps = list.filter((p) => p.group === k); if (!ps.length) return '';
     return `<section><h2>${esc(title)}</h2><ul class="grid">${ps.map((p) => {
-      const badge = p.status === 'out' ? '<span class="badge">Sold out</span>' : p.status === 'upcoming' ? '<span class="badge soon">Coming soon</span>' : '';
-      const note = p.status === 'out' ? '<p class="note">A new batch is being prepared.</p>' : p.status === 'upcoming' ? '<p class="note">Not on the shop yet.</p>' : '';
+      // the catalogue never says "Sold out": that belongs to the shop. A sold-out piece looks like any other piece here.
+      const badge = p.status === 'upcoming' ? '<span class="badge soon">Coming soon</span>' : '';
+      const note = p.status === 'upcoming' ? '<p class="note">Not on the shop yet.</p>' : '';
       const img = p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy" width="360" height="360">` : '<div class="noimg" role="img" aria-label="Photo coming"></div>';
-      return `<li class="card${p.status === 'in' ? '' : ' ' + p.status}">${badge}${img}<h3>${esc(p.name)}</h3>${p.price > 0 ? `<p class="price">₹${p.price.toLocaleString('en-IN')}</p>` : ''}${note}</li>`;
+      return `<li class="card${p.status === 'upcoming' ? ' upcoming' : ''}">${badge}${img}<h3>${esc(p.name)}</h3>${p.price > 0 ? `<p class="price">₹${p.price.toLocaleString('en-IN')}</p>` : ''}${note}</li>`;
     }).join('')}</ul></section>`;
   }).join('') + '</main>';
 }
