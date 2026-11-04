@@ -57,7 +57,7 @@ const run = (rows, existing, stock) => imp.plan([{ name: 'Glass Candles', rows: 
   const MH = HEAD + ',Marketplace Price (₹),Dimensions (cm),Barcode (EAN)';
   const mrun = (rows, existing) => imp.plan([{ name: 'Glass Candles', rows: imp.parseCsv([MH].concat(rows).join('\n')) }], existing || [], {});
   p = mrun([',1,BNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown,200,,799,12,Yes,899,10x10x8,4006381333931']);
-  assert.strictEqual(p.items[0].data.mrpMarket, 899); assert.deepStrictEqual(p.items[0].data.dims, { l: 10, b: 10, h: 8 }); assert.strictEqual(p.items[0].data.gtin, '4006381333931'); assert.strictEqual(p.notes.length, 0);
+  assert.strictEqual(p.items[0].data.mrpMarket, 899); assert.deepStrictEqual(p.items[0].data.dims, { l: 10, b: 10, h: 8 }); assert.strictEqual(p.items[0].data.gtin, '4006381333931'); assert.strictEqual(p.notes.filter((n) => !/filled in automatically/.test(n)).length, 0);
   // blank cells keep what the shop already has; the site price is not touched
   const ex = [{ id: p.items[0].id, data: JSON.parse(JSON.stringify(p.items[0].data)), sort: 1000, live: true }];
   p = mrun([',1,BNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown,200,,799,12,Yes,,,'], ex);
@@ -66,7 +66,7 @@ const run = (rows, existing, stock) => imp.plan([{ name: 'Glass Candles', rows: 
   assert.strictEqual(p.counts.changed, 1); assert.strictEqual(p.items[0].data.mrpMarket, 949); assert.strictEqual(p.items[0].data.variants[0].price, 799);
   // unreadable values are ignored and explained, never saved
   p = mrun([',1,BNT-PRD-CG-002,Vanilla,Glass candle,,,,,500,,Yes,abc,10x10,123']);
-  assert.ok(!('mrpMarket' in p.items[0].data) && !('dims' in p.items[0].data) && !('gtin' in p.items[0].data)); assert.strictEqual(p.notes.length, 3);
+  assert.ok(!('mrpMarket' in p.items[0].data) && !('dims' in p.items[0].data) && !('gtin' in p.items[0].data)); assert.strictEqual(p.notes.filter((n) => !/filled in automatically/.test(n)).length, 3);
   // sheets without the new columns still import exactly as before
   p = run([',1,BNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown,200,,799,12,Yes'], [], {}); assert.ok(!('mrpMarket' in p.items[0].data));
   console.log('Import checks passed.');
@@ -82,3 +82,16 @@ const run = (rows, existing, stock) => imp.plan([{ name: 'Glass Candles', rows: 
     r.notes.forEach((x) => console.log('  note ' + x));
   }
 })().catch((e) => { console.error(e); process.exit(1); });
+
+// automatic description and material
+{
+  const csv = 'Product ID / SKU,Product Name,Product Type,Scent,Colour,Actual Weight (g),Selling price (₹),Stock,Show on website\nBNT-PRD-CG-001,Iced Latte,Glass candle,Coffee,Brown + White,170,199,2,YES\nBNT-PRD-JT-001,Rose Dawn,Jesmonite tray,N/A,Rose Gold + White,172,149,1,YES\n';
+  const r = imp.plan([{ name: 'Glass Candles', rows: imp.parseCsv(csv) }], []);
+  const a = r.items.find((i) => i.sku === 'BNT-PRD-CG-001'), b = r.items.find((i) => i.sku === 'BNT-PRD-JT-001');
+  assert.strictEqual(a.data.line, 'Handmade glass candle in brown and white, scented with coffee.');
+  assert.strictEqual(a.data.material, 'Soy wax in a glass jar');
+  assert.strictEqual(b.data.line, 'Handmade jesmonite tray in rose gold and white.');
+  assert.strictEqual(b.data.material, 'Jesmonite');
+  assert.ok(r.notes.some((n) => /filled in automatically/.test(n)));
+}
+console.log('Auto-fill checks passed.');
