@@ -105,6 +105,7 @@
     weight: ['actual weight (g)', 'weight (g)', 'weight'], pack: ['packaging type'], img: ['primary image link', 'image link'],
     price: ['selling price (₹)', 'selling price', 'price (₹)', 'price'], stock: ['stock', 'opening stock'], show: ['show on website', 'on website'],
     desc: ['short description', 'description', 'one-line description'],
+    size: ['size', 'product size', 'size (cm)'], material: ['material', 'materials'],
     mrp: ['marketplace price (₹)', 'marketplace price', 'marketplace mrp'], dims: ['dimensions (cm)', 'dimensions', 'package size (cm)', 'package size'], gtin: ['barcode (ean)', 'barcode', 'ean', 'gtin']
   };
   const ID_RE = /^BNT-PRD-([A-Z]{2,4})-(\d{3})$/;
@@ -179,7 +180,7 @@
         if (mrpRaw && !(mrp > 0)) out.notes.push(where + ': the marketplace price "' + mrpRaw + '" is not a number, ignored.');
         if (dimsRaw && !dims) out.notes.push(where + ': the dimensions "' + dimsRaw + '" should look like 10x10x8 (cm), ignored.');
         if (gtinRaw && !gtin) out.notes.push(where + ': the barcode "' + gtinRaw + '" is not a valid EAN/UPC (8, 12, 13 or 14 digits with a correct last digit), ignored.');
-        const d = clean({ sku: skuRaw, name, type, cat: CAT[code] || 'candles', line: cell(row, 'desc'), notes: list(cell(row, 'scent')), colour, packaging: cell(row, 'pack'), weight: w > 0 ? w : '', mrpMarket: mrp > 0 ? mrp : '', dims: dims || '', gtin });
+        const d = clean({ sku: skuRaw, name, type, cat: CAT[code] || 'candles', line: cell(row, 'desc'), size: cell(row, 'size'), material: cell(row, 'material'), notes: list(cell(row, 'scent')), colour, packaging: cell(row, 'pack'), weight: w > 0 ? w : '', mrpMarket: mrp > 0 ? mrp : '', dims: dims || '', gtin });
         if (!CAT[code]) out.notes.push(where + ': code ' + code + ' is new, so it was put under Candles. Change it in Products if needed.');
         const hasPrice = price > 0; const wantLive = h.map.show != null && yes(cell(row, 'show'));
         if (hasPrice) d.variants = [{ sku: skuRaw, label: w > 0 ? w + ' g' : 'Standard', price }];

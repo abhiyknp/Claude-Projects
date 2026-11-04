@@ -8,6 +8,9 @@ const csv = (rows) => imp.parseCsv([HEAD].concat(rows).join('\n'));
 const run = (rows, existing, stock) => imp.plan([{ name: 'Glass Candles', rows: csv(rows) }], existing, stock);
 
 (async () => {
+  // size and material columns fill the fields the shop needs before a product can be published
+  { const o = imp.plan([{ name: 'Glass Candles', rows: imp.parseCsv('Product ID / SKU,Product Name,Product Type,Size,Material,Scent,Selling Price (₹),Show on website\nBNT-PRD-CG-201,Test urli,Glass candle,12 cm,Brass urli and soy wax,"Rose, Oud",499,Yes') }], [], {});
+    assert.strictEqual(o.items.length, 1); const dd = o.items[0].data; assert.strictEqual(dd.size, '12 cm'); assert.strictEqual(dd.material, 'Brass urli and soy wax'); assert.deepStrictEqual(dd.notes, ['Rose', 'Oud']); }
   // csv quoting
   assert.deepStrictEqual(imp.parseCsv('a,"b,c","d ""x"""\r\n1,2,3'), [['a', 'b,c', 'd "x"'], ['1', '2', '3']]);
   // google links
