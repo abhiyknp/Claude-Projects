@@ -1948,7 +1948,7 @@ function renderChrome() {
   $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = Tx('foot.also').split('|').map((x) => x.trim()).filter(Boolean).map((x, i) => `<li>${hl(['spark', 'shield', 'note', 'gift'][i] || 'spark', 22)}<span>${esc(x)}</span></li>`).join(''); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-pay').innerHTML = payBadges();
-  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' || /^(pay|bill)-/.test(r) ? '' : whyBand();
+  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' || /^(pay|bill|i|b)-/.test(r) ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   
@@ -3919,6 +3919,22 @@ function viewPay(code) {
   <div class="pay-sec"><div class="pay-ic"><a href="https://budandthings.com/" aria-label="Shop at budandthings.com"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8a3 3 0 0 1 6 0"/></svg><span>Shop</span></a><a href="https://www.instagram.com/budandthings_offical/" aria-label="BUD &amp; THINGS on Instagram"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17" cy="7" r=".6" fill="currentColor"/></svg><span>Instagram</span></a></div></div>
   <p class="pay-ft">Made with thought. Given with feeling.</p></div></div>`;
 }
+// With the database on, the link is short (#i-CODE for the WhatsApp page, #b-CODE for the invoice); otherwise the whole invoice is carried in the link.
+async function billShort(o, kind) {
+  const full = billLink(o, kind); if (!BTDB.on) return full;
+  try {
+    const long = full.slice(full.indexOf('#') + 1).replace(/^(pay|bill)-/, ''); const data = JSON.parse(unb64u(long)); const al = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const rnd = new Uint8Array(8); crypto.getRandomValues(rnd);
+    const code = Array.from(rnd, (n) => al[n % al.length]).join(''); await BTDB.upsert('bills', [{ code, order_id: o.id, data }]);
+    return location.origin + location.pathname + '#' + (kind === 'pay' ? 'i-' : 'b-') + code;
+  } catch (e) { return full; } // the bills table is not set up yet: use the long link
+}
+function viewShort(kind, code) {
+  const c = String(code).toUpperCase().replace(/[^A-Z0-9]/g, ''); const bills = UI.bills || (UI.bills = {});
+  if (!(c in bills)) { bills[c] = undefined; if (BTDB.on) BTDB.rpc('get_bill', { code_in: c }).then((d) => { bills[c] = d || null; if (/^[ib]-/.test(route())) render(); }, () => { bills[c] = null; if (/^[ib]-/.test(route())) render(); }); else bills[c] = null; }
+  if (bills[c] === undefined) return '<div class="wrap" style="padding:60px 0;text-align:center"><p>Opening your invoice…</p></div>';
+  if (!bills[c]) return '<div class="wrap" style="padding:40px 0"><h1>We could not find this invoice</h1><p>Please ask BUD &amp; THINGS to send the link again.</p></div>';
+  const long = b64u(JSON.stringify(bills[c])); return kind === 'i' ? viewPay(long) : viewBill(long);
+}
 function billParse(code) {
   const v = JSON.parse(unb64u(code));
   if (Array.isArray(v)) { const d = String(v[2] || ''); return { i: v[0], n: v[1], d: d.length === 6 ? '20' + d.slice(0, 2) + '-' + d.slice(2, 4) + '-' + d.slice(4, 6) : '', l: v[3], s: v[4], o: v[5], p: v[6], u: String(SET.upiId || ''), un: String(SET.upiName || 'Bud & Things') }; }
@@ -4269,6 +4285,7 @@ function viewFor(r, cs) {
   let html;
   if (r.startsWith('bill-')) html = viewBill(r.slice(5));
   else if (r.startsWith('pay-')) html = viewPay(r.slice(4));
+  else if (/^[ib]-/.test(r)) html = viewShort(r[0], r.slice(2));
   else if (cs) html = viewComingSoon();
   else if (soonFor(r)) html = viewSoonSection(soonFor(r));
   else if (r.startsWith('s-')) html = viewNewSection(r);
@@ -4303,7 +4320,7 @@ function viewFor(r, cs) {
   return html;
 }
 function render(nav) {
-  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs); document.body.classList.toggle('bare', /^(pay|bill)-/.test(r)); document.body.classList.toggle('framed', /[?&]frame=1/.test(location.search));
+  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs); document.body.classList.toggle('bare', /^(pay|bill|i|b)-/.test(r)); document.body.classList.toggle('framed', /[?&]frame=1/.test(location.search));
   document.body.classList.toggle('public', BTDB.on && !BTDB.owner()); // the preview bar is for the owner and the demo only
   html = viewFor(r, cs);
   const app = $('#app'); app.innerHTML = (BTDB.on && DB.state === 'error' && r !== 'admin' && !BTDB.owner() ? `<div class="wrap" style="padding-top:12px"><div class="status err" role="alert" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="flex:1 1 260px">${T('err.load')}</span><button class="btn small" type="button" data-act="db-retry">Try again</button></div></div>` : '') + html;
@@ -4721,8 +4738,8 @@ document.addEventListener('click', (e) => {
     case 'imp-copy': impCopy(); break;
     case 'adm-offline': offlineOrderModal(); break;
     case 'bill-copy-upi': { const done = () => say('UPI ID copied.'); try { navigator.clipboard.writeText(d.upi).then(done, () => say('UPI ID: ' + d.upi)); } catch (e) { say('UPI ID: ' + d.upi); } break; }
-    case 'adm-bill-link': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const url = billLink(o, d.kind); const done = () => say(d.kind === 'pay' ? 'WhatsApp link copied. Paste it in the chat.' : 'Invoice link copied. Send it by email.');
-      try { navigator.clipboard.writeText(url).then(done, () => { prompt('Copy this link', url); }); } catch (e) { prompt('Copy this link', url); } break; }
+    case 'adm-bill-link': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const say2 = d.kind === 'pay' ? 'WhatsApp link copied. Paste it in the chat.' : 'Invoice link copied. Send it by email.';
+      billShort(o, d.kind).then((url) => { const done = () => say(say2); try { navigator.clipboard.writeText(url).then(done, () => { prompt('Copy this link', url); }); } catch (e) { prompt('Copy this link', url); } }); break; }
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;
     case 'adm-media-for': UI.adm.tab = 'media'; UI.adm.upProd = d.id; UI.adm.edit = null; render(); break;
