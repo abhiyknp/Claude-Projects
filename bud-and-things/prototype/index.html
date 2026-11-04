@@ -1948,7 +1948,7 @@ function renderChrome() {
   $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = Tx('foot.also').split('|').map((x) => x.trim()).filter(Boolean).map((x, i) => `<li>${hl(['spark', 'shield', 'note', 'gift'][i] || 'spark', 22)}<span>${esc(x)}</span></li>`).join(''); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-pay').innerHTML = payBadges();
-  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' || r.startsWith('pay-') ? '' : whyBand();
+  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' || /^(pay|bill)-/.test(r) ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   
@@ -3919,7 +3919,7 @@ function viewPay(code) {
   const R = (n) => '₹' + Math.round(n).toLocaleString('en-IN'); const first = String(b.n || '').trim().split(/\s+/)[0] || 'friend';
   const diya = '<svg class="pay-diya" viewBox="0 0 96 80" aria-hidden="true"><ellipse class="gl" cx="48" cy="30" rx="34" ry="26" fill="#D6A34A" opacity=".35"/><g class="fl"><path d="M48 6C54 20 66 26 66 40a18 18 0 0 1-36 0c0-8 4-12 8-18 1 6 4 8 6 8C46 24 44 14 48 6z" fill="#D6A34A"/><path d="M48 28c3 6 8 8 8 14a8 8 0 0 1-16 0c0-4 4-6 4-10 1.600 2 3 2.400 4-4z" fill="#F8F0E4"/></g><path d="M8 52h80c0 14-16 24-40 24S8 66 8 52z" fill="#D6A34A"/><path d="M14 52h68" stroke="#7A1229" stroke-width="3"/></svg>';
   return `<div class="pay-pg"><style>${PAY_CSS}</style><div class="pay-in">${diya}
-  <div class="pay-hello"><small>Happy Diwali</small><h1>Thank you, ${esc(first)}</h1><p>Your order from BUD &amp; THINGS is ready.</p></div>
+  <div class="pay-hello"><small>Happy Diwali</small><h1>Thank you, ${esc(first)}</h1><p>Thank you for shopping with BUD &amp; THINGS.</p></div>
   <div class="pay-card">${left > 0 ? `<small>Left to pay</small><div class="pay-amt">${R(left)}</div>${upi ? `<a class="pay-btn" href="${esc(upi)}">Pay ${R(left)} by UPI</a><button class="pay-btn alt" type="button" data-act="bill-copy-upi" data-upi="${esc(b.u)}">Copy UPI ID ${esc(b.u)}</button>${qr ? `<div class="pay-qr">${qr}<small>Scan with any UPI app</small></div>` : ''}` : '<p class="pu">Please pay as agreed. Thank you!</p>'}` : '<small>All paid</small><div class="pay-amt">Thank you!</div>'}</div>
   <div class="pay-sec"><h2>Your order</h2><ul class="pay-list">${b.l.map((l) => `<li><span>${esc(l[0])} × ${+l[1]}</span><span>${R(l[1] * l[2])}</span></li>`).join('')}${b.s > 0 ? `<li><span>Delivery</span><span>${R(+b.s)}</span></li>` : ''}${off > 0 ? `<li><span>Discount</span><span>−${R(off)}</span></li>` : ''}<li class="t"><span>Total</span><span>${R(total)}</span></li>${paid > 0 ? `<li><span>Paid so far</span><span>−${R(paid)}</span></li>` : ''}</ul><p style="margin-top:8px;font-size:12px;opacity:.7">Invoice ${esc(b.i)}</p></div>
   <div class="pay-sec"><div class="pay-links"><a class="go" href="https://budandthings.com/">Shop</a><a href="https://www.instagram.com/budandthings_offical/">Instagram</a></div></div>
@@ -3932,7 +3932,7 @@ function viewBill(code) {
   let qr = ''; if (upi) { if (window.qrcode) { try { const q = window.qrcode(0, 'M'); q.addData(upi); q.make(); qr = q.createSvgTag(4, 0); } catch (e) { /* no QR; the UPI ID is still shown */ } } else setTimeout(() => { if (route().startsWith('bill-')) render(); }, 1500); }
   const when = b.d ? new Date(b.d + 'T12:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
   const sum = (l, v, c) => `<div${c ? ` class="${c}"` : ''}><span>${l}</span><span>${v}</span></div>`; const R = (n) => rs(Math.round(n * 100));
-  return `<div class="wrap" style="padding:20px 0 40px"><style>${INV_CSS}</style><div class="inv">
+  return `<div class="wrap" style="padding:20px 0 40px"><style>${INV_CSS}.bare .why-band,.bare .site-head,.bare .site-foot,.bare #offers-slot,.bare .pv-bar,.bare #mobile-menu{display:none!important}</style><div class="inv">
     <div class="iv-band"><div class="iv-title" style="text-align:left"><h1>Invoice</h1><span>BUD &amp; THINGS</span></div></div>
     <div class="iv-body"><div class="iv-meta"><div class="iv-no"><small>Invoice no.</small><strong>${esc(b.i)}</strong></div>${when ? `<div><small>Date</small><strong>${when}</strong></div>` : ''}<div><small>For</small><strong>${esc(b.n)}</strong></div></div>
     <div class="inv-tw"><table><thead><tr><th>No.</th><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead><tbody>${b.l.map((l, i) => `<tr><td>${i + 1}</td><td>${esc(l[0])}</td><td>${+l[1]}</td><td>${R(+l[2])}</td><td>${R(l[1] * l[2])}</td></tr>`).join('')}</tbody></table></div>
@@ -4304,7 +4304,7 @@ function viewFor(r, cs) {
   return html;
 }
 function render(nav) {
-  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs); document.body.classList.toggle('bare', r.startsWith('pay-')); document.body.classList.toggle('framed', /[?&]frame=1/.test(location.search));
+  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs); document.body.classList.toggle('bare', /^(pay|bill)-/.test(r)); document.body.classList.toggle('framed', /[?&]frame=1/.test(location.search));
   document.body.classList.toggle('public', BTDB.on && !BTDB.owner()); // the preview bar is for the owner and the demo only
   html = viewFor(r, cs);
   const app = $('#app'); app.innerHTML = (BTDB.on && DB.state === 'error' && r !== 'admin' && !BTDB.owner() ? `<div class="wrap" style="padding-top:12px"><div class="status err" role="alert" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="flex:1 1 260px">${T('err.load')}</span><button class="btn small" type="button" data-act="db-retry">Try again</button></div></div>` : '') + html;
