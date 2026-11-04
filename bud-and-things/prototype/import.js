@@ -115,6 +115,14 @@
   const SWATCH = [['rose gold', '#C99A8B'], ['brown', '#8B6B4A'], ['white', '#F1EBE0'], ['ivory', '#EFE6D4'], ['gold', '#C9A96A'], ['purple', '#8E7BB0'], ['pink', '#E8B4BC'], ['red', '#B8363F'],
     ['blue', '#6E8FB5'], ['green', '#7E9468'], ['yellow', '#E4C45A'], ['orange', '#D98B4A'], ['grey', '#B9B5AE'], ['gray', '#B9B5AE'], ['black', '#3A3532'], ['transp', '#E6E2DA'], ['transper', '#E6E2DA']];
 
+  const AUTO_MATERIAL = { CG: 'Soy wax in a glass jar', MC: 'Soy wax', TL: 'Soy wax', JT: 'Jesmonite' };
+  const autoLine = (type, colour, scent) => {
+    const t = norm(type); if (!t) return '';
+    const col = norm(colour).replace(/\s*\+\s*/g, ' and ');
+    const raw = norm(scent); const sc = /^(n\/a|na|none|any|random|any\/random)$/.test(raw) ? [] : raw.split(/[,;+]/).map((x) => x.trim()).filter(Boolean);
+    return 'Handmade ' + t + (col ? ' in ' + col : '') + (sc.length ? ', scented with ' + sc.join(' and ').toLowerCase() : '') + '.';
+  };
+
   function findHeader(rows) {
     for (let r = 0; r < Math.min(rows.length, 12); r++) {
       const map = {}; (rows[r] || []).forEach((h, i) => { const k = norm(h); for (const f in COLS) if (map[f] == null && COLS[f].includes(k)) map[f] = i; });
@@ -181,6 +189,11 @@
         if (dimsRaw && !dims) out.notes.push(where + ': the dimensions "' + dimsRaw + '" should look like 10x10x8 (cm), ignored.');
         if (gtinRaw && !gtin) out.notes.push(where + ': the barcode "' + gtinRaw + '" is not a valid EAN/UPC (8, 12, 13 or 14 digits with a correct last digit), ignored.');
         const d = clean({ sku: skuRaw, name, type, cat: CAT[code] || 'candles', line: cell(row, 'desc'), size: cell(row, 'size'), material: cell(row, 'material'), notes: list(cell(row, 'scent')), colour, packaging: cell(row, 'pack'), weight: w > 0 ? w : '', mrpMarket: mrp > 0 ? mrp : '', dims: dims || '', gtin });
+        // fill what can be worked out, never over something already in the shop; the owner reads it before publishing
+        const filled = [];
+        if (!d.line && !(old && old.data && old.data.line)) { d.line = autoLine(type, colour, cell(row, 'scent')); if (d.line) filled.push('description'); }
+        if (!d.material && !(old && old.data && old.data.material) && AUTO_MATERIAL[code]) { d.material = AUTO_MATERIAL[code]; filled.push('material'); }
+        if (filled.length) out.notes.push(where + ': ' + filled.join(' and ') + ' filled in automatically from the product type, colour and scent. Please read before publishing.');
         if (!CAT[code]) out.notes.push(where + ': code ' + code + ' is new, so it was put under Candles. Change it in Products if needed.');
         const hasPrice = price > 0; const wantLive = h.map.show != null && yes(cell(row, 'show'));
         if (hasPrice) d.variants = [{ sku: skuRaw, label: w > 0 ? w + ' g' : 'Standard', price }];

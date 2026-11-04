@@ -414,6 +414,12 @@ td input[type="number"] { width: 84px; min-height: 40px; }
 .stat strong { font-family: var(--display); font-weight: 300; font-size: 32px; }
 
 /* toast & search */
+/* publish pop-up: fill what is still missing */
+.pm-bg{position:fixed;inset:0;z-index:9000;background:rgba(21,2,6,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.pm-box{background:var(--cream);color:var(--ink);max-width:460px;width:100%;max-height:90vh;overflow:auto;padding:22px;border:1px solid var(--line2)}
+.pm-box h2{font-size:24px;margin:0 0 6px}.pm-box p{margin:0 0 12px}.pm-box .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.pm-box input,.pm-box textarea{padding:10px;border:1px solid var(--line2);background:#fff;font:inherit}
+.pm-act{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
 /* cookie consent: Silk Maroon and Gold */
 #bt-consent.cc-bar { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 70; max-width: 640px; margin: 0 auto; background: #150206; color: #F8F0E4; border: 1px solid #D6A34A; border-radius: 10px; padding: 14px 16px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; box-shadow: 0 8px 28px rgba(21,2,6,.35); font-size: 14px; line-height: 1.45; }
 #bt-consent.cc-bar p { margin: 0; flex: 1 1 260px; }
@@ -2613,6 +2619,25 @@ function admOrders() {
 function marketGaps(d) {
   const miss = []; if (!(d.weight > 0)) miss.push('weight'); if (!d.dims) miss.push('package size'); if (!(d.mrpMarket > 0)) miss.push('marketplace price');
   return miss;
+}
+// the details a product needs typed in before it can be published (photos are handled separately)
+function publishTextGaps(d) {
+  const m = []; if (!d.line) m.push(['line', 'One-line description', 'text']); if (!d.size) m.push(['size', 'Size, for example 8 cm wide, 6 cm tall', 'text']);
+  if (!d.material) m.push(['material', 'Material', 'text']); if (!(d.weight > 0)) m.push(['weight', 'Weight in grams (one packed piece)', 'number']);
+  if (d.cat === 'candles' && !(d.notes || []).length) m.push(['notes', 'Scent notes, separated by commas', 'text']);
+  return m;
+}
+// a pop-up with only the blanks; Save puts the answers into the form and publishes in one step
+function askMissing(form, submitter, gaps) {
+  const bg = document.createElement('div'); bg.className = 'pm-bg';
+  const name = (form.elements.name && form.elements.name.value) || 'this product';
+  bg.innerHTML = `<form class="pm-box" role="dialog" aria-modal="true" aria-labelledby="pm-h"><h2 id="pm-h">Before “${esc(name)}” goes live</h2><p>Fill these and press Save and publish. Everything else is already in.</p>${gaps.map(([k, l, t]) => `<span class="field"><label for="pm-${k}">${esc(l)}</label><input id="pm-${k}" name="${k}" type="${t}" ${t === 'number' ? 'min="1"' : ''} value="${esc((form.elements[k] && form.elements[k].value) || '')}" required></span>`).join('')}<span class="pm-act"><button class="btn" type="submit">Save and publish</button><button class="btn ghost" type="button" data-pm="x">Cancel</button></span></form>`;
+  document.body.appendChild(bg);
+  const box = bg.firstChild; const first = box.querySelector('input'); if (first) first.focus();
+  const close = () => bg.remove();
+  box.querySelector('[data-pm="x"]').addEventListener('click', close);
+  bg.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') close(); });
+  box.addEventListener('submit', (ev) => { ev.preventDefault(); gaps.forEach(([k]) => { if (form.elements[k]) form.elements[k].value = box.elements[k].value.trim(); }); close(); form.requestSubmit(submitter); });
 }
 // what a product still needs before it can be published
 function publishGaps(id, d) {
@@ -4894,7 +4919,8 @@ document.addEventListener('submit', (e) => {
     const row = { code: `BT-${pick(4)}-${pick(4)}`, amount: amt, balance: amt, note: note || null };
     admDo(async () => { if (BTDB.on) { await BTDB.insert('gift_cards', row); A.rows = {}; } else { S.db = S.db || {}; S.db.cards = [Object.assign({ created_at: new Date().toISOString() }, row)].concat(S.db.cards || []); save(); } A.cardMsg = `Made ${row.code} for ${inr(amt)}. Copy the code and send it with the card.`; render(); });
     return; }
-  if (kind === 'adm-product') { const live = !!(e.submitter && e.submitter.dataset.live === '1'); const r = readProductForm(f, live); const openStock = r.data.openStock; delete r.data.openStock; const d = r.data; const A = UI.adm; const others = prodRows().filter((x) => x.id !== r.id); const skus = new Set(); others.forEach((x) => ((x.data || {}).variants || []).forEach((v) => skus.add(v.sku)));
+  if (kind === 'adm-product') { const live = !!(e.submitter && e.submitter.dataset.live === '1'); const r = readProductForm(f, live); const openStock = r.data.openStock; delete r.data.openStock; const d = r.data; const A = UI.adm;
+    if (live && (r.isNew || (prodRows().find((x) => x.id === r.id) || {}).live === false) && d.name && d.variants.length && d.variants.every((v) => v.label && v.price > 0)) { const gaps = publishTextGaps(d); if (gaps.length) { askMissing(f, e.submitter, gaps); return; } } const others = prodRows().filter((x) => x.id !== r.id); const skus = new Set(); others.forEach((x) => ((x.data || {}).variants || []).forEach((v) => skus.add(v.sku)));
     A.formErr = !d.name ? 'Give the product a name.' : r.isNew && !/^[a-z0-9][a-z0-9-]{1,59}$/.test(r.id) ? 'Choose a web address name with lowercase letters, numbers and dashes.' : r.isNew && prodRows().some((x) => x.id === r.id) ? 'That web address name is already used.'
       : ['dimL', 'dimB', 'dimH'].some((n) => f.elements[n] && f.elements[n].value.trim()) && !d.dims ? 'Fill all three package measures (length, breadth, height in cm), or clear all three.' : f.elements.gtin && f.elements.gtin.value.trim() && !d.gtin ? 'That barcode is not a valid EAN or UPC (8, 12, 13 or 14 digits, correct last digit). Clear it or fix it.'
       : !d.variants.length ? 'Add at least one option with an SKU, a name and a price.' : d.variants.some((v) => !v.label || !(v.price > 0)) ? 'Every option needs a name and a price above 0.' : d.variants.some((v, i) => skus.has(v.sku) || d.variants.findIndex((w) => w.sku === v.sku) !== i) ? 'Each SKU can only be used once across the shop.' : live && (r.isNew || (prodRows().find((x) => x.id === r.id) || {}).live === false) ? publishGaps(r.id, d) : null;
