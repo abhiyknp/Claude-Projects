@@ -1537,7 +1537,7 @@ async function pvCheck() {
   if (ok !== PV_OK) { PV_OK = ok; if (typeof render === 'function' && !UI.adm.pending) render(); }
 }
 const pvSeesAll = () => !!BTDB.owner() || PV_OK;
-const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !route().startsWith('bill-') && !pvSeesAll();
+const gated = () => BTDB.on && !!SET.comingSoon && route() !== 'admin' && !/^(bill|pay)-/.test(route()) && !pvSeesAll();
 // the preview code is shown once, when it is made; this browser keeps it so the owner can copy the link again here
 const pvCode = () => { try { return localStorage.getItem('bt-preview-code') || ''; } catch (e) { return ''; } };
 const previewLink = () => location.origin + location.pathname + '?preview=' + encodeURIComponent(pvCode());
@@ -1948,7 +1948,7 @@ function renderChrome() {
   $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = Tx('foot.also').split('|').map((x) => x.trim()).filter(Boolean).map((x, i) => `<li>${hl(['spark', 'shield', 'note', 'gift'][i] || 'spark', 22)}<span>${esc(x)}</span></li>`).join(''); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-pay').innerHTML = payBadges();
-  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' ? '' : whyBand();
+  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' || r.startsWith('pay-') ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   
@@ -2590,7 +2590,7 @@ const DELAY_REASONS = ['Courier is running late', 'Bad weather', 'Festival rush'
 const canDelay = (o) => ['Placed', 'Packed', 'Shipped'].includes(o.status);
 const delayText = (dl) => `${esc(dl.reason)}${dl.note ? ': ' + esc(dl.note) : ''}${dl.until ? ' · now expected by ' + niceDay(dl.until) : ''}`;
 const delayNote = (o) => (o.delay ? `<span style="display:block;margin-top:6px"><span class="pill out">Delayed</span> <span class="muted" style="font-size:13px">${delayText(o.delay)}</span></span>` : '')
-  + `<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${canDelay(o) ? `<button class="btn small ghost" type="button" data-act="adm-delay-open" data-id="${esc(o.id)}">${o.delay ? 'Change delay' : 'Mark delayed'}</button>${o.delay ? `<button class="btn small ghost" type="button" data-act="adm-delay-clear" data-id="${esc(o.id)}">Clear delay</button>` : ''}` : ''}${invoiceBtn(o)}${o.channel === 'offline' ? `<button class="btn small" type="button" data-act="adm-bill-link" data-id="${esc(o.id)}">Copy invoice link</button>` : ''}</span>`;
+  + `<span style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${canDelay(o) ? `<button class="btn small ghost" type="button" data-act="adm-delay-open" data-id="${esc(o.id)}">${o.delay ? 'Change delay' : 'Mark delayed'}</button>${o.delay ? `<button class="btn small ghost" type="button" data-act="adm-delay-clear" data-id="${esc(o.id)}">Clear delay</button>` : ''}` : ''}${invoiceBtn(o)}${o.channel === 'offline' ? `<button class="btn small" type="button" data-act="adm-bill-link" data-id="${esc(o.id)}">Copy invoice link</button><button class="btn small" type="button" data-act="adm-bill-link" data-kind="pay" data-id="${esc(o.id)}">Copy WhatsApp link</button>` : ''}</span>`;
 function delayForm(list) {
   const id = UI.adm.delayFor; const o = id && list.find((x) => x.id === id); if (!o) return '';
   const cur = o.delay || {}; const known = DELAY_REASONS.slice(0, -1).includes(cur.reason); const sel = cur.reason ? (known ? cur.reason : 'Something else') : DELAY_REASONS[0];
@@ -3882,10 +3882,51 @@ function orderRows(list) {
 // A shareable invoice link for an order sold offline. The invoice is carried inside the link itself (no database lookup), so it needs no login and nothing to switch on.
 const b64u = (str) => btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const unb64u = (str) => decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/'))));
-function billLink(o) {
+function billLink(o, kind) {
   const ok = /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(SET.upiId || ''));
   const pay = { i: o.id, n: (o.contact || {}).name || '', d: String(o.placedAt || '').slice(0, 10), l: o.items.map((l) => [l.name + (l.label ? ' · ' + l.label : ''), l.qty, l.price]), s: o.ship || 0, o: o.codeOff || 0, p: o.paid || 0, u: ok ? SET.upiId : '', un: String(SET.upiName || 'Bud & Things').slice(0, 30) };
-  return location.origin + location.pathname + '#bill-' + b64u(JSON.stringify(pay));
+  return location.origin + location.pathname + (kind === 'pay' ? '#pay-' : '#bill-') + b64u(JSON.stringify(pay));
+}
+const PAY_CSS = `
+.bare .why-band,.bare .tabbar,.bare .app-tabs,.bare .site-head,.bare .site-foot,.bare #offers-slot,.bare .pv-bar,.bare #mobile-menu{display:none!important}
+.bare #app{padding:0}
+.pay-pg{--m:#7A1229;--g:#D6A34A;--c:#F8F0E4;background:radial-gradient(120% 70% at 50% 0,#8F1834 0,#5a0c1e 55%,#2a0510 100%);color:var(--c);min-height:100vh;overflow:hidden;position:relative;font-family:Montserrat,Arial,sans-serif}
+.pay-pg *{box-sizing:border-box}.pay-in{max-width:520px;margin:0 auto;padding:24px 20px 48px;position:relative;z-index:2}
+.pay-lights{position:absolute;left:0;right:0;top:0;height:46px;z-index:1;display:flex;justify-content:space-around;pointer-events:none}.pay-lights i{width:6px;height:6px;border-radius:50%;background:var(--g);margin-top:12px;box-shadow:0 0 6px 2px rgba(214,163,74,.5);animation:twk 2.4s ease-in-out infinite}.pay-lights i:nth-child(2n){animation-delay:.6s;margin-top:20px}.pay-lights i:nth-child(3n){animation-delay:1.2s}
+@keyframes twk{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+.pay-spark{position:absolute;inset:0;pointer-events:none;z-index:1}.pay-spark b{position:absolute;top:-10px;width:3px;height:3px;background:var(--g);border-radius:50%;opacity:0;animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(0);opacity:0}10%{opacity:.9}100%{transform:translateY(105vh);opacity:0}}
+.pay-diya{display:block;margin:34px auto 6px;width:96px}.pay-diya .fl{transform-origin:50% 90%;animation:fl 1.6s ease-in-out infinite}.pay-diya .gl{animation:glow 2.2s ease-in-out infinite}
+@keyframes glow{0%,100%{opacity:.35}50%{opacity:.8}}
+.pay-hello{text-align:center;opacity:0;animation:rise .9s .2s forwards}.pay-hello small{letter-spacing:.2em;text-transform:uppercase;color:var(--g);font-size:11px}.pay-hello h1{font:600 32px/1.15 'Playfair Display',Georgia,serif;margin:8px 0 6px;color:var(--c)}.pay-hello p{margin:0;opacity:.85;font-size:14px}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pay-card{margin:24px 0 0;background:var(--c);color:#150206;padding:22px 18px;text-align:center;border:2px solid var(--g);opacity:0;animation:rise .9s .5s forwards}.pay-card small{text-transform:uppercase;letter-spacing:.14em;color:#7A5A18;font-size:11px}.pay-amt{font:700 44px/1.1 Georgia,serif;color:var(--m);margin:4px 0 12px}.pay-btn{display:block;min-height:54px;line-height:54px;background:var(--m);color:var(--c);font-weight:700;text-decoration:none;letter-spacing:.04em;}.pay-btn.alt{background:transparent;color:var(--m);border:1.5px solid var(--m);line-height:48px;min-height:50px;margin-top:10px;animation:none;cursor:pointer;width:100%;font:600 14px Montserrat,Arial,sans-serif}
+@keyframes pls{0%,100%{box-shadow:0 0 0 0 rgba(214,163,74,.7)}50%{box-shadow:0 0 0 9px rgba(214,163,74,0)}}
+.pay-qr{display:none;margin-top:14px}.pay-qr svg{width:150px;height:150px;display:block;margin:0 auto 4px}.pay-card .pu{margin:10px 0 0;font-size:13px}
+@media(min-width:760px){.pay-qr{display:block}.pay-btn:not(.alt){display:none}}
+.pay-sec{margin-top:26px;opacity:0;animation:rise .9s .8s forwards}.pay-sec h2{font:600 20px 'Playfair Display',Georgia,serif;color:var(--g);margin:0 0 10px}.pay-sec p{margin:0 0 8px;font-size:14px;line-height:1.55;opacity:.92}
+.pay-list{list-style:none;margin:0;padding:0}.pay-list li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(214,163,74,.3);font-size:14px}.pay-list li.t{font-weight:700;color:var(--g)}
+.pay-links{display:flex;gap:10px;flex-wrap:wrap}.pay-links a{flex:1 1 140px;text-align:center;padding:13px 10px;border:1.5px solid var(--g);color:var(--c);text-decoration:none;font-weight:600;font-size:14px}.pay-links a.go{background:var(--g);color:#150206}
+.pay-ft{text-align:center;margin-top:30px;font:italic 15px 'Playfair Display',Georgia,serif;color:var(--g)}
+@media(prefers-reduced-motion:reduce){.pay-pg *{animation:none!important;opacity:1!important}}
+`;
+
+function viewPay(code) {
+  let b; try { b = JSON.parse(unb64u(code)); if (!b || !Array.isArray(b.l)) throw 0; } catch (e) { return '<div class="wrap" style="padding:40px 0"><h1>This link is not complete</h1><p>Please ask BUD &amp; THINGS to send it again.</p></div>'; }
+  const sub = b.l.reduce((a, l) => a + (+l[1] || 0) * (+l[2] || 0), 0); const off = Math.min(+b.o || 0, sub); const total = sub + (+b.s || 0) - off; const paid = Math.min(+b.p || 0, total); const left = Math.max(0, total - paid);
+  const upi = left > 0 && b.u && /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(b.u)) ? 'upi://pay?pa=' + encodeURIComponent(b.u) + '&pn=' + encodeURIComponent(String(b.un || 'Bud & Things').slice(0, 30)) + '&am=' + left.toFixed(2) + '&cu=INR&tn=' + encodeURIComponent('Invoice ' + b.i) : '';
+  let qr = ''; if (upi) { if (window.qrcode) { try { const q = window.qrcode(0, 'M'); q.addData(upi); q.make(); qr = q.createSvgTag(4, 0); } catch (e) { /* the UPI ID is still shown */ } } else setTimeout(() => { if (route().startsWith('pay-')) render(); }, 1500); }
+  const R = (n) => '₹' + Math.round(n).toLocaleString('en-IN'); const first = String(b.n || '').trim().split(/\s+/)[0] || 'friend';
+  const spark = Array.from({ length: 6 }, (_, i) => `<b style="left:${(i * 37 + 11) % 100}%;animation-duration:${10 + (i * 5) % 6}s;animation-delay:${(i * 5) % 11}s"></b>`).join('');
+  const lights = Array.from({ length: 10 }, () => '<i></i>').join('');
+  const diya = '<svg class="pay-diya" viewBox="0 0 96 80" aria-hidden="true"><ellipse class="gl" cx="48" cy="30" rx="34" ry="26" fill="#D6A34A" opacity=".35"/><g class="fl"><path d="M48 6C54 20 66 26 66 40a18 18 0 0 1-36 0c0-8 4-12 8-18 1 6 4 8 6 8C46 24 44 14 48 6z" fill="#D6A34A"/><path d="M48 28c3 6 8 8 8 14a8 8 0 0 1-16 0c0-4 4-6 4-10 1.600 2 3 2.400 4-4z" fill="#F8F0E4"/></g><path d="M8 52h80c0 14-16 24-40 24S8 66 8 52z" fill="#D6A34A"/><path d="M14 52h68" stroke="#7A1229" stroke-width="3"/></svg>';
+  return `<div class="pay-pg"><style>${PAY_CSS}</style><div class="pay-lights" aria-hidden="true">${lights}</div><div class="pay-spark" aria-hidden="true">${spark}</div><div class="pay-in">${diya}
+  <div class="pay-hello"><small>Happy Diwali</small><h1>Thank you, ${esc(first)}</h1><p>Your order from BUD &amp; THINGS is ready.</p></div>
+  <div class="pay-card">${left > 0 ? `<small>Left to pay</small><div class="pay-amt">${R(left)}</div>${upi ? `<a class="pay-btn" href="${esc(upi)}">Pay ${R(left)} by UPI</a><button class="pay-btn alt" type="button" data-act="bill-copy-upi" data-upi="${esc(b.u)}">Copy UPI ID ${esc(b.u)}</button>${qr ? `<div class="pay-qr">${qr}<small>Scan with any UPI app</small></div>` : ''}` : '<p class="pu">Please pay as agreed. Thank you!</p>'}` : '<small>All paid</small><div class="pay-amt">Thank you!</div>'}</div>
+  <div class="pay-sec"><h2>Your order</h2><ul class="pay-list">${b.l.map((l) => `<li><span>${esc(l[0])} × ${+l[1]}</span><span>${R(l[1] * l[2])}</span></li>`).join('')}${b.s > 0 ? `<li><span>Delivery</span><span>${R(+b.s)}</span></li>` : ''}${off > 0 ? `<li><span>Discount</span><span>−${R(off)}</span></li>` : ''}<li class="t"><span>Total</span><span>${R(total)}</span></li>${paid > 0 ? `<li><span>Paid so far</span><span>−${R(paid)}</span></li>` : ''}</ul><p style="margin-top:8px;font-size:12px;opacity:.7">Invoice ${esc(b.i)}</p></div>
+  <div class="pay-sec"><h2>About us</h2><p>BUD &amp; THINGS makes hand-poured candles and cast Jesmonite pieces, in small batches, by hand. If anything arrives damaged, send us a photo and we send a new one.</p></div>
+  <div class="pay-sec"><h2>Have a look</h2><div class="pay-links"><a class="go" href="https://budandthings.com/#shop">Shop</a><a href="https://budandthings.com/#candles">Candles</a><a href="https://budandthings.com/#gifting">Gifting</a><a href="https://www.instagram.com/budandthings_offical/">Instagram</a></div></div>
+  <p class="pay-ft">May your home glow with light and joy.</p></div></div>`;
 }
 function viewBill(code) {
   let b; try { b = JSON.parse(unb64u(code)); if (!b || !Array.isArray(b.l)) throw 0; } catch (e) { return '<div class="wrap" style="padding:40px 0"><h1>This invoice link is not complete</h1><p>Please ask BUD &amp; THINGS to send it again.</p></div>'; }
@@ -4231,6 +4272,7 @@ function viewGiftHome() {
 function viewFor(r, cs) {
   let html;
   if (r.startsWith('bill-')) html = viewBill(r.slice(5));
+  else if (r.startsWith('pay-')) html = viewPay(r.slice(4));
   else if (cs) html = viewComingSoon();
   else if (soonFor(r)) html = viewSoonSection(soonFor(r));
   else if (r.startsWith('s-')) html = viewNewSection(r);
@@ -4265,7 +4307,7 @@ function viewFor(r, cs) {
   return html;
 }
 function render(nav) {
-  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs); document.body.classList.toggle('framed', /[?&]frame=1/.test(location.search));
+  const r = route(); let html; const cs = gated(); document.body.classList.toggle('cs', cs); document.body.classList.toggle('bare', r.startsWith('pay-')); document.body.classList.toggle('framed', /[?&]frame=1/.test(location.search));
   document.body.classList.toggle('public', BTDB.on && !BTDB.owner()); // the preview bar is for the owner and the demo only
   html = viewFor(r, cs);
   const app = $('#app'); app.innerHTML = (BTDB.on && DB.state === 'error' && r !== 'admin' && !BTDB.owner() ? `<div class="wrap" style="padding-top:12px"><div class="status err" role="alert" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="flex:1 1 260px">${T('err.load')}</span><button class="btn small" type="button" data-act="db-retry">Try again</button></div></div>` : '') + html;
@@ -4682,7 +4724,8 @@ document.addEventListener('click', (e) => {
     case 'imp-fetch': impFetch(); break;
     case 'imp-copy': impCopy(); break;
     case 'adm-offline': offlineOrderModal(); break;
-    case 'adm-bill-link': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const url = billLink(o); const done = () => say('Invoice link copied. Send it to the customer.');
+    case 'bill-copy-upi': { const done = () => say('UPI ID copied.'); try { navigator.clipboard.writeText(d.upi).then(done, () => say('UPI ID: ' + d.upi)); } catch (e) { say('UPI ID: ' + d.upi); } break; }
+    case 'adm-bill-link': { const o = (admData('orders') || []).find((x) => x.id === d.id); if (!o) break; const url = billLink(o, d.kind); const done = () => say(d.kind === 'pay' ? 'WhatsApp link copied. Paste it in the chat.' : 'Invoice link copied. Send it by email.');
       try { navigator.clipboard.writeText(url).then(done, () => { prompt('Copy this link', url); }); } catch (e) { prompt('Copy this link', url); } break; }
     case 'adm-edit': UI.adm.edit = d.id; UI.adm.formErr = null; render(); $('.adm-body')?.scrollIntoView(); break;
     case 'adm-edit-close': UI.adm.edit = null; UI.adm.formErr = null; render(); break;

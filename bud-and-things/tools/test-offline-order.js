@@ -31,6 +31,10 @@ const expect = (label, got, want) => { console.log(label, got === want ? 'ok' : 
   const q = await ctx.newPage(); const qerrs = []; q.on('pageerror', (e) => qerrs.push(e.message)); await q.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
   await q.goto(link.replace(/^https?:\/\/[^/]+/, 'http://localhost:8765')); await q.waitForTimeout(800); const bt = await q.textContent('#app'); console.log(bt.replace(/\s+/g, ' ').slice(0, 300));
   expect('link page has name', /Himanshu/.test(bt), true); expect('link page has left to pay', /Left to pay/.test(bt) && /₹507\.00/.test(bt), true); expect('link page no errors', qerrs.length, 0);
+  await p.click('[data-act="adm-bill-link"][data-kind="pay"]'); await p.waitForTimeout(300);
+  const plink = await p.evaluate(() => navigator.clipboard.readText()); expect('whatsapp link copied', /#pay-/.test(plink), true);
+  await q.goto(plink.replace(/^https?:\/\/[^/]+/, 'http://localhost:8765')); await q.reload(); await q.waitForTimeout(1200); const pt = await q.textContent('#app');
+  expect('whatsapp page greets', /Happy Diwali/.test(pt) && /Himanshu/.test(pt), true); expect('whatsapp page left to pay', /Left to pay/i.test(pt) && /₹507/.test(pt), true); expect('whatsapp page no errors', qerrs.length, 0);
   expect('no page errors', errs.length, 0);
   await b.close(); if (fails.length) { console.log('FAILED:', fails.join(', ')); process.exit(1); } console.log('Offline order checks passed.');
 })();
