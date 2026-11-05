@@ -50,12 +50,11 @@ function renderMain(list) {
     const ps = list.filter((p) => p.group === k); if (!ps.length) return '';
     return `<section><h2>${esc(title)}</h2><ul class="grid">${ps.map((p) => {
       // price always shown. The catalogue never mentions stock or "sold out"; the shop does that.
-      const q = p.qty == null ? 1 : p.qty;
       const badge = p.status === 'upcoming' ? '<span class="badge soon">Coming soon</span>': '';
       const note = p.status === 'upcoming' ? '<p class="note">Not on the shop yet.</p>' : '';
       const price = p.price > 0 ? `<p class="price">₹${Number(p.price).toLocaleString('en-IN')}</p>` : '';
       const img = p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy" width="360" height="360">` : '<div class="noimg" role="img" aria-label="Photo coming"></div>';
-      return `<li class="card${p.status === 'upcoming' ? ' upcoming'}">${badge}${img}<h3>${esc(p.name)}</h3>${p.line ? `<p class="line">${esc(p.line)}</p>` : ''}${p.details && p.details.length ? `<p class="spec">${p.details.map(esc).join(' · ')}</p>` : ''}${price}${note}</li>`;
+      return `<li class="card${p.status === 'upcoming' ? ' upcoming' : ''}">${badge}${img}<h3>${esc(p.name)}</h3>${p.line ? `<p class="line">${esc(p.line)}</p>` : ''}${p.details && p.details.length ? `<p class="spec">${p.details.map(esc).join(' · ')}</p>` : ''}${price}${note}</li>`;
     }).join('')}</ul></section>`;
   }).join('') + '</main>';
 }
