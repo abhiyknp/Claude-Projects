@@ -34,7 +34,7 @@ const expect = (label, got, want) => { console.log(label, got === want ? 'ok' : 
   await p.evaluate(() => { document.querySelector('.nx-share').open = true; }); await p.click('[data-act="adm-bill-link"][data-kind="pay"]'); await p.waitForTimeout(300);
   const pmsg = await p.evaluate(() => navigator.clipboard.readText()); expect('message greets by name', /^Hi Himanshu/.test(pmsg) && pmsg.replace(/https?:\/\/\S+/g, '').length < 200 && !/left/i.test(pmsg) && /Pay now: http/.test(pmsg) && /Shop now: https:\/\/budandthings\.com/.test(pmsg), true); const plink = (pmsg.match(/https?:\/\/\S+#pay-\S+/) || [''])[0]; expect('whatsapp link copied', /#pay-/.test(plink), true);
   await q.goto(plink.replace(/^https?:\/\/[^/]+/, 'http://localhost:8765')); await q.reload(); await q.waitForTimeout(1200); const pt = await q.textContent('#app');
-  expect('whatsapp page greets', /Happy Diwali/.test(pt) && /Himanshu/.test(pt), true); expect('whatsapp page left to pay', /Left to pay/i.test(pt) && /₹507/.test(pt), true); expect('whatsapp page no errors', qerrs.length, 0);
+  expect('whatsapp page greets', /Happy Diwali/.test(pt) && /Himanshu/.test(pt), true); expect('whatsapp page left to pay', /Left to pay/i.test(pt) && /₹507/.test(pt), true); expect('whatsapp page no errors', qerrs.length, 0); const hrefs = await q.$$eval('.pay-ic a', (as) => as.map((x) => x.href)); expect('pay page icon links', hrefs.join(' '), 'https://budandthings.com/ https://www.instagram.com/budandthings_official/');
   expect('no page errors', errs.length, 0);
   await b.close(); if (fails.length) { console.log('FAILED:', fails.join(', ')); process.exit(1); } console.log('Offline order checks passed.');
 })();
