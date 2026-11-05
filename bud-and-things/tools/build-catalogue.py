@@ -55,10 +55,7 @@ for tab, title in groups:
     ps = [p for p in products if p['sheetTab'] == tab]
     if not ps: continue
     def card(p):
-        q = p.get('stock', 0)
-        badge = '<span class="badge out">Sold out</span>' if q <= 0 else f'' if q <= 2 else ''
-        sub = ' <small>· made to order</small>' if q <= 0 else ''
-        return f'<li class="card{" out" if q <= 0 else ""}">{badge}<img src="img/{p["img"]}" alt="{escape(p["name"])}" loading="lazy" width="360" height="360"><h3>{escape(p["name"])}</h3><p class="price">₹{p["price"]:,}{sub}</p></li>'
+        return f'<li class="card"><img src="img/{p["img"]}" alt="{escape(p["name"])}" loading="lazy" width="360" height="360"><h3>{escape(p["name"])}</h3><p class="price">₹{p["price"]:,}</p></li>'
     cards = ''.join(card(p) for p in ps)
     sec += f'<section><h2>{title}</h2><ul class="grid">{cards}</ul></section>'
 page = f'''<!doctype html>
