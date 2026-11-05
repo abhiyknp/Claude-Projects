@@ -28,6 +28,7 @@ for i, tab in enumerate(tabs, 1):
     cid, cn, cp, cpr = col('product id'), col('product name'), col('product type'), col('selling price')
     cshow = next((j for j, h in enumerate(hdr) if h.lower() in ('show on website',)), None)
     if cshow is None: cshow = 11
+    cstock = next((j for j, h in enumerate(hdr) if h.lower().startswith(('stock', 'qty', 'quantity'))), None)
     for rn in range(5, ws.max_row + 1):
         v = [c.value for c in ws[rn]]
         if not v[cid]: continue
@@ -42,7 +43,7 @@ for i, tab in enumerate(tabs, 1):
             fn = pid.lower() + '.jpg'
             im = Image.open(io.BytesIO(z.read('xl/media/' + media))).convert('RGB')
             im.thumbnail((720, 720)); im.save(f'{out}/img/{fn}', quality=82, optimize=True)
-        products.append({'id': pid, 'name': str(v[cn]).strip(), 'type': str(v[cp]).strip(), 'price': int(price) if price == int(price) else price, 'img': fn, 'sheetTab': tab, 'sheetRow': rn})
+        products.append({'id': pid, 'name': str(v[cn]).strip(), 'type': str(v[cp]).strip(), 'price': int(price) if price == int(price) else price, 'img': fn, 'stock': int(v[cstock] or 0) if cstock is not None and isinstance(v[cstock], (int, float)) else 0, 'sheetTab': tab, 'sheetRow': rn})
 json.dump({'currency': 'INR', 'source': 'Team Master Source of Truth workbook (photos are temporary)', 'products': products}, open(out + '/products.json', 'w'), ensure_ascii=False, indent=1)
 print(len(products), 'products')
 
@@ -53,7 +54,12 @@ sec = ''
 for tab, title in groups:
     ps = [p for p in products if p['sheetTab'] == tab]
     if not ps: continue
-    cards = ''.join(f'<li class="card"><img src="img/{p["img"]}" alt="{escape(p["name"])}" loading="lazy" width="360" height="360"><h3>{escape(p["name"])}</h3><p class="price">₹{p["price"]:,}</p></li>' for p in ps)
+    def card(p):
+        q = p.get('stock', 0)
+        badge = '<span class="badge out">Sold out</span>' if q <= 0 else f'' if q <= 2 else ''
+        sub = ' <small>· made to order</small>' if q <= 0 else ''
+        return f'<li class="card{" out" if q <= 0 else ""}">{badge}<img src="img/{p["img"]}" alt="{escape(p["name"])}" loading="lazy" width="360" height="360"><h3>{escape(p["name"])}</h3><p class="price">₹{p["price"]:,}{sub}</p></li>'
+    cards = ''.join(card(p) for p in ps)
     sec += f'<section><h2>{title}</h2><ul class="grid">{cards}</ul></section>'
 page = f'''<!doctype html>
 <html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -82,7 +88,7 @@ h2{{font:600 26px 'Playfair Display',serif;color:var(--maroon);border-bottom:1px
 .card{{background:#fff;border:1px solid #e6d3b3;border-radius:6px;overflow:hidden;text-align:center;padding-bottom:14px}}
 .card img{{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;background:var(--cream)}}
 .card h3{{font:600 18px 'Playfair Display',serif;margin:12px 8px 2px}}
-.price{{margin:0;font-weight:600;color:var(--maroon)}}
+.price{{margin:0;font-weight:600;color:var(--maroon)}}.card{{position:relative}}.badge{{position:absolute;left:10px;top:10px;z-index:1;padding:4px 10px;border-radius:999px;background:var(--maroon-d);color:var(--cream);font:600 11px Montserrat,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase}}.badge.low{{background:var(--gold);color:var(--ink)}}.badge.out{{background:var(--ink)}}.card.out img{{filter:grayscale(.85);opacity:.55}}.price small{{font-weight:500;font-size:12px;color:var(--maroon-d);letter-spacing:.02em}}
 .share{{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:18px 16px 0}}
 .share a,.share button{{font:600 14px Montserrat,system-ui,sans-serif;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1.5px solid var(--maroon);background:var(--maroon);color:var(--cream);text-decoration:none;cursor:pointer}}
 .share a.alt,.share button.alt{{background:transparent;color:var(--maroon)}}

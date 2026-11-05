@@ -9,7 +9,8 @@
    "price": 199,
    "img": "bnt-prd-cg-001.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 5
+   "sheetRow": 5,
+   "stock": 2
   },
   {
    "id": "BNT-PRD-CG-002",
@@ -18,7 +19,8 @@
    "price": 169,
    "img": "bnt-prd-cg-002.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 6
+   "sheetRow": 6,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-CG-003",
@@ -27,7 +29,8 @@
    "price": 199,
    "img": "bnt-prd-cg-003.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 7
+   "sheetRow": 7,
+   "stock": 0
   },
   {
    "id": "BNT-PRD-CG-004",
@@ -36,7 +39,8 @@
    "price": 169,
    "img": "bnt-prd-cg-004.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 8
+   "sheetRow": 8,
+   "stock": 0
   },
   {
    "id": "BNT-PRD-CG-005",
@@ -45,7 +49,8 @@
    "price": 169,
    "img": "bnt-prd-cg-005.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 9
+   "sheetRow": 9,
+   "stock": 0
   },
   {
    "id": "BNT-PRD-CG-006",
@@ -54,7 +59,8 @@
    "price": 199,
    "img": "bnt-prd-cg-006.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 10
+   "sheetRow": 10,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-CG-007",
@@ -63,7 +69,8 @@
    "price": 299,
    "img": "bnt-prd-cg-007.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 11
+   "sheetRow": 11,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-CG-008",
@@ -72,7 +79,8 @@
    "price": 249,
    "img": "bnt-prd-cg-008.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 12
+   "sheetRow": 12,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-CG-009",
@@ -81,7 +89,8 @@
    "price": 249,
    "img": "bnt-prd-cg-009.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 13
+   "sheetRow": 13,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-CG-010",
@@ -90,7 +99,8 @@
    "price": 299,
    "img": "bnt-prd-cg-010.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 14
+   "sheetRow": 14,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-CG-011",
@@ -99,7 +109,8 @@
    "price": 99,
    "img": "bnt-prd-cg-011.jpg",
    "sheetTab": "Glass Candles",
-   "sheetRow": 15
+   "sheetRow": 15,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-MC-001",
@@ -108,7 +119,8 @@
    "price": 49,
    "img": "bnt-prd-mc-001.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 5
+   "sheetRow": 5,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-MC-002",
@@ -117,7 +129,8 @@
    "price": 39,
    "img": "bnt-prd-mc-002.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 6
+   "sheetRow": 6,
+   "stock": 4
   },
   {
    "id": "BNT-PRD-MC-003",
@@ -126,7 +139,8 @@
    "price": 29,
    "img": "bnt-prd-mc-003.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 7
+   "sheetRow": 7,
+   "stock": 14
   },
   {
    "id": "BNT-PRD-MC-004",
@@ -135,7 +149,8 @@
    "price": 39,
    "img": "bnt-prd-mc-004.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 8
+   "sheetRow": 8,
+   "stock": 2
   },
   {
    "id": "BNT-PRD-MC-005",
@@ -144,7 +159,8 @@
    "price": 49,
    "img": "bnt-prd-mc-005.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 9
+   "sheetRow": 9,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-MC-006",
@@ -153,7 +169,8 @@
    "price": 49,
    "img": "bnt-prd-mc-006.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 10
+   "sheetRow": 10,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-MC-007",
@@ -162,7 +179,8 @@
    "price": 39,
    "img": "bnt-prd-mc-007.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 11
+   "sheetRow": 11,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-MC-008",
@@ -171,7 +189,8 @@
    "price": 39,
    "img": "bnt-prd-mc-008.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 12
+   "sheetRow": 12,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-MC-009",
@@ -180,7 +199,8 @@
    "price": 39,
    "img": "bnt-prd-mc-009.jpg",
    "sheetTab": "Moulded Candles",
-   "sheetRow": 13
+   "sheetRow": 13,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-TL-001",
@@ -189,7 +209,8 @@
    "price": 15,
    "img": "bnt-prd-tl-001.jpg",
    "sheetTab": "Tealight Candles",
-   "sheetRow": 5
+   "sheetRow": 5,
+   "stock": 5
   },
   {
    "id": "BNT-PRD-TL-002",
@@ -198,7 +219,8 @@
    "price": 15,
    "img": "bnt-prd-tl-002.jpg",
    "sheetTab": "Tealight Candles",
-   "sheetRow": 6
+   "sheetRow": 6,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-TL-003",
@@ -207,7 +229,8 @@
    "price": 15,
    "img": "bnt-prd-tl-003.jpg",
    "sheetTab": "Tealight Candles",
-   "sheetRow": 7
+   "sheetRow": 7,
+   "stock": 6
   },
   {
    "id": "BNT-PRD-TL-004",
@@ -216,7 +239,8 @@
    "price": 15,
    "img": "bnt-prd-tl-004.jpg",
    "sheetTab": "Tealight Candles",
-   "sheetRow": 8
+   "sheetRow": 8,
+   "stock": 6
   },
   {
    "id": "BNT-PRD-TL-005",
@@ -225,7 +249,8 @@
    "price": 15,
    "img": "bnt-prd-tl-005.jpg",
    "sheetTab": "Tealight Candles",
-   "sheetRow": 9
+   "sheetRow": 9,
+   "stock": 6
   },
   {
    "id": "BNT-PRD-TL-006",
@@ -234,7 +259,8 @@
    "price": 15,
    "img": "bnt-prd-tl-006.jpg",
    "sheetTab": "Tealight Candles",
-   "sheetRow": 10
+   "sheetRow": 10,
+   "stock": 2
   },
   {
    "id": "BNT-PRD-JT-001",
@@ -243,7 +269,8 @@
    "price": 149,
    "img": "bnt-prd-jt-001.jpg",
    "sheetTab": "Jesmonite Tray",
-   "sheetRow": 5
+   "sheetRow": 5,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-JT-002",
@@ -252,7 +279,8 @@
    "price": 149,
    "img": "bnt-prd-jt-002.jpg",
    "sheetTab": "Jesmonite Tray",
-   "sheetRow": 6
+   "sheetRow": 6,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-JT-003",
@@ -261,7 +289,8 @@
    "price": 79,
    "img": "bnt-prd-jt-003.jpg",
    "sheetTab": "Jesmonite Tray",
-   "sheetRow": 7
+   "sheetRow": 7,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-JT-004",
@@ -270,7 +299,8 @@
    "price": 79,
    "img": "bnt-prd-jt-004.jpg",
    "sheetTab": "Jesmonite Tray",
-   "sheetRow": 8
+   "sheetRow": 8,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-JT-005",
@@ -279,7 +309,8 @@
    "price": 79,
    "img": "bnt-prd-jt-005.jpg",
    "sheetTab": "Jesmonite Tray",
-   "sheetRow": 9
+   "sheetRow": 9,
+   "stock": 1
   },
   {
    "id": "BNT-PRD-DIY-001",
@@ -288,7 +319,8 @@
    "price": 69,
    "img": "bnt-prd-diy-001.jpg",
    "sheetTab": "DIY Items",
-   "sheetRow": 5
+   "sheetRow": 5,
+   "stock": 1
   }
  ]
 }

@@ -23,12 +23,12 @@ assert.ok(!by('Draft piece') && !by('Old sample'), 'drafts stay out');
 assert.ok(by('Pour kit') && !by('Tulip'), 'sheet-only piece kept, matched piece not doubled');
 const html = apply('<style>a{}</style><main>old</main>', list);
 assert.ok(html.includes('Coming soon') && html.includes('Chai'), 'sold-out pieces stay listed');
-assert.ok(!/sold out/i.test(html) && !html.includes('A new batch is being prepared.'), 'the catalogue never says sold out');
+assert.ok(/Sold out/.test(html) && !html.includes('A new batch is being prepared.'), 'sold-out pieces are labelled');
 assert.ok(!html.includes('<b>') && html.includes('Tulip &lt;b&gt;'), 'names are escaped');
 assert.ok(!html.includes('₹0'), 'no zero price');
 console.log('Live catalogue checks passed.');
 
 assert.ok(html.includes('Warm chai candle.') && html.includes('Size: 8 cm') && html.includes('Material: Soy wax') && html.includes('Scent: Chai, Cardamom') && html.includes('Colour: Cream'), 'filled sheet details show on the catalogue');
 console.log('Catalogue-live details check passed.');
-assert.ok(!html.includes('class="price"') && !html.includes('₹'), 'the catalogue shows no prices; the shop has them');
-console.log('Catalogue shows no prices.');
+assert.ok(html.includes('class="price"') && html.includes('₹199') && html.includes('made to order'), 'prices shown, sold out says made to order');
+console.log('Catalogue shows prices and stock labels.');
