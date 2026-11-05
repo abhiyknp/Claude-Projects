@@ -35,11 +35,12 @@ function merge(rows, snap, base) {
     const status = d.upcoming ? 'upcoming' : vs.some((v) => (qty[v.sku] || 0) > 0) ? 'in' : 'out';
     const details = []; if (d.size) details.push('Size: ' + d.size); if (d.material) details.push('Material: ' + d.material);
     if (d.notes && d.notes.length) details.push('Scent: ' + d.notes.join(', ')); if (d.colour) details.push('Colour: ' + d.colour);
-    out.push({ name: d.name || r.id, line: d.line || '', details, price: isFinite(price) ? price : 0, status, group: GROUPS.some((g) => g[0] === d.cat) ? d.cat : 'more',
+    const q = vs.reduce((n, v) => n + (qty[v.sku] || 0), 0);
+    out.push({ name: d.name || r.id, qty: q, line: d.line || '', details, price: isFinite(price) ? price : 0, status, group: GROUPS.some((g) => g[0] === d.cat) ? d.cat : 'more',
       img: photos[0] ? photoUrl(photos[0].path, base) : snapHit && snapHit.img ? 'img/' + snapHit.img : '' });
   });
   (snap.products || []).filter((s) => !used.has(s.id)).forEach((s) => {
-    out.push({ name: s.name, price: s.price, status: 'in', group: TAB_GROUP[s.sheetTab] || 'more', img: s.img ? 'img/' + s.img : '' });
+    out.push({ name: s.name, price: s.price, qty: s.stock == null ? 1 : s.stock, status: s.stock === 0 ? 'out' : 'in', group: TAB_GROUP[s.sheetTab] || 'more', img: s.img ? 'img/' + s.img : '' });
   });
   return out;
 }
@@ -48,16 +49,17 @@ function renderMain(list) {
   return '<main>' + GROUPS.map(([k, title]) => {
     const ps = list.filter((p) => p.group === k); if (!ps.length) return '';
     return `<section><h2>${esc(title)}</h2><ul class="grid">${ps.map((p) => {
-      // the catalogue never says "Sold out": that belongs to the shop. A sold-out piece looks like any other piece here.
-      const badge = p.status === 'upcoming' ? '<span class="badge soon">Coming soon</span>' : '';
+      // price always shown. The catalogue never mentions stock or "sold out"; the shop does that.
+      const badge = p.status === 'upcoming' ? '<span class="badge soon">Coming soon</span>': '';
       const note = p.status === 'upcoming' ? '<p class="note">Not on the shop yet.</p>' : '';
+      const price = p.price > 0 ? `<p class="price">₹${Number(p.price).toLocaleString('en-IN')}</p>` : '';
       const img = p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy" width="360" height="360">` : '<div class="noimg" role="img" aria-label="Photo coming"></div>';
-      return `<li class="card${p.status === 'upcoming' ? ' upcoming' : ''}">${badge}${img}<h3>${esc(p.name)}</h3>${p.line ? `<p class="line">${esc(p.line)}</p>` : ''}${p.details && p.details.length ? `<p class="spec">${p.details.map(esc).join(' · ')}</p>` : ''}${note}</li>`;
+      return `<li class="card${p.status === 'upcoming' ? ' upcoming' : ''}">${badge}${img}<h3>${esc(p.name)}</h3>${p.line ? `<p class="line">${esc(p.line)}</p>` : ''}${p.details && p.details.length ? `<p class="spec">${p.details.map(esc).join(' · ')}</p>` : ''}${price}${note}</li>`;
     }).join('')}</ul></section>`;
   }).join('') + '</main>';
 }
 
-const CSS = '.card{position:relative}.badge{position:absolute;left:10px;top:10px;z-index:1;padding:4px 10px;background:var(--ink);color:var(--cream);font:600 12px Montserrat,system-ui,sans-serif;letter-spacing:.06em}.badge.soon{background:var(--gold);color:var(--ink)}.card.out img{filter:grayscale(1);opacity:.5}.noimg{aspect-ratio:1;background:#efe3cf}.line{margin:4px 8px 0;font-size:14px}.spec{margin:2px 8px 0;font-size:13px;color:#555}.note{margin:4px 8px 0;font-size:14px;color:var(--maroon-d)}';
+const CSS = '.card{position:relative}.badge{position:absolute;left:10px;top:10px;z-index:1;padding:4px 10px;border-radius:999px;background:var(--maroon-d);color:var(--cream);font:600 11px Montserrat,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase}.badge.low{background:var(--gold);color:var(--ink)}.badge.out{background:var(--ink)}.card.out img{filter:grayscale(.85);opacity:.55}.price small{font-weight:500;font-size:12px;color:var(--maroon-d);letter-spacing:.02em}.badge.soon{background:var(--gold);color:var(--ink)}.noimg{aspect-ratio:1;background:#efe3cf}.line{margin:4px 8px 0;font-size:14px}.spec{margin:2px 8px 0;font-size:13px;color:#555}.note{margin:4px 8px 0;font-size:14px;color:var(--maroon-d)}';
 
 function apply(html, list) {
   const m = html.replace(/<main>[\s\S]*<\/main>/, renderMain(list));
