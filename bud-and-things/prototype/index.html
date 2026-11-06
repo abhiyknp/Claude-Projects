@@ -893,8 +893,8 @@ body.app .why-band { padding-bottom: 96px; }
 .pdp-desc { font-size: 17px; line-height: 1.65; color: var(--choc2); max-width: 560px; }
 .pdp-info .hl-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .gal-main { position: relative; }
-.room-try { position: absolute; right: 14px; top: 14px; width: auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(255,252,246,.94); box-shadow: 0 6px 18px rgba(75,46,30,.16); font-size: 13px; font-weight: 700; z-index: 2; }
-.room-try:hover { background: var(--choc); color: var(--ivory); }
+.room-try { position: absolute; right: 14px; top: 14px; width: auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(248,240,228,.94); color: #8F1834; box-shadow: 0 6px 18px rgba(21,2,6,.18); font-size: 13px; font-weight: 700; z-index: 2; }
+.room-try:hover { background: #8F1834; color: #F8F0E4; }
 .accs { border-top: 1px solid var(--line); }
 .acc { border-bottom: 1px solid var(--line); }
 .acc summary { list-style: none; display: flex; align-items: center; gap: 12px; min-height: 56px; cursor: pointer; font-weight: 700; }
@@ -2176,7 +2176,7 @@ function viewProduct(id) {
   const care = p.care.map((c) => `<li>${esc(c)}</li>`).join('') + (p.cat === 'candles' || p.cat === 'gifts' && /candle/i.test(p.material) ? `<li>${esc(p.burnTime ? 'Burn time: ' + p.burnTime + '.' : 'Burn time to be confirmed by testing.')}</li>` : '');
   return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${subOf(p)}">${SUBS[subOf(p)].label}</a> / ${esc(p.name)}</nav>
   <div class="pdp"><div class="pdp-gallery"><div class="gal-main">${main}
-      </div>
+      <button class="room-try" type="button" data-act="room-open" data-id="${id}">${hl('home', 18)}${T('pdp.room')}</button></div>
     <div class="thumbs" role="group" aria-label="Images">${gal.map((x, i) => `<button type="button" data-act="pdp-img" data-id="${id}" data-i="${i}" aria-pressed="${i === gi}" aria-label="${esc(x.label)}">${thumb(x)}</button>`).join('')}</div>
     </div>
   <div class="pdp-info"><span class="eyebrow">${p.cat === 'candles' ? SUBS[subOf(p)].label.replace(/s$/, '') : 'Jesmonite'} · ${p.notes ? esc(p.notes.join(', ')) : esc(p.type)}</span>
