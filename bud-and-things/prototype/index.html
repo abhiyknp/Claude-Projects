@@ -4070,7 +4070,7 @@ function offersCard(p, v) {
   if (SET.welcomeCode && +SET.welcomeOff) o.push(`<li>${hl('tag', 20)}<span><strong>${esc(SET.welcomeOff)}% off your first order</strong> with code <button type="button" class="code-chip" data-act="copy-code" data-v="${esc(SET.welcomeCode)}">${esc(SET.welcomeCode)} ${hl('copy', 14)}</button></span></li>`);
   if (+SET.ritualOff && p.cat !== 'gifts') o.push(`<li>${hl('spark', 20)}<span><strong>Pair and save ${esc(SET.ritualOff)}%</strong> when you buy it with ${p.cat === 'candles' ? 'any Jesmonite object' : 'any candle'}. <a href="#ritual">Build a pair</a></span></li>`);
   if (+SET.freeOver) o.push(`<li>${hl('truck', 20)}<span><strong>Free shipping</strong> on orders over ${inr(SET.freeOver)}${v.price < +SET.freeOver ? `, ${inr(+SET.freeOver - v.price)} more to go` : ', and this one qualifies'}.</span></li>`);
-  if (+SET.rewardPct) o.push(`<li>${hl('star', 20)}<span>${esc(fill(Tx('pdp.rewards')).replace('{points}', pts(v.price)).replace('{pointsValue}', inr(pts(v.price))))}</span></li>`);
+  if (+SET.rewardPct && pts(v.price) >= 1) o.push(`<li>${hl('star', 20)}<span>${esc(fill(Tx('pdp.rewards')).replace('{points}', pts(v.price)).replace('{pointsValue}', inr(pts(v.price))))}</span></li>`);
   return o.length ? `<div class="offers-card"><strong class="oc-h">${T('pdp.offers')}</strong><ul>${o.join('')}</ul></div>` : '';
 }
 function deliveryCard(id, st) {

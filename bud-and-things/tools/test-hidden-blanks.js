@@ -44,6 +44,9 @@ const BAD = [/\[to add\]/i, /\bundefined\b/, /\bnull\b/, /\bNaN\b/, /,\s*,/, /:\
   // some details filled, some not: the list keeps what exists
   v = await visit({ ...BLANK, grievanceName: 'Only Name', email: 'x@y.test' }, '#privacy'); t = await v.text();
   ok('partial: keeps the name and email', /Only Name/.test(t) && /x@y\.test/.test(t)); ok('partial: no gaps', !BAD.some((re) => re.test(t))); await v.ctx.close();
+  // a cheap piece earns less than one whole Bud Point: no "Earn 0 Bud Points ... worth ₹0" line
+  v = await visit(FULL, '#p-bnt-prd-tl-001'); t = await v.text();
+  ok('tealight page: no "Earn 0 Bud Points" line', !/Earn 0 Bud Points/.test(t) && !/worth ₹0\b/.test(t)); await v.ctx.close();
   // the Owner view says what is empty
   v = await visit(BLANK, '#admin'); t = await v.text();
   ok('owner view: lists the empty details', /Empty, so hidden from customers/.test(t) && /Business name/i.test(t));
