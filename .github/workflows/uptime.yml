@@ -55,7 +55,8 @@ jobs:
         run: |
           n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"Site check failed" in:title' --json number --jq '.[0].number // empty')
           if [ "$OK" = "true" ]; then
-            [ -n "$n" ] && gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "The site answers again ($(date -u +%FT%TZ))."
+            # an if, not "[ -n ] && …": that form ends the step with exit 1 whenever there is nothing to close
+            if [ -n "$n" ]; then gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "The site answers again ($(date -u +%FT%TZ))."; fi
           else
             [ -n "$n" ] || gh issue create --repo "$GITHUB_REPOSITORY" --title "Site check failed" --body "budandthings.com, /catalogue/ or the database did not answer with 200 twice in a row at $(date -u +%FT%TZ). Open the site; check the Pages deploy and Supabase status."
           fi
