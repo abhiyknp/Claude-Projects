@@ -1495,7 +1495,31 @@ const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
 const LEGAL_KEYS = ['bizName', 'bizAddress', 'gstin', 'grievanceName', 'grievancePhone', 'courtCity', 'policyDate'];
-const fill = (s) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k === 'year' ? String(new Date().getFullYear()) : k === 'gstinText' ? (String(SET.gstin || '').trim() ? 'GSTIN: ' + String(SET.gstin).trim() + '. ' : '') : LEGAL_KEYS.includes(k) && !String(SET[k] || '').trim() ? '[to add]' : k in SET ? (/Fee|Price|Over/.test(k) ? inr(SET[k]) : String(SET[k])) : m));
+// A detail the owner has not filled in is left out for customers (never "[to add]", "undefined" or an empty label);
+// only a signed-in owner sees "[to add]", so they know what to fix. The owner sees the list at the top of the Owner view.
+const MISS = '\u0001';
+const dropMissing = (str) => str.split('\n').map((line) => {
+  if (line.indexOf(MISS) < 0) return line;
+  return (line.match(/[^.!?]*[.!?]*\s*/g) || []).map((sn) => {
+    if (sn.indexOf(MISS) < 0) return sn;
+    const tail = (sn.match(/\s*$/) || [''])[0], core = sn.slice(0, sn.length - tail.length);
+    let res = '', i = 0;
+    while (i < core.length) {
+      if (core[i] !== MISS) { res += core[i++]; continue; }
+      // a missing item in a list such as "Label: a, b, c." is skipped; a sentence that needs it ("Courts in ___ have...") is dropped
+      const before = core.slice(Math.max(0, i - 2), i), next = core[i + 1];
+      if (!(i === 0 || before === ': ' || before === ', ') || !(next === undefined || ',.!?'.indexOf(next) >= 0)) return '';
+      i++; if (next === ',') { i++; while (core[i] === ' ') i++; }
+    }
+    res = res.replace(/,\s*([.!?]*)$/, '$1');
+    return !res.trim() || /:\s*[.!?]*$/.test(res) ? '' : res + tail;
+  }).join('');
+}).join('\n');
+const fill = (s) => {
+  const own = !!(BTDB.owner && BTDB.owner());
+  const out = String(s).replace(/\{(\w+)\}/g, (m, k) => (k === 'year' ? String(new Date().getFullYear()) : k === 'gstinText' ? (String(SET.gstin || '').trim() ? 'GSTIN: ' + String(SET.gstin).trim() + '. ' : '') : (LEGAL_KEYS.includes(k) || k === 'email') && !String(SET[k] || '').trim() ? (own ? '[to add]' : MISS) : k in SET ? (/Fee|Price|Over/.test(k) ? inr(SET[k]) : String(SET[k])) : m));
+  return out.indexOf(MISS) >= 0 ? dropMissing(out) : out;
+};
 const Tx = (k) => fill(k in TXT ? TXT[k] : (TEXT[k] ? TEXT[k][0] : ''));
 const T = (k) => esc(Tx(k)).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
 const pickIds = (v) => String(v || '').split(',').map((x) => x.trim()).filter((id) => byId[id]);
@@ -2153,7 +2177,8 @@ function packDetails(p, v) {
   const bd = p.batch && (p.batch.packed || p.batch.poured) ? new Date(p.batch.packed || p.batch.poured) : null;
   const packed = bd && !isNaN(bd) ? bd.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : 'Month and year are printed on each pack';
   const biz = [fill('{bizName}'), fill('{bizAddress}')].filter(Boolean).join(', ');
-  return `<dl class="spec"><dt>Common name</dt><dd>${esc(p.type)}</dd><dt>Net quantity</dt><dd>${esc(net)}</dd><dt>MRP</dt><dd>${inr(v.price)} (incl. of all taxes)</dd><dt>Packed</dt><dd>${esc(packed)}</dd><dt>Country of origin</dt><dd>India</dd><dt>Made and packed by</dt><dd>${esc(biz)}, India</dd><dt>Consumer care</dt><dd>${esc(fill('{grievanceName}'))}, ${esc(fill('{grievancePhone}'))}, ${esc(fill('{email}'))}</dd></dl>`;
+  const care = [fill('{grievanceName}'), fill('{grievancePhone}'), fill('{email}')].filter(Boolean).join(', ');
+  return `<dl class="spec"><dt>Common name</dt><dd>${esc(p.type)}</dd><dt>Net quantity</dt><dd>${esc(net)}</dd><dt>MRP</dt><dd>${inr(v.price)} (incl. of all taxes)</dd><dt>Packed</dt><dd>${esc(packed)}</dd><dt>Country of origin</dt><dd>India</dd>${biz ? `<dt>Made and packed by</dt><dd>${esc(biz)}, India</dd>` : ''}${care ? `<dt>Consumer care</dt><dd>${esc(care)}</dd>` : ''}</dl>`;
 }
 function viewProduct(id) {
   const p = byId[id]; if (!p) return viewNotFound('product');
@@ -2579,9 +2604,11 @@ function viewAdmin() {
   }
   const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
   const body = { start: admStart, orders: admOrders, products: admProducts, import: admImport, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const gaps = LEGAL_KEYS.concat(['email']).filter((k) => k !== 'gstin' && !String(SET[k] || '').trim()).map((k) => (SET_META.find((m) => m[0] === k) || [k, k])[1]);
+  const gapNote = gaps.length ? `<div class="status adm-banner" role="status"><strong>Empty, so hidden from customers:</strong> ${gaps.map(esc).join('; ')}. Fill them in Settings. You see “[to add]” on the policy and product pages until you do.</div>` : '';
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Iced Latte, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span><button class="btn small ghost" type="button" data-act="pv-toggle" aria-pressed="${A.pv ? 'true' : 'false'}">${A.pv ? 'Close live preview' : 'Live preview'}</button></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
-  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${find}${tabs}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
+  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${find}${tabs}${gapNote}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
 // what Shiprocket booked for an order, for the Owner view
