@@ -37,7 +37,8 @@ jobs:
         run: |
           n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"Vendored library advisory" in:title' --json number --jq '.[0].number // empty')
           if [ -z "$(echo "$FOUND" | tr -d '[:space:]')" ]; then
-            [ -n "$n" ] && gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "No advisory is listed for the vendored versions now."
+            # an if, not "[ -n ] && …": that form ends the step with exit 1 whenever there is nothing to close
+            if [ -n "$n" ]; then gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "No advisory is listed for the vendored versions now."; fi
           else
             body="GitHub lists advisories that affect a vendored library. Read the notes, then update the file and prototype/vendor/VERSIONS.md.
           $FOUND"
