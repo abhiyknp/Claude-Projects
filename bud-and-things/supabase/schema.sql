@@ -356,6 +356,8 @@ create or replace function customer_email() returns text language sql stable sec
   select lower(u.email) from auth.users u where u.id = auth.uid() and u.email_confirmed_at is not null
 $$;
 create index if not exists orders_email on orders ((data ->> 'email'));
+-- the courier's tracking webhook finds an order by its AWB number (supabase/functions/delivery)
+create index if not exists orders_awb on orders ((data -> 'parcel' ->> 'awb'));
 -- Bud Points: earned points count once the order is delivered; points spent are held from the moment the order is placed
 -- and come back if it is cancelled
 create or replace function points_of(em text) returns jsonb language sql stable security definer set search_path = public as $$

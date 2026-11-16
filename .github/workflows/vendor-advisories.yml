@@ -1,0 +1,45 @@
+# Once a week, asks GitHub's advisory database whether the two vendored libraries (see
+# bud-and-things/prototype/vendor/VERSIONS.md) have a known security advisory, and opens an issue named
+# "Vendored library advisory" if so. It closes the issue again when a later check is clean.
+# The versions below must match VERSIONS.md (tools/check-syntax.js checks the three.js one). No secrets are used.
+name: Vendored library advisories
+
+on:
+  schedule:
+    - cron: '23 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Look for advisories
+        id: adv
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          found=""
+          for pkg in three@0.160.0 qrcode-generator@2.0.4; do
+            out=$(gh api -X GET advisories -f ecosystem=npm -f "affects=$pkg" -f per_page=20 --jq '.[] | "\(.ghsa_id) \(.severity): \(.summary)"') || { echo "advisory lookup failed for $pkg"; exit 1; }
+            [ -n "$out" ] && found="$found
+          $pkg
+          $out"
+          done
+          { echo 'found<<EOF'; echo "$found"; echo 'EOF'; } >> "$GITHUB_OUTPUT"
+      - name: Open or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FOUND: ${{ steps.adv.outputs.found }}
+        run: |
+          n=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search '"Vendored library advisory" in:title' --json number --jq '.[0].number // empty')
+          if [ -z "$(echo "$FOUND" | tr -d '[:space:]')" ]; then
+            [ -n "$n" ] && gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "No advisory is listed for the vendored versions now."
+          else
+            body="GitHub lists advisories that affect a vendored library. Read the notes, then update the file and prototype/vendor/VERSIONS.md.
+          $FOUND"
+            [ -n "$n" ] || gh issue create --repo "$GITHUB_REPOSITORY" --title "Vendored library advisory" --body "$body"
+          fi

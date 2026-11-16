@@ -30,13 +30,13 @@
 4–7. Test cases: 18 registered; 11 pass, 1 pass with gaps, 4 blocked, 2 not tested, 0 fail (see 07).
 8. Critical findings: 0. 9. High: F-02 (key regeneration, owner), F-13 (payment evidence).
 10. Overall readiness: NOT READY (conditions in FINAL report).
-11. Reports: this folder `audit/`; screenshots in `audit/screenshots/`. Earlier passes: `bud-and-things/audit-reports/` in the project files.
+11. Reports: this folder `audit/`; screenshots in `audit/screenshots/`. Owner guides: `audit/owner-pack/`.
 
 ## Next actions
 Owner: F-02, F-03 deploy, F-05, A-10 probe, F-12, F-07. Then re-run the live checks from an unrestricted network.
 
 ## Update 2026-11-03 (owner-reported)
-F-13, F-02, F-03, F-05 reported done by the owner; not independently verified. Backups and uptime monitor are next (guide: `bud-and-things/audit-reports/backup-and-uptime-guide.md` in the project files). Owner two-step last. Decision stays NOT READY until evidence is logged.
+F-13, F-02, F-03, F-05 reported done by the owner; not independently verified. Backups and uptime monitor are next (guides: `audit/owner-pack/05_WEEKLY_BACKUP_FREE_PLAN.md` and `06_UPTIME_MONITORING.md`). Owner two-step last. Decision stays NOT READY until evidence is logged.
 
 ## Fixes 2026-11-03
 See the end of `26_MASTER_FINDINGS_REGISTER.md`: vendor versions, secret scan in CI, photo fallback in every slot, 15-minute site check. Remaining items need the owner or an unrestricted network.

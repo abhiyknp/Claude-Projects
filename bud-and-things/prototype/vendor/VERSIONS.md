@@ -6,4 +6,4 @@
 | qrcode-generator | 2.0.4 (Kazuhiko Arase, from npm, unchanged) | `qrcode/qrcode.js` | MIT | Authenticator set-up code in Owner view |
 
 Before updating: read the release notes, replace the file, update this table, run `tools/audit.js` and `tools/test-flow.js`.
-Check for security advisories on these two names when you update (github.com/advisories). Last checked: 2026-11-03, no advisory known to the author for these versions; this is not a scanner result.
+`.github/workflows/vendor-advisories.yml` asks GitHub for advisories on these two versions every week and opens an issue if it finds any (first live run pending; keep the versions in that file in step with this table). Last manual check: 2026-11-03, no advisory known to the author; this is not a scanner result.

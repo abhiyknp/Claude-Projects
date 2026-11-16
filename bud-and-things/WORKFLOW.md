@@ -44,26 +44,26 @@ glow are pre-calculated in Blender and stored in images (lightmaps), so the brow
 bud-and-things/
   README.md                decisions, stack, catalogue and asset notes
   WORKFLOW.md              this file
-  data/catalogue.sheet.json
-    houselib.py            shared Blender helpers: shapes, UVs, baking, panorama, export
-    foyer.py               porch + foyer (Blender script)
-    bedroom.py             bedroom (Blender script)
-  prototype/               everything the site serves
-    index.html             the whole shop: one file, no build step
-    config.js              where the database is (empty = demo mode)
-    db.js                  the database link (window.BTDB): tables, sign-in, file uploads
-    products3d.js          3D models of the products, shared by C and D
-    assets/                brand images, oak texture
-    assets/house/          the two room panoramas used by the sample-room viewer
-    vendor/three/          three.js 0.160.0 and the addons the page imports (MIT, see its LICENSE)
+  prototype/               everything the site serves (published to GitHub Pages)
+    index.html             the whole shop and the Owner view: one file, no build step
+    config.js              where the database is (empty = demo mode); public values only
+    db.js                  the database link (window.BTDB): tables, sign-in, function calls, file uploads
+    import.js, invoice.js  product-sheet import rules; invoice helpers (both have tests)
+    room3d.js, products3d.js  the "See it in your room" viewer on product pages
+    assets/                brand images, fonts, catalogue photos
+    vendor/                three.js r160 and qrcode-generator (see vendor/VERSIONS.md)
+  catalogue/               public catalogue, share, light and Diwali pages (built into /catalogue/)
   supabase/
-    schema.sql             tables, access rules, limits, place_order, get_order and cancel_order
+    schema.sql             tables, access rules, limits and all database functions (safe to re-run)
+    DEPLOYED_STATE.md      what must be deployed outside this repository, and who last checked it
+    functions/             pay (Razorpay), delivery (Shiprocket), notify (email), _shared/util.ts
     README.md              how to set up the database and what the Owner view edits
-  tools/
-    preview.sh             local preview server
-    test-flow.js           end-to-end shop test
-    mock-supabase.js       in-memory stand-in for Supabase, for testing database mode
-.github/workflows/pages.yml  publishes prototype/ to GitHub Pages
+  tools/                   build scripts (catalogue, Pinterest, CSP, script split), tests (test-*.js) and probes
+  brand/, system/          logo and pattern masters; design tokens, components, icons, print and social templates
+  data/catalogue.sheet.json  snapshot of the team product sheet
+  tasks/                   task workspace: backlog, active and done notes
+.github/workflows/         pages.yml (build and deploy), audit.yml (tests), uptime.yml (site check),
+                           vendor-advisories.yml (weekly check of the vendored libraries)
 ```
 
 ---
@@ -96,122 +96,31 @@ bud-and-things/
   candle bought with an object) and the cart's one suggestion all read from settings. With a database, orders
   go through `place_order`, which re-checks prices and takes stock off atomically; the order page re-reads its
   status with `get_order`. Help has an order lookup by number and mobile.
-- **The prototype bar** switches website or installed-app layout (the opening is now always D, and the theme is set
-  in Owner view → Settings).
-- **The Living Canvas** is the sticky stage at the top of the home page. A 2D canvas draws the loading poster and
-  overlays (vignette, fades) over the house, which draws on a WebGL canvas underneath it.
-  Scroll progress `p` (0–1) is smoothed each frame.
-- **`TOUR_ITEMS`** is the list of 3D pieces shared with the 3D modules (exposed as `window.TOUR_ITEMS`). Each
-  entry is a room, a kind (`jar`, `pillar`, `tray`, `plate`, `dish`, `arch`, `pebbles`, `archtray`, `box`), a
-  product id (or `null` for unlabelled props), a colour, a position, an `at` time, and options such as `place`
-  (drops into place), `withPillar`, `ry` (which way it faces) and `where` (label text). Room `F` is the foyer, `BR`
-  the house bedroom, and `L`/`B` are opening C's rooms. The order matters: label anchors are matched by index.
+- **The theme** is set in Owner view → Settings (default Silk · Maroon & Gold). The old Living Canvas opening and its
+  `TOUR_ITEMS` list were removed with the 3D house (section 4).
 
 ---
 
 ## 4. The 3D house (moved out)
 
-The 3D house walk-through was taken off the site in October 2026. The Blender pipeline and the browser
-renderer now live in [abhiyknp/pixelpatra](https://github.com/abhiyknp/pixelpatra/tree/main/House_3D_Prototype);
-this repository's history still has the version that shipped here. The sample-room viewer on product pages
-(`prototype/room3d.js`) is a different feature and stays.
+The 3D house walk-through (Blender rooms with baked light, the glide-to-piece tour and the room moods) was taken off
+the site in October 2026. Its pipeline notes, the Blender scripts and the browser renderer now live in
+[abhiyknp/pixelpatra](https://github.com/abhiyknp/pixelpatra/tree/main/House_3D_Prototype); this repository's git
+history still has the version that shipped here. The sample-room viewer on product pages (`prototype/room3d.js`) is a
+different feature and stays.
 
 ---
 
-## 4.1 Pipeline
+## 5. Database and Edge Functions
 
-```
-   │  build geometry with bmesh: boxes, arched openings cut with booleans, lathed forms
-   │  stand-in "proxies" for the products, so their shadows are baked onto the shelves
-   │  two UV maps per piece: "tile" (world-space, for repeating textures) and "lightmap" (packed)
-   │  Cycles bakes two light states per piece
-   │      day  = sunlight + sky (dusk in the bedroom)      →  lm-day-<piece>.jpg
-   │      lit  = only the candle lights                     →  lm-lit-<piece>.jpg
-   │  equirectangular panorama from inside the room         →  env.jpg / env-bed.jpg
-   │  glTF export → converted to a JS module                →  foyer.js / bedroom.js
-   ▼
-```
-
-### 4.2 Conventions to keep
-
-- **Coordinates.** Blender is x right, y into the house, z up. The page uses three.js coordinates: a Blender
-  point `(x, y, z)` appears at `(-x, z, y)`, because the glTF export is y-up and the page turns the model round.
-  `houselib.t2b()` converts page positions back to Blender (used for proxies and candle lights), so `TOUR_ITEMS`
-  positions and the bake always agree.
-- **Lightmap encoding.** A pixel stores `(light / 4) ^ (1/2.2)` as an 8-bit JPEG, and the page decodes
-  `pow(texel, 2.2) * 4`. Bakes are denoised with OpenCV before saving.
-- **Colour comes from the page, light from the bake.** Blender materials only need roughly the right base colour
-  (it affects bounced light). The page multiplies its own textures and colours (plaster, oak, stone, rug,
-  linen) by the lightmap. That's why moods can recolour walls without re-baking.
-- **No overlapping surfaces.** A panel laid exactly over another surface blocks that surface's light and bakes
-  black (this happened once in the foyer niche). Cut recesses with booleans instead.
-- **Only web-safe file types.** The publisher serves `.js`, `.json`, `.jpg`, `.png` and similar, but not `.glb`
-  or `.hdr`. So geometry ships as a **JS module** (`export default { gltf, bin }`, with the buffer as base64)
-  that the page turns back into a GLB in memory, and panoramas ship as sRGB JPEGs. Nothing is fetched from a
-  `data:` URL, which the artifact's security policy blocks.
-
-### 4.3 Running a bake
-
-Needs Python 3.13 with `pip install bpy opencv-python-headless`. Blender 5.2 runs headless; no GPU is needed.
-
-```sh
-```
-
-On 4 CPU cores a full room takes about 45–50 minutes, mostly the 2048 px walls (about 8 minutes per state).
-Always do a `--fast` run first. The foyer is about 2 MB of assets and the bedroom about 1.2 MB.
-
-### 4.4 Adding a room (checklist)
-
-1. **Plan it in page coordinates:** where it joins the previous room (an arch), where light comes from (windows
-   facing the sun), and the centre display, left and right shelves, and pieces.
-2. **Write `3d/<room>.py`** using `houselib`. Build the walls with openings, the furniture and the shelves. Add a
-   glowing block behind any opening into a lit room, so the bake neither leaks sky nor goes black there. Add the
-   proxies and candle lights from the same page positions as the pieces. Set a resolution per piece.
-3. **Run it with `--fast`,** look at the panorama, then run it at full quality.
-4. **Add the pieces to `TOUR_ITEMS`** (a new room code, `hp: true` and walk positions as `at`), and add the room
-   camera keyframes to `PATH`, and the room's walk range to `roomAt`.
-6. **In `index.html`,** update the opening's rail, captions and section height, plus the `where` labels in the
-   details panel.
-7. **Test** (section 6), **publish** (section 7).
-
----
-
-
-- **Loading:** both rooms' geometry modules, lightmaps and panoramas load behind a quiet "Opening the house…"
-  progress line, then fade in. If WebGL or loading fails, the stage says so and shows the error.
-- **Baked surfaces** use a `MeshBasicMaterial` patched to read the second UV set and mix the two lightmaps:
-  `light = day × kDay + lit × kLit`, with one pair of values per room.
-- **The walk:** `PATH` is a list of `[p, camera, look-at]` keyframes, joined smoothly with Catmull-Rom curves. The
-  foyer takes the first 56% (`FS`), the bedroom the rest. The front doors swing open early in the walk.
-- **Candles and placing:**
-  - In the foyer, niche candles light one by one and shelf pieces drop into place, timed from their `at`
-    values.
-  - In the bedroom, `at` is the walk position directly.
-  - Each room's candle light (`kLit`) follows how many of its candles are lit, with a gentle flicker.
-  - Real-time point lights light the 3D products.
-- **Products** come from `products3d.js` and are lit by the room's panorama, so their reflections match the
-  room. They are scaled 1.3×.
-- **Tap to view:**
-  - A label, or the "Shop this room" list, glides the camera to stand in front of the piece (it uses `ry` to
-    know which side faces the room).
-  - The panel offers Light it / Blow it out, Add to cart, View details, Share and ‹ ›.
-  - Dragging turns the piece; Esc or scrolling returns to the walk.
-- **Moods (`MOODS3`)** recolour walls and textiles, change the daylight and candle balance and the exposure, and
-  show the extras:
-
-  | Mood | Feels like | Extras |
-  |---|---|---|
-  | Calm | soft, cool, pale sage | none |
-  | Cosy | dim daylight, strong candles, terracotta | none |
-  | Fresh | bright, airy greens | none |
-  | Creative | terracotta bedroom, olive textiles | none |
-  | Birthday | blush | balloons |
-  | Housewarming | warm neutrals | plants |
-  | Festive | rani maroon, brightest candles | marigold garlands, diyas |
-  | Thank you | soft neutrals | thank-you cards |
-
-  A feeling matches a product's `mood` list and a gift matches its `occ` list. Only matching pieces are
-  labelled, and the room list is filtered to them. The mood also sets the site theme (`MOOD_SKIN`).
+- `supabase/schema.sql` is the one source of truth for tables, row rules and database functions. It is written to be
+  re-run safely. There are no versioned migration files: a change is made by editing `schema.sql`, pasting it into
+  Supabase → SQL Editor, and noting the date in `supabase/DEPLOYED_STATE.md`.
+- `supabase/functions/` holds three Edge Functions: `pay` (Razorpay), `delivery` (Shiprocket) and `notify` (email
+  through Resend). They are deployed by hand with the Supabase CLI (commands in `supabase/README.md`), so what is
+  running can differ from the repository. `DEPLOYED_STATE.md` is where that is recorded.
+- Secrets (Razorpay, Shiprocket, Resend, the service-role key) are Supabase function secrets. They are never in the
+  repository; `tools/scan-secrets.js` runs on every pull request and every push to `main`.
 
 ---
 
@@ -236,28 +145,25 @@ node bud-and-things/tools/test-flow.js                       # cart → checkout
 
 ## 7. Publishing
 
-1. **Branch and PR.** Work happens on `claude/ui-ux-pro-max-install-du2w6y`. After a PR is merged, the branch
-   restarts from `main` for the next change. Commit messages end with the Claude attribution lines.
+1. **Branch and PR.** Work happens on the session's own branch (named in the session). After a PR is merged, the branch
+   restarts from `main` for the next change. Nothing is merged or pushed to `main` without the owner's approval. Commit messages end with the Claude attribution lines.
 2. **GitHub Pages (public).** `.github/workflows/pages.yml` runs on every push to `main` that touches
    `bud-and-things/prototype/`, wraps `index.html` in a full document and deploys
    https://abhiyknp.github.io/Claude-Projects/. One-time setting: Settings → Pages → Source: **GitHub Actions**
    (done). To re-run it: Actions → *Prototype preview (GitHub Pages)* → Run workflow.
-3. **Claude artifact (private).** The same `index.html` is published with its supporting files (the JS modules,
-   `vendor/three/*` and `assets/house/*`) as https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr. Only the person who owns it and
+3. **Claude artifact (private).** The same `index.html` is published with its supporting files as
+   https://claude.ai/artifact/Dr85NyUq11yCmEqZkMmHkr. Only the person who owns it and
    people it's shared with can open it.
 
 ---
 
 ## 8. Known limits and next steps
 
-- **Intro length.** Done: a Shop button stays on screen through the walk, returning visitors open at the end
-  ("Welcome back"), and walk completion, skips and Shop taps are tracked (`walk_complete`, `walk_skip`,
-  `walk_shop`). Next: a short default intro (door → niche → shop), with the full house as an optional page.
-- **Responsiveness and speed.** Done: a poster of the porch while the house loads, half-size lightmaps on phones,
-  labels that stack instead of overlapping, quieter chrome on the hero and end screens. Next: touch gestures and
-  testing on real devices.
-- **Real products.** The 3D pieces are stand-ins built in code. Model the real candles and Jesmonite pieces from
-  photos and sizes, and replace the PDF-cut brand images with original files.
-- **More rooms** (living room, dining nook) follow the checklist in 4.4.
-- **Production build** (Stage 4): Next.js + Supabase + Razorpay + Capacitor, as in the README. The 3D house
-  carries over as a self-contained module.
+The live list is `tasks/BACKLOG.md`. In short:
+
+- **Real products and photos.** Replace the temporary sheet photos and the PDF-cut brand images with originals.
+- **Product costing and margins** are not built; see the backlog.
+- **WhatsApp, SMS and phone push** are queued by the database but no provider is connected.
+- **Store apps.** The README lists Capacitor as the plan; nothing for it exists yet.
+- **Database changes** are applied by pasting `supabase/schema.sql` into the SQL editor. Record each time in
+  `supabase/DEPLOYED_STATE.md`.

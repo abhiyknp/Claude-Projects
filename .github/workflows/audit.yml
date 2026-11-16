@@ -3,12 +3,20 @@
 name: Page audit
 
 on:
+  # also on a push to main, so a direct push can't skip the tests
+  push:
+    branches: [main]
+    paths:
+      - 'bud-and-things/**'
+      - '.github/workflows/audit.yml'
   pull_request:
     paths:
       - 'bud-and-things/prototype/**'
       - 'bud-and-things/tools/audit.js'
       - 'bud-and-things/tools/catalogue-live.js'
       - 'bud-and-things/tools/scan-secrets.js'
+      - 'bud-and-things/tools/check-syntax.js'
+      - 'bud-and-things/supabase/**'
       - 'bud-and-things/tools/test-*.js'
       - '.github/workflows/audit.yml'
   workflow_dispatch:
@@ -26,6 +34,8 @@ jobs:
           persist-credentials: false
       - name: Scan for committed secrets
         run: node bud-and-things/tools/scan-secrets.js
+      - name: Check scripts parse and vendored libraries match their notes
+        run: node bud-and-things/tools/check-syntax.js
       - name: Install a browser
         run: |
           mkdir -p "$RUNNER_TEMP/audit" && cd "$RUNNER_TEMP/audit"
@@ -40,6 +50,7 @@ jobs:
           node bud-and-things/tools/test-catalogue-live.js
           sh bud-and-things/tools/test-backup-export.sh
           node bud-and-things/tools/test-build-fallback.js
+          node bud-and-things/tools/test-functions.js
       - name: Run the shop flow test
         run: |
           sh bud-and-things/tools/preview.sh >/dev/null 2>&1 &
