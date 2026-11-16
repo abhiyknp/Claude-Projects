@@ -7,7 +7,7 @@ Other projects go in their own repositories.
 
 - **What it is:** a gift shop for hand-poured candles and Jesmonite objects. The tagline is "Thoughtful objects. Meaningful moments."
   The brand lockup is BUD & THINGS, and Ashi signs the Our Story note and the footer.
-- **Site:** `prototype/index.html` is the whole shop in one file, with no build step. It uses hash routes
+- **Site:** `../prototype/index.html` is the whole shop in one file, with no build step. It uses hash routes
   (`#home`, `#shop`, `#p-<id>`, `#checkout`, `#admin`, and so on). It is published to GitHub Pages by
   `.github/workflows/pages.yml` on each push to `main` and once a day.
 - **Catalogue page:** `catalogue/` holds the public catalogue, the Diwali page, the light page and the share pages.
@@ -18,9 +18,9 @@ Other projects go in their own repositories.
   and tracking) and `notify`.
 - **Brand:** the logo, monogram and pattern masters are in `brand/`. Design tokens, components, icons and print
   and social templates are in `system/`. The default theme is Silk · Maroon & Gold.
-- **Audit and launch:** the audit reports are in `../audit/`. The status of each finding is in
-  `../audit/26_MASTER_FINDINGS_REGISTER.md` and `../audit/28_CLOSEOUT_STATUS.md`. The owner's launch list is in
-  `../audit/legal/TODO.md`. The current decision is **NOT READY for public launch**: no critical defect is known,
+- **Audit and launch:** the audit reports are in `../../audit/`. The status of each finding is in
+  `../../audit/26_MASTER_FINDINGS_REGISTER.md` and `../../audit/28_CLOSEOUT_STATUS.md`. The owner's launch list is in
+  `../../audit/legal/TODO.md`. The current decision is **NOT READY for public launch**: no critical defect is known,
   but evidence is missing.
 - **Recent work (Nov 2026):** offline orders with a WhatsApp pay page, invoices that show amounts paid and due,
   a cookie consent banner, a publish pop-up for missing details, and prices on the catalogue.
