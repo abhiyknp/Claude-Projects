@@ -8,8 +8,8 @@ Taken from `../../audit/legal/TODO.md`, `../../audit/26_MASTER_FINDINGS_REGISTER
 |---|---|---|---|
 | T-001 | Mobile load time fix for the live home page (LCP about 6 s locally improved to 2.9 s) | F-19 | Needs the owner's phone Lighthouse result first |
 | T-002 | Update policies and Pack details after the CA answers | F-14, legal TODO | Waiting on the CA |
-| T-003 | Review the remaining marketing text for risky claims (one soft line: "less soot and a cleaner jar") | legal TODO | |
-| T-004 | Add a phone-number check on the `pay` verify step | F-04 | Optional, low priority |
+| T-003 | ~~Review marketing text for risky claims~~ | legal TODO | Done 2026-11-16. Changed: the "less soot" line and "free replacement" now says "if something arrives damaged". Kept: the 48-hour / 30-day complaint promise (it matches the grievance rules for online sellers; confirm with the CA) and the "Ships within 24 hours" setting (already "only while it is true"). Saved site text in the database can still hold the old wording: check Owner view → Site text |
+| T-004 | ~~Phone-number check on the payment verify step~~ | F-04 | Decided not to change (see register F-04): the return-from-bank page may not know the phone, so a strict check could stop real payments being confirmed. Reopen only with a live test |
 | T-005 | Add lint and a vendor CVE check to CI | F-10, F-17 | |
 | T-006 | Sitemap lists products after launch | F-20 | When Coming soon is turned off |
 | T-007 | Re-run the independent audit after the CA replies and the owner steps are done | audit | |

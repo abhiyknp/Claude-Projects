@@ -24,7 +24,7 @@ Tick a box only when you've seen it work. "Reported" items below were told to me
 - [ ] Fill the cost sheet and batch records (`cost_sheet_prefilled.csv`, `batch_record.csv`).
 - [ ] Fragrance SDS and IFRA certificate from the supplier.
 - [ ] Keep your payment, webhook and refund IDs from the live test (F-13 evidence).
-- [ ] Decide on four wordings (see `BACKLOG.md` T-003): "less soot and a cleaner jar"; "free replacement"; the 48-hour / 30-day complaint promise; "Ships within 24 hours".
+- [ ] Check Owner view → Site text for saved copies of the old lines ("less soot and a cleaner jar", "free replacement" without "if something arrives damaged"); the code defaults are already changed. Only switch on "Ships within 24 hours" if you can keep it, and confirm the 48-hour / 30-day complaint promise with the CA.
 
 ## D. Go-live day (last)
 - [ ] Owner view → Settings → untick "Show visitors the Coming soon page". (live test row 17)
