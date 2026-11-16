@@ -25,3 +25,7 @@ Never write a secret's value in this file. Names only.
 |---|---|---|
 | 2026-11-16 | `schema.sql`: index on the courier tracking number (`orders_awb`) | Run `schema.sql` again |
 | 2026-11-16 | `_shared/util.ts`: requests with no visitor address now use their own, stricter limit bucket | Redeploy `pay` and `delivery` |
+
+## Status of those two changes (2026-11-16)
+- `orders_awb` index: **not yet run.** Optional; it only speeds up the courier tracking lookup once there are many orders. Safe to run any time: `create index if not exists orders_awb on orders ((data -> 'parcel' ->> 'awb'));`
+- `pay` and `delivery` redeploy: **merged in the repository, not deployed.** The owner chose to skip it because the live payment test passed on the deployed version. The only difference is how a request with no visitor address is rate limited. If you deploy it later, do it before launch day and place one more test order afterwards.
