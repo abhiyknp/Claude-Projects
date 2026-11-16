@@ -1,4 +1,4 @@
-# A second line of defence next to the uptime monitor (see bud-and-things/audit-reports/backup-and-uptime-guide.md):
+# A second line of defence next to the uptime monitor (see audit/owner-pack/06_UPTIME_MONITORING.md):
 # every 15 minutes GitHub opens the site, the catalogue and reads one public row from the database. If either fails twice in a row it opens an issue named
 # "Site check failed" (one at a time) and closes it again when the site is back. GitHub can delay scheduled runs by some
 # minutes, so this is a backup, not a replacement for a 5-minute monitor. No secrets are used.
@@ -17,7 +17,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # pinned to an exact commit like the other workflows (Dependabot proposes updates)
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
       - name: Open the site, the catalogue and the database
         id: probe
         run: |

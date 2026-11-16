@@ -27,18 +27,24 @@ Public preview: https://abhiyknp.github.io/Claude-Projects/
 | See it in a room | Product page → See it in your room: our sample room in 3D (`prototype/room3d.js`, the real piece on an oak console in daylight or by lamplight, candle can be lit) or the visitor's own photo with a 3D render of the piece, a contact shadow and its light matched to the photo |
 | Platforms | One codebase: responsive website, installable app (PWA), then Android and iOS store apps |
 
-## Proposed stack (to confirm at Stage 4)
+## Stack (what is built, and what is only planned)
 
-- **Next.js + TypeScript**: website, PWA and the shell for the store apps
-- **GSAP + ScrollTrigger**: the Living Canvas only; CSS for everything else
-- **Supabase** (free starter plan): products, text, settings, photos and videos, orders, stock, reviews and sign-ups. Already wired into the prototype (`prototype/db.js`, `supabase/schema.sql`)
-- **Razorpay**: checkout, UPI, cards, net banking, webhooks (wired in, `supabase/functions/pay`)
-- **Shiprocket**: couriers, labels, tracking (wired in, `supabase/functions/delivery`)
-- **Capacitor**: wraps the same app for the Play Store and App Store
-- **Vercel / Netlify / Cloudflare Pages**: hosting, free tier at launch
+Built and in use:
+- **One HTML page plus plain JavaScript** (`prototype/`): the shop, the installed-app layout and the Owner view. No framework and no build step.
+- **Supabase** (free plan): products, text, settings, photos and videos, orders, stock, reviews, coupons, invoices and sign-ups (`prototype/db.js`, `supabase/schema.sql`)
+- **Razorpay**: checkout, UPI, cards, net banking, webhooks (`supabase/functions/pay`)
+- **Shiprocket**: PIN check, couriers, labels, tracking (`supabase/functions/delivery`)
+- **Resend**: email to customers and the owner (`supabase/functions/notify`)
+- **Cloudinary**: photo and video storage and resizing
+- **GitHub Pages behind Cloudflare**: hosting, DNS and security headers
+
+Planned, not built (the first two were the original plan and have not been started): **Next.js + TypeScript**,
+**GSAP**, **Capacitor** (Play Store and App Store apps), a WhatsApp or SMS provider. Revisit these before starting any of them.
+
+What must be deployed outside this repository is listed in [supabase/DEPLOYED_STATE.md](supabase/DEPLOYED_STATE.md).
 
 Recurring or per-use costs: domain, payment gateway fees per transaction, shipping per parcel,
-Google Play developer account (one-time), Apple Developer Program (yearly), marketplace commissions.
+Google Play developer account (one-time, only if an app is built), Apple Developer Program (yearly), marketplace commissions.
 Check current India pricing before committing.
 
 ## Catalogue

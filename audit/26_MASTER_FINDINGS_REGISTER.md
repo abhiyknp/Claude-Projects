@@ -8,7 +8,7 @@ Columns: ID, domain, where, severity, priority (P0 now, P1 before launch, P2 pla
 | F-01 | Infra | Domain | Medium | P2 | DNS, TLS details, http→https not checkable from sandbox | Owner: SSL Labs test; confirm GitHub 'Enforce HTTPS' | S | NOT TESTED |
 | F-02 | Security | Razorpay test key | High→Medium | P0 | Test secret pasted in chat earlier | Owner regenerates test key (and live key if ever shared) | S | OPEN owner action |
 | F-03 | Security | pay function | Medium | P1 | No rate limit; fixed in #74; deploy unverified | Owner `supabase functions deploy pay`; retest 25 rapid calls → 429 | S | FIXED IN REPO, deploy unverified |
-| F-04 | Security | pay verify | Medium→Low | P2 | Verify needs order id only | Add phone check if desired | S | OPEN |
+| F-04 | Security | pay verify | Medium→Low | P2 | Verify needs order id only | Accepted for now (2026-11-16): the order id has a time part and 6 random hex characters, `verify` is limited to 120 a hour per visitor, and it only tells whether the order is paid. A strict phone check could break the return-from-bank page, so add it only with a live test | S | ACCEPTED RISK |
 | F-05 | Security | CORS | Medium | P1 | `*` until SITE_ORIGINS set | Owner sets SITE_ORIGINS=https://budandthings.com | XS | OPEN owner action |
 | F-06/18 | Security | Headers | Medium | P2 | No HSTS/XFO/header-CSP on Pages | Cloudflare in front (done 2026-11-03): nosniff, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy live and checked by curl; Full (strict) SSL. HSTS and header CSP not yet (HSTS after live shop test; CSP stays as meta tag) | M | PARTLY CLOSED |
 | F-07 | Security | Owner sign-in | Medium | P1 | No second factor | Turn on ownerTwoStep + DB function | S | OPEN |

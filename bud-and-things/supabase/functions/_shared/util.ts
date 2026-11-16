@@ -21,10 +21,14 @@ export async function setting(key: string, fallback: unknown) {
   const row = (await db('/rest/v1/settings?select=value&key=eq.' + encodeURIComponent(key)))[0];
   return row && row.value !== null && row.value !== '' ? row.value : fallback;
 }
-// counts one try for this visitor; false once there have been max in the window (the same limits as the database's)
+// counts one try for this visitor; false once there have been max in the window (the same limits as the database's).
+// Supabase's gateway normally supplies the visitor's address. If none arrives, the caller is counted in a separate
+// shared bucket with a smaller limit (a third, at least 1), so unidentifiable callers can't use up the limit that
+// identified visitors have, and the missing address shows up in the function logs.
 export async function allowed(req: Request, bucket: string, max: number, per: string) {
-  const ip = (req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || (req.headers.get('x-forwarded-for') || '').split(',')[0]).trim() || 'unknown';
-  const who = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ip)))].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const ip = (req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || (req.headers.get('x-forwarded-for') || '').split(',')[0]).trim();
+  if (!ip) { console.warn('rate limit: no visitor address on request to ' + bucket); bucket = 'noip-' + bucket; max = Math.max(1, Math.floor(max / 3)); }
+  const who = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ip || 'unknown')))].slice(0, 12).map((b) => b.toString(16).padStart(2, '0')).join('');
   try { await db('/rest/v1/rpc/hit', { b: bucket, w: who, max_n: max, per }); return true; } catch (e) { if (/too_many/.test(String(e))) return false; throw e; }
 }
 // is the caller signed in as the owner? (their sign-in token, checked by the database's own is_owner())

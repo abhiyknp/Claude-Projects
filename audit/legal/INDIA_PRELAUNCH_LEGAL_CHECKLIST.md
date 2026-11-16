@@ -67,7 +67,7 @@ CHECK: whether small packs or a home-based packer must register with the state L
 | BIS mark | **N/A** | No mandatory BIS standard for hand-made decorative candles to my knowledge. CHECK. |
 | Trademark for BUD & THINGS | **SHOULD** | Optional. Protects the name and logo. |
 | Professional tax, labour laws | Only if you hire | State-specific. |
-| Records: batch, cost, safety (owner-pack templates) | **SHOULD** | Already in `audit-reports/owner-pack`. |
+| Records: batch, cost, safety (owner-pack templates) | **SHOULD** | Already in `audit/owner-pack/templates`. |
 
 ## 5. Open questions for the CA
 

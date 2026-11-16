@@ -17,4 +17,4 @@ Free has no backups. This makes your own copy of the shop data (products, stock,
 6. Also keep the original product photo files in that Drive folder.
 
 ## Restore test (once, before launch)
-Follow Part 1.4 of `backup-and-uptime-guide.md`: make an empty test project, load the file with `psql`, check `products`, `orders`, `stock` have rows, delete the test project. Send me the result.
+Make an empty test Supabase project, load the file with `psql`, check `products`, `orders`, `stock` have rows, delete the test project. Send me the result.
