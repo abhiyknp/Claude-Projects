@@ -14,6 +14,11 @@ Taken from `../../audit/legal/TODO.md`, `../../audit/26_MASTER_FINDINGS_REGISTER
 | T-006 | Sitemap lists products after launch | F-20 | When Coming soon is turned off |
 | T-007 | Re-run the independent audit after the CA replies and the owner steps are done | audit | |
 
+## Merged since (2026-11-16)
+- PR #117 (docs, rate-limit fallback, AWB index, CI, function tests), #118 (false site-check failures), #119 (empty details hidden from customers, zero Bud Points line hidden).
+- Owner view Launch checklist now also tracks online payment, UPI ID and the shop contact email.
+- Drafted: CA questions (PDF v2), four licence enquiry letters with a tracker, data breach plan.
+
 ## Needs the owner
 | ID | Task | Source |
 |---|---|---|

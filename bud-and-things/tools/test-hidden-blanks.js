@@ -51,6 +51,8 @@ const BAD = [/\[to add\]/i, /\bundefined\b/, /\bnull\b/, /\bNaN\b/, /,\s*,/, /:\
   v = await visit(BLANK, '#admin'); t = await v.text();
   ok('owner view: lists the empty details', /Empty, so hidden from customers/.test(t) && /Business name/i.test(t));
   await v.ctx.close();
+  ok('owner view: launch checklist lists payments and contact email', /Online payment \(Razorpay\) switched on/.test(t) && /UPI ID saved/.test(t) && /Shop contact email/.test(t));
+  await v.ctx.close();
   v = await visit(FULL, '#admin'); t = await v.text();
   ok('owner view: no list when nothing is empty', !/Empty, so hidden from customers/.test(t)); await v.ctx.close();
   await b.close();
