@@ -7,6 +7,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
   const url = process.env.BT_URL || 'http://localhost:8765/page.html';
   for (const [w, h] of [[1280, 900], [390, 844]]) {
     const pg = await b.newPage({ viewport: { width: w, height: h } });
+    await pg.addInitScript(() => { try { localStorage.setItem('bt-adm-mode', 'full'); } catch (e) { /* ok */ } });
     // config.js now points at the live project, where the Coming soon page hides the shop; this flow runs on the built-in draft content
     await pg.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
     pg.on('pageerror', (e) => errs.push(w + ' pageerror: ' + e.message));

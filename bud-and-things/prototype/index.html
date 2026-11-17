@@ -1055,6 +1055,28 @@ body.app .why-band { padding-bottom: 96px; }
   .section-head a, .section a[href^="#"]:not(.btn):not(.tile):not(.card):not(.disc) { min-height: 44px; display: inline-flex; align-items: center; }
   .adm-banner .linkbtn { display: inline; min-height: 0; padding: 12px 4px; }
 }
+
+/* festive looks, daily note, owner ease */
+.ft-note{text-align:center;padding:8px 0 var(--section)}
+.ft-note blockquote{margin:12px auto;max-width:640px;font-family:var(--display);font-style:italic;font-size:clamp(22px,3.2vw,30px);line-height:1.35}
+.ft-note blockquote span{opacity:0;display:inline-block;transform:translateY(8px);animation:ft-wi .7s cubic-bezier(.2,.7,.2,1) forwards}
+.ft-note .linkbtn{min-height:44px}
+.ft-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:60;max-width:calc(100% - 24px);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;padding:10px 14px;border-radius:30px;background:#150206;color:#f3dca6;border:1px solid #D6A34A;box-shadow:0 10px 40px rgba(0,0,0,.4);font-size:14px}
+.ft-bar button{min-height:40px}
+.ft-cel{margin:0 0 16px;padding:14px 18px;border-radius:14px;background:linear-gradient(135deg,#fdf0d3,#f5deb0);border:1px solid #D6A34A;color:#7A1229;font-family:var(--display);font-style:italic;font-size:19px}
+.ft-cel small{display:block;font:600 10px var(--body,sans-serif);letter-spacing:.24em;text-transform:uppercase;color:#9a6b1a;margin-bottom:4px;font-style:normal}
+.adm-today{display:grid;gap:14px}
+.adm-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.adm-tiles button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:84px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card,#fff);cursor:pointer;font:inherit;color:inherit}
+.adm-tiles button:hover{border-color:var(--choc)}
+.adm-tiles strong{font-size:15px}.adm-tiles span{font-size:13px;color:var(--muted,#6b5a50)}
+.adm-tiles .nb{display:inline-block;min-width:22px;padding:0 7px;border-radius:12px;background:#D6A34A;color:#150206;font-weight:700;font-size:12px;text-align:center}
+.adm-grp{margin-bottom:6px}.adm-gl{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted,#6b5a50);margin:10px 0 2px}
+.adm-help{margin:-12px 0 18px;font-size:14px}
+.adm-mode{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.ft-card{border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--card,#fff)}
+.ft-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+@keyframes ft-wi{to{opacity:1;transform:none}}
 </style>
 
 <div class="proto" role="region" aria-label="Preview controls">
@@ -1116,6 +1138,7 @@ body.app .why-band { padding-bottom: 96px; }
 <script src="invoice.js"></script>
 <script src="db.js?v=9"></script>
 <script src="import.js"></script>
+<script src="festive.js?v=1"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -2424,6 +2447,7 @@ function viewOrder(id) {
   const fresh = UI.justPlaced === id; const wa = waLink('Hello, a question about my order ' + id);
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
+  if (fresh && !unpaid && !gone && window.BTFest && !(UI.thx || (UI.thx = {}))[id]) { UI.thx[id] = 1; const nm = o.items.map((l) => l.name).filter((v, i, a) => a.indexOf(v) === i).join(' and '); setTimeout(() => BTFest.thanks({ text: 'Order ' + id + ' is ' + (cod ? 'placed' : 'paid') + '. Your ' + nm + ' will be packed by hand and sent with care.' }), 450); }
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
     <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.delay && canDelay(o) ? `<div class="status delayed" role="status"><strong>Running a little late.</strong> ${delayText(o.delay)}. Thank you for waiting; we’ll update this page as soon as it moves.</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
       ${inv ? `<div class="status ok inv-card"><strong>Invoice ${esc(inv.id)}</strong><span>${esc(inv.data.gst ? 'Tax invoice' : 'Bill of supply')} for this order, ${inr(Math.round(inv.data.totals.total / 100))}.</span><button class="btn small ghost" type="button" data-act="inv-print" data-id="${esc(o.id)}">View or print invoice</button></div>` : ''}
@@ -2536,7 +2560,7 @@ function viewGifting() {
 }
 
 // ---------- owner view: the control panel for everything kept in the database ----------
-const ADM_TABS = [['start', 'Launch checklist'], ['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['import', 'Import from sheet'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
+const ADM_TABS = [['start', 'Launch checklist'], ['orders', 'Orders'], ['invoices', 'Invoices'], ['products', 'Products'], ['import', 'Import from sheet'], ['pairings', 'Rituals'], ['media', 'Photos & videos'], ['text', 'Site text'], ['lists', 'Menus & FAQ'], ['policies', 'Policy pages'], ['journal', 'Journal'], ['filters', 'Filters & quiz'], ['homepage', 'Home page'], ['festive', 'Festive looks'], ['history', 'History'], ['guide', 'Owner guide'], ['stock', 'Stock'], ['settings', 'Settings'], ['reviews', 'Reviews'], ['people', 'Sign-ups'], ['coupons', 'Coupons'], ['rewards', 'Rewards'], ['cards', 'Gift cards'], ['events', 'Analytics'], ['setup', 'Setup']];
 const ARTS = [['jar', 'Candle jar'], ['pillar', 'Pillar candle'], ['tray', 'Tray'], ['dish', 'Ring dish'], ['archtray', 'Arched catch-all'], ['pebbles', 'Coasters'], ['arch', 'Sculptural arch'], ['plate', 'Candle plate']];
 // what each product needs before it can go live with real photography (see the photo checklist doc)
 const NEED = { candles: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['lit', 'photo', 'Lit, close'], ['detail', 'photo', 'Label and lid'], ['loop', 'video', 'Flame loop']], other: [['packshot', 'photo', 'Pack shot'], ['lifestyle', 'photo', 'In a room'], ['hand', 'photo', 'In the hand'], ['detail', 'photo', 'Texture'], ['loop', 'video', 'Turntable loop']], brand: [['packaging', 'photo', 'Packaging'], ['gift', 'photo', 'Gift card and wrap'], ['unboxing', 'video', 'Unboxing'], ['founder', 'photo', 'Ashi'], ['process', 'photo', 'Pouring and casting'], ['story', 'photo', 'Home page story band'], ['logo-wide', 'photo', 'Logo, wide (header)'], ['logo-stack', 'photo', 'Logo, stacked (footer)'], ['logo-leaf', 'photo', 'Logo, leaf only (phone header)'], ['favicon', 'photo', 'Browser tab icon'], ['share', 'photo', 'Link preview picture'], ['signature', 'photo', 'Signature and seal (invoices)']] };
@@ -2602,13 +2626,13 @@ function viewAdmin() {
       <span class="field full"><label for="own-pass">Password</label><input id="own-pass" type="password" autocomplete="current-password" required></span>
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
   }
-  const tabs = `<div class="adm-tabs" role="tablist" aria-label="Sections">${ADM_TABS.map(([k, l]) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${l}</button>`).join('')}</div>`;
-  const body = { start: admStart, orders: admOrders, products: admProducts, import: admImport, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
+  const tabs = admTabsHTML(A);
+  const body = { start: admStart, orders: admOrders, products: admProducts, import: admImport, pairings: admPairings, media: admMedia, text: admText, lists: admLists, policies: admPolicies, journal: admJournal, filters: admFilters, homepage: admHome, festive: admFestive, history: admHistory, guide: admGuide, stock: admStock, settings: admSettings, reviews: admReviews, people: admPeople, invoices: admInvoices, coupons: admCoupons, rewards: admRewards, cards: admCards, events: admEvents, setup: admSetup }[A.tab] || admOrders;
   const gaps = LEGAL_KEYS.concat(['email']).filter((k) => k !== 'gstin' && !String(SET[k] || '').trim()).map((k) => (SET_META.find((m) => m[0] === k) || [k, k])[1]);
   const gapNote = gaps.length ? `<div class="status adm-banner" role="status"><strong>Empty, so hidden from customers:</strong> ${gaps.map(esc).join('; ')}. Fill them in Settings. You see “[to add]” on the policy and product pages until you do.</div>` : '';
   const loadErr = BTDB.on && A.err ? `<div class="status err adm-banner" role="alert">Some of this couldn’t load: ${esc(A.err)}. If you just updated the site, run schema.sql again in Supabase.</div>` : '';
   const find = `<div class="adm-bar" style="margin-bottom:12px"><span class="field" style="flex:1 1 320px"><label for="adm-find">Search the whole control panel</label><input id="adm-find" type="search" placeholder="shipping, Iced Latte, privacy, logo…" value="${esc(A.find || '')}" autocomplete="off"></span><button class="btn small ghost" type="button" data-act="pv-toggle" aria-pressed="${A.pv ? 'true' : 'false'}">${A.pv ? 'Close live preview' : 'Live preview'}</button></div><div id="adm-find-res">${A.find ? findResults(A.find) : ''}</div>`;
-  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${find}${tabs}${gapNote}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
+  return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}${A.cel ? `<div class="ft-cel" role="status"><small>${esc(A.cel.k)}</small>${esc(A.cel.m)}</div>` : ''}${find}${tabs}<p class="muted adm-help">${esc(TAB_HELP[A.tab] || '')}</p>${gapNote}${loadErr}<section class="adm-body" role="tabpanel" aria-label="${esc((ADM_TABS.find((x) => x[0] === A.tab) || ADM_TABS[0])[1])}">${body()}</section></div>`;
 }
 
 // what Shiprocket booked for an order, for the Owner view
@@ -3019,6 +3043,51 @@ const tagKey = (label, list) => { let b = label.toLowerCase().replace(/[^a-z0-9]
 const saveTags = (k, v) => { SET[k] = v; applyTagLists(); return dbPut('settings', { key: k, value: v }); };
 
 // Home page: show, hide and reorder the sections of the home page
+
+// ---------- festive looks, daily note, owner ease (festive.js holds the scenes) ----------
+const FEST_ID = () => UI.festPrev || SET.festiveScene || '';
+function festSync(r) {
+  if (!window.BTFest) return;
+  const home = r === 'home' && homeStyle() === 'gift' && !gated(); const id = FEST_ID();
+  BTFest.visible(home);
+  if (home && id) { if (BTFest.active() !== id) { const pv = !!UI.festPrev && SET.festiveScene !== id; BTFest.start(id, { preview: pv, intro: pv }); } } else if (!id && BTFest.active()) BTFest.stop();
+  let bar = document.getElementById('ft-bar');
+  if (home && UI.festPrev && BTFest.owner !== false && (!BTDB.on || BTDB.owner())) {
+    const s = BTFest.scenes.find((x) => x.id === UI.festPrev); const html = `<span>Previewing the ${esc(s ? s.name : '')} look. Customers do not see this.</span><button class="btn small" type="button" data-act="ft-apply" data-v="${esc(UI.festPrev)}">Apply for customers</button><button class="btn small ghost" type="button" data-act="ft-prev-stop" style="color:#f3dca6;border-color:#D6A34A">Stop preview</button>`;
+    if (!bar) { bar = document.createElement('div'); bar.id = 'ft-bar'; bar.className = 'ft-bar'; bar.setAttribute('role', 'status'); document.body.appendChild(bar); } bar.innerHTML = html;
+  } else if (bar) bar.remove();
+}
+function festCelebrate(k, m) { UI.adm.cel = { k, m }; render(); if (window.BTFest && !BTFest.reduce) BTFest.confetti(innerWidth / 2, innerHeight * .3, 90, 1.5); }
+const daysTo = (m, d) => { const n = new Date(); const ds = new Date(n.getFullYear(), n.getMonth(), n.getDate()); let x = new Date(n.getFullYear(), m, d); if (x < ds) x = new Date(n.getFullYear() + 1, m, d); return Math.round((x - ds) / 864e5); };
+function admToday() {
+  const h = new Date().getHours(); const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; const B = window.BTFest;
+  let waiting = 0; try { waiting = (admData('orders') || []).filter((o) => o.status === 'Placed').length; } catch (e) { /* not loaded yet */ }
+  const sc = B ? B.scenes.filter((s) => s.m >= 0).map((s) => ({ s, n: daysTo(s.m, s.d) })).sort((a, b) => a.n - b.n)[0] : null;
+  const occ = sc && sc.n <= 45 ? `<div class="ft-cel"><small>${sc.n === 0 ? 'Today' : 'Coming up'}</small>${sc.n === 0 ? `Today is ${esc(sc.s.name)}. Wishing you a bright day.` : `${esc(sc.s.name)} is ${sc.n} days away.`} <button class="linkbtn" type="button" data-act="adm-tab" data-v="festive">${SET.festiveScene ? 'Festive looks' : 'Preview the look'}</button></div>` : '';
+  const tiles = [['orders', 'See and pack orders', waiting ? waiting + ' waiting' : 'Nothing waiting', waiting], ['products', 'Add or change a product', 'Name, price, photos'], ['stock', 'Update stock', 'How many are left'], ['media', 'Change a photo', 'Pictures and videos'], ['text', 'Change words on the site', 'Any line you can read'], ['festive', 'Festive looks', SET.festiveScene ? 'One is on' : 'Off for now'], ['settings', 'Shop details', 'Contact, shipping, payment'], ['guide', 'Help and guide', 'Plain-English steps']];
+  return `<div class="adm-today"><div class="adm-card"><span class="eyebrow">${g}</span><h2 style="font-size:26px;margin:4px 0 6px">What would you like to do?</h2><p class="muted" style="margin:0 0 12px;font-style:italic">${esc(B ? B.ownerNote() : '')}</p>${occ}
+    <div class="adm-tiles">${tiles.map(([k, a, b, n]) => `<button type="button" data-act="adm-tab" data-v="${k}"><strong>${a}${n ? ` <span class="nb">${n}</span>` : ''}</strong><span>${b}</span></button>`).join('')}</div></div></div>`;
+}
+const ADM_SIMPLE = ['start', 'orders', 'products', 'stock', 'media', 'festive', 'settings', 'guide'];
+const ADM_GROUPS = [['Every day', ['start', 'orders', 'invoices', 'products', 'stock', 'reviews']], ['Look and words', ['homepage', 'festive', 'media', 'text', 'lists', 'policies', 'journal', 'filters', 'pairings']], ['Customers and offers', ['people', 'coupons', 'rewards', 'cards']], ['Behind the scenes', ['settings', 'import', 'events', 'history', 'setup', 'guide']]];
+const TAB_HELP = { start: 'Your starting point: quick jumps, what is coming up, and the launch checklist.', orders: 'New orders, packing, shipping and delays. Move an order along one step at a time.', invoices: 'Bills and tax invoices for paid orders.', products: 'Add or change products, prices, scents and sizes.', import: 'Bring many products in at once from a spreadsheet.', pairings: 'Ready-made sets of products shown together.', media: 'Photos and videos for products and the whole site.', text: 'Every line of words on the site. Click, type, done.', lists: 'Menus, footer links and the questions people ask.', policies: 'Privacy, terms, shipping and refund pages.', journal: 'Stories and articles.', filters: 'The filters and the Find Your Feeling quiz.', homepage: 'Choose which sections show on the Home page and in what order.', festive: 'Seasonal looks for the Home page. Preview first, then apply when you are ready.', history: 'Every change that was saved, with a way to put it back.', guide: 'Plain-English steps for common jobs.', stock: 'How many of each piece are left. Change a number and leave the box to save.', settings: 'Shop details: contact, shipping, payment, tax and switches.', reviews: 'Read, publish or hide customer reviews.', people: 'Newsletter and restock sign-ups.', coupons: 'Discount codes.', rewards: 'Bud Points and referrals.', cards: 'Gift cards sold and used.', events: 'What visitors do on the site.', setup: 'Technical set-up: database, payments, courier, email.' };
+function admTabsHTML(A) {
+  let mode = A.mode; if (!mode) { try { mode = localStorage.getItem('bt-adm-mode'); } catch (e) { /* private window */ } mode = mode === 'full' ? 'full' : 'simple'; A.mode = mode; }
+  const label = Object.fromEntries(ADM_TABS); const btn = (k) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${label[k]}</button>`;
+  const toggle = `<div class="adm-mode"><span class="muted" style="font-size:13px">${mode === 'full' ? 'Showing every tool, grouped by job.' : 'Showing the everyday tools. Need something else? Use the search above, or show everything.'}</span><button type="button" class="btn small ghost" data-act="adm-mode" aria-pressed="${mode === 'full'}">${mode === 'full' ? 'Show fewer tools' : 'Show all tools'}</button></div>`;
+  if (mode === 'full') return toggle + `<div role="tablist" aria-label="Sections">${ADM_GROUPS.map(([g, ks]) => `<div class="adm-grp"><span class="adm-gl">${g}</span><div class="adm-tabs" style="margin-bottom:6px">${ks.map(btn).join('')}</div></div>`).join('')}</div><div style="margin-bottom:18px"></div>`;
+  const ks = ADM_SIMPLE.includes(A.tab) ? ADM_SIMPLE : ADM_SIMPLE.concat([A.tab]);
+  return toggle + `<div class="adm-tabs" role="tablist" aria-label="Sections">${ks.map(btn).join('')}</div>`;
+}
+function admFestive() {
+  const A = UI.adm; const B = window.BTFest; if (!B) return '<p class="muted">Festive looks did not load. Refresh the page.</p>'; const on = SET.festiveScene || '';
+  return `<div class="adm-card"><h2 style="font-size:24px">Festive looks</h2><p class="muted">A festive look adds seasonal decoration to your <strong>Home page</strong>: lights, snow, fireworks and more. It is <strong>off</strong> until you apply one. Preview it first, then apply it when you are ready. Products, prices and orders never change. One look at a time. Phones that ask for less motion see a calm, still version.</p>${on ? `<p><span class="pill">Live now</span> The ${esc((B.scenes.find((s) => s.id === on) || {}).name || on)} look is showing to every visitor. <button class="btn small ghost" type="button" data-act="ft-off">Turn it off</button></p>` : '<p class="muted">Nothing is showing for customers right now.</p>'}</div>
+  <div class="ft-cards">${B.scenes.map((s) => { const live = on === s.id; const n = s.m >= 0 ? daysTo(s.m, s.d) : -1; const ask = A.ftAsk === s.id;
+    return `<div class="ft-card"><strong style="font-size:18px">${esc(s.name)}</strong><span class="muted" style="font-size:13px">${esc(s.m >= 0 ? s.when + (n === 0 ? ' (today)' : ' · ' + n + ' days to go') : s.when)}</span><span style="font-size:14px">${esc(s.line)}</span>${s.hint ? `<span class="muted" style="font-size:13px">${esc(s.hint)}</span>` : ''}
+      ${live ? '<span class="pill">Live now</span><button class="btn small ghost" type="button" data-act="ft-off">Turn off</button>'
+      : ask ? `<span style="font-size:14px"><strong>Show this look to every visitor until you turn it off?</strong> Nothing changes until you confirm.</span><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" type="button" data-act="ft-apply" data-v="${s.id}">Yes, apply it</button><button class="btn small ghost" type="button" data-act="ft-noask">Not now</button></span>`
+      : `<span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="ft-prev" data-v="${s.id}">Preview only</button><button class="btn small" type="button" data-act="ft-ask" data-v="${s.id}">Apply for customers</button></span>`}</div>`; }).join('')}</div>`;
+}
 function admHome() {
   const hide = Array.isArray(SET.homeHide) ? SET.homeHide : []; const name = Object.fromEntries(HOME_SECTIONS);
   return `<p class="muted">Tick a section to show it on the home page. Use the arrows to change the order. The opening banner always shows. Changes save at once.</p>
@@ -3074,8 +3143,8 @@ function launchItems() {
   ];
 }
 function admStart() {
-  const items = launchItems(); const done = items.filter((x) => x[2]).length; const pct = Math.round(done * 100 / items.length); const groups = [...new Set(items.map((x) => x[0]))];
-  return `<div class="adm-card"><h2 style="font-size:26px">${done} of ${items.length} ready to launch</h2><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Launch progress" style="height:14px;border-radius:7px;background:var(--linen);overflow:hidden;margin:10px 0"><div style="height:100%;width:${pct}%;background:var(--cta)"></div></div>
+  const items = launchItems(); const today = admToday(); const done = items.filter((x) => x[2]).length; const pct = Math.round(done * 100 / items.length); const groups = [...new Set(items.map((x) => x[0]))];
+  return `${today}<div class="adm-card"><h2 style="font-size:26px">${done} of ${items.length} ready to launch</h2><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Launch progress" style="height:14px;border-radius:7px;background:var(--linen);overflow:hidden;margin:10px 0"><div style="height:100%;width:${pct}%;background:var(--cta)"></div></div>
     <p class="muted">${pct === 100 ? 'Everything on the list is done. Switch the Coming soon page off to open the shop.' : 'Work down the list. “Fix” takes you to the right tab. This list checks what is saved now; it cannot judge photo quality or legal wording.'}</p></div>
     ${groups.map((g) => `<div class="adm-card"><h2 style="font-size:20px">${esc(g)}</h2>${items.filter((x) => x[0] === g).map(([, l, ok, tab, hint]) => `<div class="lrow" style="grid-template-columns:auto 1fr auto;align-items:center"><span aria-hidden="true" style="font-size:20px">${ok ? '✓' : '○'}</span><span><strong>${esc(l)}</strong>${hint ? `<br><span class="muted">${esc(hint)}</span>` : ''}<span class="sr"> ${ok ? 'done' : 'not done'}</span></span>${ok ? '<span></span>' : `<button class="btn small ghost" type="button" data-act="adm-goto" data-v="${tab}" aria-label="Fix: ${esc(l)}">Fix</button>`}</div>`).join('')}</div>`).join('')}`;
 }
@@ -4262,7 +4331,7 @@ function giftBoxesHTML(id) {
 
 // the gift-first home page: products, gifts and reasons to buy first, and no scroll intro
 // order and visibility of the home page sections: the owner's list in Owner view → Home page, else this order
-const HOME_SECTIONS = [['hero', 'Opening banner'], ['welcome', 'Welcome gift'], ['cats', 'Categories'], ['boxes', 'Gift boxes'], ['new', 'New arrivals'], ['promos', 'Offer banners'], ['best', 'Best sellers'], ['feel', 'Find Your Feeling'], ['occasions', 'Moments (occasions)'], ['rituals', 'Rituals'], ['spotlight', 'Spotlight product'], ['reviews', 'Reviews'], ['packaging', 'How it arrives'], ['story', 'Our story band'], ['journal', 'Journal stories'], ['discover', 'More to explore'], ['festive', 'Festive banner'], ['news', 'Newsletter sign-up']];
+const HOME_SECTIONS = [['hero', 'Opening banner'], ['note', 'Daily note'], ['welcome', 'Welcome gift'], ['cats', 'Categories'], ['boxes', 'Gift boxes'], ['new', 'New arrivals'], ['promos', 'Offer banners'], ['best', 'Best sellers'], ['feel', 'Find Your Feeling'], ['occasions', 'Moments (occasions)'], ['rituals', 'Rituals'], ['spotlight', 'Spotlight product'], ['reviews', 'Reviews'], ['packaging', 'How it arrives'], ['story', 'Our story band'], ['journal', 'Journal stories'], ['discover', 'More to explore'], ['festive', 'Festive banner'], ['news', 'Newsletter sign-up']];
 function homeOrder(all) { const known = HOME_SECTIONS.map((x) => x[0]); const v = Array.isArray(SET.homeOrder) ? SET.homeOrder.filter((x) => known.includes(x)) : []; const order = v.concat(known.filter((x) => !v.includes(x))); const hide = Array.isArray(SET.homeHide) ? SET.homeHide : []; return all ? order : order.filter((x) => !hide.includes(x) || x === 'hero'); }
 function viewGiftHome() {
   const G = UI.gh; const t = totals(); const sub = t.sub || 0; const free = +SET.freeOver || 0;
@@ -4283,6 +4352,7 @@ function viewGiftHome() {
       <div class="gh-cta gh-rise d2"><a class="btn gh-shine" href="#gifting">${T('ghome.cta1')}</a><a class="btn ghost" href="#shop">${T('ghome.cta2')}</a></div>
     </div>
   </section>`,
+    note: () => { if (!window.BTFest) return ''; const q = BTFest.quote(); return `  <section class="wrap ft-note" aria-label="Today’s note"><span class="eyebrow" id="ft-nk">${esc(q.k)}</span><blockquote id="ft-nq">${q.t.split(' ').map((w, i) => `<span style="animation-delay:${i * .07}s">${esc(w)}&nbsp;</span>`).join('')}</blockquote><button type="button" class="linkbtn" data-act="ft-note">Another note</button></section>`; },
     welcome: () => `  ${SET.welcomeCode ? `<section class="wrap" style="padding-bottom:var(--section)" aria-label="Your welcome gift">${G.open
     ? `<div class="gh-won" id="gh-won" tabindex="-1" role="status"><span class="eyebrow" style="color:var(--ivory)">${T('ghome.wonEyebrow')}</span><strong>${T('ghome.wonTitle')}</strong><span>${T('ghome.won').replace(esc(SET.welcomeCode), `<code>${esc(SET.welcomeCode)}</code>`)}</span></div>`
     : `<button type="button" class="gh-unwrap gh-shine" data-act="gh-unwrap"><span class="gh-box" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFF8ED" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/></svg></span><span><strong>${T('ghome.unwrap')}</strong><span class="muted">${T('ghome.unwrapSub')}</span></span></button>`}</section>` : ''}`,
@@ -4366,7 +4436,7 @@ function render(nav) {
   if (banner) banner.insertAdjacentHTML('afterend', offersBar()); // pages with no banner have no strip
   renderChrome(); renderOverlay();
   if (r === 'admin') reapplyHeld(); else saveBar();
-  pvRender(r);
+  pvRender(r); festSync(r);
   if (r !== 'admin') { applyText(app, r); ['.site-head', '.site-foot', '#mobile-menu', '#offers-slot'].forEach((q) => applyText($(q), 'every page')); }
   if (!cs) { consentSync(); adsLoad(); }
   if (cs) { if (nav) window.scrollTo(0, 0); return; }
@@ -4375,6 +4445,7 @@ function render(nav) {
   if (nav) { window.scrollTo(0, 0); const h = app.querySelector('h1[tabindex]'); if (h && r !== 'home') h.focus({ preventScroll: true }); }
 }
 
+if (window.BTFest) BTFest.config({ toast: (m) => say(m), photo: 'assets/pack-jar.webp', photos: ['assets/pack-box.webp', 'assets/pack-pouch.webp', 'assets/pack-seal.webp', 'assets/pack-tag.webp'], products: () => P.filter((p) => p.variants.some((v) => stockOf(v.sku) > 0)).slice(0, 2).map((p) => ({ name: p.name, price: minPrice(p), stock: true, href: '#p-' + String(p.id).toLowerCase() })) });
 // ---------- living canvas ----------
 const TAU = Math.PI * 2;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -4769,7 +4840,15 @@ document.addEventListener('click', (e) => {
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
-    case 'adm-tab': UI.adm.draft = null; UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
+    case 'ft-note': { const q = BTFest.nextQuote(); const b = $('#ft-nq'); if (b) { b.innerHTML = q.t.split(' ').map((w, i) => `<span style="animation-delay:${i * .07}s">${esc(w)}&nbsp;</span>`).join(''); } const k = $('#ft-nk'); if (k) k.textContent = q.k; break; }
+    case 'ft-prev': UI.festPrev = d.v; if (route() === 'home') render(); else location.hash = '#home'; break;
+    case 'ft-prev-stop': UI.festPrev = null; location.hash = '#admin'; render(); break;
+    case 'ft-ask': UI.adm.ftAsk = d.v; render(); break;
+    case 'ft-noask': UI.adm.ftAsk = null; render(); break;
+    case 'ft-apply': admDo(async () => { await dbPut('settings', { key: 'festiveScene', value: d.v }); UI.festPrev = null; UI.adm.ftAsk = null; const s = BTFest.scenes.find((x) => x.id === d.v); if (route() !== 'admin') location.hash = '#admin'; festCelebrate((s ? s.name : 'Festive') + ' look is live', 'Customers now see it on the Home page. Good luck this season.'); }, 'Saved.'); break;
+    case 'ft-off': admDo(async () => { await dbPut('settings', { key: 'festiveScene', value: '' }); UI.festPrev = null; render(); }, 'Festive look turned off.'); break;
+    case 'adm-mode': UI.adm.mode = UI.adm.mode === 'full' ? 'simple' : 'full'; try { localStorage.setItem('bt-adm-mode', UI.adm.mode); } catch (e) { /* private window */ } render(); break;
+    case 'adm-tab': UI.adm.cel = null; UI.adm.draft = null; UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'imp-fetch': impFetch(); break;
     case 'imp-copy': impCopy(); break;
     case 'adm-offline': offlineOrderModal(); break;
@@ -4857,7 +4936,7 @@ document.addEventListener('click', (e) => {
       o.status = 'Cancelled'; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = 'Cancelled'; save(); track('order_status', { order: o.id, status: 'Cancelled' }); render(); say(`${o.id} cancelled. Its pieces are back in stock.`); }); break;
     case 'advance': admDo(async () => { const list = admData('orders') || []; const o = list.find((x) => x.id === d.id); if (!o) return; const i = STATUSES.indexOf(o.status); if (o.status !== 'Awaiting payment' && (i < 0 || i >= 3)) return; const st = o.status === 'Awaiting payment' ? 'Placed' : STATUSES[i + 1];
       if (BTDB.on) await BTDB.update('orders', 'id=eq.' + encodeURIComponent(o.id), { status: st });
-      o.status = st; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = st; save(); track('order_status', { order: o.id, status: st }); render(); say(`${o.id} marked ${st.toLowerCase()}. The customer would get an update.`); }); break;
+      o.status = st; const mine = S.orders.find((x) => x.id === o.id); if (mine) mine.status = st; save(); track('order_status', { order: o.id, status: st }); render(); say(`${o.id} marked ${st.toLowerCase()}. The customer would get an update.`); if (st === 'Packed' && !(admData('orders') || []).some((x) => x.status === 'Placed')) festCelebrate('All packed', 'Every parcel is ready. Well done.'); }); break;
   }
 });
 // drag a picture onto another of the same kind to reorder (Owner view → Photos & videos)

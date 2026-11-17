@@ -3,7 +3,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
 const fails = [];
 const expect = (label, got, want) => { console.log(label, got === want ? 'ok' : 'FAIL (got ' + got + ', want ' + want + ')'); if (got !== want) fails.push(label); };
 (async () => {
-  const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1000, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] }); const p = await ctx.newPage();
+  const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1000, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] }); await ctx.addInitScript(() => { try { localStorage.setItem('bt-adm-mode', 'full'); } catch (e) { /* ok */ } }); const p = await ctx.newPage();
   const errs = []; p.on('pageerror', (e) => errs.push(e.message));
   await p.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.BT_CONFIG = {};' }));
   await p.goto('http://localhost:8765/page.html#admin'); await p.waitForTimeout(800);
