@@ -45,7 +45,7 @@ Every row below was checked against the repository or an owner statement. Nothin
 - GST: not registered. The GST switch is off and invoices are bills of supply.
 - Public contacts on the site: grievance officer and consumer care Abhishek Yadav, hello@budandthings.com. Phone numbers and the postal address are not copied into `docs/`.
 - Product ID codes in use: CG, DIY, JT, MC and TL.
-- Automated checks: 12 test suites (`bud-and-things/tools/test-*`), the 13-page audit (`audit.js`), `check-syntax.js` and `scan-secrets.js`, run by `.github/workflows/audit.yml`.
+- Automated checks: 13 test suites (`bud-and-things/tools/test-*`), the 13-page audit (`audit.js`), `check-syntax.js` and `scan-secrets.js`, run by `.github/workflows/audit.yml`.
 - Workflows: `pages.yml` (publishes the site; its paths do not include `docs/`, so documentation changes do not redeploy the site), `audit.yml`, `uptime.yml`, `vendor-advisories.yml`, and Dependabot.
 - The database and the Edge Functions are deployed by hand. `bud-and-things/supabase/DEPLOYED_STATE.md` records what is and is not deployed.
 
@@ -234,7 +234,7 @@ Create: Master Test Strategy, Test Plan, Test Scenarios, Detailed Test Cases, Fu
 
 Every test case holds: Test Case ID, Requirement ID, module, scenario, preconditions, steps, test data, expected result, actual result, pass or fail, severity, priority, evidence reference, execution date.
 
-Existing automated checks (the 12 test suites, the 13-page audit, the syntax check and the secret scan) are real evidence only when you cite a CI run or a command output. Anything not run is **Planned**. Do not claim execution without evidence. Keep planned and executed results separate.
+Existing automated checks (the 13 test suites, the 13-page audit, the syntax check and the secret scan) are real evidence only when you cite a CI run or a command output. Anything not run is **Planned**. Do not claim execution without evidence. Keep planned and executed results separate.
 
 ---
 
