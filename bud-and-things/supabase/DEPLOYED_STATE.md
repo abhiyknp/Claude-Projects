@@ -25,7 +25,7 @@ Never write a secret's value in this file. Names only.
 |---|---|---|
 | 2026-11-16 | `schema.sql`: index on the courier tracking number (`orders_awb`) | Run `schema.sql` again |
 | 2026-11-16 | `_shared/util.ts`: requests with no visitor address now use their own, stricter limit bucket | Redeploy `pay` and `delivery` |
-| 2026-11-17 | Owner two-step on: `ownerTwoStep: true` (site) and `owner_two_step()` returns `true` (`schema.sql`) | After the site rebuilds and the owner has scanned the code: run the one `owner_two_step()` line in the SQL editor |
+| 2026-11-17 | Owner two-step on: `ownerTwoStep: true` (site) and `owner_two_step()` returns `true` (`schema.sql`) | Done 2026-11-17 (owner-reported): code scanned, `owner_two_step()` returns `true`, sign-in tested |
 
 ## Status of those two changes (2026-11-16)
 - `orders_awb` index: **not yet run.** Optional; it only speeds up the courier tracking lookup once there are many orders. Safe to run any time: `create index if not exists orders_awb on orders ((data -> 'parcel' ->> 'awb'));`
