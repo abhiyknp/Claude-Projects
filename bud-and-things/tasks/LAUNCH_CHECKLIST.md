@@ -1,6 +1,6 @@
 # Launch checklist: what is done, and what only the owner can finish
 
-Updated 2026-11-16. Target launch date: **20 November 2026**. Audit decision: **NOT READY** until the "On you" items 1 to 7 and the test order pass. No critical bug is known.
+Updated 2026-11-17. Target launch date: **20 November 2026**. Audit decision: **NOT READY** until the open "On you" items and the test order pass. No critical bug is known.
 The Owner view → **Launch checklist** tab shows the live state of the settings items below (it reads what is saved now).
 Sources: `audit/legal/TODO.md`, `audit/28_CLOSEOUT_STATUS.md`, `audit/26_MASTER_FINDINGS_REGISTER.md`. "Reported" means told to Claude and not checked by it.
 
@@ -12,20 +12,18 @@ Sources: `audit/legal/TODO.md`, `audit/28_CLOSEOUT_STATUS.md`, `audit/26_MASTER_
 - [x] Four licence enquiry letters with a tracker, a data breach plan, a task list and a work plan, all drafted on 2026-11-16 as one branded master file. The CA question note is written and kept separately; the owner decided a CA is not needed for now.
 - [x] Secret scan, 15 test suites and a sweep of every page and product page pass.
 
-## On you, in this order
-1. [ ] Open the live Privacy page: no "[to add]" anywhere. In Settings, set the **policy date** to the day you publish.
-2. [ ] Settings: UPI ID and name, shop WhatsApp number, contact email, shipping and free-shipping amounts, **online payment on**, real stock counts. Watch the Launch checklist tab turn green.
-3. [ ] Send the four licence letters. Keep every written reply in the tracker.
-4. [ ] **Shiprocket:** KYC, pickup address, wallet balance, pickup PIN in Settings, and one test courier booking with a label (live test row 13).
-5. [ ] **Real product photos** (the catalogue photos are marked temporary) and the original logo files.
-6. [ ] **Labels:** test print page 1 at 100% scale, check size and wording, then print all (`node bud-and-things/tools/make-labels.js out.html MM/YYYY`).
-7. [ ] **One real test order**, end to end: customer email, shop email, order Paid, stock down, courier label.
-8. [ ] **Owner two-step** on, and a new preview code (`supabase/README.md` step 7).
-9. [ ] **Backups:** the weekly export routine, and the Supabase Pro decision (at about 50 orders or launch day).
-10. [ ] **Last: turn off the Coming soon page** (live test row 17). Then open the home page, the catalogue and one product on a phone.
+## On you, in this order (owner-reported progress, 2026-11-17)
+1. [x] Check the live policy pages for "[to add]"; set the policy date. **Done** (reported).
+2. [x] Settings: UPI ID and name, shop WhatsApp number, contact email, shipping and free-shipping amounts, online payment on. **Done** (reported). Stock counts: check the Launch checklist tab.
+3. [x] Shiprocket: KYC, pickup address, wallet balance, pickup PIN. **Done** (reported). The test label is part of item 7.
+4. [ ] **Real product photos** (the catalogue photos are marked temporary) and the original logo files.
+5. [ ] **Labels:** test print page 1 at 100% scale, check size and wording, then print all (`node bud-and-things/tools/make-labels.js out.html MM/YYYY`).
+6. [ ] **Owner two-step** on, a new preview code, and the first weekly backup (`supabase/README.md` step 7). Order matters: set `ownerTwoStep: true` in `prototype/config.js` and let the site rebuild, scan the authenticator code, and only then run `owner_two_step()` returning `true` in the SQL editor, or editing locks.
+7. [ ] **One real test order**, end to end, with a courier test label: customer email, shop email, order Paid, stock down, then Book courier for a tracking number and label. Cancel the test shipment in Shiprocket afterwards (live test row 13).
+8. [ ] **Last: turn off the Coming soon page** (live test row 17). Then open the home page, the catalogue and one product on a phone.
 
-## Waiting on others
-- [ ] Replies to the four enquiries: UP Labour Department (Shop and Establishment), Greater Noida Authority (trade licence), District Fire Office, the society RWA. The society's reply matters most: many societies bar commercial activity or stock.
+## Skipped by the owner (decided 2026-11-17)
+- The four licence enquiry letters: UP Labour Department (Shop and Establishment), Greater Noida Authority (trade licence), District Fire Office, the society RWA. The letters are written and kept separately. The risk to remember: the society can object to a home business whatever the law says.
 
 ## Strongly advised, not mandatory
 - [ ] Burn tests for every product. Do not print or publish a burn time you have not tested.
