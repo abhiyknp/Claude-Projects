@@ -5,9 +5,9 @@
 // read and write is limited by the rules in supabase/schema.sql. Leave them empty to run the site on its built-in
 // draft content, with owner changes kept in this browser only.
 window.BT_CONFIG = {
-  // Owner sign-in asks for an authenticator app code after the password when this is true. Off until launch; turn it
-  // on together with owner_two_step() in supabase/schema.sql.
-  ownerTwoStep: false,
+  // Owner sign-in asks for an authenticator app code after the password. On since 2026-11-17, together with
+  // owner_two_step() returning true in supabase/schema.sql.
+  ownerTwoStep: true,
   // Photos and videos are stored on Cloudinary and delivered resized (f_auto,q_auto). The upload preset must be Unsigned;
   // never put the Cloudinary API secret here. Leave `cloud` empty to keep using Supabase storage.
   cloudinary: { cloud: 'ayyjmq3n', preset: 'budandthings' },

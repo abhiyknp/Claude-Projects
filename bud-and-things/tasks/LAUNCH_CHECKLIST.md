@@ -18,7 +18,7 @@ Sources: `audit/legal/TODO.md`, `audit/28_CLOSEOUT_STATUS.md`, `audit/26_MASTER_
 3. [x] Shiprocket: KYC, pickup address, wallet balance, pickup PIN. **Done** (reported). The test label is part of item 7.
 4. [ ] **Real product photos** (the catalogue photos are marked temporary) and the original logo files.
 5. [ ] **Labels:** test print page 1 at 100% scale, check size and wording, then print all (`node bud-and-things/tools/make-labels.js out.html MM/YYYY`).
-6. [ ] **Owner two-step** on, a new preview code, and the first weekly backup (`supabase/README.md` step 7). Order matters: set `ownerTwoStep: true` in `prototype/config.js` and let the site rebuild, scan the authenticator code, and only then run `owner_two_step()` returning `true` in the SQL editor, or editing locks.
+6. [ ] **Owner two-step** (started 2026-11-17: the site side is switched on; the owner scans the code, then runs the one SQL line), a new preview code, and the first weekly backup (`supabase/README.md` step 7). Order matters: set `ownerTwoStep: true` in `prototype/config.js` and let the site rebuild, scan the authenticator code, and only then run `owner_two_step()` returning `true` in the SQL editor, or editing locks.
 7. [ ] **One real test order**, end to end, with a courier test label: customer email, shop email, order Paid, stock down, then Book courier for a tracking number and label. Cancel the test shipment in Shiprocket afterwards (live test row 13).
 8. [ ] **Last: turn off the Coming soon page** (live test row 17). Then open the home page, the catalogue and one product on a phone.
 

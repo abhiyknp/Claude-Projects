@@ -6,10 +6,10 @@
 -- ---------- who may edit ----------
 -- The owner is the signed-in account whose confirmed email is in this table. With the second step on, that sign-in
 -- must also have passed the authenticator app code ("aal2"), so a stolen password alone can change nothing.
--- The second step is OFF until launch. To turn it on: change `false` to `true` in owner_two_step() below, run this
--- file again, and set ownerTwoStep: true in prototype/config.js.
+-- The second step is ON (2026-11-17), matching ownerTwoStep: true in prototype/config.js. To switch it off in an
+-- emergency (for example a lost phone and no other way in), change `true` to `false` below and run just that line.
 create table if not exists owners (email text primary key);
-create or replace function owner_two_step() returns boolean language sql immutable as $$ select false $$;
+create or replace function owner_two_step() returns boolean language sql immutable as $$ select true $$;
 create or replace function is_owner() returns boolean language sql stable security definer set search_path = public as $$
   select (not owner_two_step() or coalesce(auth.jwt() ->> 'aal', '') = 'aal2') and exists (
     select 1 from auth.users u join owners o on lower(o.email) = lower(u.email)
