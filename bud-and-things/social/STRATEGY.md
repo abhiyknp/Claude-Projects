@@ -60,7 +60,7 @@ These are rules for this plan, not suggestions. The relevant framework in India:
 | **Instagram** (main) | Discovery and trust: Reels, carousels, Stories | 6 feed posts a week (2 to 3 Reels, 2 carousels, 1 to 2 single-image) and Stories every day | Link in bio to the site. Add the site link sticker on product Stories. |
 | **YouTube Shorts** | Same Reels, longer shelf life in search | 3 a week, the same day as the Reel (no new filming) | Upload the clean video (no Instagram watermark). Use the title and description from `captions/youtube-pinterest.md`. |
 | **WhatsApp Status** | Warm audience: friends, family, early customers | Daily, 1 image or 15-second clip | The Stories template images work as they are. Status only reaches people who saved the shop's number, so say "save this number" once at launch. |
-| **WhatsApp Channel** | Broadcast: new pours, restocks, order-by dates | 2 a week (Tue, Fri) | Short. Only news that is true that day. |
+| **WhatsApp Channel** | Broadcast: new pours, restocks, gift cards | 2 a week (Tue, Fri) | Short. Only news that is true that day. |
 | **Pinterest** | Slow-burning search: "Christmas gift ideas India", "Jesmonite tray" | Auto-feed already built (products.xml) plus 5 hand-made pins a week, batched on Sundays | The feed publishes live products only. Hand pins use the carousel images and link to product pages. |
 
 Facebook, X and LinkedIn are skipped for now. Revisit in January.
@@ -88,5 +88,5 @@ Look once a week at: saves and shares (these matter more than likes), profile vi
 - **Instagram handle.** The site footer links to `@budandthings_offical`. Is that spelling right? (It lives in `brand.json`; change once there.)
 - **Prices on graphics.** Templates show prices by default. Set `"showPrices": false` in `brand.json` to hide them.
 - **Product names.** The catalogue says "Angle & Amber" (probably "Angel & Amber"?) and "Murphy candle" (is this the right trade name for the gel-style jars?). Plans use the catalogue's names as they are. Fix them in the Owner view first, then the content follows.
-- **Last order date for Christmas** and **last dispatch date**: the plan assumes 16 Dec and 22 Dec. Confirm with Shiprocket's real transit times.
+- **Christmas delivery dates.** The plan deliberately has no order-by or last-dispatch date. Posts say "order early" and quote the site's delivery time (4 to 7 days). Add a date later only after checking real courier times.
 - **Gift boxes.** The site has gift-box wording but the current catalogue has no gift-box product. The unboxing Reel shows a gift-wrapped order (₹99 wrap, hand-written note), not a boxed set, until a box exists.

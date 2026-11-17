@@ -32,10 +32,10 @@ Stickers: add a real countdown, poll or question sticker yourself; the templates
 | 1211 | Handwritten note / "Gift wrap ₹99" | A note in my handwriting. | n/a |
 | 1212 | Tealight pour clip / "₹15" | The smallest pour: tealights. | Tealights are on the site, from ₹15. |
 | 1213 | Question sticker: "Ask me anything" / answers | Any questions? Ask here. | n/a |
-| 1214 | Countdown sticker to 16 Dec / "Order by 16 Dec" | Order by 16 Dec for Christmas. | Order by 16 Dec for Christmas delivery (4 to 7 days). Confirm date first. |
-| 1215 | Iced Latte clip / Product Story | Iced Latte, ₹199. | n/a |
-| 1216 | "Last day to order for Christmas" / Product Story | Last day for Christmas orders. | Today is the last day I recommend ordering for Christmas. |
-| 1217 | Gift card Story / "₹500, ₹1,000, ₹2,000" | Gift cards: the easy answer. | n/a |
+| 1214 | "Order early for Christmas" / Product Story | Order early for Christmas. Delivery takes 4 to 7 days. | n/a |
+| 1215 | Iced Latte clip / Product Story | Iced Latte, ₹199. | Order early for Christmas: delivery takes 4 to 7 days and everything is made in small batches. budandthings.com |
+| 1216 | Gift card Story / "₹500, ₹1,000, ₹2,000" | Can't choose? Give a gift card. | Gift cards: ₹500, ₹1,000 and ₹2,000. budandthings.com |
+| 1217 | Question sticker: "Who is it for?" / replies | Tell me who it's for and your budget, I'll suggest. | n/a |
 | 1218 | Christmas table / Poll: "Tealights or candle?" | A Christmas table in small lights. | Christmas table ideas are on Instagram. Tealights from ₹15. |
 | 1219 | Lighting clip / "Christmas Eve is near" | The best second of Christmas. | n/a |
 | 1220 | Week recap (real photos) / Question sticker | This week in small things. | n/a |

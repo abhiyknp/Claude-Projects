@@ -45,7 +45,7 @@ Needs Node and Playwright (`npm i -D playwright`, then `npx playwright install c
 | `01-post-product` | 1080x1350 | One product, with name, scent, price | `product`, `kicker`, `badge` (optional), `photo` |
 | `02-post-quote` | 1080x1350 | Tips, care, greetings, carousel covers | `kicker`, `title`, `sub` |
 | `03-post-list` | 1080x1350 | Gift guides, price ladders | `kicker`, `title`, `items[]` (each: `product`) |
-| `04-post-announce` | 1080x1350 | Launch, order-by dates | `kicker`, `title`, `sub` |
+| `04-post-announce` | 1080x1350 | Launch, announcements | `kicker`, `title`, `sub` |
 | `05-story-product` | 1080x1920 | Product Story with a link sticker | `product`, `kicker`, `badge`, `photo` |
 | `06-story-interactive` | 1080x1920 | Polls, questions, countdowns | `kicker`, `title`, `sub` |
 
@@ -66,7 +66,7 @@ The site's catalogue pictures are marked **temporary** in the main README, and s
 5. Does it say anything I cannot prove (natural, non-toxic, burn time, "relaxing")? If so, delete it.
 6. If a customer is shown, did they say yes in writing (a DM counts)?
 7. If a product was gifted to someone for a post, is it labelled (#gifted, Paid partnership)?
-8. Is the date true (order-by, last day)? Never post a date you have not checked.
+8. Is every date in it true (opening day, festivals)? Never post a delivery or order-by date you have not checked with the courier.
 9. Is there a phone number, address or private detail in the frame or caption? Remove it.
 
 ## Open questions

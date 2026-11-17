@@ -5,7 +5,7 @@ Limit: 2,200 characters per caption. Every caption here is well under 700. Paste
 **Offer line.** Add this as the last line before the hashtags *only while the welcome code is live in the Owner view*; if it is not live, leave it out:
 `New here? Use HELLO10 for 10% off your first order.`
 
-**Order-by date.** Captions `1214-IG`, `1216-IG` say 16 Dec. That is a recommendation from the site's "4 to 7 days" delivery time. Confirm the date with the courier before posting.
+**Delivery time.** Captions `1214-IG` and `1215`'s Channel line quote "4 to 7 days", the delivery time in the site settings. Check it is still what the Owner view says. No post gives an order-by date.
 
 ---
 
@@ -296,17 +296,16 @@ Link in bio.
 #budandthings #byashi #tealights #handpouredcandles #candlemaking #greaternoida
 ```
 
-### 1214-IG · Carousel · order-by
+### 1214-IG · Single image · order early
 ```text
-Order by 16 December for Christmas. 🎄
+Order early for Christmas. 🎄
 
-Delivery takes 4 to 7 days, and I'd like your gift to arrive with time to spare. Orders after 16 December may still reach you, but I can't promise Christmas.
+Delivery takes 4 to 7 days, and everything here is made in small batches, so the earlier you order, the more time your gift has.
 
 Add the note and gift wrap at checkout. Link in bio.
 
 #budandthings #byashi #christmasgifts #giftideas #christmasgiftideas #greaternoida
 ```
-**Confirm the date first.**
 
 ### 1215-IG · Single image · Iced Latte
 ```text
@@ -320,29 +319,28 @@ Tell me in the comments: is your friend a latte, a cappuccino or a masala chai p
 ```
 Check stock on the day.
 
-### 1216-IG · Single image · last day for Christmas
+### 1216-IG · Single image · gift cards
 ```text
-Last day to order for Christmas. 🎁
-
-If you order today, I'll pack it with care and send it on its way. Delivery is 4 to 7 days, so this is the day I'd recommend.
-
-After today, gift cards are the easy answer. Link in bio.
-
-#budandthings #byashi #christmasgifts #giftideas #festivegifting #greaternoida
-```
-**Only if the date still holds.**
-
-### 1217-IG · Single image · gift cards
-```text
-Too late for a parcel? There's a gift card. 💌
+Can't choose? Give a gift card. 💌
 
 Gift cards come in ₹500, ₹1,000 and ₹2,000. They let someone pick their own scent, or their own tray.
 
 Link in bio.
 
-#budandthings #byashi #giftcards #giftideas #lastminutegift #christmasgifts
+#budandthings #byashi #giftcards #giftideas #giftcard #christmasgifts
 ```
 Check the gift card page and how it is delivered before posting.
+
+### 1217-IG · Single image · tell me who it's for
+```text
+Tell me who it's for. 🎁
+
+Mum, a friend, your boss, a cousin who has everything. Comment or DM me who it's for and your budget, and I'll suggest something.
+
+Gift wrap is ₹99 and your note is included. Ek naam batao, baaki mujh par chhodo.
+
+#budandthings #byashi #giftideas #thoughtfulgifts #christmasgifts #giftingindia
+```
 
 ### 1218-IG · Single image · Christmas table
 ```text

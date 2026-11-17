@@ -19,4 +19,4 @@ Pick one item per price tier **from what is in stock on posting day**. Example (
 **Audio mood:** playful, festive but not jingle-bells: light acoustic or a soft bossa. Upbeat, 100 to 110 bpm.
 **CTA:** "Save this for your Secret Santa. Tell me who you're gifting."
 
-**Honesty checks:** Re-check each item's stock and price that day and swap any that are at 0. Say "Order by 16 Dec" only if you have confirmed the delivery time. Shipping ₹99, free over ₹1,999 (check the Owner view).
+**Honesty checks:** Re-check each item's stock and price that day and swap any that are at 0. Say "order early" if you like, but give no order-by date; quote only the delivery time shown on the site. Shipping ₹99, free over ₹1,999 (check the Owner view).

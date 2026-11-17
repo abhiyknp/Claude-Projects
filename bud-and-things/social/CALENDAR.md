@@ -6,7 +6,7 @@
 1. **Do not post "we are open / order now" until the launch checklist's test order has passed** (`tasks/LAUNCH_CHECKLIST.md`: payments, shop WhatsApp number, stock counts). Until then, posts say "opening 20 Nov".
 2. **Check stock the same day** for every product named. A product at 0 is not "available". Swap it out.
 3. **C posts are real-only.** If you do not have a real message or photo with permission, use the fallback named in the row.
-4. **Dates in italics are suggestions to confirm**: Christmas order-by (16 Dec) and last dispatch (22 Dec) depend on real courier times.
+4. **No delivery dates in posts.** Christmas content says "order early" and quotes only the delivery time shown on the site (4 to 7 days). Do not add an order-by or last-dispatch date unless you have checked it with the courier.
 
 Planned rhythm: Instagram feed Mon to Sat, Stories and WhatsApp Status every day, Shorts on Reel days, WhatsApp Channel Tue and Fri, Pinterest batch on Sundays. Sundays are Stories only.
 
@@ -54,15 +54,15 @@ Planned rhythm: Instagram feed Mon to Sat, Stories and WhatsApp Status every day
 | Fri 11 Dec | Single image · G | "A note, in my handwriting." | `1211-IG` | Hand-written note photo (no name), template 02 |
 | Sat 12 Dec | **Remix of Reel 02** · M | "Tealights are the smallest pour." | `1212-IG` | Tealight pour clips (re-cut, 15 s) |
 | Sun 13 Dec | Stories only: Q&A · C | "Ask me anything." | Stories line | Template 06. Pin batch #4 |
-| Mon 14 Dec | Carousel (3) · G | "Order by 16 Dec for Christmas." | `1214-IG` | Template 04 + 02. *Confirm date with Shiprocket first* |
+| Mon 14 Dec | Single image · G | "Order early for Christmas." | `1214-IG` | Template 04 or 02. Check the delivery time in the Owner view still says 4 to 7 days |
 | Tue 15 Dec | Single image · G | "Iced Latte: a candle that smells like coffee." | `1215-IG` | Iced Latte, template 01. Check stock |
-| Wed 16 Dec | Single image · F | "Last day to order for Christmas." | `1216-IG` | Template 04. *Only if the date holds* |
-| Thu 17 Dec | Single image · G | "Too late for a parcel? Gift cards." | `1217-IG` | Template 02. Check the gift card page and what the buyer receives |
+| Wed 16 Dec | Single image · G | "Can't choose? Give a gift card." | `1216-IG` | Template 02. Check the gift card page and what the buyer receives |
+| Thu 17 Dec | Single image · G | "Tell me who it's for." | `1217-IG` | Template 02. Reply to every DM and comment |
 | Fri 18 Dec | Single image · F | "Christmas table, small lights." | `1218-IG` | Tealights and a dish on a table |
 | Sat 19 Dec | **Remix of Reel 04** · F | "The best second of Christmas." | `1219-IG` | Re-cut Reel 04 with a Christmas table |
 | Sun 20 Dec | Stories only: week recap · C | "This week, in small things." | Stories line | Real stuff only. Pin batch #5 |
 | Mon 21 Dec | Single image · F | "The longest night of the year." | `1221-IG` | Tealight at dusk. Winter solstice is 21 Dec |
-| Tue 22 Dec | Carousel (4) · F | "Three ways to light a Christmas table." | `1222-IG` | Template 02 + photos. *Last dispatch before Christmas: confirm* |
+| Tue 22 Dec | Carousel (4) · F | "Three ways to light a Christmas table." | `1222-IG` | Template 02 + photos |
 | Wed 23 Dec | Single image · G | "New Year gifts, still possible." | `1223-IG` | Template 01 or 03 |
 | Thu 24 Dec | Reel remix + Story · F | "Light one tonight." | `1224-IG` | Re-cut Reel 04 or 10, 12 s |
 | **Fri 25 Dec** | Single image · F | "Merry Christmas." | `1225-IG` | Template 02. No product push |
@@ -81,6 +81,6 @@ Planned rhythm: Instagram feed Mon to Sat, Stories and WhatsApp Status every day
 ## Coverage check
 
 - Launch week: Fri 20 to Thu 26 Nov, one feed post every day plus Stories.
-- Christmas: 1 Dec to 25 Dec, with an order-by date, a gift-card fallback and a no-pressure Christmas Day post.
+- Christmas: 1 Dec to 25 Dec, with an "order early" reminder, a gift-card post and a no-pressure Christmas Day post.
 - New Year: 28 to 31 Dec.
 - Reels: 10 scripts + 4 remixes (12, 19, 24, 31 Dec).
