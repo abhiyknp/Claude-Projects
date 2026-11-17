@@ -770,7 +770,7 @@ body.app .why-band { padding-bottom: 96px; }
 .why-grid.big li { padding: 26px; font-size: 15px; }
 .why-grid.big strong { font-family: var(--display); font-size: 26px; font-weight: 500; }
 .why-grid.big .why-ic { width: 60px; height: 60px; }
-.cat-tiles { display: grid; gap: 14px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.cat-tiles { display: grid; gap: 14px; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); }
 .cat-tile { display: flex; flex-direction: column; gap: 10px; text-decoration: none; min-width: 0; }
 .cat-tile .tile { aspect-ratio: 4 / 5; height: auto; border-radius: 2px; transition: transform .35s ease; }
 .cat-tile .tile .obj { max-width: 72%; height: auto; }
@@ -1056,6 +1056,11 @@ body.app .why-band { padding-bottom: 96px; }
   .adm-banner .linkbtn { display: inline; min-height: 0; padding: 12px 4px; }
 }
 
+
+/* go-live sizing fixes */
+#adm-find { min-height: 44px; }
+#gc-msg { min-height: 96px; }
+.ft-cel .linkbtn, .ft-note .linkbtn { min-height: 44px; padding: 0 6px; }
 /* festive looks, daily note, owner ease */
 .ft-note{text-align:center;padding:8px 0 var(--section)}
 .ft-note blockquote{margin:12px auto;max-width:640px;font-family:var(--display);font-style:italic;font-size:clamp(22px,3.2vw,30px);line-height:1.35}
@@ -3823,7 +3828,7 @@ function catTiles(id) {
     return ['#' + k, SUBS[k].label, list.length + ' ' + SUBS[k].noun, im, ''];
   }).filter(Boolean);
   return `<section class="wrap section" aria-labelledby="${id}"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="${id}">${T('home.cats')}</h2><span class="muted">${T('home.catsSub')}</span></div><a href="#shop" style="font-weight:600">Shop all ${P.length} →</a></div>
-    <div class="cat-tiles" style="grid-template-columns:repeat(${Math.min(tiles.length, 4)},minmax(0,1fr))">${tiles.map(([h, l, s, im, alt]) => `<a class="cat-tile" href="${h}"><span class="tile${alt ? ' alt' : ''}${/<img src/.test(im) ? ' photo-tile' : ''}">${im}</span><span class="cat-label"><strong>${l}</strong><span>${esc(s)} →</span></span></a>`).join('')}</div></section>`;
+    <div class="cat-tiles" style="--cols:${Math.min(tiles.length, 4)}">${tiles.map(([h, l, s, im, alt]) => `<a class="cat-tile" href="${h}"><span class="tile${alt ? ' alt' : ''}${/<img src/.test(im) ? ' photo-tile' : ''}">${im}</span><span class="cat-label"><strong>${l}</strong><span>${esc(s)} →</span></span></a>`).join('')}</div></section>`;
 }
 
 function newArrivals(id) {
