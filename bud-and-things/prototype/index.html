@@ -1079,7 +1079,7 @@ body.app .why-band { padding-bottom: 96px; }
 .adm-grp{margin-bottom:6px}.adm-gl{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted,#6b5a50);margin:10px 0 2px}
 .adm-help{margin:-12px 0 18px;font-size:14px}
 .adm-mode{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
-.ft-card{border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--card,#fff)}
+.ft-ocard,.ft-card{border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--card,#fff)}
 .ft-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 @keyframes ft-wi{to{opacity:1;transform:none}}
 </style>
@@ -1143,6 +1143,7 @@ body.app .why-band { padding-bottom: 96px; }
 <script src="invoice.js"></script>
 <script src="db.js?v=9"></script>
 <script src="import.js"></script>
+<link rel="stylesheet" href="festive.css?v=1">
 <script src="festive.js?v=1"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
@@ -3062,16 +3063,23 @@ function festUntil(id) {
 }
 function festSync(r) {
   if (!window.BTFest) return;
-  const home = r === 'home' && homeStyle() === 'gift' && !gated(); const id = FEST_ID();
-  BTFest.visible(home);
-  if (home && id) { if (BTFest.active() !== id) { const pv = !!UI.festPrev && SET.festiveScene !== id; BTFest.start(id, { preview: pv, intro: pv }); } } else if (!id && BTFest.active()) BTFest.stop();
+  const cs = gated(); const home = r === 'home' && homeStyle() === 'gift' && !cs; const strap = !cs && !/^(admin|checkout|pay|bill|i|b)(-|$)/.test(r); const id = FEST_ID();
+  BTFest.page({ home, strap });
+  if ((home || strap) && id) { if (BTFest.active() !== id) { const pv = !!UI.festPrev && SET.festiveScene !== id; BTFest.start(id, { preview: pv, intro: pv }); } else BTFest.refresh(); } else if (!id && BTFest.active()) BTFest.stop();
   let bar = document.getElementById('ft-bar');
-  if (home && UI.festPrev && BTFest.owner !== false && (!BTDB.on || BTDB.owner())) {
+  if ((home || strap) && UI.festPrev && (!BTDB.on || BTDB.owner())) {
     const s = BTFest.scenes.find((x) => x.id === UI.festPrev); const html = `<span>Previewing the ${esc(s ? s.name : '')} look. Customers do not see this.</span><button class="btn small" type="button" data-act="ft-apply" data-v="${esc(UI.festPrev)}">Apply for customers</button><button class="btn small ghost" type="button" data-act="ft-prev-stop" style="color:#f3dca6;border-color:#D6A34A">Stop preview</button>`;
     if (!bar) { bar = document.createElement('div'); bar.id = 'ft-bar'; bar.className = 'ft-bar'; bar.setAttribute('role', 'status'); document.body.appendChild(bar); } bar.innerHTML = html;
   } else if (bar) bar.remove();
 }
 function festCelebrate(k, m) { UI.adm.cel = { k, m }; render(); if (window.BTFest && !BTFest.reduce) BTFest.confetti(innerWidth / 2, innerHeight * .3, 90, 1.5); }
+function festOfferInfo(id) {
+  const s = window.BTFest && BTFest.scenes.find((x) => x.id === id); const text = String(SET.festiveOffer || '').trim(); const code = String(SET.festiveCode || '').trim().toUpperCase();
+  const until = SET.festiveScene === id && SET.festiveUntil ? SET.festiveUntil : festUntil(id); let endsAt = 0, label = '';
+  if (until && id !== 'bday') { let d = new Date(until + 'T23:59:59'); if (s && s.m >= 0) d = new Date(d.getTime() - 2 * 864e5); endsAt = d.getTime(); label = text ? 'Offer ends in' : (s ? s.name + ' in' : 'Ends in'); }
+  return { text, code, endsAt, label, href: '#gifting', cta: 'Shop gifts' };
+}
+const couponKnown = (c) => { try { const rows = BTDB.on ? (UI.adm && UI.adm.rows && UI.adm.rows.coupons) : localCoupons(); if (!rows) return null; return rows.some((x) => String(x.code || '').toUpperCase() === c); } catch (e) { return null; } };
 const daysTo = (m, d) => { const n = new Date(); const ds = new Date(n.getFullYear(), n.getMonth(), n.getDate()); let x = new Date(n.getFullYear(), m, d); if (x < ds) x = new Date(n.getFullYear() + 1, m, d); return Math.round((x - ds) / 864e5); };
 function admToday() {
   const h = new Date().getHours(); const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; const B = window.BTFest;
@@ -3095,7 +3103,11 @@ function admTabsHTML(A) {
 }
 function admFestive() {
   const A = UI.adm; const B = window.BTFest; if (!B) return '<p class="muted">Festive looks did not load. Refresh the page.</p>'; const ended = festEnded(); const on = ended ? '' : SET.festiveScene || ''; const endTxt = SET.festiveUntil ? niceDay(SET.festiveUntil) : ''; const endedName = ended ? (B.scenes.find((s) => s.id === SET.festiveScene) || {}).name : '';
-  return `<div class="adm-card"><h2 style="font-size:24px">Festive looks</h2><p class="muted">A festive look adds seasonal decoration to your <strong>Home page</strong>: lights, snow, fireworks and more. It is <strong>off</strong> until you apply one. Preview it first, then apply it when you are ready. Products, prices and orders never change. One look at a time. Phones that ask for less motion see a calm, still version.</p>${on ? `<p><span class="pill">Live now</span> The ${esc((B.scenes.find((s) => s.id === on) || {}).name || on)} look is showing to every visitor${endTxt ? `, and turns itself off after ${esc(endTxt)}` : ' until you turn it off'}. <button class="btn small ghost" type="button" data-act="ft-off">Turn it off now</button></p>` : ended ? `<p class="muted">The ${esc(endedName || '')} look ended after ${esc(endTxt)} and turned itself off. Customers see the normal shop.</p>` : '<p class="muted">Nothing is showing for customers right now.</p>'}<p class="muted" style="font-size:14px">To keep the shop calm, each look switches itself off a couple of days after its festival, its snow and sparkle thin out after half a minute, and nothing ever covers your product photos or buttons.</p></div>
+  return `<div class="adm-card"><h2 style="font-size:24px">Festive looks</h2><p class="muted">A festive look adds seasonal decoration to your <strong>Home page</strong>: lights, snow, fireworks and more. It is <strong>off</strong> until you apply one. Preview it first, then apply it when you are ready. Products, prices and orders never change. One look at a time. Phones that ask for less motion see a calm, still version.</p>${on ? `<p><span class="pill">Live now</span> The ${esc((B.scenes.find((s) => s.id === on) || {}).name || on)} look is showing to every visitor${endTxt ? `, and turns itself off after ${esc(endTxt)}` : ' until you turn it off'}. <button class="btn small ghost" type="button" data-act="ft-off">Turn it off now</button></p>` : ended ? `<p class="muted">The ${esc(endedName || '')} look ended after ${esc(endTxt)} and turned itself off. Customers see the normal shop.</p>` : '<p class="muted">Nothing is showing for customers right now.</p>'}<div class="ft-ocard" style="margin:14px 0"><strong>Festival offer (optional)</strong><span class="muted" style="font-size:14px">Shown in the strap under the menu on every page, with a live countdown, while a look is on. Keep it honest: the code must exist in <button type="button" class="linkbtn" data-act="adm-tab" data-v="coupons">Coupons</button> and the offer must really be honoured.</span>
+    <span class="field"><label for="ft-offer">Offer line</label><input id="ft-offer" maxlength="90" data-act="ft-offer" data-k="festiveOffer" placeholder="15% off gift boxes this Christmas" value="${esc(SET.festiveOffer || '')}"></span>
+    <span class="field"><label for="ft-code">Coupon code</label><input id="ft-code" maxlength="20" autocapitalize="characters" data-act="ft-offer" data-k="festiveCode" placeholder="XMAS15" value="${esc(SET.festiveCode || '')}"></span>
+    ${SET.festiveCode && couponKnown(String(SET.festiveCode).toUpperCase()) === false ? '<span class="err" role="alert">That code is not in Coupons yet, so customers could not use it. Add it there first.</span>' : ''}</div>
+    <p class="muted" style="font-size:14px">To keep the shop calm, each look switches itself off a couple of days after its festival, its snow and sparkle thin out after half a minute, and nothing ever covers your product photos or buttons.</p></div>
   <div class="ft-cards">${B.scenes.map((s) => { const live = on === s.id; const n = s.m >= 0 ? daysTo(s.m, s.d) : -1; const ask = A.ftAsk === s.id;
     return `<div class="ft-card"><strong style="font-size:18px">${esc(s.name)}</strong><span class="muted" style="font-size:13px">${esc(s.m >= 0 ? s.when + (n === 0 ? ' (today)' : ' · ' + n + ' days to go') : s.when)}</span><span style="font-size:14px">${esc(s.line)}</span>${s.hint ? `<span class="muted" style="font-size:13px">${esc(s.hint)}</span>` : ''}
       ${live ? '<span class="pill">Live now</span><button class="btn small ghost" type="button" data-act="ft-off">Turn off</button>'
@@ -4140,6 +4152,7 @@ function signInBox(next) {
 }
 function viewAccount() {
   const a = S.account;
+  if (!a && BTDB.on && BTDB.owner()) return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Account</h1><div class="signin"><span class="why-ic">${hl('user', 26)}</span><h2 style="font-size:32px">You are signed in as the Owner</h2><p class="muted">That sign-in (password plus your authenticator code) is for running the shop. This Account page is for customers, who sign in with a code sent to their email, so it is a separate sign-in. You can stay as the Owner, or try the customer side below.</p><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#admin">Open Owner view</a><button class="btn ghost" type="button" data-act="adm-signout">Sign out of Owner</button></span></div><details style="max-width:520px;margin:24px auto 0"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600">Try signing in as a customer</summary>${signInBox(UI.acct.next || '')}</details></div>`;
   if (!a) return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Sign in</h1>${signInBox(UI.acct.next || '')}</div>`;
   loadMine(); const list = myOrders(); const pm = ptsMine();
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Your account</span><h1 tabindex="-1">Hello${a.name ? ', ' + esc(a.name.split(' ')[0]) : ''}.</h1><p class="muted">Signed in as ${esc(a.email)}. <button class="linkbtn" type="button" data-act="acct-out">Sign out</button></p></div>
@@ -4459,7 +4472,7 @@ function render(nav) {
   if (nav) { window.scrollTo(0, 0); const h = app.querySelector('h1[tabindex]'); if (h && r !== 'home') h.focus({ preventScroll: true }); }
 }
 
-if (window.BTFest) BTFest.config({ toast: (m) => say(m), photo: 'assets/pack-jar.webp', photos: ['assets/pack-box.webp', 'assets/pack-pouch.webp', 'assets/pack-seal.webp', 'assets/pack-tag.webp'], products: () => P.filter((p) => p.variants.some((v) => stockOf(v.sku) > 0)).slice(0, 2).map((p) => ({ name: p.name, price: minPrice(p), stock: true, href: '#p-' + String(p.id).toLowerCase() })) });
+if (window.BTFest) BTFest.config({ offer: (id) => festOfferInfo(id), toast: (m) => say(m), photo: 'assets/pack-jar.webp', photos: ['assets/pack-box.webp', 'assets/pack-pouch.webp', 'assets/pack-seal.webp', 'assets/pack-tag.webp'], products: () => P.filter((p) => p.variants.some((v) => stockOf(v.sku) > 0)).slice(0, 2).map((p) => ({ name: p.name, price: minPrice(p), stock: true, href: '#p-' + String(p.id).toLowerCase() })) });
 // ---------- living canvas ----------
 const TAU = Math.PI * 2;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -5010,6 +5023,7 @@ document.addEventListener('change', (e) => {
   if (d.act === 'stock') { const qty = Math.max(0, parseInt(t.value, 10) || 0); t.value = qty; admDo(() => dbPut('stock', { sku: d.sku, qty }), 'Stock saved.'); track('stock_update', { sku: d.sku, stock: qty }); }
   if (d.act === 'adm-ns') { const v = readNs(); admDo(async () => { SET.newSections = v; UI.adm.draftNs = null; await dbPut('settings', { key: 'newSections', value: v }); renderChrome(); render(); }, 'Saved.'); }
   if (d.act === 'adm-soon') { const v = [...document.querySelectorAll('[data-act=adm-soon]')].filter((x) => x.checked).map((x) => x.dataset.k); admDo(async () => { SET.soonPages = v; await dbPut('settings', { key: 'soonPages', value: v }); render(); }, v.length ? 'Saved. These sections show Coming soon.' : 'Saved. No section shows Coming soon.'); }
+  if (d.act === 'ft-offer') { const v = d.k === 'festiveCode' ? t.value.trim().toUpperCase() : t.value.trim(); t.value = v; admDo(async () => { await dbPut('settings', { key: d.k, value: v }); if (window.BTFest) BTFest.refresh(); const ae = document.activeElement; if (!ae || !/^ft-(offer|code)$/.test(ae.id)) render(); }, 'Saved.'); }
   if (d.act === 'adm-set') { const meta = SET_META.find((m) => m[0] === d.k); const value = meta[2] === 'bool' ? t.checked : meta[2] === 'num' ? Math.max(0, parseInt(t.value, 10) || 0) : t.value.trim(); admDo(async () => { await dbPut('settings', { key: d.k, value }); renderChrome(); if (d.k === 'theme') render(); const l = $('#cs-link'); if (l) l.value = previewLink(); }, 'Saved.'); }
   if (d.act === 'adm-pol') { const id = d.id; const box = t.closest('[data-pol]'); const body = box.querySelector('.pol-body').value; const ti = box.querySelector('.pol-title');
     admDo(async () => { if (ti) { const list = (SET.policyPages || []).map((x) => (x.id === id ? { id, title: ti.value.trim() || x.title, body } : x)); await savePolicies(list); } else { const k = 'legal.' + id; if (body === TEXT[k][0]) { if (k in TXT) await dbDel('site_text', 'key', k); } else await dbPut('site_text', { key: k, value: body }); } renderChrome(); }, 'Saved.'); }
