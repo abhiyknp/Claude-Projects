@@ -3050,7 +3050,16 @@ const saveTags = (k, v) => { SET[k] = v; applyTagLists(); return dbPut('settings
 // Home page: show, hide and reorder the sections of the home page
 
 // ---------- festive looks, daily note, owner ease (festive.js holds the scenes) ----------
-const FEST_ID = () => UI.festPrev || SET.festiveScene || '';
+const todayISO = () => { const n = new Date(); return new Date(n.getTime() - n.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); };
+const festEnded = () => !!(SET.festiveScene && SET.festiveUntil && todayISO() > SET.festiveUntil);
+const FEST_ID = () => UI.festPrev || (festEnded() ? '' : SET.festiveScene || '');
+// Christmas ends on 27 Dec, New Year on 3 Jan, Valentine's on 16 Feb; festivals with a moving date end 10 days after applying; Birthday stays until turned off
+function festUntil(id) {
+  const s = window.BTFest && BTFest.scenes.find((x) => x.id === id); if (!s || id === 'bday') return '';
+  const n = new Date(); const iso = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+  if (s.m >= 0) { let e = new Date(n.getFullYear(), s.m, s.d + 2); if (e < new Date(n.getFullYear(), n.getMonth(), n.getDate())) e = new Date(n.getFullYear() + 1, s.m, s.d + 2); return iso(e); }
+  return iso(new Date(n.getTime() + 10 * 864e5));
+}
 function festSync(r) {
   if (!window.BTFest) return;
   const home = r === 'home' && homeStyle() === 'gift' && !gated(); const id = FEST_ID();
@@ -3085,12 +3094,12 @@ function admTabsHTML(A) {
   return toggle + `<div class="adm-tabs" role="tablist" aria-label="Sections">${ks.map(btn).join('')}</div>`;
 }
 function admFestive() {
-  const A = UI.adm; const B = window.BTFest; if (!B) return '<p class="muted">Festive looks did not load. Refresh the page.</p>'; const on = SET.festiveScene || '';
-  return `<div class="adm-card"><h2 style="font-size:24px">Festive looks</h2><p class="muted">A festive look adds seasonal decoration to your <strong>Home page</strong>: lights, snow, fireworks and more. It is <strong>off</strong> until you apply one. Preview it first, then apply it when you are ready. Products, prices and orders never change. One look at a time. Phones that ask for less motion see a calm, still version.</p>${on ? `<p><span class="pill">Live now</span> The ${esc((B.scenes.find((s) => s.id === on) || {}).name || on)} look is showing to every visitor. <button class="btn small ghost" type="button" data-act="ft-off">Turn it off</button></p>` : '<p class="muted">Nothing is showing for customers right now.</p>'}</div>
+  const A = UI.adm; const B = window.BTFest; if (!B) return '<p class="muted">Festive looks did not load. Refresh the page.</p>'; const ended = festEnded(); const on = ended ? '' : SET.festiveScene || ''; const endTxt = SET.festiveUntil ? niceDay(SET.festiveUntil) : ''; const endedName = ended ? (B.scenes.find((s) => s.id === SET.festiveScene) || {}).name : '';
+  return `<div class="adm-card"><h2 style="font-size:24px">Festive looks</h2><p class="muted">A festive look adds seasonal decoration to your <strong>Home page</strong>: lights, snow, fireworks and more. It is <strong>off</strong> until you apply one. Preview it first, then apply it when you are ready. Products, prices and orders never change. One look at a time. Phones that ask for less motion see a calm, still version.</p>${on ? `<p><span class="pill">Live now</span> The ${esc((B.scenes.find((s) => s.id === on) || {}).name || on)} look is showing to every visitor${endTxt ? `, and turns itself off after ${esc(endTxt)}` : ' until you turn it off'}. <button class="btn small ghost" type="button" data-act="ft-off">Turn it off now</button></p>` : ended ? `<p class="muted">The ${esc(endedName || '')} look ended after ${esc(endTxt)} and turned itself off. Customers see the normal shop.</p>` : '<p class="muted">Nothing is showing for customers right now.</p>'}<p class="muted" style="font-size:14px">To keep the shop calm, each look switches itself off a couple of days after its festival, its snow and sparkle thin out after half a minute, and nothing ever covers your product photos or buttons.</p></div>
   <div class="ft-cards">${B.scenes.map((s) => { const live = on === s.id; const n = s.m >= 0 ? daysTo(s.m, s.d) : -1; const ask = A.ftAsk === s.id;
     return `<div class="ft-card"><strong style="font-size:18px">${esc(s.name)}</strong><span class="muted" style="font-size:13px">${esc(s.m >= 0 ? s.when + (n === 0 ? ' (today)' : ' · ' + n + ' days to go') : s.when)}</span><span style="font-size:14px">${esc(s.line)}</span>${s.hint ? `<span class="muted" style="font-size:13px">${esc(s.hint)}</span>` : ''}
       ${live ? '<span class="pill">Live now</span><button class="btn small ghost" type="button" data-act="ft-off">Turn off</button>'
-      : ask ? `<span style="font-size:14px"><strong>Show this look to every visitor until you turn it off?</strong> Nothing changes until you confirm.</span><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" type="button" data-act="ft-apply" data-v="${s.id}">Yes, apply it</button><button class="btn small ghost" type="button" data-act="ft-noask">Not now</button></span>`
+      : ask ? `<span style="font-size:14px"><strong>Show this look to every visitor${festUntil(s.id) ? ` until ${esc(niceDay(festUntil(s.id)))}` : ' until you turn it off'}?</strong> Nothing changes until you confirm.</span><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" type="button" data-act="ft-apply" data-v="${s.id}">Yes, apply it</button><button class="btn small ghost" type="button" data-act="ft-noask">Not now</button></span>`
       : `<span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="ft-prev" data-v="${s.id}">Preview only</button><button class="btn small" type="button" data-act="ft-ask" data-v="${s.id}">Apply for customers</button></span>`}</div>`; }).join('')}</div>`;
 }
 function admHome() {
@@ -4850,8 +4859,8 @@ document.addEventListener('click', (e) => {
     case 'ft-prev-stop': UI.festPrev = null; location.hash = '#admin'; render(); break;
     case 'ft-ask': UI.adm.ftAsk = d.v; render(); break;
     case 'ft-noask': UI.adm.ftAsk = null; render(); break;
-    case 'ft-apply': admDo(async () => { await dbPut('settings', { key: 'festiveScene', value: d.v }); UI.festPrev = null; UI.adm.ftAsk = null; const s = BTFest.scenes.find((x) => x.id === d.v); if (route() !== 'admin') location.hash = '#admin'; festCelebrate((s ? s.name : 'Festive') + ' look is live', 'Customers now see it on the Home page. Good luck this season.'); }, 'Saved.'); break;
-    case 'ft-off': admDo(async () => { await dbPut('settings', { key: 'festiveScene', value: '' }); UI.festPrev = null; render(); }, 'Festive look turned off.'); break;
+    case 'ft-apply': admDo(async () => { await dbPut('settings', [{ key: 'festiveScene', value: d.v }, { key: 'festiveUntil', value: festUntil(d.v) }]); UI.festPrev = null; UI.adm.ftAsk = null; const s = BTFest.scenes.find((x) => x.id === d.v); if (route() !== 'admin') location.hash = '#admin'; festCelebrate((s ? s.name : 'Festive') + ' look is live', 'Customers now see it on the Home page. Good luck this season.'); }, 'Saved.'); break;
+    case 'ft-off': admDo(async () => { await dbPut('settings', [{ key: 'festiveScene', value: '' }, { key: 'festiveUntil', value: '' }]); UI.festPrev = null; render(); }, 'Festive look turned off.'); break;
     case 'adm-mode': UI.adm.mode = UI.adm.mode === 'full' ? 'simple' : 'full'; try { localStorage.setItem('bt-adm-mode', UI.adm.mode); } catch (e) { /* private window */ } render(); break;
     case 'adm-tab': UI.adm.cel = null; UI.adm.draft = null; UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'imp-fetch': impFetch(); break;

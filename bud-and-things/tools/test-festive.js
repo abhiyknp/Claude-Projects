@@ -19,8 +19,9 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     ok(tag + ': another note changes it', await (async () => { const a = await p.textContent('#ft-nq'); await p.click('[data-act="ft-note"]'); await p.waitForTimeout(200); return (await p.textContent('#ft-nq')) !== a; })());
     ok(tag + ': no festive look by default', await p.evaluate(() => !BTFest.active()));
     for (const id of await p.evaluate(() => BTFest.scenes.map((s) => s.id))) {
-      await p.evaluate((i) => BTFest.start(i, { preview: true }), id); await p.waitForTimeout(500);
+      await p.evaluate((i) => { scrollTo(0, 0); BTFest.start(i, { preview: true }); }, id); await p.waitForTimeout(1100);
       ok(tag + ': ' + id + ' starts', await p.evaluate((i) => BTFest.active() === i && document.getElementById('ft-layer').children[1].children.length > 0 || i === 'ny' || i === 'holi' || i === 'eid', id));
+      ok(tag + ': ' + id + ' never covers the product photo or heading', await p.evaluate(() => { const L = document.getElementById('ft-layer').getBoundingClientRect(); const ph = document.querySelector('.gh-ph'), h1 = document.querySelector('.gh-hero h1'); return (!ph || L.bottom <= ph.getBoundingClientRect().top + 1) && (!h1 || L.bottom <= h1.getBoundingClientRect().top + 1); }));
       await p.evaluate(() => BTFest.stop());
     }
     await p.goto(url + '#admin'); await p.waitForTimeout(700);
@@ -40,6 +41,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     await p.click('[data-act="adm-tab"][data-v="festive"]').catch(() => {}); await p.waitForTimeout(200);
     await p.click('.ft-card >> nth=1 >> [data-act="ft-ask"]'); await p.click('[data-act="ft-apply"]'); await p.waitForTimeout(500);
     ok(tag + ': celebration banner after applying', await p.evaluate(() => !!document.querySelector('.ft-cel')));
+    ok(tag + ': says when the look turns itself off', await p.evaluate(() => /turns itself off after/.test(document.querySelector('.adm-body').textContent)));
     await p.goto(url + '#home'); await p.waitForTimeout(900);
     ok(tag + ': customers now see the look', await p.evaluate(() => BTFest.active() === 'ny'));
     await p.goto(url + '#shop'); await p.waitForTimeout(300);
