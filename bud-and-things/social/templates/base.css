@@ -1,0 +1,35 @@
+/* BUD & THINGS by Ashi: shared tokens for the social templates.
+   Palette and fonts are the site's Silk theme (prototype/index.html SKINS.silk). */
+@font-face { font-family: 'Playfair Display'; src: url(../../prototype/assets/fonts/playfair.woff2) format('woff2'); font-weight: 400 900; font-style: normal; }
+@font-face { font-family: 'Playfair Display'; src: url(../../prototype/assets/fonts/playfair-italic.woff2) format('woff2'); font-weight: 400 900; font-style: italic; }
+@font-face { font-family: 'Montserrat'; src: url(../../prototype/assets/fonts/montserrat.woff2) format('woff2'); font-weight: 100 900; font-style: normal; }
+:root {
+  --maroon: #8F1834; --maroon-deep: #7A1229; --gold: #D6A34A; --gold-soft: #F3D79B;
+  --cream: #F8F0E4; --ink: #150206; --ink-soft: #5A2A35;
+  --serif: 'Playfair Display', Georgia, serif; --sans: 'Montserrat', Arial, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; background: var(--ink); }
+body { font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+.canvas { position: relative; width: 1080px; overflow: hidden; display: flex; flex-direction: column; align-items: center; }
+.post { height: 1350px; } .story { height: 1920px; }
+.on-maroon { color: var(--cream); background: radial-gradient(120% 90% at 50% 0%, var(--maroon) 0%, var(--maroon-deep) 62%, #5C0D1F 100%); }
+.on-cream { color: var(--ink); background: radial-gradient(100% 80% at 50% 0%, #FFF8EE 0%, var(--cream) 70%, #EFE2CE 100%); }
+.frame { position: absolute; inset: 36px; border: 2px solid var(--gold); pointer-events: none; }
+.frame::after { content: ''; position: absolute; inset: 10px; border: 1px solid rgba(214,163,74,.55); }
+.logo { display: block; background: center / contain no-repeat; aspect-ratio: 960 / 549; }
+.logo.rev { background-image: url(../../prototype/assets/logo-primary-reverse.webp); }
+.logo.dark { background-image: url(../../prototype/assets/logo-primary.webp); }
+.kicker { font: 600 24px/1 var(--sans); letter-spacing: .32em; text-transform: uppercase; color: var(--gold); }
+.on-cream .kicker { color: var(--maroon); }
+.serif { font-family: var(--serif); font-weight: 500; }
+em { font-style: italic; color: var(--gold); }
+.on-cream em { color: var(--maroon); }
+.arch { overflow: hidden; border-radius: 999px 999px 0 0; border: 3px solid var(--gold); background: #EBD9C0 center / cover no-repeat; }
+.pill { display: inline-block; font: 700 34px/1 var(--sans); letter-spacing: .04em; padding: 16px 34px; border-radius: 999px; background: var(--gold); color: var(--ink); }
+.foot { font: 500 22px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--gold-soft); }
+.on-cream .foot { color: var(--ink-soft); }
+.badge { position: absolute; font: 700 22px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; padding: 14px 22px; background: var(--cream); color: var(--maroon); border: 2px solid var(--gold); }
+/* Story safe zones: Instagram covers about 250px at the top and 340px at the bottom. Run with --guides to see them. */
+.guides .canvas::before, .guides .canvas::after { content: ''; position: absolute; left: 0; right: 0; background: rgba(0,200,255,.18); z-index: 9; }
+.guides .canvas::before { top: 0; height: 250px; } .guides .canvas::after { bottom: 0; height: 340px; }

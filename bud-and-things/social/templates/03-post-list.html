@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="size" content="1080x1350"><link rel="stylesheet" href="base.css">
+<style>
+.canvas { align-items: stretch; }
+.head { background: var(--maroon-deep); color: var(--cream); padding: 74px 90px 46px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 18px; border-bottom: 4px solid var(--gold); }
+.head .logo { width: 200px; } h1 { font: 500 66px/1.08 var(--serif); } h1 em, .head .kicker { color: var(--gold); }
+.on-cream .head em, .on-cream .head .kicker { color: var(--gold); }
+.rows { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; padding: 20px 90px; }
+.r { display: flex; align-items: center; gap: 34px; padding: 6px 0; border-bottom: 1px solid rgba(143,24,52,.25); }
+.r:last-child { border: 0; }
+.r .ph { width: 190px; height: 190px; flex: none; background: #EBD9C0 center / cover no-repeat; border: 3px solid var(--gold); border-radius: 999px 999px 8px 8px; }
+.r .t { flex: 1; } .r b { font: 500 44px/1.1 var(--serif); display: block; } .r span { font: 400 24px/1.4 var(--sans); color: var(--ink-soft); display: block; margin-top: 8px; }
+.r .p { font: 700 36px/1 var(--sans); color: var(--maroon); }
+.bar { background: var(--maroon-deep); color: var(--gold-soft); text-align: center; padding: 26px; font: 500 22px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; }
+</style></head><body>
+<div class="canvas post on-cream">
+<div class="head"><div class="logo rev"></div><div class="kicker">{{kicker}}</div><h1 data-fit>{{title}}</h1></div>
+<div class="rows">{{{rows}}}</div>
+<div class="bar">{{site}}</div></div></body></html>

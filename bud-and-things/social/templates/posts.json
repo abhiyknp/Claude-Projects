@@ -1,0 +1,9 @@
+[
+  { "id": "p01-product", "template": "01-post-product", "product": "BNT-PRD-CG-002", "kicker": "Hand-poured glass candle", "badge": "" },
+  { "id": "p02-quote", "template": "02-post-quote", "kicker": "Light it right", "title": "Let the first burn reach the *edges*.", "sub": "About two hours the first time, and trim the wick to 5 mm. It burns evenly after that." },
+  { "id": "p03-list", "template": "03-post-list", "kicker": "Gifts under ₹200", "title": "Small gift. *Real* feeling.",
+    "items": [ { "product": "BNT-PRD-CG-011", "line": "Strawberry scent · Jar candle" }, { "product": "BNT-PRD-MC-003", "line": "Mithai scent · Not for eating, only for lighting" }, { "product": "BNT-PRD-JT-003" }, { "product": "BNT-PRD-CG-002" } ] },
+  { "id": "p04-announce", "template": "04-post-announce", "kicker": "Opening day", "title": "We open\n*20 November*", "sub": "Hand-poured candles and Jesmonite objects, made in small batches by Ashi." },
+  { "id": "s01-product", "template": "05-story-product", "product": "BNT-PRD-JT-001", "kicker": "New in" },
+  { "id": "s02-poll", "template": "06-story-interactive", "kicker": "You choose", "title": "Which scent should we pour *next*?", "sub": "Vote below. Every vote is read." }
+]

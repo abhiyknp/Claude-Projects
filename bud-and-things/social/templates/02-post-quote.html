@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="size" content="1080x1350"><link rel="stylesheet" href="base.css">
+<style>
+.canvas { padding: 120px 110px 90px; justify-content: space-between; text-align: center; }
+.leaf { width: 78px; aspect-ratio: 400/418; background: var(--maroon); -webkit-mask: url(../../prototype/assets/leaf.png) center / contain no-repeat; mask: url(../../prototype/assets/leaf.png) center / contain no-repeat; }
+h1 { font: 500 92px/1.12 var(--serif); }
+.sub { font: 400 30px/1.55 var(--sans); color: var(--ink-soft); max-width: 760px; }
+.mid { display: flex; flex-direction: column; align-items: center; gap: 44px; }
+.canvas .logo { width: 230px; }
+</style></head><body>
+<div class="canvas post on-cream"><div class="frame"></div>
+<div class="mid" style="gap:30px"><div class="leaf"></div><div class="kicker">{{kicker}}</div></div>
+<div class="mid"><h1 data-fit>{{title}}</h1><p class="sub" data-fit>{{sub}}</p></div>
+<div class="mid" style="gap:18px"><div class="logo dark"></div><span class="foot">{{site}}</span></div></div></body></html>
