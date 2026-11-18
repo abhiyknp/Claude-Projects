@@ -234,3 +234,35 @@ body.ft-scn .site-head{box-shadow:0 1px 0 rgba(214,163,74,.5)}
 .ft-intro{animation-duration:3.4s}
 
 .ft-say{width:max-content!important}
+
+/* ---- the festive world (Christmas) ---- */
+.ft-wcv{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1}
+.ft-capped{position:relative}
+.ft-cap{position:absolute;left:-3px;right:-3px;top:-8px;height:13px;z-index:4;pointer-events:none;background:no-repeat center/100% 100% url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 13' preserveAspectRatio='none'><path d='M0 13V8Q3 1 8 6T18 5T29 7T40 3T52 6T63 4T74 7T86 3T100 6V13Z' fill='%23fff'/><path d='M0 13V10Q10 7 20 10T40 9T60 10T80 9T100 10V13Z' fill='%23dde7f3'/></svg>");filter:drop-shadow(0 2px 2px rgba(60,80,110,.25))}
+.ft-cap-s{height:10px;top:-6px;left:-1px;right:-1px}
+.ft-room{padding-top:50px!important}
+.ft-host{overflow:visible!important}
+.ft-sit{position:absolute;left:18px;bottom:100%;margin-bottom:-4px;width:84px;height:96px;pointer-events:none;z-index:5;filter:drop-shadow(0 6px 6px rgba(0,0,0,.25));animation:ft-sitin 1s .8s cubic-bezier(.2,1.2,.3,1) both}
+.ft-sit svg{display:block;width:100%;height:100%;overflow:visible;transform-origin:50% 100%;animation:ft-bob2 3.6s ease-in-out infinite}
+@keyframes ft-sitin{from{transform:translateY(-40px) scale(.7);opacity:0}to{transform:none;opacity:1}}
+@keyframes ft-bob2{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1.2deg) translateY(-1px)}}
+.ft-leg1{transform-origin:31px 72px;animation:ft-swing 2.6s ease-in-out infinite}
+.ft-leg2{transform-origin:52px 72px;animation:ft-swing 2.6s .5s ease-in-out infinite reverse}
+@keyframes ft-swing{0%,100%{transform:rotate(7deg)}50%{transform:rotate(-7deg)}}
+.ft-arm2{transform-origin:62px 48px;animation:ft-wave 3.2s 1.6s ease-in-out infinite}
+@keyframes ft-wave{0%,60%,100%{transform:rotate(0)}70%{transform:rotate(-18deg)}80%{transform:rotate(8deg)}90%{transform:rotate(-14deg)}}
+.ft-pom{transform-origin:58px 10px;animation:ft-pom 2.4s ease-in-out infinite}
+@keyframes ft-pom{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+.ft-eyes{transform-origin:42px 29px;animation:ft-blink 5s infinite}
+@keyframes ft-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+#ft-lights{position:relative;height:0;z-index:14;pointer-events:none}
+#ft-lights svg{position:absolute;left:0;top:0;width:100%;height:26px;overflow:visible}
+.ft-lg{position:relative}
+.ft-hat{position:absolute;left:-12px;top:-14px;transform:rotate(-16deg);pointer-events:none;z-index:2;animation:ft-sitin .9s .4s both}
+body.ft-world #ft-foot:after{content:"";position:absolute;left:0;right:0;top:-1px;height:14px;background:no-repeat center/100% 100% url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 14' preserveAspectRatio='none'><path d='M0 0H100V4Q94 12 88 5T76 7T64 4T52 8T40 4T28 7T16 4T6 8T0 5Z' fill='%23f8f0e4'/></svg>");pointer-events:none}
+@media (max-width:640px){.ft-sit{width:62px;height:71px;left:10px}.ft-room{padding-top:38px!important}.ft-hat{width:32px;left:-8px;top:-10px}}
+@media (prefers-reduced-motion: reduce){.ft-sit,.ft-sit *,.ft-hat{animation:none!important}}
+
+.ft-spacer{height:56px;flex:none;width:100%}
+.ft-sit{width:70px!important;height:80px!important;left:16px!important}
+@media (max-width:640px){.ft-spacer{height:46px}.ft-sit{width:56px!important;height:64px!important;left:10px!important}}
