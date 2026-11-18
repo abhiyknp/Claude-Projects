@@ -49,7 +49,7 @@ const priceHtml = (price, post) => (brand.showPrices && post.price !== false && 
 
 function build(post) {
   const pr = product(post);
-  const f = { site: esc(brand.site), kicker: esc(post.kicker || ''), title: em(post.title || ''), sub: em(post.sub || ''),
+  const f = { icon: esc(post.icon || ''), site: esc(brand.site), kicker: esc(post.kicker || ''), title: em(post.title || ''), sub: em(post.sub || ''),
     name: esc(post.name || pr.name || ''), meta: esc(post.meta || pr.meta || ''),
     price_html: priceHtml(post.price ?? pr.price, post), badge_html: post.badge ? `<div class="badge">${esc(post.badge)}</div>` : '' };
   f.photo_url = photo(post.photo || pr.img, post.id);
@@ -69,7 +69,7 @@ const fill = (html, f) => html.replace(/\{\{\{(\w+)\}\}\}/g, (_, k) => f[k] ?? '
   const jobs = list.map((p) => ({ p, html: fill(fs.readFileSync(path.join(__dirname, p.template + '.html'), 'utf8'), build(p)) }));
   if (flag('--final') && temp.length) { console.error('--final: these still use temporary catalogue pictures. Add real photos to social/photos/:\n  ' + temp.join('\n  ')); process.exit(2); }
   fs.mkdirSync(path.join(ROOT, 'out'), { recursive: true });
-  const browser = await chromium.launch(); let bad = 0;
+  const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] }); let bad = 0;
   for (const { p, html } of jobs) {
     const [w, h] = /name="size" content="(\d+)x(\d+)"/.exec(html).slice(1).map(Number);
     const tmp = path.join(__dirname, `.tmp-${p.id}.html`); fs.writeFileSync(tmp, html);

@@ -1,0 +1,18 @@
+<!doctype html><html lang="en" data-icon="{{icon}}"><head><meta charset="utf-8"><meta name="size" content="1080x1920"><link rel="stylesheet" href="base.css">
+<style>
+.canvas { height: 1920px; justify-content: center; }
+.ring { width: 640px; height: 640px; border-radius: 50%; border: 6px solid var(--gold); display: grid; place-items: center; box-shadow: inset 0 0 0 14px rgba(214,163,74,.18); }
+.ic { display: none; width: 330px; height: 330px; fill: none; stroke: var(--gold); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.leaf { display: none; width: 280px; aspect-ratio: 400/418; background: var(--gold); -webkit-mask: url(../../prototype/assets/leaf.png) center / contain no-repeat; mask: url(../../prototype/assets/leaf.png) center / contain no-repeat; }
+[data-icon=leaf] .leaf { display: block; }
+[data-icon=bag] .bag, [data-icon=gift] .gift, [data-icon=flame] .flame, [data-icon=ladle] .ladle, [data-icon=ask] .ask, [data-icon=truck] .truck { display: block; }
+</style></head><body>
+<div class="canvas on-maroon"><div class="ring">
+<div class="leaf"></div>
+<svg class="ic bag" viewBox="0 0 200 200"><path d="M48 70h104l-8 100H56z"/><path d="M75 70a25 25 0 0 1 50 0"/></svg>
+<svg class="ic gift" viewBox="0 0 200 200"><path d="M45 92h110v78H45z"/><path d="M35 66h130v26H35z"/><path d="M100 66v104"/><path d="M100 66c-8-26-40-26-34-6M100 66c8-26 40-26 34-6"/></svg>
+<svg class="ic flame" viewBox="0 0 200 200"><path d="M100 22c20 26 32 42 32 62a32 32 0 0 1-64 0c0-20 12-36 32-62z"/><path d="M64 128h72v48H64z"/><path d="M100 104v24"/></svg>
+<svg class="ic ladle" viewBox="0 0 200 200"><path d="M50 96h100v62a14 14 0 0 1-14 14H64a14 14 0 0 1-14-14z"/><path d="M40 96h120"/><path d="M90 96V84h20v12"/><path d="M50 118H32M150 118h18"/><path d="M82 64c-8-10 8-16 0-26M118 64c-8-10 8-16 0-26"/></svg>
+<svg class="ic ask" viewBox="0 0 200 200"><circle cx="100" cy="100" r="68"/><path d="M78 84a24 24 0 1 1 40 18c-12 8-18 14-18 26"/><path d="M100 150v4"/></svg>
+<svg class="ic truck" viewBox="0 0 200 200"><path d="M24 64h96v70H24z"/><path d="M120 90h34l22 28v16h-56z"/><circle cx="62" cy="142" r="14"/><circle cx="152" cy="142" r="14"/></svg>
+</div></div></body></html>

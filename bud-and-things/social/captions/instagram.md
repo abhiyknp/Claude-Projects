@@ -19,7 +19,7 @@ Every BUD & THINGS candle is hand-poured by me, Ashi, in small batches in Greate
 
 Save this to see it open. Which scent should I pour next? Tell me below.
 
-#budandthings #byashi #candlemaking #handpouredcandles #makersgram #satisfyingvideos #greaternoida
+#budandthings #byashi #candlemaking #handpouredcandles #makersgram
 ```
 
 ### 1118-IG · Carousel · first pour
@@ -32,7 +32,7 @@ All made by hand, in small batches. When something is gone, it's gone until the 
 
 Opens Friday 20 November. Swipe, then tell me your favourite.
 
-#budandthings #byashi #handpouredcandles #jesmonite #giftideas #greaternoida #supportsmallbusiness
+#budandthings #byashi #handpouredcandles #jesmonite #giftideas
 ```
 Slides: 1 template 04 (cover "Opening 20 Nov") · 2 template 03 (candles) · 3 template 03 (objects) · 4 template 01 (one hero product) · 5 "Link in bio" quote.
 
@@ -44,7 +44,7 @@ BUD & THINGS opens on Friday 20 November. Hand-poured candles and Jesmonite obje
 
 Set a reminder, and save the shop's WhatsApp number to see the daily Status. Kal milte hain.
 
-#budandthings #byashi #handpouredcandles #jesmonite #giftideas #greaternoida
+#budandthings #byashi #handpouredcandles #jesmonite #giftideas
 ```
 
 ### 1120-IG · Reel 01 · launch
@@ -57,7 +57,7 @@ Everything is made by hand, so there are only a few of each. Link in bio.
 
 Which one would you light first? Tell me below.
 
-#budandthings #byashi #handpouredcandles #jesmonite #giftideas #greaternoida #supportsmallbusiness
+#budandthings #byashi #handpouredcandles #jesmonite #giftideas
 ```
 
 ### 1121-IG · Reel 04 · lighting
@@ -68,7 +68,7 @@ For the first burn, let the wax melt right to the edges (about 2 hours). It help
 
 Save this for your next candle night. Link in bio.
 
-#budandthings #byashi #candlecare #handpouredcandles #candlelover #candlenight
+#budandthings #byashi #candlecare #handpouredcandles #candlelover
 ```
 
 ### 1123-IG · Carousel · mood
@@ -81,7 +81,7 @@ Not sure? Comment a number and I'll tell you which one I'd pick for you. Aapka m
 
 (Stock changes as I pour, so check the site for what is available today.)
 
-#budandthings #byashi #scentedcandles #handpouredcandles #giftideas #greaternoida
+#budandthings #byashi #scentedcandles #handpouredcandles #giftideas
 ```
 Slides: 1 quote cover · 2 to 7 template 01, one scent each. Use only products in stock.
 
@@ -93,7 +93,7 @@ Wishing everyone celebrating Kartik Purnima, Dev Deepawali and Gurpurab a warm, 
 
 A tealight is ₹15 and burns on a dish by the window. Diwali ke baad bhi roshni chalti rahe.
 
-#budandthings #byashi #kartikpurnima #devdeepawali #festivelights #handpouredcandles
+#budandthings #byashi #kartikpurnima #devdeepawali #festivelights
 ```
 
 ### 1125-IG · Reel 06 · Jesmonite
@@ -104,7 +104,7 @@ Mix. Colour. Pour. Wait. Sand the edge. That's a Jesmonite trinket dish, made by
 
 Not for food. Made for the small things you put down at the end of the day. What would you keep in yours?
 
-#budandthings #byashi #jesmonite #trinkettray #handmadehome #makersgram
+#budandthings #byashi #jesmonite #trinkettray #handmadehome
 ```
 
 ### 1126-IG · Carousel · care
@@ -119,7 +119,7 @@ How to burn a candle properly. Save this. 🕯️
 
 Questions? Ask in the comments, I read them all.
 
-#budandthings #byashi #candlecare #candletips #handpouredcandles #candlenight
+#budandthings #byashi #candlecare #candletips #handpouredcandles
 ```
 Slides: 1 template 02 cover (title) · 2 to 5 one step each (template 02) · last "Save this".
 
@@ -133,7 +133,7 @@ Ek simple si baat: pyaar se banaya, imaandari se becha.
 
 Today, shop what's here at budandthings.com (link in bio).
 
-#budandthings #byashi #supportsmallbusiness #handpouredcandles #giftideas #greaternoida
+#budandthings #byashi #supportsmallbusiness #handpouredcandles #giftideas
 ```
 
 ### 1128-IG · Reel 07 · ladoo candle
@@ -144,7 +144,7 @@ The ladoo-shaped candle: ₹29, mithai scent, made by hand. NOT for eating, only
 
 A tiny gift for any festival or any friend. Tag the person who would try to eat it.
 
-#budandthings #byashi #handpouredcandles #giftideas #festivegifting #greaternoida
+#budandthings #byashi #handpouredcandles #giftideas #festivegifting
 ```
 
 ### 1130-IG · Carousel · gifts by budget
@@ -160,7 +160,7 @@ Pick the number, then the person. We'll wrap it and write your note. (Gift wrap 
 
 Save this for the next birthday you forget. 😄
 
-#budandthings #byashi #giftideas #thoughtfulgifts #giftingindia #greaternoida
+#budandthings #byashi #giftideas #thoughtfulgifts #giftingindia
 ```
 Slides: 1 template 02 cover · 2 to 4 template 01 or 03.
 
@@ -172,7 +172,7 @@ A tealight ₹15 · a ladoo candle ₹29 · a Jesmonite dish ₹79 · the Desser
 
 Save this for your office Secret Santa, and tell me who you're gifting. Link in bio.
 
-#budandthings #byashi #secretsanta #christmasgifts #christmasgiftideas #giftideas #greaternoida
+#budandthings #byashi #secretsanta #christmasgifts #christmasgiftideas
 ```
 
 ### 1202-IG · Carousel · Secret Santa under ₹200
@@ -189,7 +189,7 @@ Small, thoughtful, easy to wrap. The best kind of Secret Santa gift. 🎅
 
 (Everything is made in small batches, so check the site for today's stock.)
 
-#budandthings #byashi #secretsanta #secretsantaideas #christmasgifts #thoughtfulgifts #greaternoida
+#budandthings #byashi #secretsanta #secretsantaideas #christmasgifts
 ```
 
 ### 1203-IG · Reel 09 · pack an order
@@ -200,7 +200,7 @@ Tissue, a hand-written note, padding, a thank-you card. Every parcel gets the sa
 
 Link in bio, I'll pack yours too.
 
-#budandthings #byashi #packingorders #smallbusinessindia #makersgram #satisfyingvideos
+#budandthings #byashi #packingorders #smallbusinessindia #makersgram
 ```
 (If you filmed a real order with permission, replace the second line with "Thank you to the customer who let me film this.")
 
@@ -212,7 +212,7 @@ The Rose Dawn tray (₹149) and the Ivory Gilt tray (₹149): Jesmonite, made by
 
 A gift for the person who has everything but a place to put it.
 
-#budandthings #byashi #jesmonite #trinkettray #handmadehome #giftideas
+#budandthings #byashi #jesmonite #trinkettray #handmadehome
 ```
 
 ### 1205-IG · Reel 03 · unboxing
@@ -223,7 +223,7 @@ Wrapped by hand, with a note in your words. Gift wrap is ₹99 and the note is i
 
 Sending one to someone? Link in bio. Your message goes in the note, and no prices inside.
 
-#budandthings #byashi #giftideas #unboxing #thoughtfulgifts #giftingindia
+#budandthings #byashi #giftideas #unboxing #thoughtfulgifts
 ```
 (Keep "no prices inside" only if that is what you do for gift orders.)
 
@@ -235,7 +235,7 @@ Office Secret Santa, client thank-yous, a welcome gift. We can pack a mix of can
 
 I make everything by hand in small batches, so please tell me early. Message us on Instagram, or use the bulk gifts page on the site.
 
-#budandthings #byashi #corporategifting #giftideas #secretsanta #greaternoida
+#budandthings #byashi #corporategifting #giftideas #secretsanta
 ```
 Confirm real capacity and lead times before posting.
 
@@ -247,7 +247,7 @@ A hand-poured Murphy candle, yellow and white, Nargis scent, ₹249. It looks li
 
 One of a few. Check the site for today's stock.
 
-#budandthings #byashi #handpouredcandles #scentedcandles #giftideas #greaternoida
+#budandthings #byashi #handpouredcandles #scentedcandles #giftideas
 ```
 Check that Daisy Pop is in stock on the day.
 
@@ -259,7 +259,7 @@ Coffee · Vanilla · Rose · White Oud · Nargis. Comment your number and I'll t
 
 (Fun matches, not medical advice, I just like a good scent.) Link in bio.
 
-#budandthings #byashi #scentedcandles #handpouredcandles #candlelover #giftideas #greaternoida
+#budandthings #byashi #scentedcandles #handpouredcandles #candlelover
 ```
 
 ### 1210-IG · Carousel · customer love (real only)
@@ -270,7 +270,7 @@ These are real messages from people who have received their BUD & THINGS pieces.
 
 Swipe. If you've ordered, I'd love to hear what you thought.
 
-#budandthings #byashi #thankyou #smallbusinessindia #handpouredcandles #greaternoida
+#budandthings #byashi #thankyou #smallbusinessindia #handpouredcandles
 ```
 **Only if you have real messages with permission.** Fallback: `FB-C1` below.
 
@@ -282,7 +282,7 @@ Every gift order comes with a hand-written note. You tell me what to say, and I 
 
 Gift wrap is ₹99. We can send it straight to them. Link in bio.
 
-#budandthings #byashi #giftideas #handwrittennote #thoughtfulgifts #giftingindia
+#budandthings #byashi #giftideas #handwrittennote #thoughtfulgifts
 ```
 
 ### 1212-IG · Remix of Reel 02 · tealights
@@ -293,7 +293,7 @@ Tealights are the smallest pour. 🕯️
 
 Link in bio.
 
-#budandthings #byashi #tealights #handpouredcandles #candlemaking #greaternoida
+#budandthings #byashi #tealights #handpouredcandles #candlemaking
 ```
 
 ### 1214-IG · Single image · order early
@@ -304,7 +304,7 @@ Delivery takes 4 to 7 days, and everything here is made in small batches, so the
 
 Add the note and gift wrap at checkout. Link in bio.
 
-#budandthings #byashi #christmasgifts #giftideas #christmasgiftideas #greaternoida
+#budandthings #byashi #christmasgifts #giftideas #christmasgiftideas
 ```
 
 ### 1215-IG · Single image · Iced Latte
@@ -315,7 +315,7 @@ A hand-poured glass candle in brown and white, ₹199. For the friend who is nev
 
 Tell me in the comments: is your friend a latte, a cappuccino or a masala chai person?
 
-#budandthings #byashi #scentedcandles #handpouredcandles #coffeelover #giftideas
+#budandthings #byashi #scentedcandles #handpouredcandles #coffeelover
 ```
 Check stock on the day.
 
@@ -327,7 +327,7 @@ Gift cards come in ₹500, ₹1,000 and ₹2,000. They let someone pick their ow
 
 Link in bio.
 
-#budandthings #byashi #giftcards #giftideas #giftcard #christmasgifts
+#budandthings #byashi #giftcards #giftideas #giftcard
 ```
 Check the gift card page and how it is delivered before posting.
 
@@ -339,7 +339,7 @@ Mum, a friend, your boss, a cousin who has everything. Comment or DM me who it's
 
 Gift wrap is ₹99 and your note is included. Ek naam batao, baaki mujh par chhodo.
 
-#budandthings #byashi #giftideas #thoughtfulgifts #christmasgifts #giftingindia
+#budandthings #byashi #giftideas #thoughtfulgifts #christmasgifts
 ```
 
 ### 1218-IG · Single image · Christmas table
@@ -350,7 +350,7 @@ Three tealights (₹15 each) in a Jesmonite dish. That's all it takes. Dim the l
 
 Ek chhoti si roshni, bahut sa pyaar.
 
-#budandthings #byashi #christmasgifts #tealights #festivegifting #handmadehome
+#budandthings #byashi #christmasgifts #tealights #festivegifting
 ```
 
 ### 1219-IG · Remix of Reel 04 · Christmas
@@ -359,7 +359,7 @@ The best second of Christmas. 🕯️
 
 The match, the flame, the room going quiet. Light yours tonight, and remember: let the first burn reach the edges.
 
-#budandthings #byashi #christmasgifts #candlelover #handpouredcandles #candlenight
+#budandthings #byashi #christmasgifts #candlelover #handpouredcandles
 ```
 
 ### 1221-IG · Single image · solstice
@@ -370,7 +370,7 @@ Tonight, light something small and sit with it for a minute. A tealight, ₹15, 
 
 Happy winter solstice.
 
-#budandthings #byashi #wintersolstice #tealights #handpouredcandles #candlenight
+#budandthings #byashi #wintersolstice #tealights #handpouredcandles
 ```
 
 ### 1222-IG · Carousel · Christmas table
@@ -383,7 +383,7 @@ Three ways to light a Christmas table. 🎄
 
 Swipe for each. Which would you make?
 
-#budandthings #byashi #christmasgifts #christmasgiftideas #festivegifting #handmadehome
+#budandthings #byashi #christmasgifts #christmasgiftideas #festivegifting
 ```
 
 ### 1223-IG · Single image · New Year gifts
@@ -394,7 +394,7 @@ Not everyone remembers a gift for 1 January. You do. Tealights from ₹15, dishe
 
 Link in bio.
 
-#budandthings #byashi #newyear2027 #newyearsgift #giftideas #greaternoida
+#budandthings #byashi #newyear2027 #newyearsgift #giftideas
 ```
 Say nothing about delivery by a specific date unless confirmed.
 
@@ -404,7 +404,7 @@ Light one tonight. 🕯️
 
 Merry Christmas Eve from all of us at BUD & THINGS. May the night be warm, and the table full.
 
-#budandthings #byashi #christmaseve #candlenight #handpouredcandles #festivelights
+#budandthings #byashi #christmaseve #candlenight #handpouredcandles
 ```
 
 ### 1225-IG · Single image · Christmas Day
@@ -413,7 +413,7 @@ Merry Christmas. 🎄
 
 Thank you for being here for the first weeks of BUD & THINGS. See you tomorrow, when I'll be back with something small and lit.
 
-#budandthings #byashi #merrychristmas #thankyou #handpouredcandles #greaternoida
+#budandthings #byashi #merrychristmas #thankyou #handpouredcandles
 ```
 No product push today.
 
@@ -425,7 +425,7 @@ When I started, BUD & THINGS was a table, a pot of wax and an idea. This season,
 
 I'm so grateful. More small things coming in 2027.
 
-#budandthings #byashi #thankyou #smallbusinessindia #handpouredcandles #greaternoida
+#budandthings #byashi #thankyou #smallbusinessindia #handpouredcandles
 ```
 **Only if true for you.** Fallback: `FB-C2` below. Add real numbers (orders, pours) only if you have them.
 
@@ -437,7 +437,7 @@ Light one for what you're leaving. Light one for what's next. Light one for some
 
 Three tealights (₹15 each) in a dish. That's all. Send this to someone you want to start the year with.
 
-#budandthings #byashi #newyearritual #newyear2027 #tealights #handpouredcandles
+#budandthings #byashi #newyearritual #newyear2027 #tealights
 ```
 
 ### 1229-IG · Carousel · the season in the studio
@@ -448,7 +448,7 @@ Pours, dishes, wrapping tables, handwritten notes. A few of the moments that mad
 
 (Use your own photos. Add real numbers if you want: how many pours, how many parcels. Only true ones.)
 
-#budandthings #byashi #makersgram #smallbusinessindia #candlemaking #behindthescenes
+#budandthings #byashi #makersgram #smallbusinessindia #candlemaking
 ```
 Delete the bracketed line before posting.
 
@@ -460,7 +460,7 @@ A tealight, a ladoo candle (not for eating!), a Jesmonite dish or the Dessert Ja
 
 Link in bio.
 
-#budandthings #byashi #newyear2027 #giftideas #thoughtfulgifts #greaternoida
+#budandthings #byashi #newyear2027 #giftideas #thoughtfulgifts
 ```
 
 ### 1231-IG · Reel remix · New Year's Eve
@@ -469,10 +469,63 @@ Light one for the year ahead. ✨
 
 Thank you for this first season of BUD & THINGS. Happy New Year, from my table to yours.
 
-#budandthings #byashi #newyear2027 #newyearritual #tealights #handpouredcandles
+#budandthings #byashi #newyear2027 #newyearritual #tealights
 ```
 
 ---
+
+## First-9 grid captions (no launch date in them, safe whenever the shop opens)
+
+### S01-IG · Carousel · why BUD
+```text
+Why BUD? 🌱
+
+A bud is something small that's just beginning to grow. "& Things" keeps the door open for whatever comes next.
+
+We're starting small: hand-poured candles and Jesmonite objects, made in small batches by me, Ashi, in Greater Noida. Made with thought, given with feeling.
+
+Follow along while the shop gets ready. Link in bio to join the list.
+
+#budandthings #byashi #handpouredcandles #jesmonite #greaternoida
+```
+Slides: 1 template 02 cover ("Why *BUD*?") · 2 "A bud is a small beginning" · 3 "& Things: room to grow" · 4 "Candles and Jesmonite, to start" · 5 template 04 ("Opening soon").
+
+### S02-IG · Reel 02 · pouring
+```text
+Watch a candle become a candle. 🕯️
+
+Melt. Colour. Scent. Wick. Pour. Then the hardest part: we wait.
+
+Every BUD & THINGS candle is hand-poured by me in small batches in Greater Noida. Save this, and follow to see the shop open.
+
+Which scent should I pour next? Tell me below.
+
+#budandthings #byashi #candlemaking #handpouredcandles #satisfyingvideos
+```
+
+### S03-IG · Single image · Vanilla Gold
+```text
+Vanilla Gold. 🤍
+
+A hand-poured glass candle, vanilla scent, in white and gold. ₹169. A small, quiet gift for someone who likes a calm corner.
+
+Made in small batches, so there are only a few. Link in bio.
+
+#budandthings #byashi #handpouredcandles #scentedcandles #giftideas
+```
+Check Vanilla Gold is in stock on the day; if it is not, use another in-stock glass candle.
+
+### S04-IG · Carousel · the price ladder
+```text
+What's in the first pour? From ₹15.
+
+Tealights ₹15 · Ladoo-shaped candle ₹29 · Jesmonite dishes ₹79 · Dessert Jar ₹99 · Trays ₹149 · Glass candles ₹169 to ₹199 · Murphy candles ₹249 to ₹299.
+
+All made by hand, in small batches. When something is gone, it's gone until the next pour. Swipe, then tell me your favourite.
+
+#budandthings #byashi #handpouredcandles #jesmonite #giftideas
+```
+Slides: 1 template 04 · 2 template 03 (candles) · 3 template 03 (objects) · 4 template 01 hero · 5 "Link in bio" (template 02).
 
 ## Fallbacks for Customer Love slots
 
@@ -484,7 +537,7 @@ Does the candle smell strong? Can I send it straight to them? What does the note
 
 Got a question? Drop it below and I'll add it to the next one.
 
-#budandthings #byashi #candlecare #smallbusinessindia #handpouredcandles #greaternoida
+#budandthings #byashi #candlecare #smallbusinessindia #handpouredcandles
 ```
 
 ### FB-C2 · Single image · Maker's note
@@ -495,5 +548,5 @@ I make everything here by hand, in small batches, in Greater Noida. If you've fo
 
 More small things soon.
 
-#budandthings #byashi #smallbusinessindia #handpouredcandles #makersgram #greaternoida
+#budandthings #byashi #smallbusinessindia #handpouredcandles #makersgram
 ```

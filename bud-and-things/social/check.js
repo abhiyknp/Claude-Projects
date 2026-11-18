@@ -16,7 +16,7 @@ for (const b of all) {
   if (len > LIMIT[kind]) err(`${b.id}: ${len} chars > ${LIMIT[kind]}`);
   if (kind === 'YT' && [...b.body.split('\n')[0]].length > 100) err(`${b.id}: YouTube title over 100`);
   if (kind === 'PIN') { const [t, , ...d] = b.body.split('\n'); if ([...t].length > 100) err(`${b.id}: pin title over 100`); if ([...d.join(' ')].length > 500) err(`${b.id}: pin description over 500`); }
-  if (kind === 'IG') { const n = (b.body.match(/#\w+/g) || []).length; if (n > 8) err(`${b.id}: ${n} hashtags (max 8)`); if (n < 3) err(`${b.id}: fewer than 3 hashtags`); }
+  if (kind === 'IG') { const n = (b.body.match(/#\w+/g) || []).length; if (n > 5) err(`${b.id}: ${n} hashtags (max 5)`); if (n < 3) err(`${b.id}: fewer than 3 hashtags`); }
 }
 console.log(`captions: ${all.length} blocks checked`);
 
@@ -37,12 +37,17 @@ for (const d of dd) if (!rows.find((r) => r[1] === d)) err(`stories-status missi
 for (const r of rows) { if (r[3].length > 700) err(`${r[1]} status too long`); if (r[4].length > 300) err(`${r[1]} channel too long`); }
 console.log(`stories-status: ${rows.length} days`);
 
+// account setup: bio 150, name 64
+const acct = rd('ACCOUNT_SETUP.md');
+for (const m of acct.matchAll(/^### (BIO-\d|NAME-\d)[^\n]*\n```text\n([\s\S]*?)```/gm)) { const t = m[2].trimEnd(), lim = m[1].startsWith('BIO') ? 150 : 64, len = [...t].length; if (len > lim) err(`${m[1]}: ${len} chars > ${lim}`); else console.log(`${m[1]}: ${len}/${lim}`); }
+
 // reels
 for (let i = 1; i <= 10; i++) { const f = fs.readdirSync(path.join(R, 'reels')).find((x) => x.startsWith(String(i).padStart(2, '0') + '-')); if (!f) { err(`reel ${i} missing`); continue; }
   const t = rd('reels/' + f); for (const k of ['**Hook (0 to 2 s)', '| # | Time | Shot', 'Audio mood', 'CTA', 'Honesty checks']) if (!t.includes(k)) err(`${f}: missing "${k}"`); }
 
 // banned claims and private details across authored copy (not the rules that list them)
 const copy = [...all.map((b) => [b.id, b.body]), ...rows.map((r) => [r[1], r.slice(2).join(' ')])];
+for (const f of ['OUTREACH.md', 'ACCOUNT_SETUP.md']) for (const m of rd(f).matchAll(/```text\n([\s\S]*?)```/g)) copy.push([f, m[1]]);
 for (const f of fs.readdirSync(path.join(R, 'reels'))) if (/^\d\d-/.test(f)) copy.push([f, rd('reels/' + f).replace(/^\*\*Honesty checks:\*\*.*$/gm, '')]);
 const BANNED = /\b(luxury|premium|best[- ]selling|no\.? ?1|organic|non-?toxic|eco-?friendly|toxin|aromatherapy|stress[- ]relie|therapy|hurry|last chance|selling fast|limited (stock|edition|time)|only \d+ left|clean[- ]burn|soy|paraffin|\d+\s*(hours|hrs) burn)\b/i;
 const PRIVATE = /(\+?91[\s-]?\d{5}[\s-]?\d{5}|\b[6-9]\d{9}\b|@gmail|@yahoo|@outlook|\bflat\b|\bsector\s?\d|\bpin ?code\b\s*\d{6}|\b\d{6}\b)/i;

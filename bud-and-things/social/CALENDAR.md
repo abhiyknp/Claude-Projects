@@ -2,6 +2,8 @@
 
 **Legend.** Pillar: **M** making · **G** gifting · **F** festive/occasion · **C** customer love. Caption IDs point to `captions/instagram.md` (`-IG`), `captions/youtube-pinterest.md` (`-YT`, `-PIN`) and the day's Stories and WhatsApp lines in `captions/stories-status.md`. The hook is the first line of the caption and the first 2 seconds of any video. Reel numbers point to `reels/`.
 
+**Nothing was posted before 18 Nov, so 14 to 19 Nov are replaced by [ROLLOUT.md](ROLLOUT.md).** From Fri 20 Nov this calendar applies. If the shop opens later than 20 Nov, shift every row from 20 Nov by the same number of days and keep "opening soon" content until it does.
+
 **Gates (do not skip):**
 1. **Do not post "we are open / order now" until the launch checklist's test order has passed** (`tasks/LAUNCH_CHECKLIST.md`: payments, shop WhatsApp number, stock counts). Until then, posts say "opening 20 Nov".
 2. **Check stock the same day** for every product named. A product at 0 is not "available". Swap it out.

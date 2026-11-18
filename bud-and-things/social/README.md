@@ -4,6 +4,11 @@ Everything for Instagram, YouTube Shorts, WhatsApp and Pinterest from launch (Fr
 
 | File | What it is |
 |---|---|
+| [STUDY.md](STUDY.md) | Full study of the business from the whole repo: readiness, catalogue numbers, shipping problem, positioning, SWOT |
+| [ACCOUNT_SETUP.md](ACCOUNT_SETUP.md) | Build the Instagram account from zero: name, bio, link, settings, Highlights |
+| [ROLLOUT.md](ROLLOUT.md) | **Start here.** Day-by-day first 14 days, the first 9 posts, daily engagement routine, first-100 targets |
+| [OUTREACH.md](OUTREACH.md) | Ready-to-send messages: friends, creators, businesses, offices; saved replies |
+| `account-assets/` | Profile picture and 7 Highlight covers, ready to upload |
 | [STRATEGY.md](STRATEGY.md) | Who it's for, 4 pillars, tone, honest-marketing rules, platform split, open questions |
 | [CALENDAR.md](CALENDAR.md) | Day by day, 14 Nov to 31 Dec: what to post, hook, caption ID, what to prepare |
 | [reels/](reels/) | 10 Reel scripts (hook, shot list, on-screen text, audio mood, CTA) |
