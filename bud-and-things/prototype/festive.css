@@ -266,3 +266,16 @@ body.ft-world #ft-foot:after{content:"";position:absolute;left:0;right:0;top:-1p
 .ft-spacer{height:56px;flex:none;width:100%}
 .ft-sit{width:70px!important;height:80px!important;left:16px!important}
 @media (max-width:640px){.ft-spacer{height:46px}.ft-sit{width:56px!important;height:64px!important;left:10px!important}}
+
+/* ---- v2: clearer 3D Santa behind the button, hat on the cart icon, nothing in the buyer's way ---- */
+.ft-sit{width:100px!important;height:93px!important;left:14px!important;margin-bottom:-8px!important}
+.ft-spacer{height:78px!important}
+.ft-leg1{transform-origin:50px 92px!important}.ft-leg2{transform-origin:72px 92px!important}
+.ft-arm2{transform-origin:90px 66px!important}.ft-pom{transform-origin:40px 24px!important}
+.ft-eyes{transform-origin:60px 46px!important}
+.ft-hat{left:-9px!important;top:-13px!important;width:28px;height:auto}
+.ft-hat svg{width:100%;height:auto;display:block}
+@media (max-width:640px){.ft-sit{width:70px!important;height:65px!important;left:8px!important}.ft-spacer{height:58px!important}.ft-hat{left:-8px!important;top:-11px!important;width:24px}}
+.ft-sit svg{overflow:hidden!important}
+.ft-hat{left:-2px!important;top:-9px!important}
+@media (max-width:640px){.ft-hat{left:-2px!important;top:-8px!important}}
