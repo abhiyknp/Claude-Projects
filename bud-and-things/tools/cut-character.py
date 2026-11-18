@@ -4,6 +4,8 @@
   python3 bud-and-things/tools/cut-character.py picture.png xmas peek elf
   python3 bud-and-things/tools/cut-character.py picture.png diw wave girl
 
+If the character wears green, add KEEP_GREEN=1 in front so its green clothes are not cut out with the background.
+
 Arguments: the picture, the look id (xmas, ny, val, diw, holi, eid, bday), the pose (peek or wave) and a short name.
 It writes bud-and-things/prototype/assets/festive/chars/<look>-<pose>-<name>.webp and adds it to manifest.json, so the
 shop starts using it at random. Needs Pillow, numpy and scipy (pip install pillow numpy scipy).
@@ -28,6 +30,14 @@ def main():
     r, g, b = c[..., 0], c[..., 1], c[..., 2]
     d = g - np.maximum(r, b)                      # how green a pixel is, beyond red and blue
     alpha = np.clip(1 - (d - 10) / (48 - 10), 0, 1)
+    if os.environ.get('KEEP_GREEN') == '1':
+        # the character wears green (an elf's collar, a leaf): key on distance from the real background colour instead,
+        # so dark greens inside the character stay opaque
+        H0, W0 = r.shape
+        corners = np.concatenate([c[:20, :20].reshape(-1, 3), c[:20, -20:].reshape(-1, 3), c[-20:, :20].reshape(-1, 3), c[-20:, -20:].reshape(-1, 3)])
+        key = np.median(corners, axis=0)
+        dist = np.sqrt(((c - key) ** 2).sum(-1))
+        alpha = np.clip((dist - 70) / (150 - 70), 0, 1)
     # the green behind the character is not perfectly flat: estimate it so edges unmix cleanly
     bgmask = (alpha < .02).astype(np.float32)
     den = gaussian_filter(bgmask, 40)

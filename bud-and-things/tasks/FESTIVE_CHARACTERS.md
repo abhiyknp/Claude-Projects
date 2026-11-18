@@ -20,7 +20,7 @@ Each festive look can show characters at random: one leaning on the main button 
 | Look | When | Pose | Character |
 |---|---|---|---|
 | Christmas `xmas` | from 1 Dec | peek (done) | Santa with round glasses |
-| | | peek | a cheerful elf in a red-and-green hat with pointed ears |
+| | | peek (done) | a cheerful elf in a red-and-green hat with pointed ears |
 | | | peek | a cute snowman with a knitted scarf and a carrot nose |
 | | | peek | a friendly reindeer with a red nose and small antlers |
 | | | wave | Santa waving |
