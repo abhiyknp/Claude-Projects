@@ -16,6 +16,9 @@ Each festive look can show characters at random: one leaning on the main button 
 - **peek:** *The character peeks over a flat horizontal ledge that fills the bottom of the picture. Only the head, shoulders and both hands resting on the edge are visible. Looking at the viewer. The ledge is exactly the same green as the background.*
 - **wave:** *Upper body in the centre of the frame, three-quarter view, waving one hand and smiling at the viewer. No ledge.*
 
+## Current scope: Christmas, New Year, Valentine's Day and Eid
+Holi, Diwali and Birthday get no characters for now (their looks keep the drawn decoration only). Their prompts are parked at the end of `FESTIVE_CHARACTER_PROMPTS.md`.
+
 ## What to generate, in order of need
 | Look | When | Pose | Character |
 |---|---|---|---|
@@ -30,18 +33,9 @@ Each festive look can show characters at random: one leaning on the main button 
 | Valentine's `val` | 14 Feb | peek | a teddy bear with tiny angel wings holding a heart |
 | | | peek | a bunny holding a single red rose |
 | | | wave | the teddy bear waving with a heart |
-| Holi `holi` | about 22 Mar | peek | a playful boy with bright colour powder on his hair and cheeks |
-| | | peek | a laughing girl holding a pichkari (water gun), colour on her kurta |
-| | | wave | the boy waving, both hands covered in colour |
 | Eid `eid` | about 10 Mar | peek | a smiling boy in a kurta holding a glowing fanoos lantern |
 | | | peek | a smiling girl in a dupatta holding a small lantern |
 | | | wave | the boy waving, lantern in the other hand |
-| Diwali `diw` | next Oct or Nov | peek | a smiling girl in a festive lehenga with a marigold garland, holding a lit diya |
-| | | peek | a smiling boy in a kurta holding a sparkler |
-| | | wave | the girl waving, diya in the other hand |
-| Birthday `bday` | any day | peek | a bear in a party hat holding a balloon |
-| | | peek | a bunny with a cupcake with one candle |
-| | | wave | the bear waving |
 
 Keep the characters friendly and respectful: no religious figures or symbols used as props, no people from real life, no brands. Only use pictures you may use commercially.
 
