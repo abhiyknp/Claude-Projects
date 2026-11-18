@@ -6,7 +6,7 @@ Taken from `../../audit/legal/TODO.md`, `../../audit/26_MASTER_FINDINGS_REGISTER
 ## Claude can do (code or docs)
 | ID | Task | Source | Notes |
 |---|---|---|---|
-| T-001 | Mobile load time fix for the live home page (LCP about 6 s locally improved to 2.9 s) | F-19 | Needs the owner's phone Lighthouse result first |
+| T-001 | Mobile load time fix for the live home page. 2026-11-18: measured on an emulated slow phone, first screen was about 3.7 s because the Coming soon screen was drawn by the 510 KB app script. Fix 1 done in `tools/prerender-soon.js` (draws that screen into the built page: about 1.5 s, same look); fix 2 (load Owner-view code only on `#admin`) not done | F-19 | Needs the owner's phone Lighthouse result to confirm on a real phone |
 | T-002 | Update policies and Pack details after the CA answers | F-14, legal TODO | Waiting on the CA |
 | T-003 | ~~Review marketing text for risky claims~~ | legal TODO | Done 2026-11-16. Changed: the "less soot" line and "free replacement" now says "if something arrives damaged". Kept: the 48-hour / 30-day complaint promise (it matches the grievance rules for online sellers; confirm with the CA) and the "Ships within 24 hours" setting (already "only while it is true"). Saved site text in the database can still hold the old wording: check Owner view → Site text |
 | T-004 | ~~Phone-number check on the payment verify step~~ | F-04 | Decided not to change (see register F-04): the return-from-bank page may not know the phone, so a strict check could stop real payments being confirmed. Reopen only with a live test |
