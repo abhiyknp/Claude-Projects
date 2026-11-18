@@ -180,7 +180,10 @@ function page(o){homeOn=!!o.home;strapOn=!!o.strap&&!dismissed();routeOK=homeOn|
  cv.style.display=(routeOK||bursts.length||fullUntil>Date.now())?'':'none';if(on)startClock();else clearInterval(clockT);watchWorld();decorate();if(fest&&!fxRun)loop()}
 
 /* ---- the festive world (Christmas first): snow behind the page, snow caps, a Santa perched on the main button, lights, a hat on the logo ---- */
-const SANTA='<span class="ft-sit" aria-hidden="true"><img alt="" src="assets/festive/santa-peek.webp" width="900" height="615" onerror="this.parentNode.remove()"></span>';
+let CH=null,chP=null;
+function loadChars(){if(chP)return chP;chP=fetch('assets/festive/chars/manifest.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{CH=j||{};return CH});return chP}
+function pickChar(scene,pose,not){const l=(((CH||{})[scene]||{})[pose])||[];let pool=l.filter(f=>!(not||[]).includes(f));if(!pool.length)return null;let last='';try{last=sessionStorage.getItem('ft-lastchar-'+pose)||''}catch(e){}const p2=pool.filter(f=>f!==last);if(p2.length)pool=p2;const f=pool[Math.floor(Math.random()*pool.length)];try{sessionStorage.setItem('ft-lastchar-'+pose,f)}catch(e){}return f}
+const sitHTML=(f,cls)=>'<span class="ft-sit '+(cls||'')+'" aria-hidden="true"><img alt="" src="assets/festive/chars/'+esc(f)+'" onerror="this.parentNode.remove()"></span>';
 const HAT='<span class="ft-hat" aria-hidden="true"><svg viewBox="0 0 48 40" width="44" height="37"><path d="M6 30q-2-20 18-26t20 24q-10-8-20-7T6 30z" fill="#e0283f"/><path d="M6 30q-2-20 18-26" fill="none" stroke="#ff6b78" stroke-width="2" opacity=".6"/><rect x="4" y="27" width="40" height="9" rx="4.5" fill="#fff"/><path d="M40 8q8 3 7 13" stroke="#e0283f" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="46" cy="22" r="4.5" fill="#fff"/></svg></span>';
 const WL={on:false,cv:null,cx:null,flakes:[],raf:0,mo:null,lights:null,t:0};
 const worldWanted=()=>!!fest&&fest.id==='xmas'&&strapOn;
@@ -200,14 +203,21 @@ function pickSanta(app){const h=(location.hash||'#home').slice(1)||'home';let bt
  if(h==='home')btn=app.querySelector('.gh-hero .gh-cta .btn:not(.ghost)');
  else if((h==='cart'||h==='gifting')&&innerWidth>=640)btn=app.querySelector('.btn:not(.ghost):not(.small)');
  return btn}
-function decorate(){if(!worldWanted()){cleanWorld();return}const app=document.getElementById('app');if(!app)return;wStart();document.body.classList.add('ft-world');
+function decorate(){const app0=document.getElementById('app');if(fest&&strapOn&&app0)placeChars(app0);if(!worldWanted()){cleanWorld(!!(fest&&strapOn));return}const app=app0;if(!app)return;wStart();document.body.classList.add('ft-world');
  if(strapEl&&strapEl.style.display!=='none'&&strapEl.nextElementSibling!==lightsEl())strapEl.after(lightsEl());
  const lg=document.getElementById('cart-btn');if(lg&&!lg.querySelector('.ft-hat')){lg.classList.add('ft-lg');lg.insertAdjacentHTML('beforeend',HAT)}
  app.querySelectorAll('.card:not(.ft-capped)').forEach((el,i)=>{if(i<30){el.classList.add('ft-capped');el.insertAdjacentHTML('afterbegin','<i class="ft-cap" aria-hidden="true"></i>')}});
  app.querySelectorAll('.btn:not(.ghost):not(.small):not(.ft-capped)').forEach((el,i)=>{if(i<4&&!el.disabled){el.classList.add('ft-capped');el.insertAdjacentHTML('afterbegin','<i class="ft-cap ft-cap-s" aria-hidden="true"></i>')}});
- if(!app.querySelector('.ft-sit')){app.querySelectorAll('.ft-spacer').forEach(e=>e.remove());const b=pickSanta(app);if(b&&b.parentElement){b.classList.add('ft-host');const cp0=b.querySelector(':scope>.ft-cap');if(cp0)cp0.remove();const blk=b.closest('.gh-cta,.buy')||b;const sp=document.createElement('div');sp.className='ft-spacer';sp.setAttribute('aria-hidden','true');blk.parentNode.insertBefore(sp,blk);b.insertAdjacentHTML('beforeend',SANTA)}}}
-function cleanWorld(){WL.on=false;if(WL.raf){cancelAnimationFrame(WL.raf);WL.raf=0}if(WL.cv)WL.cv.style.display='none';WL.flakes=[];document.body.classList.remove('ft-world');
- document.querySelectorAll('.ft-cap,.ft-sit,.ft-hat,.ft-spacer').forEach(e=>e.remove());document.querySelectorAll('.ft-capped,.ft-host,.ft-room,.ft-lg').forEach(e=>e.classList.remove('ft-capped','ft-host','ft-room','ft-lg'));if(WL.lights&&WL.lights.parentNode)WL.lights.remove()}
+ placeChars(app)}
+function placeChars(app){if(!fest)return;if(!CH){loadChars().then(()=>decorate());return}
+ if(app.querySelector('.ft-sit')&&(!footEl||footEl.querySelector('.ft-sit')||!footEl.isConnected))return;
+ const sid=fest.id;const used=[];
+ if(!app.querySelector('.ft-sit')){const b=pickSanta(app);if(b&&b.parentElement){const f=pickChar(sid,'peek');if(f){used.push(f);b.classList.add('ft-host');const cp0=b.querySelector(':scope>.ft-cap');if(cp0)cp0.remove();const blk=b.closest('.gh-cta,.buy')||b;const sp=document.createElement('div');sp.className='ft-spacer';sp.setAttribute('aria-hidden','true');blk.parentNode.insertBefore(sp,blk);b.insertAdjacentHTML('beforeend',sitHTML(f))}}}
+ else used.push((app.querySelector('.ft-sit img')||{}).getAttribute?app.querySelector('.ft-sit img').getAttribute('src').split('/').pop():'');
+ // the footer ribbon: a second, different character (or the only one, when none sits on a button)
+ if(footEl&&footEl.isConnected&&footEl.style.display!=='none'&&!footEl.querySelector('.ft-sit')){const f=pickChar(sid,'peek',used);if(f){footEl.classList.add('ft-hasc');footEl.insertAdjacentHTML('afterbegin',sitHTML(f,'ft-sit-foot'))}}}
+function cleanWorld(keepChars){WL.on=false;if(WL.raf){cancelAnimationFrame(WL.raf);WL.raf=0}if(WL.cv)WL.cv.style.display='none';WL.flakes=[];document.body.classList.remove('ft-world');
+ document.querySelectorAll('.ft-cap,.hat,.ft-hat').forEach(e=>e.remove());if(!keepChars){document.querySelectorAll('.ft-sit,.ft-spacer').forEach(e=>e.remove());document.querySelectorAll('.ft-host').forEach(e=>e.classList.remove('ft-host'));if(footEl)footEl.classList.remove('ft-hasc')}document.querySelectorAll('.ft-capped,.ft-room,.ft-lg').forEach(e=>e.classList.remove('ft-capped','ft-room','ft-lg'));if(WL.lights&&WL.lights.parentNode)WL.lights.remove()}
 function watchWorld(){if(WL.mo)return;const app=document.getElementById('app');if(!app)return;let tm=0;WL.mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(decorate,60)});WL.mo.observe(app,{childList:true,subtree:true})}
 /* ---- the offer strap (every page), the footer ribbon, and the clock ---- */
 const SB={xmas:{bg:'garland.webp',orn:['bauble-maroon.webp','bauble-gold.webp','bauble-silver.webp']},ny:{bg:'fireworks.webp',orn:[]},eid:{orn:['lantern-a.webp','lantern-b.webp']},diw:{bg:'lamps-diwali.webp',orn:[]}};
@@ -231,6 +241,7 @@ function startClock(){clearInterval(clockT);tickClock();clockT=setInterval(()=>{
 function thanks(o){const d=document.createElement('div');d.className='ft-thx';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-label','Thank you');
  const line=fest&&SQ[fest.id]?SQ[fest.id]:THX[Math.floor(Math.random()*THX.length)];
  d.innerHTML='<div class="ft-cam" aria-hidden="true"><img alt="" src="'+esc(cfg.photo)+'"><i></i><i></i></div><div><h2>Thank you.</h2><p>'+esc(o.text||'')+'</p>'+(o.points?'<p>You will earn '+o.points+' Bud Points on delivery.</p>':'')+'<div class="q">'+esc(line)+'</div><p style="margin-top:22px"><button class="ft-btn" type="button">Continue</button></p></div>';
+ {const wf=fest?pickChar(fest.id,'wave'):null;if(wf)d.insertAdjacentHTML('afterbegin','<img class="ft-thxchar" alt="" src="assets/festive/chars/'+esc(wf)+'" onerror="this.remove()">')}
  mount();document.body.appendChild(d);cv.classList.add('ft-top');cv.style.display='';
  const W=innerWidth,H=innerHeight,sc=Math.max(W*1.08/IW,H*1.08/IH),ox=(W*1.08-IW*sc)*.5-W*.04,oy=(H*1.08-IH*sc)*.22-H*.04,fx0=ox+FX*IW*sc,fy0=oy+FY*IH*sc;
  $$('i',d.firstChild).forEach(i=>{i.style.left=(fx0+W*.04)+'px';i.style.top=(fy0+H*.04)+'px'});
@@ -238,5 +249,5 @@ function thanks(o){const d=document.createElement('div');d.className='ft-thx';d.
  const b=$('button',d);b.onclick=done;b.focus();
  if(!reduce){thxAt={x:fx0,y:fy0};confetti(W/2,H*.6,140,1.5);setTimeout(()=>confetti(W*.25,H*.7,60,.9),500);setTimeout(()=>confetti(W*.75,H*.7,60,.9),700);loop()}
  return done}
-window.BTFest={config:o=>Object.assign(cfg,o),scenes:SCENES.map(s=>({id:s.id,name:s.name,when:s.when,line:s.line,m:s.m,d:s.d,hint:s.hint||'',ey:s.ey})),start,stop,active:()=>fest&&fest.id,visible:setVisible,page,refresh:()=>{if(fest){renderStrap()}},quote,nextQuote:()=>{qoff++;return quote()},ownerNote:()=>OQ[doy()%OQ.length],thanks,confetti:(x,y,n,sp)=>{mount();cv.style.display='';confetti(x,y,n,sp)},reduce};
+window.BTFest={loadChars,config:o=>Object.assign(cfg,o),scenes:SCENES.map(s=>({id:s.id,name:s.name,when:s.when,line:s.line,m:s.m,d:s.d,hint:s.hint||'',ey:s.ey})),start,stop,active:()=>fest&&fest.id,visible:setVisible,page,refresh:()=>{if(fest){renderStrap()}},quote,nextQuote:()=>{qoff++;return quote()},ownerNote:()=>OQ[doy()%OQ.length],thanks,confetti:(x,y,n,sp)=>{mount();cv.style.display='';confetti(x,y,n,sp)},reduce};
 })();
