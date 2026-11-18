@@ -44,13 +44,23 @@ async function comingSoonIsOn() {
   });
   await new Promise((res) => server.listen(0, '127.0.0.1', res));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const browser = await chromium.launch();
+  // BT_CHROME_PATH: use a browser that is already installed (the CI runner has Google Chrome), which saves a 4 minute download
+  const browser = await chromium.launch(process.env.BT_CHROME_PATH ? { executablePath: process.env.BT_CHROME_PATH } : {});
+  const seen = [];
   try {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    page.on('pageerror', (e) => seen.push('page error: ' + e.message));
+    page.on('console', (m) => { if (m.type() === 'error') seen.push('console: ' + m.text().slice(0, 200)); });
     // only the site itself answers: the database is blocked, so the page draws its built-in Coming soon text
     await page.route((u) => !u.href.startsWith(base), (route) => route.abort());
     await page.goto(base + '/index.html', { waitUntil: 'load' });
-    await page.waitForSelector('#app .soon', { timeout: 15000 });
+    try { await page.waitForSelector('#app .soon', { timeout: 15000 }); }
+    catch (e) {
+      // say what the page did, so a failure in the build log can be understood
+      const st = await page.evaluate(() => ({ body: document.body.className, app: (document.getElementById('app') || {}).innerHTML ? document.getElementById('app').innerHTML.slice(0, 300) : '(empty)', ua: navigator.userAgent })).catch(() => ({}));
+      console.log('prerender-soon: page state at timeout: ' + JSON.stringify(st) + '\n  messages: ' + (seen.slice(0, 8).join(' | ') || '(none)'));
+      throw e;
+    }
     // only the Coming soon section: the page may also draw a "trouble loading" notice above it, because the database is blocked here
     const out = await page.evaluate(() => { const s = document.querySelector('#app > section.soon'); return { inner: s ? s.outerHTML : '', body: document.body.className }; });
     if (!/^<section class="soon"/.test(out.inner) || /<script|data-act="db-retry"/i.test(out.inner)) throw new Error('unexpected Coming soon drawing, not used');
