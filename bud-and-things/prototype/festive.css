@@ -279,3 +279,15 @@ body.ft-world #ft-foot:after{content:"";position:absolute;left:0;right:0;top:-1p
 .ft-sit svg{overflow:hidden!important}
 .ft-hat{left:-2px!important;top:-9px!important}
 @media (max-width:640px){.ft-hat{left:-2px!important;top:-8px!important}}
+
+/* ---- v3: a real photographed Santa leaning over the button, snow cap on top ---- */
+.ft-sit{width:104px!important;height:101px!important;left:8px!important;margin-bottom:-5px!important;overflow:hidden!important;z-index:3!important;filter:none!important;animation:none!important}
+.ft-sit img{display:block;width:100%;height:auto;position:absolute;left:0;bottom:0;transform-origin:18% 100%;filter:drop-shadow(0 4px 5px rgba(0,0,0,.28));animation:ft-peek 1s .7s cubic-bezier(.2,.9,.25,1) both,ft-lean 6s 1.7s ease-in-out infinite}
+@keyframes ft-peek{from{transform:translateY(105%)}to{transform:none}}
+@keyframes ft-lean{0%,100%{transform:rotate(-.6deg) translateY(0)}50%{transform:rotate(.9deg) translateY(-1.5px)}}
+@media (max-width:640px){.ft-sit{width:78px!important;height:76px!important}}
+@media (prefers-reduced-motion: reduce){.ft-sit img{animation:none!important}}
+.ft-sit{width:128px!important;height:124px!important;left:2px!important;margin-bottom:-6px!important}
+.ft-sit img{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 20%);mask-image:linear-gradient(to right,transparent 0,#000 20%)}
+.ft-spacer{height:104px!important}
+@media (max-width:640px){.ft-sit{width:92px!important;height:90px!important}.ft-spacer{height:76px!important}}
