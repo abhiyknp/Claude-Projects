@@ -134,8 +134,7 @@ XM.decor=function(){const a=[bokeh(['rgba(255,190,100,.7)','rgba(255,90,90,.45)'
  [[5,14,'bauble-maroon.webp',40],[17,40,'bauble-gold.webp',44],[31,8,'bauble-silver.webp',36],[47,34,'bauble-maroon.webp',38],[62,12,'bauble-silver-2.webp',42],[74,44,'bauble-gold.webp',38]].forEach((o,i)=>a.push(imgOrn(...o,i)));
  a.push(`<svg class="ft-drift" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40Q150 6 300 34T600 30T900 34T1200 26V70H0Z" fill="#f7f1e6"/><path d="M0 52Q200 24 400 48T800 44T1200 46V70H0Z" fill="#fff" opacity=".9"/></svg>`);
  const ph=cfg.photos||[];[[2,0],[8,1]].forEach(([x,k],i)=>{const pr=pick();if(!pr||!ph.length)return;a.push(`<button class="ft-gift ft-pe" style="left:${x}%" aria-label="Open a gift"><img alt="" src="${esc(ph[k%ph.length])}" class="ft-gimg"><span class="ft-gp" style="left:0;transform:translate(0,10px)">Gift idea: ${esc(pr.name)} · ₹${pr.price}<br>In stock${pr.href?` · <a href="${esc(pr.href)}" style="color:#D6A34A">See it</a>`:''}</span></button>`)});
- const pr=pick();
- a.push(`<button class="ft-santa ft-pe" type="button" aria-label="Santa has a gift idea for you"><img alt="" src="${AS('santa.webp')}" onerror="this.parentNode.remove()">${pr?`<span class="ft-say">Ho ho ho! <strong>${esc(pr.name)}</strong> · ₹${pr.price}${pr.href?` <a href="${esc(pr.href)}">See it</a>`:''}</span>`:''}</button>`);
+
  return a.join('')};
 const xInit=XM.init;XM.init=function(){xInit&&xInit();const s=scene.querySelector('.ft-santa');if(!s)return;
  s.onclick=e=>{if(e.target.closest('a'))return;s.classList.toggle('talk')};
@@ -181,7 +180,7 @@ function page(o){homeOn=!!o.home;strapOn=!!o.strap&&!dismissed();routeOK=homeOn|
  cv.style.display=(routeOK||bursts.length||fullUntil>Date.now())?'':'none';if(on)startClock();else clearInterval(clockT);watchWorld();decorate();if(fest&&!fxRun)loop()}
 
 /* ---- the festive world (Christmas first): snow behind the page, snow caps, a Santa perched on the main button, lights, a hat on the logo ---- */
-const SANTA='<span class="ft-sit" aria-hidden="true"><img alt="" src="assets/festive/santa-peek.webp" width="380" height="370" onerror="this.parentNode.remove()"></span>';
+const SANTA='<span class="ft-sit" aria-hidden="true"><img alt="" src="assets/festive/santa-peek.webp" width="900" height="615" onerror="this.parentNode.remove()"></span>';
 const HAT='<span class="ft-hat" aria-hidden="true"><svg viewBox="0 0 48 40" width="44" height="37"><path d="M6 30q-2-20 18-26t20 24q-10-8-20-7T6 30z" fill="#e0283f"/><path d="M6 30q-2-20 18-26" fill="none" stroke="#ff6b78" stroke-width="2" opacity=".6"/><rect x="4" y="27" width="40" height="9" rx="4.5" fill="#fff"/><path d="M40 8q8 3 7 13" stroke="#e0283f" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="46" cy="22" r="4.5" fill="#fff"/></svg></span>';
 const WL={on:false,cv:null,cx:null,flakes:[],raf:0,mo:null,lights:null,t:0};
 const worldWanted=()=>!!fest&&fest.id==='xmas'&&strapOn;
@@ -206,7 +205,7 @@ function decorate(){if(!worldWanted()){cleanWorld();return}const app=document.ge
  const lg=document.getElementById('cart-btn');if(lg&&!lg.querySelector('.ft-hat')){lg.classList.add('ft-lg');lg.insertAdjacentHTML('beforeend',HAT)}
  app.querySelectorAll('.card:not(.ft-capped)').forEach((el,i)=>{if(i<30){el.classList.add('ft-capped');el.insertAdjacentHTML('afterbegin','<i class="ft-cap" aria-hidden="true"></i>')}});
  app.querySelectorAll('.btn:not(.ghost):not(.small):not(.ft-capped)').forEach((el,i)=>{if(i<4&&!el.disabled){el.classList.add('ft-capped');el.insertAdjacentHTML('afterbegin','<i class="ft-cap ft-cap-s" aria-hidden="true"></i>')}});
- if(!app.querySelector('.ft-sit')){app.querySelectorAll('.ft-spacer').forEach(e=>e.remove());const b=pickSanta(app);if(b&&b.parentElement){b.classList.add('ft-host');const blk=b.closest('.gh-cta,.buy')||b;const sp=document.createElement('div');sp.className='ft-spacer';sp.setAttribute('aria-hidden','true');blk.parentNode.insertBefore(sp,blk);b.insertAdjacentHTML('beforeend',SANTA)}}}
+ if(!app.querySelector('.ft-sit')){app.querySelectorAll('.ft-spacer').forEach(e=>e.remove());const b=pickSanta(app);if(b&&b.parentElement){b.classList.add('ft-host');const cp0=b.querySelector(':scope>.ft-cap');if(cp0)cp0.remove();const blk=b.closest('.gh-cta,.buy')||b;const sp=document.createElement('div');sp.className='ft-spacer';sp.setAttribute('aria-hidden','true');blk.parentNode.insertBefore(sp,blk);b.insertAdjacentHTML('beforeend',SANTA)}}}
 function cleanWorld(){WL.on=false;if(WL.raf){cancelAnimationFrame(WL.raf);WL.raf=0}if(WL.cv)WL.cv.style.display='none';WL.flakes=[];document.body.classList.remove('ft-world');
  document.querySelectorAll('.ft-cap,.ft-sit,.ft-hat,.ft-spacer').forEach(e=>e.remove());document.querySelectorAll('.ft-capped,.ft-host,.ft-room,.ft-lg').forEach(e=>e.classList.remove('ft-capped','ft-host','ft-room','ft-lg'));if(WL.lights&&WL.lights.parentNode)WL.lights.remove()}
 function watchWorld(){if(WL.mo)return;const app=document.getElementById('app');if(!app)return;let tm=0;WL.mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(decorate,60)});WL.mo.observe(app,{childList:true,subtree:true})}
