@@ -1,0 +1,19 @@
+{
+  "xmas": {
+    "peek": [
+      "xmas-peek-santa.webp",
+      "xmas-peek-reindeer.webp",
+      "xmas-peek-snowman.webp",
+      "xmas-peek-elf.webp"
+    ],
+    "wave": [
+      "xmas-wave-santa.webp"
+    ]
+  },
+  "ny": {
+    "peek": [
+      "ny-peek-fox.webp",
+      "ny-peek-penguin.webp"
+    ]
+  }
+}
