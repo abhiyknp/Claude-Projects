@@ -97,7 +97,7 @@ const SCENES=[
    const PP=(cfg.products()||[]).filter(p=>p&&p.name);const G0=PP[0],G1=PP[1]||PP[0];const gifts=PP.length?[[4,'#8F1834','#D6A34A',G1],[12,'#D6A34A','#8F1834',G0],[84,'#fff3dc','#8F1834',G1],[92,'#8F1834','#fff3dc',G0]]:[];
    gifts.forEach(([x,c1,c2,pr],i)=>a.push(`<button class="ft-gift ft-pe" data-i="${i}" style="left:${x}%" aria-label="Open a gift">${(cfg.photos&&cfg.photos.length)?`<img alt="" src="${esc(cfg.photos[i%cfg.photos.length])}" style="width:62px;height:62px;object-fit:cover;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.4);border:2px solid rgba(243,220,166,.85)">`:giftSVG(c1,c2)}<span class="ft-gp" style="${x<20?'left:0;transform:translate(0,10px)':x>80?'left:auto;right:0;transform:translate(0,10px)':''}">Gift idea: ${esc(pr.name)} · ₹${pr.price}<br>${pr.stock?'In stock':'Back soon'}</span></button>`));
    return a.join('')},
-  init(){$$('.ft-gift',scene).forEach(g=>g.onclick=()=>{const was=g.classList.contains('open');$$('.ft-gift',scene).forEach(x=>x.classList.remove('open'));if(!was){g.classList.add('open');burst(g.getBoundingClientRect().left+31,g.getBoundingClientRect().top+10,['#ffd36a','#fff3dc','#ff5a5f'],18,1.8,.03,1.6)}})}},
+  init(){$$('.ft-gift',scene).forEach(g=>g.onclick=()=>{const was=g.classList.contains('open');if(was&&g.dataset.href){location.hash=g.dataset.href;return}$$('.ft-gift',scene).forEach(x=>x.classList.remove('open'));if(!was){g.classList.add('open');burst(g.getBoundingClientRect().left+31,g.getBoundingClientRect().top+10,['#ffd36a','#fff3dc','#ff5a5f'],18,1.8,.03,1.6)}})}},
  {id:'ny',name:'New Year',when:'1 January',m:0,d:1,line:'Soft fireworks, rising bubbles, and a wish to send up.',h:'Begin the year with a little light',ey:'New Year',p:'Send a wish and watch it rise.',kind:'bubble',col:['rgba(255,236,190,.9)','rgba(255,214,120,.8)'],n:30,tint:'radial-gradient(120% 90% at 50% 0%,rgba(214,163,74,.35),rgba(30,20,70,.4))',
   decor(){return bokeh(['rgba(255,214,120,.7)','rgba(255,160,200,.5)','rgba(150,200,255,.5)'],14,5)},
   kind2:'bubble',init(){const w=wishBox('Make a wish for the new year…','#ffd36a',v=>{floatNote(v,'#ffd36a');burst(innerWidth/2,innerHeight*.7,['#ffd36a','#fff3dc','#ff9ac0'],36,2.4,.02,2)});scene.appendChild(w);
@@ -133,7 +133,7 @@ XM.decor=function(){const a=[bokeh(['rgba(255,190,100,.7)','rgba(255,90,90,.45)'
  a.push(`<div class="ft-garland" style="background-image:url('${AS('garland.webp')}')"></div>`);
  [[5,14,'bauble-maroon.webp',40],[17,40,'bauble-gold.webp',44],[31,8,'bauble-silver.webp',36],[47,34,'bauble-maroon.webp',38],[62,12,'bauble-silver-2.webp',42],[74,44,'bauble-gold.webp',38]].forEach((o,i)=>a.push(imgOrn(...o,i)));
  a.push(`<svg class="ft-drift" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40Q150 6 300 34T600 30T900 34T1200 26V70H0Z" fill="#f7f1e6"/><path d="M0 52Q200 24 400 48T800 44T1200 46V70H0Z" fill="#fff" opacity=".9"/></svg>`);
- const ph=cfg.photos||[];[[2,0],[8,1]].forEach(([x,k],i)=>{const pr=pick();if(!pr||!ph.length)return;a.push(`<button class="ft-gift ft-pe" style="left:${x}%" aria-label="Open a gift"><img alt="" src="${esc(ph[k%ph.length])}" class="ft-gimg"><span class="ft-gp" style="left:0;transform:translate(0,10px)">Gift idea: ${esc(pr.name)} · ₹${pr.price}<br>In stock${pr.href?` · <a href="${esc(pr.href)}" style="color:#D6A34A">See it</a>`:''}</span></button>`)});
+ const ph=cfg.photos||[];[[2,0],[8,1]].forEach(([x,k],i)=>{const pr=pick();if(!pr||!ph.length)return;a.push(`<button class="ft-gift ft-pe" style="left:${x}%" aria-label="Open a gift" data-href="${esc(pr.href||'')}"><img alt="" src="${esc(ph[k%ph.length])}" class="ft-gimg"><span class="ft-gp" style="left:0;transform:translate(0,10px)">Gift idea: ${esc(pr.name)} · ₹${pr.price}<br>In stock${pr.href?' · tap again to see it':''}</span></button>`)});
 
  return a.join('')};
 const xInit=XM.init;XM.init=function(){xInit&&xInit();const s=scene.querySelector('.ft-santa');if(!s)return;
@@ -226,7 +226,7 @@ function fmtLeft(ms){const s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/8640
 const offer=()=>((cfg.offer&&fest&&cfg.offer(fest.id))||{});
 function mountStrap(){if(strapEl)return;strapEl=document.createElement('div');strapEl.id='ft-strap';strapEl.setAttribute('role','region');strapEl.setAttribute('aria-label','Festive offer');strapEl.style.display='none';
  strapEl.addEventListener('click',e=>{if(e.target.closest('.ft-sx')){try{sessionStorage.setItem('ft-sx','1')}catch(x){}page({home:homeOn,strap:strapOn})}});
- footEl=document.createElement('div');footEl.id='ft-foot';footEl.style.display='none'}
+ footEl=document.createElement('div');footEl.id='ft-foot';footEl.setAttribute('role','region');footEl.setAttribute('aria-label','Festive offer reminder');footEl.style.display='none'}
 function ensureStrap(){const h=document.querySelector('.site-head');if(h&&strapEl.previousElementSibling!==h)h.after(strapEl)}
 function ensureFoot(){const f=document.querySelector('.site-foot');if(f&&footEl.nextElementSibling!==f)f.before(footEl)}
 function renderStrap(){if(!strapEl||!fest)return;const o=fest,i=offer(),sb=SB[o.id]||{};
