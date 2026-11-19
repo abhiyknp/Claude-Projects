@@ -893,8 +893,8 @@ body.app .why-band { padding-bottom: 96px; }
 .pdp-desc { font-size: 17px; line-height: 1.65; color: var(--choc2); max-width: 560px; }
 .pdp-info .hl-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .gal-main { position: relative; }
-.room-try { position: absolute; right: 14px; top: 14px; width: auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(255,252,246,.94); box-shadow: 0 6px 18px rgba(75,46,30,.16); font-size: 13px; font-weight: 700; z-index: 2; }
-.room-try:hover { background: var(--choc); color: var(--ivory); }
+.room-try { position: absolute; right: 14px; top: 14px; width: auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(248,240,228,.94); color: #8F1834; box-shadow: 0 6px 18px rgba(21,2,6,.18); font-size: 13px; font-weight: 700; z-index: 2; }
+.room-try:hover { background: #8F1834; color: #F8F0E4; }
 .accs { border-top: 1px solid var(--line); }
 .acc { border-bottom: 1px solid var(--line); }
 .acc summary { list-style: none; display: flex; align-items: center; gap: 12px; min-height: 56px; cursor: pointer; font-weight: 700; }
@@ -1520,7 +1520,7 @@ const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5
   featured: 'bnt-prd-cg-001, bnt-prd-cg-002, bnt-prd-jt-001, bnt-prd-jt-004', giftPicks: 'bnt-prd-jt-001, bnt-prd-jt-002, bnt-prd-jt-004, bnt-prd-cg-001', homeRitual: '', newIn: 'bnt-prd-jt-005, bnt-prd-jt-003, bnt-prd-tl-001, bnt-prd-tl-002, bnt-prd-mc-002, bnt-prd-mc-001', spotlight: 'bnt-prd-cg-001', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, ownerWhatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: 'BUD & THINGS by Ashi', bizAddress: 'Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, invTerms: '', invSignName: 'Ashi', hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: 'Abhishek Yadav', grievancePhone: '9839176160', courtCity: 'Greater Noida', policyDate: '3 November 2026',
   reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
-  theme: 'silk', homeStyle: 'gift', comingSoon: true, homeHide: ['boxes', 'feel', 'occasions', 'rituals', 'festive', 'packaging'], previewHash: '', soonPages: [], newSections: [] };
+  theme: 'silk', homeStyle: 'gift', comingSoon: true, homeHide: [], previewHash: '', soonPages: [], newSections: [] };
 let SET = Object.assign({}, SET_DEFAULTS);
 let TXT = {};
 const LEGAL_KEYS = ['bizName', 'bizAddress', 'gstin', 'grievanceName', 'grievancePhone', 'courtCity', 'policyDate'];
@@ -2230,7 +2230,7 @@ function viewProduct(id) {
   const care = p.care.map((c) => `<li>${esc(c)}</li>`).join('') + (p.cat === 'candles' || p.cat === 'gifts' && /candle/i.test(p.material) ? `<li>${esc(p.burnTime ? 'Burn time: ' + p.burnTime + '.' : 'Burn time to be confirmed by testing.')}</li>` : '');
   return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${subOf(p)}">${SUBS[subOf(p)].label}</a> / ${esc(p.name)}</nav>
   <div class="pdp"><div class="pdp-gallery"><div class="gal-main">${main}
-      </div>
+      <button class="room-try" type="button" data-act="room-open" data-id="${id}">${hl('home', 18)}${T('pdp.room')}</button></div>
     <div class="thumbs" role="group" aria-label="Images">${gal.map((x, i) => `<button type="button" data-act="pdp-img" data-id="${id}" data-i="${i}" aria-pressed="${i === gi}" aria-label="${esc(x.label)}">${thumb(x)}</button>`).join('')}</div>
     </div>
   <div class="pdp-info"><span class="eyebrow">${p.cat === 'candles' ? SUBS[subOf(p)].label.replace(/s$/, '') : 'Jesmonite'} · ${p.notes ? esc(p.notes.join(', ')) : esc(p.type)}</span>
@@ -3168,9 +3168,27 @@ function launchItems() {
     ['Open the shop', 'Coming soon page switched off', SET.comingSoon === false, 'settings', 'Do this last']
   ];
 }
+// ---------- backup: one click in the Owner view, no need to open Supabase ----------
+const BACKUP_TABLES = ['orders', 'products', 'pairings', 'site_text', 'settings', 'stock', 'media', 'reviews', 'subscribers', 'restock_requests', 'gift_cards', 'coupons', 'points_log', 'invoices', 'invoice_counters', 'profiles', 'referrers', 'customer_meta', 'change_log'];
+const daysSinceBackup = () => { try { const d = localStorage.getItem('bt-last-backup'); return d ? Math.floor((Date.now() - new Date(d).getTime()) / 864e5) : null; } catch (e) { return null; } };
+function saveFile(name, mime, text) { const url = URL.createObjectURL(new Blob([text], { type: mime })); const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); }
+async function backupData() {
+  const out = { shop: 'BUD & THINGS by Ashi', saved: new Date().toISOString(), note: 'Keep this file private: it holds customers’ names, phones and addresses. Do not email it or put it in the repository.', tables: {}, skipped: [] };
+  if (!BTDB.on) { out.tables.orders = S.orders; out.tables.settings = DATA.settings || {}; out.skipped.push('database not connected: this is the copy kept in this browser'); return out; }
+  for (const tb of BACKUP_TABLES) { try { out.tables[tb] = await BTDB.list(tb, tb === 'change_log' ? 'order=at.desc&limit=2000' : 'limit=20000'); } catch (e) { out.skipped.push(tb + ': ' + (e.message || 'not readable')); } }
+  return out;
+}
+const csvCell = (v) => { v = v == null ? '' : String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+function ordersCsv(rows) {
+  const head = ['Order', 'Placed', 'Status', 'Name', 'Phone', 'Email', 'Items', 'Total (Rs)', 'Payment', 'Address', 'City', 'PIN', 'Tracking'];
+  const lines = [head.map(csvCell).join(',')];
+  rows.forEach((r) => { const d = Object.assign({ contact: {}, address: {}, items: [] }, r.data || r); lines.push([r.id, r.created_at || d.placedAt || '', r.status || d.status, d.contact.name, d.contact.phone, d.contact.email, (d.items || []).map((l) => (l.name || '') + ' ' + (l.label || '') + ' x' + (l.qty || 1)).join('; '), d.total != null ? d.total : '', d.method || '', [d.address.line1, d.address.line2].filter(Boolean).join(', '), d.address.city, d.address.pin, (d.parcel && d.parcel.awb) || ''].map(csvCell).join(',')); });
+  return '﻿' + lines.join('\r\n');
+}
 function admStart() {
   const items = launchItems(); const today = admToday(); const done = items.filter((x) => x[2]).length; const pct = Math.round(done * 100 / items.length); const groups = [...new Set(items.map((x) => x[0]))];
-  return `${today}<div class="adm-card"><h2 style="font-size:26px">${done} of ${items.length} ready to launch</h2><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Launch progress" style="height:14px;border-radius:7px;background:var(--linen);overflow:hidden;margin:10px 0"><div style="height:100%;width:${pct}%;background:var(--cta)"></div></div>
+  const bd = daysSinceBackup(); const bk = `<div class="adm-card"><h2 style="font-size:20px">Backup</h2><p class="muted" style="margin:0 0 10px">${bd === null ? 'No backup downloaded from this device yet.' : bd === 0 ? 'Last backup from this device: today.' : 'Last backup from this device: ' + bd + ' day' + (bd === 1 ? '' : 's') + ' ago.'}${bd === null || bd >= 7 ? ' <strong>Do one now, then once a week.</strong>' : ''} It saves every order, product, stock count, setting and customer record to one file. Keep it private (your own Drive, with 2-step sign-in). Never email it.</p><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="adm-backup">Download full backup</button><button class="btn ghost" type="button" data-act="adm-backup-csv">Orders as a spreadsheet</button></span></div>`;
+  return `${today}${bk}<div class="adm-card"><h2 style="font-size:26px">${done} of ${items.length} ready to launch</h2><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Launch progress" style="height:14px;border-radius:7px;background:var(--linen);overflow:hidden;margin:10px 0"><div style="height:100%;width:${pct}%;background:var(--cta)"></div></div>
     <p class="muted">${pct === 100 ? 'Everything on the list is done. Switch the Coming soon page off to open the shop.' : 'Work down the list. “Fix” takes you to the right tab. This list checks what is saved now; it cannot judge photo quality or legal wording.'}</p></div>
     ${groups.map((g) => `<div class="adm-card"><h2 style="font-size:20px">${esc(g)}</h2>${items.filter((x) => x[0] === g).map(([, l, ok, tab, hint]) => `<div class="lrow" style="grid-template-columns:auto 1fr auto;align-items:center"><span aria-hidden="true" style="font-size:20px">${ok ? '✓' : '○'}</span><span><strong>${esc(l)}</strong>${hint ? `<br><span class="muted">${esc(hint)}</span>` : ''}<span class="sr"> ${ok ? 'done' : 'not done'}</span></span>${ok ? '<span></span>' : `<button class="btn small ghost" type="button" data-act="adm-goto" data-v="${tab}" aria-label="Fix: ${esc(l)}">Fix</button>`}</div>`).join('')}</div>`).join('')}`;
 }
@@ -4874,6 +4892,8 @@ document.addEventListener('click', (e) => {
     case 'ft-noask': UI.adm.ftAsk = null; render(); break;
     case 'ft-apply': admDo(async () => { await dbPut('settings', [{ key: 'festiveScene', value: d.v }, { key: 'festiveUntil', value: festUntil(d.v) }]); UI.festPrev = null; UI.adm.ftAsk = null; const s = BTFest.scenes.find((x) => x.id === d.v); if (route() !== 'admin') location.hash = '#admin'; festCelebrate((s ? s.name : 'Festive') + ' look is live', 'Customers now see it on the Home page. Good luck this season.'); }, 'Saved.'); break;
     case 'ft-off': admDo(async () => { await dbPut('settings', [{ key: 'festiveScene', value: '' }, { key: 'festiveUntil', value: '' }]); UI.festPrev = null; render(); }, 'Festive look turned off.'); break;
+    case 'adm-backup': admDo(async () => { const b = await backupData(); const day = new Date().toISOString().slice(0, 10); saveFile('bt-backup-' + day + '.json', 'application/json', JSON.stringify(b, null, 1)); try { localStorage.setItem('bt-last-backup', new Date().toISOString()); } catch (e) { /* private window */ } render(); say('Backup saved to your downloads' + (b.skipped.length ? ' (' + b.skipped.length + ' table' + (b.skipped.length === 1 ? '' : 's') + ' could not be read)' : '') + '. Move it to your private Drive.'); }); break;
+    case 'adm-backup-csv': admDo(async () => { const rows = BTDB.on ? await BTDB.list('orders', 'order=created_at.desc&limit=20000') : S.orders; saveFile('bt-orders-' + new Date().toISOString().slice(0, 10) + '.csv', 'text/csv', ordersCsv(rows)); say('Orders saved as a spreadsheet. Keep it private.'); }); break;
     case 'adm-mode': UI.adm.mode = UI.adm.mode === 'full' ? 'simple' : 'full'; try { localStorage.setItem('bt-adm-mode', UI.adm.mode); } catch (e) { /* private window */ } render(); break;
     case 'adm-tab': UI.adm.cel = null; UI.adm.draft = null; UI.adm.tab = d.v; UI.adm.edit = null; UI.adm.formErr = null; UI.adm.upMsg = null; UI.adm.cust = null; if (BTDB.on && ['orders', 'reviews', 'people', 'stock', 'cards', 'coupons', 'rewards', 'invoices', 'events'].includes(d.v)) UI.adm.rows = {}; render(); break;
     case 'imp-fetch': impFetch(); break;

@@ -1,0 +1,53 @@
+name: Deploy shop functions (manual)
+
+# Puts the repository's pay, delivery and notify functions onto the Supabase project, from the GitHub website or app:
+# Actions tab, "Deploy shop functions (manual)", Run workflow, pick which one. No computer or command line needed.
+# One-time set-up: add a repository secret named SUPABASE_ACCESS_TOKEN (Supabase: Account, Access Tokens, Generate new
+# token; GitHub: Settings, Secrets and variables, Actions, New repository secret). The token is used only here and is
+# never printed. The functions' own keys (Razorpay, Shiprocket, Resend) stay saved in Supabase and are not touched.
+on:
+  workflow_dispatch:
+    inputs:
+      which:
+        description: 'Which function to deploy'
+        required: true
+        default: 'pay and delivery'
+        type: choice
+        options:
+          - pay and delivery
+          - pay
+          - delivery
+          - notify
+          - all three
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Check the token is set
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then echo "SUPABASE_ACCESS_TOKEN is not set. See the note at the top of .github/workflows/deploy-functions.yml."; exit 1; fi
+      - name: Deploy
+        working-directory: bud-and-things
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          WHICH: ${{ inputs.which }}
+        run: |
+          case "$WHICH" in
+            "pay and delivery") list="pay delivery" ;;
+            "all three") list="pay delivery notify" ;;
+            *) list="$WHICH" ;;
+          esac
+          for f in $list; do
+            echo "Deploying $f"
+            npx --yes supabase@2 functions deploy "$f" --project-ref cgccziskvqyatrjqdtka --no-verify-jwt
+          done
