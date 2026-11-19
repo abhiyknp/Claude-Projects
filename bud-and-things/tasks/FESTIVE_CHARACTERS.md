@@ -16,6 +16,9 @@ Each festive look can show characters at random: one leaning on the main button 
 - **peek:** *The character peeks over a flat horizontal ledge that fills the bottom of the picture. Only the head, shoulders and both hands resting on the edge are visible. Looking at the viewer. The ledge is exactly the same green as the background.*
 - **wave:** *Upper body in the centre of the frame, three-quarter view, waving one hand and smiling at the viewer. No ledge.*
 
+## Status (19 Nov): all four looks complete
+Christmas: Santa, elf, reindeer, snowman peeking; Santa waving. New Year: fox, penguin, owl peeking; penguin and fox waving. Valentine's: bunny and bear peeking; bear waving. Eid: boy and girl peeking; boy waving. More can be added any time with `tools/cut-character.py`.
+
 ## Current scope: Christmas, New Year, Valentine's Day and Eid
 Holi, Diwali and Birthday get no characters for now (their looks keep the drawn decoration only). Their prompts are parked at the end of `FESTIVE_CHARACTER_PROMPTS.md`.
 

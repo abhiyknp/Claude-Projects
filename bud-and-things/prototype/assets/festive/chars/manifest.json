@@ -13,7 +13,12 @@
   "ny": {
     "peek": [
       "ny-peek-fox.webp",
-      "ny-peek-penguin.webp"
+      "ny-peek-penguin.webp",
+      "ny-peek-owl.webp"
+    ],
+    "wave": [
+      "ny-wave-fox.webp",
+      "ny-wave-penguin.webp"
     ]
   },
   "eid": {
@@ -30,7 +35,8 @@
       "val-wave-bear.webp"
     ],
     "peek": [
-      "val-peek-bunny.webp"
+      "val-peek-bunny.webp",
+      "val-peek-bear.webp"
     ]
   }
 }
