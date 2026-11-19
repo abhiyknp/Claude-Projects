@@ -93,5 +93,40 @@
     "id": "hl-orders",
     "template": "07-highlight-cover",
     "icon": "truck"
+  },
+  {
+    "id": "s01-slide1",
+    "template": "02-post-quote",
+    "kicker": "The story",
+    "title": "Why *BUD*?",
+    "sub": "Swipe to find out."
+  },
+  {
+    "id": "s01-slide2",
+    "template": "02-post-quote",
+    "kicker": "A bud is",
+    "title": "Something small, just beginning to *grow*.",
+    "sub": "A small beginning with room to become something beautiful."
+  },
+  {
+    "id": "s01-slide3",
+    "template": "02-post-quote",
+    "kicker": "& Things",
+    "title": "Room for whatever *comes next*.",
+    "sub": "Objects, scents and little rituals, added slowly and with thought."
+  },
+  {
+    "id": "s01-slide4",
+    "template": "02-post-quote",
+    "kicker": "We start with",
+    "title": "Candles and *Jesmonite*.",
+    "sub": "Hand-poured and hand-made in small batches by Ashi, in Greater Noida."
+  },
+  {
+    "id": "s01-slide5",
+    "template": "04-post-announce",
+    "kicker": "Made with thought",
+    "title": "Opening *soon*",
+    "sub": "Follow along while the shop gets ready. Link in bio to join the list."
   }
 ]
