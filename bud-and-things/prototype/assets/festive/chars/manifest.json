@@ -15,5 +15,22 @@
       "ny-peek-fox.webp",
       "ny-peek-penguin.webp"
     ]
+  },
+  "eid": {
+    "wave": [
+      "eid-wave-boy.webp"
+    ],
+    "peek": [
+      "eid-peek-girl.webp",
+      "eid-peek-boy.webp"
+    ]
+  },
+  "val": {
+    "wave": [
+      "val-wave-bear.webp"
+    ],
+    "peek": [
+      "val-peek-bunny.webp"
+    ]
   }
 }
