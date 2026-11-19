@@ -62,6 +62,9 @@ jobs:
             printf '%s\n' '</body>' '</html>'
           } > _site/index.html
           touch _site/.nojekyll
+          # Stamp the scripts and styles with this commit, so browsers and Cloudflare fetch fresh copies after every deploy
+          # (a fixed ?v=1 let an old festive.js stay in caches after it changed).
+          sed -i -E "s#(db|festive)\.(js|css)\?v=[A-Za-z0-9]+#\1.\2?v=${GITHUB_SHA::8}#g" _site/index.html
       - name: Add the catalogue pages (budandthings.com/catalogue/, /share/, /light/, /diwali/)
         run: |
           mkdir -p _site/catalogue
