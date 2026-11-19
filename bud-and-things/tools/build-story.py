@@ -6,6 +6,11 @@ import json, os
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 WA_NUMBER = '917985508939'                      # shop WhatsApp, digits only with country code. Empty: picks go via Instagram DM
 IG = 'budandthings_official'
+# PLACEHOLDER rewards: Ashi must confirm every code and offer before launch. w = weight (higher = more common).
+REWARDS = {
+  'a': [{'c': 'DIWALI5', 't': '5% off your order', 'w': 70}, {'c': 'DIWALIWRAP', 't': 'Free gift wrap', 'w': 30}],
+  'b': [{'c': 'DIWALI10', 't': '10% off your order', 'w': 60}, {'c': 'DIWALITEA', 't': 'Free tealight with your order', 'w': 40}],
+  'terms': 'Rewards are confirmed by Ashi on WhatsApp. One reward per customer. Valid during Diwali.'}
 CH = [('Glass Candles', 'Glass candles', 'Little jars of light'), ('Tealight Candles', 'Tealights', 'Tiny flames for every thali'),
       ('Moulded Candles', 'Moulded candles', 'Shapes that make you smile'), ('Jesmonite Tray', 'Jesmonite trays', 'For sweets, keys and keepsakes')]
 P = json.load(open(f'{ROOT}/catalogue/products.json'))['products']
@@ -16,7 +21,7 @@ for tab, title, tag in CH:
         if p['sheetTab'] != tab or p['name'] in seen: continue
         seen.add(p['name']); items.append({'id': p['id'].lower(), 'n': p['name'], 'p': p['price'], 'i': p['img']})
     out.append({'t': title, 'g': tag, 'items': items})
-data = json.dumps({'wa': WA_NUMBER, 'ig': IG, 'ch': out}, ensure_ascii=False).replace('</', '<\\/')
+data = json.dumps({'wa': WA_NUMBER, 'ig': IG, 'rw': REWARDS, 'ch': out}, ensure_ascii=False).replace('</', '<\\/')
 tpl = open(f'{ROOT}/tools/story-template.html').read()
 open(f'{ROOT}/catalogue/diwali/index.html', 'w').write(tpl.replace('/*DATA*/', data))
 print(sum(len(c['items']) for c in out), 'pieces')
