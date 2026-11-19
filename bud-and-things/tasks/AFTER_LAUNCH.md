@@ -12,7 +12,7 @@ Procedure, per candle size:
 1. Weigh the candle without lid. Trim wick to 5 mm. Room: no draught, flat surface.
 2. Light it. Note start time. Burn in sessions of 3 to 4 hours (never longer), cool and re-trim between sessions.
 3. Stop when about 1 cm of wax is left. Note total burn hours.
-4. Do it for 2 candles of each size. Publish the lower number, rounded down to 5 hours.
+4. Do it for 2 candles of each size. Publish the lower number, rounded down to a whole hour (half an hour under 4 hours). Printed labels leave the burn-time line out until this is done; after testing, print with `BURN_TESTED=1 node tools/make-labels.js` and make sure the times on the label match the tested ones. The full team brief is in the "Testing, documents and wording brief" document.
 5. Record in the log below, then enter it in Owner view, product details.
 
 | Date | Product code | Size | Wick | Candle 1 hours | Candle 2 hours | Published hours | Notes (soot, tunnelling, flame height) |

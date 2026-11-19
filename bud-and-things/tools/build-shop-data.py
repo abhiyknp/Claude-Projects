@@ -6,7 +6,7 @@ Real photos: prototype/assets/catalogue/<id>.jpg (a real photo replaces the shee
 import json, os, re
 H = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 rows = json.load(open(H + '/data/catalogue.sheet.json'))
-fix = {'Vanila': 'Vanilla', 'Whit Oud': 'White Oud', 'Marrigold Glow': 'Marigold Glow'}  # spelling fixes in public text only
+fix = {'Vanila': 'Vanilla', 'Whit Oud': 'White Oud', 'Marrigold Glow': 'Marigold Glow', 'Angle & Amber': 'Angel & Amber'}  # spelling fixes in public text only
 def tidy(s): s = (s or '').strip(); return fix.get(s, s)
 def cols(c): c = c.replace('Transperent', 'Transparent'); return re.sub(r'\s*\+\s*', ' and ', c.strip()).lower().replace('multi color', 'multicolour')
 names = {}
