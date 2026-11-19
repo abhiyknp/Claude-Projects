@@ -1,5 +1,7 @@
 # Festive characters: ready-to-paste prompts
 
+**Current scope: Christmas, New Year, Valentine's Day and Eid only.**
+
 Paste **STYLE + POSE + CHARACTER** as one prompt into ChatGPT images, Gemini or Midjourney. Landscape 3:2. Ask for one image at a time and send each to Claude with its name, for example "penguin, wave" (the look and pose are in the table).
 
 ## STYLE (put first, every time)
@@ -30,12 +32,16 @@ Keep these respectful and friendly. No religious figures, no text or calligraphy
 | 2 | PEEK | `girl` | A smiling South Asian girl of about eight in a soft pastel dupatta with gold trim, holding a small glowing lantern with both hands. |
 | 3 | WAVE | `boy` | The same smiling boy in his cream and gold kurta and white cap, waving one hand, a small glowing golden lantern in the other hand. |
 
+## Parked for now (not in the current scope)
+Holi, Diwali and Birthday get no characters for now; those looks keep their drawn decoration only. The prompts are kept here in case you want them later.
+
 ## Holi (look `holi`) (about 22 March 2027)
 | # | Pose | Name | CHARACTER line |
 |---|---|---|---|
 | 1 | PEEK | `boy` | A laughing South Asian boy of about eight in a white kurta splashed with pink, yellow, blue and orange colour powder, powder on his hair and cheeks, a puff of coloured powder in the air. |
 | 2 | PEEK | `girl` | A laughing South Asian girl of about eight in a white kurta splashed with colour, holding a bright pichkari (toy water gun), colour powder on her cheeks and hair. |
 | 3 | WAVE | `boy` | The same laughing boy in his colour-splashed white kurta, waving one hand covered in bright pink powder, a little coloured powder floating around him. |
+
 
 ## Diwali (look `diw`) (next October or November)
 No religious figures or symbols on the characters. Lamps and sparklers only.
@@ -45,12 +51,14 @@ No religious figures or symbols on the characters. Lamps and sparklers only.
 | 2 | PEEK | `boy` | A smiling South Asian boy of about eight in a cream and gold kurta holding a gentle gold sparkler that throws soft light. |
 | 3 | WAVE | `girl` | The same smiling girl in her maroon and gold lehenga and marigold garland, waving one hand, a small lit diya in the other hand. |
 
+
 ## Birthday (look `bday`) (any day)
 | # | Pose | Name | CHARACTER line |
 |---|---|---|---|
 | 1 | PEEK | `bear` | A cheerful teddy bear in a striped party hat holding a bunch of bright balloons by their strings. |
 | 2 | PEEK | `bunny` | A happy bunny in a small party hat holding a cupcake with a single lit candle. |
 | 3 | WAVE | `bear` | The same cheerful teddy bear in its striped party hat, waving one paw, a few confetti pieces in the air. |
+
 
 ## Extra, only if you want more variety
 | Look | Pose | Name | CHARACTER line |

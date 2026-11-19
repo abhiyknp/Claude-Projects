@@ -38,6 +38,7 @@ def main():
         key = np.median(corners, axis=0)
         dist = np.sqrt(((c - key) ** 2).sum(-1))
         alpha = np.clip((dist - 70) / (150 - 70), 0, 1)
+        alpha = np.clip((alpha - .45) / .55, 0, 1)      # drop the faint green-tinted halo around fur and hair
     # the green behind the character is not perfectly flat: estimate it so edges unmix cleanly
     bgmask = (alpha < .02).astype(np.float32)
     den = gaussian_filter(bgmask, 40)
@@ -46,6 +47,11 @@ def main():
     f = np.clip((c - (1 - a3) * bg) / np.maximum(a3, .05), 0, 255)
     lim = np.maximum(f[..., 0], f[..., 2])
     f[..., 1] = np.where(alpha < .999, np.minimum(f[..., 1], lim + 4), f[..., 1])   # remove green spill on edges
+    # bright background-green left on the very edge of the character (fur, hair): pull it back to neutral near the outline only
+    from scipy.ndimage import binary_dilation
+    edge = binary_dilation(alpha < .98, iterations=4)
+    spill = edge & (f[..., 1] > f[..., 0] + 25) & (f[..., 1] > f[..., 2] + 25) & (f[..., 1] > 140)
+    f[..., 1] = np.where(spill, np.maximum(f[..., 0], f[..., 2]) + 2, f[..., 1])
     H, W = alpha.shape
     if pose == 'peek':
         # the ledge shadow leaves faint smudges under the hands: drop anything not solid in the lower part
@@ -59,6 +65,13 @@ def main():
     if pose == 'wave':
         y = np.arange(H)[:, None].astype(np.float32)
         alpha *= np.clip((H - 1 - y) / (H * .06), 0, 1)      # soft fade where the body leaves the frame
+    # the outline keeps its softness (alpha) but takes its colour from the solid pixels a few pixels inside, so no background
+    # green or dark rim survives on fur or hair
+    from scipy.ndimage import distance_transform_edt, binary_erosion
+    solid = binary_erosion(alpha >= .97, iterations=4)
+    if solid.any():
+        _, (iy, ix) = distance_transform_edt(~solid, return_indices=True)
+        f = np.where(solid[..., None], f, f[iy, ix])
     out = Image.fromarray(np.dstack([f, alpha * 255]).astype(np.uint8), 'RGBA')
     bb = out.getchannel('A').point(lambda v: 255 if v > 30 else 0).getbbox()
     out = out.crop(bb)
