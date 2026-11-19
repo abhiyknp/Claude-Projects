@@ -43,7 +43,9 @@ function product(post) {
   const sc = s && s.scent ? s.scent.trim() : '';
   const scent = sc && !/^(n\/a|any)/i.test(sc) ? (SCENT_FIX[sc] || sc) + ' scent' : '';
   const type = p.type.replace(/^./, (c) => c.toUpperCase());
-  return { name, price: p.price, meta: [type, scent].filter(Boolean).join(' · '), img: p.img };
+  const slug = name.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const own = ['jpg', 'jpeg', 'png', 'webp'].flatMap((x) => [`${id.toLowerCase()}.${x}`, `${slug}.${x}`]).find((f) => fs.existsSync(path.join(ROOT, 'photos', f)));
+  return { name, price: p.price, meta: [type, scent].filter(Boolean).join(' · '), img: own || p.img };
 }
 const priceHtml = (price, post) => (brand.showPrices && post.price !== false && price != null) ? `<span class="pill">${inr(price)}</span>` : '';
 

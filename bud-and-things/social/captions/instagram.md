@@ -156,7 +156,7 @@ Gifts by budget, all made by hand.
 ₹200 · a glass candle
 ₹300 · a Murphy candle
 
-Pick the number, then the person. We'll wrap it and write your note. (Gift wrap ₹99; shipping ₹99, free over ₹1,999.)
+Pick the number, then the person. We'll wrap it and write your note. (Gift wrap and shipping are shown at checkout.)
 
 Save this for the next birthday you forget. 😄
 

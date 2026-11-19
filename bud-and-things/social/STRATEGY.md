@@ -85,7 +85,7 @@ Look once a week at: saves and shares (these matter more than likes), profile vi
 
 ## 9. Open questions for the owner
 
-- **Instagram handle.** The site footer links to `@budandthings_offical`. Is that spelling right? (It lives in `brand.json`; change once there.)
+- **Instagram handle.** `@budandthings_official` (confirmed). Note: the website currently links to the misspelling `budandthings_offical`; see README "Site fix".
 - **Prices on graphics.** Templates show prices by default. Set `"showPrices": false` in `brand.json` to hide them.
 - **Product names.** The catalogue says "Angle & Amber" (probably "Angel & Amber"?) and "Murphy candle" (is this the right trade name for the gel-style jars?). Plans use the catalogue's names as they are. Fix them in the Owner view first, then the content follows.
 - **Christmas delivery dates.** The plan deliberately has no order-by or last-dispatch date. Posts say "order early" and quote the site's delivery time (4 to 7 days). Add a date later only after checking real courier times.

@@ -4,8 +4,7 @@ You already have a business account and nothing else. Do these in order. Tick ea
 
 ## Step 1 · Handle and name (10 min)
 
-- [ ] **Handle.** Send it to me and I'll put it into `brand.json` once, so every graphic picks it up. The website currently links to `@budandthings_offical` (spelled "offical"). If that is your real handle, keep it. If it is a typo, change it now, before you have followers: Instagram allows changing a username, but old links and any printed material break. Whatever you choose, make sure the website footer link and Pinterest/YouTube bios match (the site setting is in the Owner view; one place in the code is fixed text, which I can change after launch).
-  Good handle rules: short, no underscores or numbers if you can avoid them, easy to say aloud (`budandthings` is ideal).
+- [ ] **Handle:** `budandthings_official` (confirmed, saved in `brand.json`). Check the spelling in the Instagram username field exactly: `official`, not `offical`. Use the same handle on Pinterest, YouTube and WhatsApp Channel.
 - [ ] **Name field** (this is searchable, up to 64 characters; it is not your handle):
 
 ### NAME-1

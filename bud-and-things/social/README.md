@@ -8,6 +8,8 @@ Everything for Instagram, YouTube Shorts, WhatsApp and Pinterest from launch (Fr
 | [ACCOUNT_SETUP.md](ACCOUNT_SETUP.md) | Build the Instagram account from zero: name, bio, link, settings, Highlights |
 | [ROLLOUT.md](ROLLOUT.md) | **Start here.** Day-by-day first 14 days, the first 9 posts, daily engagement routine, first-100 targets |
 | [OUTREACH.md](OUTREACH.md) | Ready-to-send messages: friends, creators, businesses, offices; saved replies |
+| [SHOOT_BRIEF.md](SHOOT_BRIEF.md) | **Send to the team:** exactly which photos and clips are needed, specs and file names |
+| [PRICING_UPDATE.md](PRICING_UPDATE.md) | What to re-check when the new prices and shipping arrive |
 | `account-assets/` | Profile picture and 7 Highlight covers, ready to upload |
 | [STRATEGY.md](STRATEGY.md) | Who it's for, 4 pillars, tone, honest-marketing rules, platform split, open questions |
 | [CALENDAR.md](CALENDAR.md) | Day by day, 14 Nov to 31 Dec: what to post, hook, caption ID, what to prepare |
@@ -77,3 +79,7 @@ The site's catalogue pictures are marked **temporary** in the main README, and s
 ## Open questions
 
 See the last section of [STRATEGY.md](STRATEGY.md): the Instagram handle spelling, whether to show prices, two product names that look like typos, courier dates for Christmas, and the gift box.
+
+## Site fix (not done: no site changes before launch)
+
+The website's footer link to Instagram is fixed in `prototype/index.html` as `https://www.instagram.com/budandthings_offical/` (misspelled: **offical**). The real handle is `budandthings_official`. Until fixed, visitors from the site land on the wrong page. Quick fix: in the Owner view, Settings, set Instagram to `budandthings_official` (the footer social icons use that setting). The fixed link in the pay section needs a one-word code change after launch; tell me when you want it done.

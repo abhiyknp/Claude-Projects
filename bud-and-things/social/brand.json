@@ -1,6 +1,5 @@
 {
   "site": "budandthings.com",
-  "handle": "@budandthings_offical",
-  "showPrices": true,
-  "_note": "handle is copied from the Instagram link in the website footer (prototype/index.html). It looks like it may have a typo ('offical'). Confirm it, then change it here once: every graphic picks it up."
+  "handle": "@budandthings_official",
+  "showPrices": true
 }
