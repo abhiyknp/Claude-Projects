@@ -9,7 +9,8 @@
 // Needs Playwright (PLAYWRIGHT_PATH, as the tests use) because the block is the app's own drawing of the page, not a
 // second copy of its text kept by hand.
 const fs = require('fs'), path = require('path'), http = require('http');
-const dir = process.argv[2]; if (!dir) { console.error('usage: prerender-soon.js <site folder>'); process.exit(1); }
+const arg = process.argv[2]; if (!arg) { console.error('usage: prerender-soon.js <site folder>'); process.exit(1); }
+const dir = path.resolve(arg); // the workflow passes a relative folder (_site): the file server below needs the full path
 const file = path.join(dir, 'index.html');
 const MOUNT = '<main id="app" tabindex="-1"></main>';
 const cfg = fs.readFileSync(path.join(__dirname, '..', 'prototype', 'config.js'), 'utf8');
@@ -39,7 +40,7 @@ async function comingSoonIsOn() {
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.woff2': 'font/woff2', '.jpg': 'image/jpeg', '.ico': 'image/x-icon' };
   const server = http.createServer((q, r) => {
     const p = decodeURIComponent(q.url.split('?')[0]); const f = path.join(dir, p.endsWith('/') ? p + 'index.html' : p);
-    if (!f.startsWith(path.resolve(dir))) { r.writeHead(403); return r.end(); }
+    if (!f.startsWith(dir + path.sep)) { r.writeHead(403); return r.end(); }
     fs.readFile(f, (e, b) => { if (e) { r.writeHead(404); return r.end(); } r.writeHead(200, { 'content-type': types[path.extname(f)] || 'application/octet-stream' }); r.end(b); });
   });
   await new Promise((res) => server.listen(0, '127.0.0.1', res));
