@@ -883,6 +883,38 @@ body.app .why-band { padding-bottom: 96px; }
 .track-form .field { flex: 1 1 200px; }
 .signin { max-width: 520px; margin: 0 auto; padding: clamp(24px, 5vw, 36px) clamp(20px, 4vw, 32px); background: var(--card); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
 .signin .btn { align-self: flex-start; }
+.acct-hero { position: relative; overflow: hidden; display: flex; flex-wrap: wrap; gap: 28px 40px; align-items: center; justify-content: space-between; margin-top: var(--s5, 28px); padding: 34px 34px 30px; color: var(--ivory); background: radial-gradient(120% 140% at 12% 0%, rgba(214,163,74,.20), transparent 55%), linear-gradient(135deg, #150206 0%, #4a0b1c 58%, #7A1229 100%); border-bottom: 3px solid #D6A34A; animation: acctRise .7s ease both; }
+.acct-hero .eyebrow { color: #D6A34A; } .acct-hero h1 { color: #fff; font-size: clamp(34px, 5vw, 52px); margin: 6px 0 8px; } .acct-hero p { margin: 0 0 8px; } .acct-hero .muted { color: #e6d3b6; }
+.ah-main { display: flex; gap: 20px; align-items: flex-start; position: relative; z-index: 1; min-width: 0; flex: 1 1 380px; }
+.ah-flame { color: #D6A34A; flex: none; margin-top: 4px; transform-origin: 50% 90%; animation: flicker 2.6s ease-in-out infinite; filter: drop-shadow(0 0 14px rgba(214,163,74,.55)); }
+.ah-story { font-size: 18px; max-width: 46ch; } .ah-sub { font-size: 13px; color: #e6d3b6; } .ah-sub .linkbtn { color: #f3dca6; }
+.ah-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.ah-chip { display: inline-flex; gap: 6px; align-items: baseline; padding: 8px 14px; border: 1px solid rgba(214,163,74,.7); color: #fff; text-decoration: none; font-size: 14px; } .ah-chip:hover { background: rgba(214,163,74,.18); } .ah-chip strong { color: #f3dca6; font-size: 18px; }
+.ah-pts { display: flex; gap: 18px; align-items: center; position: relative; z-index: 1; flex: 1 1 300px; max-width: 420px; padding: 18px; background: rgba(255,252,246,.06); border: 1px solid rgba(214,163,74,.45); }
+.ring-wrap { position: relative; width: 92px; height: 92px; flex: none; display: grid; place-items: center; } .ring { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ring-bg { fill: none; stroke: rgba(255,255,255,.14); stroke-width: 7; } .ring-fg { fill: none; stroke: #D6A34A; stroke-width: 7; stroke-linecap: round; animation: ringIn 1.4s .3s ease-out both; }
+.ring-n { font: 500 26px var(--display); color: #fff; } .ah-pt-txt { display: grid; gap: 4px; font-size: 14px; } .ah-pt-txt strong { color: #f3dca6; }
+.embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; } .embers i { position: absolute; bottom: -8px; left: calc(var(--x) * 1%); width: 4px; height: 4px; border-radius: 50%; background: #D6A34A; opacity: 0; box-shadow: 0 0 8px 2px rgba(214,163,74,.6); animation: ember 7s linear infinite; animation-delay: var(--d); }
+.acct-live { margin-top: 24px; padding: 22px 26px 18px; background: #fff; border: 1px solid #D6A34A; display: grid; gap: 14px; animation: acctRise .7s .15s ease both; }
+.al-top { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: baseline; } .al-top strong { font-size: 20px; }
+.jr { list-style: none; margin: 0; padding: 0; display: flex; } .jr li { flex: 1; display: grid; justify-items: center; gap: 6px; text-align: center; position: relative; font-size: 12px; color: #8a7466; }
+.jr li + li::before { content: ''; position: absolute; top: 15px; right: 50%; width: 100%; height: 2px; background: var(--line, #E4D3B8); z-index: 0; } .jr.big li + li::before { top: 22px; height: 3px; }
+.jr-dot { position: relative; z-index: 1; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #F8F0E4; border: 2px solid var(--line, #E4D3B8); color: #8a7466; } .jr.big .jr-dot { width: 46px; height: 46px; }
+.jr li.done .jr-dot { background: #8F1834; border-color: #8F1834; color: #fff; } .jr li.done + li::before, .jr li.now::before { background: #8F1834; }
+.jr li.now { color: #150206; font-weight: 700; } .jr li.now .jr-dot { background: #8F1834; border-color: #D6A34A; color: #fff; animation: nowGlow 2.2s ease-in-out infinite; }
+.acct-h { font-size: 28px; margin: 40px 0 14px; } .acct-shelf { margin-top: 36px; animation: acctRise .7s .25s ease both; }
+.shelf-head { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: baseline; margin-bottom: 12px; } .shelf-head h2 { font-size: 26px; }
+.shelf { list-style: none; margin: 0; padding: 0 0 8px; display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+.shelf-card { flex: 0 0 150px; scroll-snap-align: start; display: grid; gap: 6px; align-content: start; padding: 12px; background: var(--linen); } .shelf-card .tile { width: 100%; height: 130px; } .shelf-card strong { font-size: 15px; line-height: 1.25; }
+.ord-cards { list-style: none; margin: 0 0 32px; padding: 0; display: grid; gap: 12px; } .ord-card a { display: flex; gap: 16px; align-items: center; padding: 14px 16px; background: #fff; border: 1px solid var(--line, #E4D3B8); text-decoration: none; transition: box-shadow .2s, transform .2s; } .ord-card a:hover { box-shadow: 0 10px 26px rgba(21,2,6,.12); transform: translateY(-2px); }
+.ord-ths { display: flex; flex: none; } .ord-th { width: 46px; height: 56px; margin-left: -10px; border: 2px solid #fff; } .ord-th:first-child { margin-left: 0; } .ord-main { display: grid; gap: 8px; flex: 1; min-width: 0; }
+@keyframes acctRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes flicker { 0%, 100% { transform: scale(1) rotate(-1deg); } 25% { transform: scale(1.06, .96) rotate(1.5deg); } 55% { transform: scale(.97, 1.05) rotate(-1.5deg); } 80% { transform: scale(1.03) rotate(1deg); } }
+@keyframes ember { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: .9; } 100% { transform: translateY(-260px) translateX(18px); opacity: 0; } }
+@keyframes ringIn { from { stroke-dashoffset: var(--c); } }
+@keyframes nowGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(214,163,74,.7); } 50% { box-shadow: 0 0 0 9px rgba(214,163,74,0); } }
+@media (max-width: 720px) { .acct-hero { padding: 24px 18px; } .ah-pts { max-width: none; } .jr li { font-size: 11px; } .jr-dot { width: 28px; height: 28px; } .jr.big .jr-dot { width: 38px; height: 38px; } .jr.big li + li::before { top: 18px; } .ord-card a { align-items: flex-start; } }
+@media (prefers-reduced-motion: reduce) { .acct-hero, .acct-live, .acct-shelf, .ah-flame, .embers i, .ring-fg, .jr li.now .jr-dot { animation: none; } .embers { display: none; } }
 .acct-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .acct-card { display: flex; flex-direction: column; gap: 6px; padding: 22px; background: var(--linen); text-decoration: none; }
 .acct-card strong { font-family: var(--display); font-size: 48px; font-weight: 500; line-height: 1; }
@@ -2517,7 +2549,7 @@ function viewOrder(id) {
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
       ${BTDB.on ? '' : '<p class="muted" style="font-size:14px">Preview: move this order along from the <a href="#admin">Owner view</a> to see the customer side update.</p>'}
       <div class="status">Questions about this order? ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener">Message us on WhatsApp</a>` : 'Message us on WhatsApp'} or write to ${esc(SET.email)}.</div>
-      <span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="reorder" data-id="${o.id}">Buy again</button><a class="btn ghost" href="#shop">Keep browsing</a></span></div>
+      <span style="display:flex;gap:10px;flex-wrap:wrap">${o.status === 'Delivered' ? `<button class="btn" type="button" data-act="reorder" data-id="${o.id}">Order these again</button>` : !unpaid && !gone && o.parcel && o.parcel.track ? `<a class="btn" href="${esc(o.parcel.track)}" target="_blank" rel="noopener">Track with the courier</a>` : ''}<a class="btn ghost" href="#shop">Explore the shop</a></span></div>
     <aside class="checkout-side"><strong>${o.id}</strong>${o.items.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.name)} · ${esc(l.label)} × ${l.qty}</span><span class="num">${inr(l.price * l.qty)}</span></div>`).join('')}
       <div class="totals num">${row('Subtotal', inr(o.sub))}${o.ritual ? row('Ritual saving', '−' + inr(o.ritual), 'save') : ''}${o.codeOff ? row('Code ' + esc(o.code), '−' + inr(o.codeOff), 'save') : ''}${o.pointsUsed ? row('Bud Points', '−' + inr(o.pointsUsed), 'save') : ''}${row('Shipping', o.ship ? inr(o.ship) : 'Free')}${o.wrap ? row('Gift wrap', inr(o.wrap)) : ''}${o.cod ? row('Cash on delivery fee', inr(o.cod)) : ''}${o.cardOff ? row('Gift card ' + esc(o.card || ''), '−' + inr(o.cardOff), 'save') : ''}${row(cod ? 'To pay on delivery' : unpaid || gone ? 'Total' : 'Paid', inr(o.total), 'grand')}</div>
       ${giftSummary(o.gift)}
@@ -4224,16 +4256,46 @@ function signInBox(next) {
       <label class="check" style="font-size:14px"><input type="checkbox" id="acct-agree" ${A.agree ? 'checked' : ''}> <span>I agree to the <a href="#terms">terms</a> and <a href="#privacy">privacy policy</a>.</span></label>
       <button class="btn" type="submit">${A.busy ? 'Sending…' : 'Email me a code'}</button></form>`}</div>`;
 }
+// ---------- your account: a small corner of the shop that is yours ----------
+const ACCT_STEPS = [['Placed', 'Order in', 'note'], ['Packed', 'Packed by hand', 'gift'], ['Shipped', 'On its way', 'truck'], ['Delivered', 'Delivered', 'home']];
+function journeyHTML(o, big) {
+  const i = STATUSES.indexOf(o.status);
+  return `<ol class="jr${big ? ' big' : ''}" aria-label="Order progress: ${esc(o.status)}">${ACCT_STEPS.map(([k, l, ic], n) => `<li class="${n < i ? 'done' : n === i ? 'now' : ''}"${n === i ? ' aria-current="step"' : ''}><span class="jr-dot">${hl(ic, big ? 22 : 15)}</span><span class="jr-l">${l}</span></li>`).join('')}</ol>`;
+}
+const orderThumbs = (o) => o.items.slice(0, 3).map((l) => skuMap[l.sku] ? `<span class="tile ord-th" title="${esc(l.name)}">${tileArt(skuMap[l.sku].p, skuMap[l.sku].p.variants.indexOf(skuMap[l.sku].v), .3)}</span>` : '').join('');
+function orderCards(list) {
+  if (!list.length) return '<p class="muted">No orders yet. Your first one starts here.</p>';
+  const fmt = (o) => new Date(o.placedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  return `<ul class="ord-cards">${list.map((o) => `<li class="ord-card"><a href="#order-${esc(o.id)}"><span class="ord-ths" aria-hidden="true">${orderThumbs(o)}</span><span class="ord-main"><strong>${esc(o.id)}</strong><span class="muted">${fmt(o)} · ${o.items.length} piece${o.items.length === 1 ? '' : 's'} · <span class="num">${inr(o.total)}</span></span>${STATUSES.includes(o.status) ? journeyHTML(o, false) : `<span class="pill ${esc(String(o.status).split(' ')[0])}">${esc(o.status)}</span>`}</span></a></li>`).join('')}</ul>`;
+}
+const shelfItem = (p, vi) => { const v = p.variants[vi] || p.variants[0]; return `<li class="shelf-card"><a class="tile" href="#p-${p.id}" aria-label="${esc(p.name)}">${tileArt(p, vi, .5)}</a><strong>${esc(p.name)}</strong><span class="muted num">${inr(v.price)}</span>${stockOf(v.sku) > 0 ? `<button class="btn small ghost" type="button" data-act="add-sku" data-sku="${v.sku}">Add</button>` : '<span class="muted">Sold out</span>'}</li>`; };
+const acctShelf = (title, sub, items) => (items.length ? `<section class="acct-shelf"><div class="shelf-head"><h2>${title}</h2><span class="muted">${sub}</span></div><ul class="shelf">${items.join('')}</ul></section>` : '');
+function acctHero(a, list, pm) {
+  const hr = new Date().getHours(), part = hr < 5 ? 'Still up' : hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening', first = a.name ? a.name.split(' ')[0] : '';
+  const active = list.find((o) => ['Placed', 'Packed', 'Shipped'].includes(o.status)), last = list.find((o) => o.status === 'Delivered');
+  const story = active ? ({ Placed: 'Your order is in. We are getting it ready by hand.', Packed: 'Your pieces are packed and waiting for the courier.', Shipped: 'Your parcel is on its way to you.' })[active.status]
+    : last ? 'Your last order has arrived. Something new for the shelf?' : list.length ? 'Nothing is on its way right now. Something new for the shelf?' : 'Welcome. Your first order starts your Bud Points.';
+  const c = 2 * Math.PI * 34, mark = pm.available % 100, off = c * (1 - mark / 100);
+  const embers = [8, 22, 35, 51, 64, 78, 90].map((x, k) => `<i style="--x:${x};--d:${(k * 0.9).toFixed(1)}s"></i>`).join('');
+  return `<section class="acct-hero"><span class="embers" aria-hidden="true">${embers}</span>
+    <div class="ah-main"><span class="ah-flame" aria-hidden="true">${hl('flame', 46)}</span><div class="ah-txt"><span class="eyebrow">Your corner of BUD &amp; THINGS</span><h1 tabindex="-1">${part}${first ? ', ' + esc(first) : ''}.</h1><p class="ah-story">${esc(story)}</p>
+      <p class="ah-sub">Signed in as ${esc(a.email)}. <button class="linkbtn" type="button" data-act="acct-out">Sign out</button></p>
+      <span class="ah-chips"><a class="ah-chip" href="#track"><strong class="num">${list.length}</strong> order${list.length === 1 ? '' : 's'}</a><a class="ah-chip" href="#saved"><strong class="num">${S.saved.length}</strong> saved</a></span></div></div>
+    ${+SET.rewardPct ? `<div class="ah-pts"><span class="ring-wrap"><svg class="ring" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="34" class="ring-bg"/><circle cx="42" cy="42" r="34" class="ring-fg" style="--c:${c.toFixed(1)}" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 42 42)"/></svg><strong class="ring-n num">${pm.available}</strong></span>
+      <span class="ah-pt-txt"><span class="eyebrow">Bud Points</span><span>Worth <strong class="num">${inr(pm.available)}</strong> off your next order.</span><span class="muted">${100 - mark} more points to the next ₹100.${pm.pending ? ` ${pm.pending} more arrive once your open orders are delivered.` : ''} You earn ${esc(SET.rewardPct)}% back on every order.</span></span></div>` : ''}</section>`;
+}
 function viewAccount() {
   const a = S.account;
   if (!a && BTDB.on && BTDB.owner()) return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Account</h1><div class="signin"><span class="why-ic">${hl('user', 26)}</span><h2 style="font-size:32px">You are signed in as the Owner</h2><p class="muted">That sign-in (password plus your authenticator code) is for running the shop. This Account page is for customers, who sign in with a code sent to their email, so it is a separate sign-in. You can stay as the Owner, or try the customer side below.</p><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#admin">Open Owner view</a><button class="btn ghost" type="button" data-act="adm-signout">Sign out of Owner</button></span></div><details style="max-width:520px;margin:24px auto 0"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600">Try signing in as a customer</summary>${signInBox(UI.acct.next || '')}</details></div>`;
   if (!a) return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Sign in</h1>${signInBox(UI.acct.next || '')}</div>`;
-  loadMine(); const list = myOrders(); const pm = ptsMine();
-  return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Your account</span><h1 tabindex="-1">Hello${a.name ? ', ' + esc(a.name.split(' ')[0]) : ''}.</h1><p class="muted">Signed in as ${esc(a.email)}. <button class="linkbtn" type="button" data-act="acct-out">Sign out</button></p></div>
-    <div class="acct-grid">${+SET.rewardPct ? `<div class="acct-card points"><span class="eyebrow">Bud Points</span><strong class="num">${pm.available}</strong><span>Worth ${inr(pm.available)} off your next order.${pm.pending ? ` ${pm.pending} more arrive once your open orders are delivered.` : ''} You earn ${esc(SET.rewardPct)}% back on every order.</span></div>` : ''}
-      <a class="acct-card" href="#track"><span class="eyebrow">Orders</span><strong class="num">${list.length}</strong><span>Track an order →</span></a>
-      <a class="acct-card" href="#saved"><span class="eyebrow">Saved</span><strong class="num">${S.saved.length}</strong><span>Pieces you loved →</span></a></div>
-    <h2 style="font-size:28px;margin:36px 0 14px">Your orders</h2>${orderRows(list)}${profileBox()}</div>`;
+  loadMine(); const list = myOrders().slice().sort((x, y) => new Date(y.placedAt) - new Date(x.placedAt)); const pm = ptsMine();
+  const active = list.find((o) => ['Placed', 'Packed', 'Shipped'].includes(o.status));
+  const again = [...new Set(list.filter((o) => o.status === 'Delivered').flatMap((o) => o.items.map((l) => l.sku)))].filter((sku) => skuMap[sku]).slice(0, 12).map((sku) => shelfItem(skuMap[sku].p, skuMap[sku].p.variants.indexOf(skuMap[sku].v)));
+  const saved = S.saved.map((id) => byId[id]).filter(Boolean).slice(0, 12).map((x) => shelfItem(x, 0));
+  return `<div class="wrap acct" style="padding-bottom:var(--section)">${acctHero(a, list, pm)}
+    ${active ? `<section class="acct-live" aria-label="Your order right now"><span class="eyebrow">Where it is right now</span><div class="al-top"><strong>${esc(active.id)}</strong><span class="muted">${active.items.length} piece${active.items.length === 1 ? '' : 's'} · <span class="num">${inr(active.total)}</span>${active.parcel && active.parcel.awb ? ` · ${esc(active.parcel.courier || 'Courier')} · AWB <span class="num sel">${esc(active.parcel.awb)}</span>` : ''}</span></div>${journeyHTML(active, true)}<a class="linkbtn" href="#order-${esc(active.id)}">See the whole order →</a></section>` : ''}
+    ${acctShelf('Saved for later', 'Pieces you loved', saved)}${acctShelf('Order again', 'From your delivered orders', again)}
+    <h2 class="acct-h">Your orders</h2>${orderCards(list)}${profileBox()}</div>`;
 }
 
 // ---------- product page parts ----------
