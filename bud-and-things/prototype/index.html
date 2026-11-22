@@ -433,6 +433,19 @@ td input[type="number"] { width: 84px; min-height: 40px; }
 #bt-consent.cc-chip button { min-height: 32px; padding: 0 10px; font-size: 12px; font-weight: 500; background: rgba(248,240,228,.92); color: #7A1229; border-color: #D6A34A; }
 body.app #bt-consent.cc-chip { bottom: 88px; }
 @media (max-width: 520px) { #bt-consent.cc-bar { bottom: 8px; } body.app #bt-consent.cc-bar { bottom: 84px; } }
+.added-pop { position: fixed; top: 88px; right: 16px; width: min(380px, calc(100% - 32px)); z-index: 45; background: var(--ivory); border: 1px solid #D6A34A; border-top: 3px solid var(--cta, #8F1834); box-shadow: 0 18px 44px rgba(21,2,6,.3); padding: 14px 16px 16px; display: grid; gap: 12px; animation: addedIn .3s ease both; }
+.added-x { position: absolute; top: 4px; right: 4px; }
+.added-row { display: flex; gap: 12px; align-items: center; padding-right: 36px; }
+.added-pop .tile { width: 76px; height: 90px; flex-shrink: 0; gap: 4px; }
+.added-txt { display: grid; gap: 2px; min-width: 0; } .added-txt strong { font-size: 17px; line-height: 1.2; overflow-wrap: anywhere; }
+.added-actions { display: flex; gap: 8px; } .added-actions .btn { flex: 1; justify-content: center; text-align: center; }
+.added-pop .shipbar { margin: 0; }
+@keyframes addedIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+#cart-btn.bump { animation: cartBump .55s ease; }
+@keyframes cartBump { 0% { transform: scale(1); } 30% { transform: scale(1.28) rotate(-6deg); } 60% { transform: scale(.94) rotate(3deg); } 100% { transform: scale(1); } }
+@media (max-width: 720px) { .added-pop { top: auto; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 12px; right: 12px; width: auto; animation-name: addedUp; } }
+@keyframes addedUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .added-pop, #cart-btn.bump { animation: none; } }
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 60; background: var(--choc); color: var(--ivory); padding: 12px 18px; font-size: 15px; max-width: calc(100% - 32px); box-shadow: 0 10px 30px rgba(58,41,32,.25); }
 body.app .toast { bottom: 96px; }
 .search-panel { position: fixed; inset: 0; z-index: 50; background: var(--ivory); overflow: auto; padding-top: env(safe-area-inset-top, 0px); }
@@ -1495,7 +1508,7 @@ SEO_PAGES.forEach(([r, label, t, d]) => { TEXT['seo.t.' + r] = [t, 'Search & sha
 const TEXT_GROUPS = [['seo.', 'Search & sharing (SEO)'], ['bar.', 'Offers bar'], ['promo.', 'Offer banners'], ['why.', 'Why people buy from us'], ['acct.', 'Sign in'], ['track.', 'Track your order'], ['legal.', 'Policies'], ['soon.', 'Coming soon page'],['home.', 'Home page'], ['ghome.', 'Gift shop home page'], ['shop.', 'Shop'], ['pdp.', 'Product pages'], ['cart.', 'Cart'], ['co.', 'Checkout'], ['gift.', 'Gifting'], ['story.', 'Our Story'], ['help.', 'Help'], ['faq.', 'FAQ'], ['share.', 'Share with a friend'], ['gc.', 'Gift cards'], ['rem.', 'Gift reminders'], ['bulk.', 'Corporate & bulk gifts'], ['foot.', 'Footer']];
 // settings: money in ₹, lists of product ids separated by commas
 const SET_META = [
-  ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Delivery promise on product pages, e.g. Ships within 24 hours (empty to hide; only while it is true)', 'text'],
+  ['shipFee', 'Shipping fee (₹)', 'num'], ['freeOver', 'Free shipping over (₹, 0 for never)', 'num'], ['shipAuto', 'Live shipping rates: show each customer the quickest courier’s price for their PIN code. Off means the flat fee above', 'bool'], ['shipRound', 'Live rates: round the fee up to the next (₹)', 'num'], ['shipBuffer', 'Live rates: add to every fee (₹)', 'num'], ['shipMin', 'Live rates: lowest fee (₹)', 'num'], ['shipMax', 'Live rates: highest fee (₹, 0 for no limit)', 'num'], ['pieceG', 'Weight of a piece that has none set (grams)', 'num'], ['packG', 'Weight of the box and wrap in one parcel (grams)', 'num'], ['autoBook', 'Book the courier by itself when a payment is confirmed (otherwise use the Book button on each order)', 'bool'], ['deliveryDays', 'Delivery time', 'text'], ['orderBy', 'Delivery promise on product pages, e.g. Ships within 24 hours (empty to hide; only while it is true)', 'text'],
   ['exchangeDays', 'Replacement window (days)', 'num'], ['onlineOn', 'Offer online payment (Razorpay). Keep this off until Razorpay is live', 'bool'], ['upiQrOn', 'Offer manual UPI QR payment (the way customers pay while online payment is off)', 'bool'], ['upiId', 'UPI ID for the QR (for example name@bank)', 'text'], ['upiName', 'Name shown in the UPI app (up to 30 characters)', 'text'], ['codOn', 'Offer cash on delivery', 'bool'], ['codFee', 'Cash on delivery fee (₹)', 'num'],
   ['wrapFee', 'Gift wrap price (₹)', 'num'], ['ritualOff', 'Ritual saving: % off a candle and object bought together (0 for none)', 'num'],
   ['welcomeCode', 'Welcome code for newsletter sign-ups', 'text'], ['welcomeOff', 'Welcome code saving (%)', 'num'], ['repourPrice', 'Jar re-pour price (₹, 0 to hide)', 'num'], ['rewardPct', 'Bud Points: % of each paid order given back as points (1 point = ₹1; 0 to hide)', 'num'],
@@ -1516,7 +1529,7 @@ const THEME_KEYS = ['theme', 'homeStyle'];
 const HOME_STYLES = { gift: 'Gift shop: products and gifts first' };
 // what this browser shows: a Preview bar pick, else the owner's setting
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'gift'; };
-const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, onlineOn: false, upiQrOn: false, upiId: '', upiName: 'Bud & Things', codFee: 49, wrapFee: 99, ritualOff: 0, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
+const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 99, freeOver: 1999, shipAuto: false, autoBook: false, shipRound: 10, shipBuffer: 0, shipMin: 0, shipMax: 0, pieceG: 300, packG: 100, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, onlineOn: false, upiQrOn: false, upiId: '', upiName: 'Bud & Things', codFee: 49, wrapFee: 99, ritualOff: 0, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 599, rewardPct: 5,
   featured: 'bnt-prd-cg-001, bnt-prd-cg-002, bnt-prd-jt-001, bnt-prd-jt-004', giftPicks: 'bnt-prd-jt-001, bnt-prd-jt-002, bnt-prd-jt-004, bnt-prd-cg-001', homeRitual: '', newIn: 'bnt-prd-jt-005, bnt-prd-jt-003, bnt-prd-tl-001, bnt-prd-tl-002, bnt-prd-mc-002, bnt-prd-mc-001', spotlight: 'bnt-prd-cg-001', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, ownerWhatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
   bizName: 'BUD & THINGS by Ashi', bizAddress: 'Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, invTerms: '', invSignName: 'Ashi', hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: 'Abhishek Yadav', grievancePhone: '9839176160', courtCity: 'Greater Noida', policyDate: '3 November 2026',
   reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
@@ -1546,7 +1559,7 @@ const dropMissing = (str) => str.split('\n').map((line) => {
 }).join('\n');
 const fill = (s) => {
   const own = !!(BTDB.owner && BTDB.owner());
-  const out = String(s).replace(/\{(\w+)\}/g, (m, k) => (k === 'year' ? String(new Date().getFullYear()) : k === 'gstinText' ? (String(SET.gstin || '').trim() ? 'GSTIN: ' + String(SET.gstin).trim() + '. ' : '') : (LEGAL_KEYS.includes(k) || k === 'email') && !String(SET[k] || '').trim() ? (own ? '[to add]' : MISS) : k in SET ? (/Fee|Price|Over/.test(k) ? inr(SET[k]) : String(SET[k])) : m));
+  const out = String(s).replace(/\{(\w+)\}/g, (m, k) => (k === 'year' ? String(new Date().getFullYear()) : k === 'gstinText' ? (String(SET.gstin || '').trim() ? 'GSTIN: ' + String(SET.gstin).trim() + '. ' : '') : (LEGAL_KEYS.includes(k) || k === 'email') && !String(SET[k] || '').trim() ? (own ? '[to add]' : MISS) : k === 'shipFee' && SET.shipAuto && BTDB.on ? 'worked out at checkout for your PIN code' : k in SET ? (/Fee|Price|Over/.test(k) ? inr(SET[k]) : String(SET[k])) : m));
   return out.indexOf(MISS) >= 0 ? dropMissing(out) : out;
 };
 const Tx = (k) => fill(k in TXT ? TXT[k] : (TEXT[k] ? TEXT[k][0] : ''));
@@ -1951,10 +1964,21 @@ function addToCart(sku, qty, opts) {
   const n = Math.min(qty, avail);
   if (have) have.qty += n; else S.cart.push({ sku, qty: n });
   save(); track('add_to_cart', { sku, qty: n, source: (opts && opts.source) || 'product' });
-  if (!(opts && opts.quiet)) { UI.drawer = true; UI.drawerMsg = `Added ${n} × ${skuMap[sku].p.name} (${skuMap[sku].v.label}).` + (n < qty ? ' Only ' + n + ' left in stock.' : ''); }
+  if (!(opts && opts.quiet)) { const e = skuMap[sku]; showAdded({ pid: e.p.id, vi: e.p.variants.indexOf(e.v), title: e.p.name, label: e.v.label, price: e.v.price, total: (S.cart.find((l) => l.sku === sku) || {}).qty, short: n < qty }); }
   renderChrome(); renderOverlay();
   return true;
 }
+// The cart no longer slides open on every add. A small card appears by the cart button (the piece, what is left to free
+// shipping, View cart and Checkout), the cart button gives a little bump, and the card goes by itself after a few seconds,
+// unless the mouse or keyboard is on it. The cart opens from the cart button, or from the card.
+let addedTimer = 0;
+function showAdded(info) {
+  UI.added = info; clearTimeout(addedTimer);
+  const hide = () => { if (document.querySelector('.added-pop:hover, .added-pop:focus-within')) { addedTimer = setTimeout(hide, 3000); return; } UI.added = null; renderOverlay(); };
+  addedTimer = setTimeout(hide, 6000);
+  const cb = $('#cart-btn'); if (cb) { cb.classList.remove('bump'); void cb.offsetWidth; cb.classList.add('bump'); }
+}
+const hideAdded = () => { clearTimeout(addedTimer); if (UI.added) { UI.added = null; renderOverlay(); } };
 function toggleSave(id) { const i = S.saved.indexOf(id); if (i >= 0) { S.saved.splice(i, 1); say('Removed from saved.'); } else { S.saved.push(id); say('Saved. Find it under Saved.'); track('save', { id }); } save(); render(); }
 
 // ---------- routing ----------
@@ -2027,6 +2051,12 @@ function renderOverlay() {
       ${lines.length ? `<div class="drawer-foot">${totalsHTML(t)}<a class="btn" href="#checkout" data-act="close-cart">${S.account ? 'Checkout' : 'Sign in to checkout'}</a><span class="hint" style="text-align:center">${T('cart.gift')}</span><button class="btn ghost" type="button" data-act="close-cart">Keep browsing</button></div>` : ''}
     </aside>`;
   }
+  if (UI.added && !UI.drawer) {
+    const a = UI.added, ap = a.pid ? byId[a.pid] : null, at = totals();
+    h += `<div class="added-pop" role="status" aria-live="polite"><button class="icon-btn added-x" type="button" data-act="added-close" aria-label="Dismiss">${CLOSE}</button>
+      <div class="added-row">${ap ? `<span class="tile">${tileArt(ap, a.vi, .44)}</span>` : ''}<span class="added-txt"><span class="eyebrow">Added to your cart</span><strong>${esc(a.text || a.title)}</strong>${a.text ? '' : `<span class="muted">${esc(a.label)} · ${inr(a.price)}${a.total > 1 ? ' · ' + a.total + ' in your cart' : ''}${a.short ? ' · that is all we have left' : ''}</span>`}</span></div>
+      ${shipBar(at)}<div class="added-actions"><button class="btn small" type="button" data-act="open-cart">View cart (${cartCount()})</button><a class="btn small ghost" href="#checkout" data-act="added-close">${S.account ? 'Checkout' : 'Sign in to checkout'}</a></div></div>`;
+  }
   if (UI.search) {
     const q = UI.searchQ.trim().toLowerCase();
     const res = q ? P.filter((p) => (p.name + ' ' + p.type + ' ' + (p.notes || []).join(' ') + ' ' + p.line).toLowerCase().includes(q)) : [];
@@ -2074,20 +2104,45 @@ async function checkCoupon(v, base) {
   if (+c.per_customer > 0 && mine.filter((o) => o.code === c.code).length >= +c.per_customer) throw new Error('coupon_per_customer');
   return { code: c.code, kind: c.kind, amount: +c.amount, min_order: +c.min_order || 0, max_off: +c.max_off || 0 };
 }
+// live shipping: the price comes from Shiprocket through the delivery function, which saves it as a quote that the order
+// then points at. The browser never sets the fee; if the quote can't be had, the flat fee applies (the database does the same).
+const liveShip = () => !!(BTDB.on && SET.shipAuto);
+const quoteKey = (lines) => lines.map((l) => l.sku + 'x' + l.qty).sort().join(',') + '|' + String((UI.co.address && UI.co.address.pin) || '').trim();
+const shipQuoteFor = (lines) => { const q = UI.co.quote; return q && q.ok && q.key === quoteKey(lines) && Date.now() - q.at < 25 * 60e3 ? q : null; };
+function ensureQuote() {
+  const co = UI.co, lines = cartLines(); if (!liveShip() || !lines.length || !/^[1-9]\d{5}$/.test(String(co.address.pin || '').trim())) return;
+  const key = quoteKey(lines); if (co.quoteAsked === key && (!co.quote || co.quote.ok === false || Date.now() - co.quote.at < 25 * 60e3)) return;
+  co.quoteAsked = key; co.quote = null; const pin = String(co.address.pin).trim();
+  const done = (q) => { if (co.quoteAsked !== key) return; co.quote = q; if (co.step === 'pay') render(); else paintShip(); };
+  BTDB.fn('delivery', { action: 'quote', pin, items: lines.map((l) => ({ sku: l.sku, qty: l.qty })) })
+    .then((r) => done(r && r.ok ? { ok: true, key, at: Date.now(), id: r.quote, fee: +r.fee, days: r.days || null } : { ok: false, key }), () => done({ ok: false, key }));
+}
 function totals() {
   const lines = cartLines(); const sub = lines.reduce((a, l) => a + l.v.price * l.qty, 0); const ritual = ritualSaving(lines);
   const code = codeOk(UI.co.code) ? couponOffFor(UI.co.coupon, sub - ritual) : 0;
-  const ship = sub === 0 ? 0 : (+SET.freeOver && sub >= +SET.freeOver ? 0 : +SET.shipFee || 0);
+  // shipping: the flat fee, or at the payment step with live rates on, the quickest courier's price for this PIN and cart.
+  // Free over the owner's limit. place_order works it out again in the database.
+  const q = liveShip() ? shipQuoteFor(lines) : null; const shipWait = liveShip() && /^[1-9]\d{5}$/.test(String((UI.co.address && UI.co.address.pin) || '').trim()) && !q && !(UI.co.quote && UI.co.quote.ok === false && UI.co.quote.key === quoteKey(lines));
+  const flat = q ? q.fee : +SET.shipFee || 0; const freeNow = !!(+SET.freeOver && sub >= +SET.freeOver);
+  const ship = sub === 0 || freeNow ? 0 : flat;
   const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
   const cod = sub && UI.co.step === 'pay' && UI.co.method === 'cod' ? +SET.codFee || 0 : 0;
   const points = UI.co.usePts && S.account ? Math.max(0, Math.min(ptsMine().available, sub - ritual - code)) : 0;
   const pre = sub - ritual - code - points + ship + wrap + cod; const card = UI.co.gcard ? Math.min(UI.co.gcard.bal, pre) : 0;
-  return { sub, ritual, code, points, ship, wrap, cod, card, total: pre - card };
+  return { sub, ritual, code, points, ship, wrap, cod, card, total: pre - card, shipWait, shipLive: !!q, shipQuote: q ? q.id : '', shipDays: q ? q.days : null };
+}
+const shipLabel = (t) => `Shipping${t.shipLive ? ` <span class="hint">(quickest courier${t.shipDays ? ', about ' + t.shipDays + ' day' + (t.shipDays > 1 ? 's' : '') : ''})</span>` : +SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`;
+const shipValue = (t) => (t.shipWait ? 'Working it out…' : t.ship ? inr(t.ship) : 'Free');
+// show a new quote without redrawing the form (the customer may still be typing in it)
+function paintShip() {
+  const t = totals();
+  const r = document.querySelector('.checkout-side .sum-ship'); if (r) { r.firstElementChild.innerHTML = shipLabel(t); r.lastElementChild.textContent = shipValue(t); }
+  const g = document.querySelector('.checkout-side .grand'); if (g) g.lastElementChild.textContent = inr(t.total);
 }
 function totalsHTML(t) {
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   return `<div class="totals num">${row('Subtotal', inr(t.sub))}${t.ritual ? row(`Ritual saving <span class="hint">(${SET.ritualOff}% off candle + object)</span>`, '−' + inr(t.ritual), 'save') : ''}${t.code ? row(`Code ${esc(String(UI.co.code).toUpperCase())}`, '−' + inr(t.code), 'save') : ''}${t.points ? row(`Bud Points <span class="hint">(${t.points} used)</span>`, '−' + inr(t.points), 'save') : ''}
-    ${row(`Shipping${+SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`, t.ship ? inr(t.ship) : 'Free')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${t.card ? row(`Gift card ${esc(UI.co.gcard.code)}`, '−' + inr(t.card), 'save') : ''}${row('Total', inr(t.total), 'grand')}</div>`;
+    ${row(shipLabel(t), shipValue(t), 'sum-ship')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${t.card ? row(`Gift card ${esc(UI.co.gcard.code)}`, '−' + inr(t.card), 'save') : ''}${row('Total', inr(t.total), 'grand')}</div>`;
 }
 function shipBar(t) {
   if (!+SET.freeOver || !t.sub) return ''; const gap = +SET.freeOver - t.sub; const pct = Math.min(100, Math.round(t.sub / +SET.freeOver * 100));
@@ -2358,7 +2413,8 @@ function viewCheckout() {
   const co = UI.co; const lines = cartLines(); const t = totals(); const g = co.gift;
   if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
   if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:var(--s5) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
-  loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr'; if (co.method === 'upiqr' && !upiQrOk()) co.method = 'qr';
+  loadMine(); loadProfile(); applyProfile(); ensureQuote(); // the price is asked for as soon as a PIN is known, on any step
+  if (co.method === 'cod' && !SET.codOn) co.method = 'qr'; if (co.method === 'upiqr' && !upiQrOk()) co.method = 'qr';
   if (BTDB.on && !SET.onlineOn && co.method !== 'cod' && co.method !== 'upiqr') co.method = upiQrOk() ? 'upiqr' : SET.codOn ? 'cod' : co.method; // online payment is off: open on the UPI QR
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
@@ -2642,7 +2698,7 @@ function viewAdmin() {
 }
 
 // what Shiprocket booked for an order, for the Owner view
-const parcelNote = (o) => { const p = o.parcel; if (!p || !p.awb) return ''; return `<span class="muted" style="display:block;font-size:13px;margin-top:6px">${esc(p.courier || 'Courier')} · AWB <span class="num sel">${esc(p.awb)}</span>${p.status ? ' · ' + esc(p.status) : ''}${p.label ? ` · <a href="${esc(p.label)}" target="_blank" rel="noopener">Print label</a>` : ''}${p.pickupErr ? ` · pickup not booked: ${esc(p.pickupErr)}` : ''}</span>`; };
+const parcelNote = (o) => { const p = o.parcel; if (p && !p.awb && p.autoErr) return `<span class="muted" style="display:block;font-size:13px;margin-top:6px;color:#b00020">Automatic booking did not work (${esc(p.autoErr)}). Use Book courier to try again.</span>`; if (!p || !p.awb) return ''; return `<span class="muted" style="display:block;font-size:13px;margin-top:6px">${esc(p.courier || 'Courier')} · AWB <span class="num sel">${esc(p.awb)}</span>${p.status ? ' · ' + esc(p.status) : ''}${p.label ? ` · <a href="${esc(p.label)}" target="_blank" rel="noopener">Print label</a>` : ''}${p.pickupErr ? ` · pickup not booked: ${esc(p.pickupErr)}` : ''}</span>`; };
 // an order running late is a flag on the order (a reason, maybe a new date), not a new step
 const DELAY_REASONS = ['Courier is running late', 'Bad weather', 'Festival rush', 'Your piece is taking longer to make', 'We need to check your address', 'Something else'];
 const canDelay = (o) => ['Placed', 'Packed', 'Shipped'].includes(o.status);
@@ -4682,9 +4738,9 @@ function acctIn(email, next) {
 async function placeOrder(via) {
   const lines = cartLines(); const co = UI.co; if (!lines.length || co.placing) return;
   for (const l of lines) if (stockOf(l.sku) < l.qty) { UI.co.payErr = `${l.p.name} (${l.v.label}) sold out while you were checking out. Please update your cart.`; render(); return; }
-  const t = totals();
+  const t = totals(); if (t.shipWait) { co.payErr = 'We are still working out your shipping. Please try again in a moment.'; render(); return; }
   const o = { placedAt: new Date().toISOString(), contact: { ...co.contact }, address: { ...co.address }, method: via, status: 'Placed', items: lines.map((l) => ({ sku: l.sku, name: l.p.name, label: l.v.label, price: l.v.price, qty: l.qty })),
-    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, wrap: t.wrap, cod: t.cod, total: t.total, card: co.gcard ? co.gcard.code : '', cardOff: t.card, ref: REF, src: VISIT.first, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total + t.card - t.ship - t.wrap - t.cod), email: S.account.email };
+    sub: t.sub, ritual: t.ritual, code: t.code ? String(co.code).toUpperCase() : '', codeOff: t.code, ship: t.ship, quote: t.shipQuote || undefined, wrap: t.wrap, cod: t.cod, total: t.total, card: co.gcard ? co.gcard.code : '', cardOff: t.card, ref: REF, src: VISIT.first, gift: co.gift.on ? { ...co.gift } : null, optin: !!co.optin, usePoints: t.points, pointsUsed: t.points, points: pts(t.total + t.card - t.ship - t.wrap - t.cod), email: S.account.email };
   let id;
   if (BTDB.on) { // the database checks prices and takes the stock off in one step
     co.placing = true; co.payErr = null; render();
@@ -4693,6 +4749,7 @@ async function placeOrder(via) {
       if (/sign_in/.test(m)) { S.account = null; save(); UI.acct = { next: 'checkout' }; render(); say('Please sign in again to place your order.'); return; }
       if (/points_changed/.test(m)) { co.usePts = false; co.payErr = 'Your Bud Points balance changed. We’ve taken them off this order; please check the total and pay again.'; loadMine(true); render(); return; }
       if (/bad_code|coupon_/.test(m)) { const why = couponMsg(m); co.code = ''; co.coupon = null; co.payErr = why + ' We took the code off this order; please check the total and pay again.'; render(); return; }
+      if (/ship_quote/.test(m)) { co.quote = null; co.quoteAsked = ''; co.payErr = 'Your shipping price was updated while you were paying. Please check the total and pay again.'; render(); return; }
       if (/bad_card/.test(m)) co.gcard = null;
       co.payErr = /bad_card/.test(m) ? 'That gift card has no balance left, so we took it off. Please check the total and pay again.' : /sold_out/.test(m) ? 'One of your pieces sold out while you were checking out. Please check your cart.' : /price_changed|unknown_item/.test(m) ? 'A price or a piece changed while you were checking out. Please check your cart and try again.'
         : /too_many/.test(m) ? 'We’ve had a lot of orders from this connection or number. Please message us on WhatsApp and we’ll place it for you.' : /bad_quantity/.test(m) ? 'That’s more than we can send in one order. Please lower the quantities, or message us for a bulk order.'
@@ -4830,7 +4887,7 @@ document.addEventListener('click', (e) => {
     case 'room-close': roomClose(); break;
     case 'na-tab': UI.na = d.v; render(); break;
     case 'copy-code': try { navigator.clipboard.writeText(d.v).then(() => say('Code ' + d.v + ' copied. Use it at checkout.'), () => say('Your code is ' + d.v + '.')); } catch (err) { say('Your code is ' + d.v + '.'); } track('code_copy', {}); break;
-    case 'combo-add': { let n = 0; d.skus.split(',').forEach((sku) => { if (skuMap[sku] && addToCart(sku, 1, { quiet: true, source: 'combo' })) n++; }); if (n) { UI.drawer = true; UI.drawerMsg = `Added the set (${n} piece${n > 1 ? 's' : ''}) to your cart.`; renderOverlay(); track('combo_add', { items: n }); } break; }
+    case 'combo-add': { let n = 0; d.skus.split(',').forEach((sku) => { if (skuMap[sku] && addToCart(sku, 1, { quiet: true, source: 'combo' })) n++; }); if (n) { showAdded({ text: `The set (${n} piece${n > 1 ? 's' : ''})` }); renderChrome(); renderOverlay(); track('combo_add', { items: n }); } break; }
     case 'acct-change': UI.acct = { email: UI.acct.email, next: UI.acct.next }; render(); $('#acct-email')?.focus(); break;
     case 'acct-resend': acctSend(UI.acct.email, UI.acct.next); break;
     case 'use-addr': { const a = UI.prof && UI.prof.addresses[+d.i]; if (a) { UI.co.address = Object.assign({}, a); UI.co.errors = {}; render(); } break; }
@@ -4858,13 +4915,14 @@ document.addEventListener('click', (e) => {
     case 'home-style': S.homePick = d.v; save(); if (route() === 'home') render(true); else renderChrome(); say(d.v === 'gift' ? 'Showing the gift shop home page.' : 'Showing the Foyer home page.'); break;
     case 'gh-cat': UI.gh.cat = d.v; render(); break;
     case 'gh-unwrap': UI.gh.open = true; track('gift_unwrap', {}); render(); $('#gh-won')?.focus(); break;
-    case 'gh-pair': { const fo = PAIRINGS.find((x) => x.id === d.v); if (!fo) break; let n = 0; fo.items.forEach(([pid, vi]) => { if (byId[pid] && addToCart(byId[pid].variants[vi].sku, 1, { quiet: true, source: 'ritual' })) n++; }); if (n) { UI.drawer = true; UI.drawerMsg = `Added ${n} piece${n > 1 ? 's' : ''} from ${fo.name}.`; renderOverlay(); track('ritual_add', { pairing: fo.id, items: n, from: 'gift-home' }); } break; }
+    case 'gh-pair': { const fo = PAIRINGS.find((x) => x.id === d.v); if (!fo) break; let n = 0; fo.items.forEach(([pid, vi]) => { if (byId[pid] && addToCart(byId[pid].variants[vi].sku, 1, { quiet: true, source: 'ritual' })) n++; }); if (n) { showAdded({ text: `${n} piece${n > 1 ? 's' : ''} from ${fo.name}` }); renderChrome(); renderOverlay(); track('ritual_add', { pairing: fo.id, items: n, from: 'gift-home' }); } break; }
     case 'mode': S.mode = d.v; save(); renderChrome(); say(d.v === 'app' ? 'Showing the installed-app layout.' : 'Showing the website layout.'); break;
     case 'reset': { const mode = S.mode, db = S.db; S = defaults(); S.mode = mode; if (db) S.db = db; save(); loadData(); UI.pdp = {}; UI.finder = { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }; UI.co = coFresh(); render(); say('Demo reset. Cart, saved items, orders and stock are back to the start.'); break; }
     case 'menu': UI.menu = !UI.menu; renderChrome(); break;
     case 'search': UI.search = true; renderOverlay(); setTimeout(() => $('#search-q')?.focus(), 0); break;
     case 'close-search': UI.search = false; renderOverlay(); break;
-    case 'open-cart': UI.drawer = true; UI.drawerMsg = null; renderOverlay(); setTimeout(() => $('#drawer-close')?.focus(), 0); break;
+    case 'added-close': hideAdded(); break;
+    case 'open-cart': clearTimeout(addedTimer); UI.added = null; UI.drawer = true; UI.drawerMsg = null; renderOverlay(); setTimeout(() => $('#drawer-close')?.focus(), 0); break;
     case 'close-cart': UI.drawer = false; UI.drawerMsg = null; renderOverlay(); break;
     case 'save': e.preventDefault(); toggleSave(d.id); break;
     case 'quick-add': { const p = byId[d.id]; const vi = p.variants.findIndex((v) => stockOf(v.sku) > 0); if (vi >= 0) { addToCart(p.variants[vi].sku, 1, { source: 'card' }); setTimeout(() => $('#drawer-close')?.focus(), 0); } break; }
@@ -4872,7 +4930,7 @@ document.addEventListener('click', (e) => {
     case 'pdp-img': UI.pdp[d.id].img = +d.i; render(); break;
     case 'shop-type': UI.shop.type = d.v; render(); break;
     case 'pdp-qty': { const st = UI.pdp[d.id]; const v = byId[d.id].variants[st.vi]; st.qty = Math.max(1, Math.min(stockOf(v.sku), st.qty + +d.d)); render(); break; }
-    case 'add': { const st = UI.pdp[d.id]; addToCart(byId[d.id].variants[st.vi].sku, st.qty, { source: 'product' }); setTimeout(() => $('#drawer-close')?.focus(), 0); break; }
+    case 'add': { const st = UI.pdp[d.id]; addToCart(byId[d.id].variants[st.vi].sku, st.qty, { source: 'product' }); break; }
     case 'notify': if (S.notify[d.sku]) { say('You’re already on the list for this one.'); break; } UI.restock = d.sku; render(); setTimeout(() => $('.restock input')?.focus(), 0); break;
     case 'share-copy': navigator.clipboard?.writeText(Tx('share.msg') + ' ' + location.origin + location.pathname + (UI.share && UI.share.ref ? '?ref=' + UI.share.ref : '')).then(() => say('Copied.'), () => say('Couldn’t copy. Select the message and copy it.')); track('share', { via: 'copy' }); break;
     case 'share-wa': track('share', { via: 'whatsapp' }); break;
@@ -5067,7 +5125,10 @@ document.addEventListener('change', (e) => {
 document.addEventListener('input', (e) => {
   const ti = e.target;
   if (ti.dataset && HOLD.has(ti.dataset.act) && route() === 'admin') { holdChange(ti); return; }
-  if (ti.id === 'co-pin') { pinAutofill(ti, 'co-city', 'co-state', 'pin-note'); return; }
+  if (ti.id === 'co-pin') {
+    pinAutofill(ti, 'co-city', 'co-state', 'pin-note');
+    if (liveShip()) { const pin = ti.value.trim(); if (/^[1-9]\d{5}$/.test(pin)) { UI.co.address.pin = pin; ensureQuote(); } else { UI.co.address.pin = ''; } paintShip(); }
+    return; }
   if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
   if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
   if (ti.id === 'cf-q' || ti.id === 'rf-q') { (ti.id === 'cf-q' ? UI.adm.cf : UI.adm.rf).q = ti.value; clearTimeout(document.cq); document.cq = setTimeout(() => { render(); const el = $('#' + ti.id); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
@@ -5299,7 +5360,7 @@ document.addEventListener('submit', (e) => {
     placeOrder('Card');
   }
 });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (UI.search) { UI.search = false; renderOverlay(); } else if (UI.drawer) { UI.drawer = false; renderOverlay(); $('#cart-btn').focus(); } else if (UI.menu) { UI.menu = false; renderChrome(); } } });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (UI.added && !UI.search && !UI.drawer) hideAdded(); else if (UI.search) { UI.search = false; renderOverlay(); } else if (UI.drawer) { UI.drawer = false; renderOverlay(); $('#cart-btn').focus(); } else if (UI.menu) { UI.menu = false; renderChrome(); } } });
 
 // cart route opens page; keep track of checkout entry
 const origRender = render;

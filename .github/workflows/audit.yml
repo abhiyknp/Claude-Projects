@@ -51,6 +51,7 @@ jobs:
           sh bud-and-things/tools/test-backup-export.sh
           node bud-and-things/tools/test-build-fallback.js
           node bud-and-things/tools/test-functions.js
+          node bud-and-things/tools/test-csp.js
       - name: Run the shop flow test
         run: |
           sh bud-and-things/tools/preview.sh >/dev/null 2>&1 &
@@ -64,3 +65,4 @@ jobs:
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-festive.js
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-characters.js
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-backup.js
+          PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-shipping.js

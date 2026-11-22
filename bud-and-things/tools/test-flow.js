@@ -21,7 +21,11 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     await pg.goto(url + '#p-bnt-prd-cg-001'); await pg.waitForTimeout(100); await over('product');
     await pg.click('[data-act="pdp-qty"][data-d="1"]');
     await pg.click('[data-act="add"]');
-    const msg = await pg.textContent('.drawer .status'); console.log(w, 'drawer:', msg.trim());
+    await pg.waitForTimeout(300);
+    if (await pg.$('.drawer')) throw new Error('the cart slid open on add');
+    console.log(w, 'added card:', (await pg.textContent('.added-pop')).replace(/\s+/g, ' ').trim().slice(0, 90));
+    await pg.click('.added-pop [data-act="open-cart"]'); await pg.waitForTimeout(150);
+    if (!(await pg.$('.drawer'))) throw new Error('View cart did not open the cart');
     await pg.click('.drawer a[href="#checkout"]'); await pg.waitForTimeout(100);
     // checkout asks for sign-in first; the preview shows the emailed code on screen
     console.log(w, 'checkout gate:', (await pg.textContent('.signin h2')).trim());

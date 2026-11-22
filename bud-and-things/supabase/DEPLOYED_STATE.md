@@ -25,6 +25,7 @@ Never write a secret's value in this file. Names only.
 |---|---|---|
 | 2026-11-16 | `schema.sql`: index on the courier tracking number (`orders_awb`) | Run `schema.sql` again |
 | 2026-11-16 | `_shared/util.ts`: requests with no visitor address now use their own, stricter limit bucket | Redeploy `pay` and `delivery` |
+| 2026-11-22 | Live shipping rates and automatic courier booking: new `ship_quotes` table and `place_order` changes in `schema.sql`; new `_shared/shiprocket.ts`, `delivery` action `quote`, `pay` books after payment | Run `schema.sql` again, then redeploy `pay` and `delivery`. The switches (`shipAuto`, `autoBook`) stay off until tested. See `supabase/README.md`, "Live shipping rates" |
 | 2026-11-17 | Owner two-step on: `ownerTwoStep: true` (site) and `owner_two_step()` returns `true` (`schema.sql`) | Done 2026-11-17 (owner-reported): code scanned, `owner_two_step()` returns `true`, sign-in tested |
 
 ## Status of those two changes (2026-11-16)
