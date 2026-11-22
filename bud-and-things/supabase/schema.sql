@@ -494,8 +494,7 @@ begin
     code := cpn ->> 'code'; code_off := (cpn ->> 'off')::int;
   end if;
   -- shipping: the flat fee, or, when the owner has switched on live rates, the fee from the Shiprocket quote this browser
-  -- points at (it must be for this PIN, this weight and still fresh). Free over the owner's limit; freeCap, when set, is
-  -- the most the shop pays: the customer pays anything above it.
+  -- points at (it must be for this PIN, this weight and still fresh). Free over the owner's limit.
   slab := greatest(ceil((grams + cfg_num('packG', 100)) / 500.0) * 0.5, 0.5);
   flat := round(cfg_num('shipFee', 99));
   if cfg_on('shipAuto', false) and coalesce(o ->> 'quote', '') <> '' then
@@ -506,8 +505,7 @@ begin
     sq := jsonb_build_object('id', q.id, 'rate', q.rate, 'courier_id', q.courier_id, 'courier', q.courier, 'days', q.days, 'kg', q.slab);
   end if;
   ship := case when sub = 0 then 0
-    when cfg_num('freeOver', 1999) > 0 and sub >= cfg_num('freeOver', 1999) then
-      case when cfg_num('freeCap', 0) > 0 then greatest(flat - round(cfg_num('freeCap', 0)), 0) else 0 end
+    when cfg_num('freeOver', 1999) > 0 and sub >= cfg_num('freeOver', 1999) then 0
     else flat end;
   if gift_on and (gift ->> 'wrap')::boolean then wrap := round(cfg_num('wrapFee', 99)); end if;
   if method = 'Cash on delivery' then cod := round(cfg_num('codFee', 49)); end if;

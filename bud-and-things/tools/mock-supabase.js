@@ -123,7 +123,7 @@ function placeOrder(o, em) {
   if (o.code) { const cp = couponOff(o.code, sub - ritual, em); code = cp.code; codeOff = cp.off; }
   const giftOn = !!(g && g.on); const slab = slabOf(grams); let flat = Math.round(num('shipFee', 99)), sq = null;
   if (on('shipAuto', false) && o.quote) { const q = QUOTES.find((x) => x.id === o.quote && x.pin === a.pin && x.slab === slab && x.expires > Date.now()); if (!q) throw new Error('ship_quote'); flat = q.fee; sq = { id: q.id, rate: q.rate, courier_id: q.courier_id, courier: q.courier, days: q.days, kg: q.slab }; }
-  const ship = num('freeOver', 1999) > 0 && sub >= num('freeOver', 1999) ? (num('freeCap', 0) > 0 ? Math.max(flat - Math.round(num('freeCap', 0)), 0) : 0) : flat;
+  const ship = num('freeOver', 1999) > 0 && sub >= num('freeOver', 1999) ? 0 : flat;
   const wrap = giftOn && g.wrap ? Math.round(num('wrapFee', 99)) : 0; const cod = o.method === 'Cash on delivery' ? Math.round(num('codFee', 49)) : 0;
   if (!/^\d{1,6}$/.test(String(o.usePoints == null ? 0 : o.usePoints))) bad('points'); const usePts = +(o.usePoints || 0);
   if (usePts > 0 && (usePts > pointsOf(em).available || usePts > sub - ritual - codeOff)) throw new Error('points_changed');

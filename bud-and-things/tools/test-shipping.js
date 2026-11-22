@@ -22,7 +22,7 @@ const DB = 'http://localhost:54321';
   await post('stock', pieces.flatMap((x) => (x.variants || []).map((v) => ({ sku: v.sku, qty: 50 }))));
   const orders = async () => (await (await fetch(DB + '/rest/v1/orders?select=*', { headers: { Authorization: 'Bearer ' + tok, apikey: 'anon' } })).json());
   const num = (s) => +String(s).replace(/\(.*?\)/g, '').replace(/[^\d.]/g, '');
-  const base = { comingSoon: false, codOn: true, codFee: 0, pickupPin: '201318', shipFee: 99, freeOver: 100000, freeCap: 0, shipAuto: false, mockRate: 94, mockNoCourier: 0, shipRound: 10, shipBuffer: 0, shipMin: 0, shipMax: 0, autoBook: false };
+  const base = { comingSoon: false, codOn: true, codFee: 0, pickupPin: '201318', shipFee: 99, freeOver: 100000, shipAuto: false, mockRate: 94, mockNoCourier: 0, shipRound: 10, shipBuffer: 0, shipMin: 0, shipMax: 0, autoBook: false };
   // one customer visit: add a piece, sign in, fill the steps, stop at the payment step and read the summary
   async function toPay(email, pin) {
     const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); await ctx.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: CFG }));
@@ -58,15 +58,10 @@ const DB = 'http://localhost:54321';
     ok('on: the order keeps the fee, the courier and the weight band from the quote', o && o.data.ship === 100 && o.data.shipQuote && o.data.shipQuote.courier_id === 2 && o.data.shipKg === 0.5, JSON.stringify(o && o.data.shipQuote));
     await p.close();
 
-    // 3. free over the limit: the shop pays it all, or only up to the cap
+    // 3. free over the limit
     await setS({ ...base, shipAuto: true, freeOver: 100 });
     p = await toPay('c@example.com', '208024');
     ship = await row(p, 'Shipping'); ok('free over the limit: shipping is free', /Free/.test(ship), ship); await p.close();
-    await setS({ ...base, shipAuto: true, freeOver: 100, freeCap: 60 });
-    p = await toPay('d@example.com', '208024');
-    ship = await row(p, 'Shipping'); ok('free with a cap: the customer pays what is above the Rs 60 the shop covers (100 − 60 = 40)', num(ship.replace(/\(.*?\)/g, '')) === 40 && /we pay/i.test(ship), ship);
-    await p.click('[data-act="pay-method"][data-v="cod"]'); await p.waitForTimeout(200); await p.click('[data-act="pay-success"][data-via="Cash on delivery"]'); await p.waitForTimeout(1500);
-    o = (await orders()).find((x) => x.data.email === 'd@example.com'); ok('free with a cap: the order keeps Rs 40', o && o.data.ship === 40); await p.close();
 
     // 4. a courier cannot be quoted: the flat fee, and the order still goes through
     await setS({ ...base, shipAuto: true, mockNoCourier: 1 });
@@ -83,7 +78,7 @@ const DB = 'http://localhost:54321';
     await o2.fill('#own-email', 'hello@budandthings.com'); await o2.fill('#own-pass', 'demo'); await o2.click('form[data-form="owner-signin"] button[type=submit]'); await o2.waitForTimeout(1800);
     await o2.click('[data-act="adm-tab"][data-v="settings"]'); await o2.waitForTimeout(500);
     for (const k of ['shipAuto', 'autoBook']) ok('owner Settings has the ' + k + ' switch', await o2.locator('input[data-act="adm-set"][data-k="' + k + '"]').count() === 1);
-    for (const k of ['freeCap', 'shipRound', 'shipBuffer', 'shipMin', 'shipMax', 'pieceG', 'packG']) ok('owner Settings has the ' + k + ' box', await o2.locator('[data-k="' + k + '"]').count() === 1);
+    for (const k of ['shipRound', 'shipBuffer', 'shipMin', 'shipMax', 'pieceG', 'packG']) ok('owner Settings has the ' + k + ' box', await o2.locator('[data-k="' + k + '"]').count() === 1);
     ok('no page errors', errs.length === 0, errs.join(' | '));
   } finally { await b.close(); mock.kill(); }
   if (fails) process.exit(1); console.log('Shipping checks passed.');
