@@ -92,11 +92,11 @@ jobs:
         # still publishes, so this step can never stop a deploy.
         continue-on-error: true
         run: |
+          # uses the Google Chrome already on the runner: no browser download (that took about 4.5 minutes)
           mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
-          npm init -y >/dev/null && npm i playwright@1.49.1 >/dev/null
-          npx playwright install --with-deps chromium >/dev/null
+          npm init -y >/dev/null && npm i playwright-core@1.49.1 >/dev/null
           cd "$GITHUB_WORKSPACE"
-          PLAYWRIGHT_PATH="$RUNNER_TEMP/pw/node_modules/playwright" node bud-and-things/tools/prerender-soon.js _site
+          BT_CHROME_PATH="$(command -v google-chrome || command -v chromium || true)" PLAYWRIGHT_PATH="$RUNNER_TEMP/pw/node_modules/playwright-core" node bud-and-things/tools/prerender-soon.js _site
       - name: Add the security policy to every page
         run: node bud-and-things/tools/add-csp.js _site
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
