@@ -52,6 +52,7 @@ jobs:
           node bud-and-things/tools/test-build-fallback.js
           node bud-and-things/tools/test-functions.js
           node bud-and-things/tools/test-csp.js
+          sh bud-and-things/tools/test-sql.sh
       - name: Run the shop flow test
         run: |
           sh bud-and-things/tools/preview.sh >/dev/null 2>&1 &

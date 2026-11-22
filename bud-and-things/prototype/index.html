@@ -2241,6 +2241,14 @@ function totals() {
 const shipLabel = (t) => `Shipping${t.shipLive ? ` <span class="hint">(quickest courier${t.shipDays ? ', about ' + t.shipDays + ' day' + (t.shipDays > 1 ? 's' : '') : ''})</span>` : +SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`;
 const shipValue = (t) => (t.shipWait ? 'Working it out…' : t.ship ? inr(t.ship) : 'Free');
 // show a new quote without redrawing the form (the customer may still be typing in it)
+// the "Delivering to" line in the order summary follows the PIN and city as they are typed (without redrawing the form)
+function paintDeliv() {
+  const side = document.querySelector('.checkout-side'), pe = document.getElementById('co-pin'); if (!side || !pe) return;
+  const pin = pe.value.trim(), city = ((document.getElementById('co-city') || {}).value || '').trim(); let el = document.getElementById('co-deliv');
+  const txt = /^[1-9]\d{5}$/.test(pin) ? `Delivering to ${city} ${pin}`.replace(/\s+/g, ' ') : '';
+  if (!el) { if (!txt) return; el = document.createElement('span'); el.id = 'co-deliv'; el.className = 'muted'; el.style.fontSize = '14px'; side.appendChild(el); }
+  el.textContent = txt;
+}
 function paintShip() {
   const t = totals();
   const r = document.querySelector('.checkout-side .sum-ship'); if (r) { r.firstElementChild.innerHTML = shipLabel(t); r.lastElementChild.textContent = shipValue(t); }
@@ -2528,7 +2536,7 @@ function viewCheckout() {
   const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> ${t.code ? 'applied' : `needs ${inr(co.coupon.min_order)} of pieces in your cart`}</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
     + (co.gcard ? `<div class="code-on"><span>Gift card <strong>${esc(co.gcard.code)}</strong> applied</span><button class="linkbtn" type="button" data-act="card-remove">Remove</button></div>` : '')
     + (codeOk(co.code) && co.gcard ? '' : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code or gift card?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${codeOk(co.code) || co.gcard ? 'disabled' : ''} ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit" ${codeOk(co.code) || co.gcard ? 'disabled' : ''}>Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`);
-  const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
+  const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" id="co-deliv" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
   let main = '';
   if (co.step === 'contact') {
     main = `<h1 tabindex="-1" style="font-size:40px">Contact</h1><p class="muted">Signed in as <strong>${esc(S.account.email)}</strong>. We use these only for your delivery and order updates.</p>
@@ -5261,7 +5269,7 @@ document.addEventListener('change', (e) => {
   const t = e.target; const d = t.dataset;
   if (d.act === 'imp-file' && t.files && t.files[0]) { impLoadFile(t.files[0]); t.value = ''; return; }
   if (HOLD.has(d.act) && route() === 'admin' && !d.flush) { holdChange(t); return; }
-  if (t.id === 'co-state' || t.id === 'pf-a-state') t.dataset.auto = '';
+  if (t.id === 'co-state' || t.id === 'pf-a-state') { t.dataset.auto = ''; t.dataset.typed = '1'; }
   if (d.act === 'shop-filter') { UI.shop[d.k] = t.value; if (d.k === 'occ' && t.value !== 'all') track('filter', { occasion: t.value }); render(); $('#' + t.id)?.focus(); }
   if (d.act === 'home-rit') { UI.ritual.homeSel = UI.ritual.homeSel || { a: true, b: true }; UI.ritual.homeSel[d.k] = t.checked; render(); $('#' + t.id)?.focus(); }
   if (d.act === 'ritual-pick') { UI.ritual.pick[UI.ritual.preset][d.i] = t.checked; render(); $('#' + t.id)?.focus(); }
@@ -5294,11 +5302,13 @@ document.addEventListener('input', (e) => {
   const ti = e.target;
   if (ti.dataset && HOLD.has(ti.dataset.act) && route() === 'admin') { holdChange(ti); return; }
   if (ti.id === 'co-pin') {
-    pinAutofill(ti, 'co-city', 'co-state', 'pin-note');
+    // a new, complete PIN replaces the city and state that came from a saved address (the PIN says where it is); a city or state the customer typed themselves is left alone
+    const np = ti.value.trim(); if (/^[1-9]\d{5}$/.test(np) && np !== String(UI.co.address.pin || '')) { const c = document.getElementById('co-city'), s = document.getElementById('co-state'); if (c && !c.dataset.typed) c.dataset.auto = '1'; if (s && !s.dataset.typed) s.dataset.auto = '1'; }
+    Promise.resolve(pinAutofill(ti, 'co-city', 'co-state', 'pin-note')).then(paintDeliv); paintDeliv();
     if (liveShip()) { const pin = ti.value.trim(); if (/^[1-9]\d{5}$/.test(pin)) { UI.co.address.pin = pin; ensureQuote(); } else { UI.co.address.pin = ''; } paintShip(); }
     return; }
   if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
-  if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
+  if (ti.id === 'co-city' || ti.id === 'pf-a-city') { ti.dataset.auto = ''; ti.dataset.typed = '1'; if (ti.id === 'co-city') paintDeliv(); }
   if (ti.id === 'cf-q' || ti.id === 'rf-q') { (ti.id === 'cf-q' ? UI.adm.cf : UI.adm.rf).q = ti.value; clearTimeout(document.cq); document.cq = setTimeout(() => { render(); const el = $('#' + ti.id); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
   if (e.target.id === 'adm-find') { UI.adm.find = e.target.value; clearTimeout(document.fq); document.fq = setTimeout(() => { const box = $('#adm-find-res'); if (box) box.innerHTML = UI.adm.find ? findResults(UI.adm.find) : ''; }, 200); return; }
   if (e.target.id === 'tx-q') { UI.adm.q = e.target.value; clearTimeout(document.tq); document.tq = setTimeout(() => { render(); const el = $('#tx-q'); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }

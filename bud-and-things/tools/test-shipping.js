@@ -35,7 +35,7 @@ const DB = 'http://localhost:54321';
     await p.fill('#co-name', 'Meera Rao'); await p.fill('#co-phone', '9876543210'); await p.check('#co-agree'); await p.click('form[data-form="contact"] button[type="submit"]'); await p.waitForTimeout(300);
     await p.fill('#co-line1', '12 Lake View Road'); await p.fill('#co-pin', pin); await p.fill('#co-city', 'Kanpur'); await p.selectOption('#co-state', 'Uttar Pradesh');
     await p.waitForTimeout(900); // the price is asked for in the background as soon as the PIN is complete
-    p.atAddress = { note: await p.locator('#ship-note').count() ? 'a note is on the page' : '', sum: await row(p, 'Shipping') };
+    p.atAddress = { deliv: await p.locator('#co-deliv').innerText().catch(() => ''), note: await p.locator('#ship-note').count() ? 'a note is on the page' : '', sum: await row(p, 'Shipping') };
     await p.click('form[data-form="address"] button[type="submit"]'); await p.waitForTimeout(600);
     return p;
   }
@@ -46,6 +46,7 @@ const DB = 'http://localhost:54321';
     let ship = await row(p, 'Shipping');
     ok('off: the flat fee of Rs 99 is charged', num(ship) === 99 && !/quickest/.test(ship), ship);
     ok('off: nothing is looked up when the PIN is typed', p.atAddress.note === '', p.atAddress.note);
+    ok('the "Delivering to" line in the summary follows the PIN as it is typed', /Delivering to Kanpur 208024/.test(p.atAddress.deliv), p.atAddress.deliv);
     await p.close();
 
     // 2. live rates on: the quickest courier's price, rounded up to Rs 10 (94 becomes 100), and the order points at the quote
