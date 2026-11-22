@@ -53,7 +53,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     console.log(w, 'admin status now:', await pg.$$eval('td .pill', (e) => e.map((x) => x.textContent).slice(0, 1)));
     // Bud Points: earned once delivered, then spent at the next checkout
     await pg.goto(url + '#account'); await pg.waitForTimeout(100);
-    console.log(w, 'points:', (await pg.textContent('.acct-card.points strong')).trim());
+    console.log(w, 'points:', (await pg.textContent('.ah-pts .ring-n')).trim());
     await pg.goto(url + '#p-bnt-prd-jt-001'); await pg.click('[data-act="add"]'); await pg.keyboard.press('Escape'); await pg.goto(url + '#checkout'); await pg.waitForTimeout(100);
     const before = (await pg.textContent('.checkout-side .grand')).trim(); await pg.click('[data-act="pts-use"]'); await pg.waitForTimeout(100);
     console.log(w, 'with points:', before, '→', (await pg.textContent('.checkout-side .grand')).trim());

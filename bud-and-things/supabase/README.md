@@ -179,7 +179,7 @@ Three switches, all in Owner view → Settings, all **off** until you turn them 
 - **Automatic booking** (`autoBook`). When Razorpay confirms a payment, the `pay` function books the courier by itself: Shiprocket order, AWB, pickup request and label, using the courier saved with the quote (or Shiprocket's own choice if that courier can no longer take it). If it fails the payment stays recorded and the order shows the reason; press **Book courier** as before. Orders paid by hand (UPI QR) or on delivery are still booked with the button.
 - **Free shipping.** `freeOver` works as before: orders at or above it ship free, with live rates on or off.
 
-**To switch on:** run `schema.sql` again (it adds `ship_quotes` and changes `place_order`), redeploy `pay` and `delivery` (GitHub → Actions → Deploy shop functions → "pay and delivery"), make sure `pickupPin` is set, then try one order of each kind with a test payment before ticking **Live shipping rates**. Turn the two switches on separately.
+**To switch on:** run `supabase/live-shipping.sql` in the SQL Editor (the short way; running all of `schema.sql` again does the same), redeploy `pay` and `delivery` (GitHub → Actions → Deploy shop functions → "pay and delivery"), make sure `pickupPin` is set, then try one order of each kind with a test payment before ticking **Live shipping rates**. Turn the two switches on separately.
 
 ## Customer profiles (October 2026)
 
