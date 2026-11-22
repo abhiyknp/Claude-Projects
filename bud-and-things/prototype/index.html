@@ -2083,7 +2083,7 @@ function ensureQuote() {
   const co = UI.co, lines = cartLines(); if (!liveShip() || !lines.length || !/^[1-9]\d{5}$/.test(String(co.address.pin || '').trim())) return;
   const key = quoteKey(lines); if (co.quoteAsked === key && (!co.quote || co.quote.ok === false || Date.now() - co.quote.at < 25 * 60e3)) return;
   co.quoteAsked = key; co.quote = null; const pin = String(co.address.pin).trim();
-  const done = (q) => { if (co.quoteAsked !== key) return; co.quote = q; render(); };
+  const done = (q) => { if (co.quoteAsked !== key) return; co.quote = q; if (co.step === 'address') paintShip(); else render(); };
   BTDB.fn('delivery', { action: 'quote', pin, items: lines.map((l) => ({ sku: l.sku, qty: l.qty })) })
     .then((r) => done(r && r.ok ? { ok: true, key, at: Date.now(), id: r.quote, fee: +r.fee, days: r.days || null } : { ok: false, key }), () => done({ ok: false, key }));
 }
@@ -2092,7 +2092,7 @@ function totals() {
   const code = codeOk(UI.co.code) ? couponOffFor(UI.co.coupon, sub - ritual) : 0;
   // shipping: the flat fee, or at the payment step with live rates on, the quickest courier's price for this PIN and cart.
   // Free over the owner's limit. place_order works it out again in the database.
-  const q = liveShip() && UI.co.step === 'pay' ? shipQuoteFor(lines) : null; const shipWait = liveShip() && UI.co.step === 'pay' && !q && !(UI.co.quote && UI.co.quote.ok === false && UI.co.quote.key === quoteKey(lines));
+  const q = liveShip() && (UI.co.step === 'pay' || UI.co.step === 'address') ? shipQuoteFor(lines) : null; const shipWait = liveShip() && UI.co.step === 'pay' && !q && !(UI.co.quote && UI.co.quote.ok === false && UI.co.quote.key === quoteKey(lines));
   const flat = q ? q.fee : +SET.shipFee || 0; const freeNow = !!(+SET.freeOver && sub >= +SET.freeOver);
   const ship = sub === 0 || freeNow ? 0 : flat;
   const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
@@ -2101,10 +2101,26 @@ function totals() {
   const pre = sub - ritual - code - points + ship + wrap + cod; const card = UI.co.gcard ? Math.min(UI.co.gcard.bal, pre) : 0;
   return { sub, ritual, code, points, ship, wrap, cod, card, total: pre - card, shipWait, shipLive: !!q, shipQuote: q ? q.id : '', shipDays: q ? q.days : null };
 }
+const shipLabel = (t) => `Shipping${t.shipLive ? ` <span class="hint">(quickest courier${t.shipDays ? ', about ' + t.shipDays + ' day' + (t.shipDays > 1 ? 's' : '') : ''})</span>` : +SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`;
+const shipValue = (t) => (t.shipWait ? 'Working it out…' : t.ship ? inr(t.ship) : 'Free');
+// the line under the PIN field: the shipping price appears as soon as the PIN code is complete, worked out in the background
+function shipNoteText(t) {
+  if (!liveShip()) return ''; const co = UI.co, lines = cartLines(), pin = String((co.address && co.address.pin) || '').trim();
+  if (!lines.length || !/^[1-9]\d{5}$/.test(pin)) return '';
+  if (t.shipLive) return t.ship ? `Shipping to ${pin}: ${inr(t.ship)}${t.shipDays ? ' · quickest courier, about ' + t.shipDays + ' day' + (t.shipDays > 1 ? 's' : '') : ''}.` : `Shipping to ${pin}: free on this order.`;
+  if (co.quote && co.quote.ok === false && co.quote.key === quoteKey(lines)) return t.ship ? `Shipping: ${inr(t.ship)}.` : 'Shipping: free on this order.';
+  return `Checking shipping to ${pin}…`;
+}
+// show a new quote without redrawing the form (the customer may still be typing in it)
+function paintShip() {
+  const t = totals(), n = document.getElementById('ship-note'); if (n) n.textContent = shipNoteText(t);
+  const r = document.querySelector('.checkout-side .sum-ship'); if (r) { r.firstElementChild.innerHTML = shipLabel(t); r.lastElementChild.textContent = shipValue(t); }
+  const g = document.querySelector('.checkout-side .grand'); if (g) g.lastElementChild.textContent = inr(t.total);
+}
 function totalsHTML(t) {
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
   return `<div class="totals num">${row('Subtotal', inr(t.sub))}${t.ritual ? row(`Ritual saving <span class="hint">(${SET.ritualOff}% off candle + object)</span>`, '−' + inr(t.ritual), 'save') : ''}${t.code ? row(`Code ${esc(String(UI.co.code).toUpperCase())}`, '−' + inr(t.code), 'save') : ''}${t.points ? row(`Bud Points <span class="hint">(${t.points} used)</span>`, '−' + inr(t.points), 'save') : ''}
-    ${row(`Shipping${t.shipLive ? ` <span class="hint">(quickest courier${t.shipDays ? ', about ' + t.shipDays + ' day' + (t.shipDays > 1 ? 's' : '') : ''})</span>` : +SET.freeOver ? ` <span class="hint">(free over ${inr(SET.freeOver)})</span>` : ''}`, t.shipWait ? 'Working it out…' : t.ship ? inr(t.ship) : 'Free')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${t.card ? row(`Gift card ${esc(UI.co.gcard.code)}`, '−' + inr(t.card), 'save') : ''}${row('Total', inr(t.total), 'grand')}</div>`;
+    ${row(shipLabel(t), shipValue(t), 'sum-ship')}${t.wrap ? row('Gift wrap', inr(t.wrap)) : ''}${t.cod ? row('Cash on delivery fee', inr(t.cod)) : ''}${t.card ? row(`Gift card ${esc(UI.co.gcard.code)}`, '−' + inr(t.card), 'save') : ''}${row('Total', inr(t.total), 'grand')}</div>`;
 }
 function shipBar(t) {
   if (!+SET.freeOver || !t.sub) return ''; const gap = +SET.freeOver - t.sub; const pct = Math.min(100, Math.round(t.sub / +SET.freeOver * 100));
@@ -2375,7 +2391,7 @@ function viewCheckout() {
   const co = UI.co; const lines = cartLines(); const t = totals(); const g = co.gift;
   if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
   if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:var(--s5) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
-  if (co.step === 'pay') ensureQuote();
+  if (co.step === 'pay' || co.step === 'address') ensureQuote();
   loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr'; if (co.method === 'upiqr' && !upiQrOk()) co.method = 'qr';
   if (BTDB.on && !SET.onlineOn && co.method !== 'cod' && co.method !== 'upiqr') co.method = upiQrOk() ? 'upiqr' : SET.codOn ? 'cod' : co.method; // online payment is off: open on the UPI QR
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
@@ -2405,6 +2421,7 @@ function viewCheckout() {
       ${field('line1', 'House, street, area', co.address.line1, { ac: g.on ? 'off' : 'address-line1', full: true })}${field('line2', 'Landmark', co.address.line2, { ac: g.on ? 'off' : 'address-line2', full: true, hint: 'optional' })}${field('pin', 'PIN code', co.address.pin, { mode: 'numeric', ac: g.on ? 'off' : 'postal-code', max: 6 })}${field('city', 'City', co.address.city, { ac: g.on ? 'off' : 'address-level2' })}
       <span class="field full"><label for="co-state">State</label><select id="co-state" data-co="state" autocomplete="${g.on ? 'off' : 'address-level1'}" ${err ? 'aria-invalid="true" aria-describedby="co-state-err"' : ''}><option value="">Choose a state</option>${STATES.map((s) => `<option ${co.address.state === s ? 'selected' : ''}>${s}</option>`).join('')}</select>${err ? `<span class="err" id="co-state-err">${esc(err)}</span>` : ''}</span>
       <p class="full muted" id="pin-note" aria-live="polite" style="font-size:14px;margin:0"></p>
+      <p class="full muted" id="ship-note" aria-live="polite" style="font-size:14px;margin:0">${esc(shipNoteText(t))}</p>
       <p class="full muted" style="font-size:14px">Delivery in ${esc(SET.deliveryDays)}.</p>
       <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue to payment</button><button class="btn ghost" type="button" data-act="co-step" data-v="contact">Back</button></span></form>`;
   } else if (co.step === 'pay') {
@@ -4210,7 +4227,7 @@ function offersCard(p, v) {
 }
 function deliveryCard(id, st) {
   return `<div class="deliv"><div class="deliv-head">${hl('pin', 20)}<form data-form="pin" class="deliv-form" novalidate><label for="pin-${id}">Deliver to</label><input id="pin-${id}" inputmode="numeric" maxlength="6" autocomplete="postal-code" placeholder="PIN code" value="${esc(st.pin)}"><button class="linkbtn" type="submit">Check</button></form></div>
-    ${st.pinMsg ? `<p class="${st.pinMsg.ok ? 'ok-text' : 'err'}" role="status">${esc(st.pinMsg.text)}</p>` : `<p class="muted">Order today, usually arrives between ${arriveRange()}.</p>`}
+    ${st.pinMsg ? `<p class="${st.pinMsg.ok ? 'ok-text' : 'err'}" role="status">${esc(st.pinMsg.text)}${st.pinMsg.ok && st.pinShip ? ' ' + esc(st.pinShip) : ''}</p>` : `<p class="muted">Order today, usually arrives between ${arriveRange()}.</p>`}
     ${SET.orderBy ? `<p class="order-by">${hl('truck', 18)}<span>${esc(SET.orderBy)}</span></p>` : ''}<p class="muted">${T('pdp.ship')}</p></div>`;
 }
 // combos: this piece with its ritual partner, and a set of three with a plate, coasters or a candle
@@ -5086,7 +5103,10 @@ document.addEventListener('change', (e) => {
 document.addEventListener('input', (e) => {
   const ti = e.target;
   if (ti.dataset && HOLD.has(ti.dataset.act) && route() === 'admin') { holdChange(ti); return; }
-  if (ti.id === 'co-pin') { pinAutofill(ti, 'co-city', 'co-state', 'pin-note'); return; }
+  if (ti.id === 'co-pin') {
+    pinAutofill(ti, 'co-city', 'co-state', 'pin-note');
+    if (liveShip()) { const pin = ti.value.trim(); if (/^[1-9]\d{5}$/.test(pin)) { UI.co.address.pin = pin; ensureQuote(); } else { UI.co.address.pin = ''; } paintShip(); }
+    return; }
   if (ti.id === 'pf-a-pin') { pinAutofill(ti, 'pf-a-city', 'pf-a-state', 'pin-note'); return; }
   if (ti.id === 'co-city' || ti.id === 'pf-a-city') ti.dataset.auto = '';
   if (ti.id === 'cf-q' || ti.id === 'rf-q') { (ti.id === 'cf-q' ? UI.adm.cf : UI.adm.rf).q = ti.value; clearTimeout(document.cq); document.cq = setTimeout(() => { render(); const el = $('#' + ti.id); if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }, 250); return; }
@@ -5287,7 +5307,10 @@ document.addEventListener('submit', (e) => {
     const yes = (extra) => ({ ok: true, text: `Yes, we deliver to ${st.pin}. Order today and it usually arrives between ${arriveRange()}${extra || ''}${SET.codOn ? '. Cash on delivery is available' : ''}.` });
     if (!/^[1-9]\d{5}$/.test(st.pin)) { st.pinMsg = { ok: false, text: 'Enter a 6-digit PIN code, for example 560001.' }; render(); return; }
     if (!BTDB.on || !/^[1-9]\d{5}$/.test(String(SET.pickupPin || ''))) { st.pinMsg = yes(); render(); return; }
-    st.pinMsg = { ok: true, text: 'Checking couriers for ' + st.pin + '…' }; render(); const pin = st.pin;
+    st.pinShip = ''; st.pinMsg = { ok: true, text: 'Checking couriers for ' + st.pin + '…' }; render(); const pin = st.pin;
+    if (liveShip()) { const pp = P.find((x) => x.id === id), vv = pp && pp.variants[st.vi || 0]; if (vv) BTDB.fn('delivery', { action: 'quote', pin, items: [{ sku: vv.sku, qty: 1 }] }).then((q) => {
+      if (st.pin !== pin || !q || !q.ok || !st.pinMsg || !st.pinMsg.ok) return; const free = +SET.freeOver && vv.price >= +SET.freeOver;
+      st.pinShip = free ? 'Shipping to you is free on this piece.' : `Shipping to ${pin} for this piece: ${inr(q.fee)}.`; render(); }, () => {}); }
     BTDB.fn('delivery', { action: 'pin', pin }).then((r) => { if (st.pin !== pin) return; st.pinMsg = r.ok ? yes(r.days ? ` (couriers take about ${r.days} day${r.days > 1 ? 's' : ''} from dispatch)` : '') : { ok: false, text: `Couriers don’t reach ${pin} yet. Message us on WhatsApp and we’ll find a way.` }; track('pin_check', { ok: !!r.ok }); render(); },
       () => { if (st.pin !== pin) return; st.pinMsg = yes(); render(); });
     return; }

@@ -23,6 +23,7 @@ const DB = 'http://localhost:54321';
   const orders = async () => (await (await fetch(DB + '/rest/v1/orders?select=*', { headers: { Authorization: 'Bearer ' + tok, apikey: 'anon' } })).json());
   const num = (s) => +String(s).replace(/\(.*?\)/g, '').replace(/[^\d.]/g, '');
   const base = { comingSoon: false, codOn: true, codFee: 0, pickupPin: '201318', shipFee: 99, freeOver: 100000, shipAuto: false, mockRate: 94, mockNoCourier: 0, shipRound: 10, shipBuffer: 0, shipMin: 0, shipMax: 0, autoBook: false };
+  const row = async (p, label) => (await p.locator('.totals > div', { hasText: label }).first().innerText()).replace(/\s+/g, ' ');
   // one customer visit: add a piece, sign in, fill the steps, stop at the payment step and read the summary
   async function toPay(email, pin) {
     const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); await ctx.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: CFG }));
@@ -33,16 +34,18 @@ const DB = 'http://localhost:54321';
     await p.fill('#acct-code', '111111'); await p.click('form[data-form="acct-code"] button[type="submit"]'); await p.waitForTimeout(800);
     await p.fill('#co-name', 'Meera Rao'); await p.fill('#co-phone', '9876543210'); await p.check('#co-agree'); await p.click('form[data-form="contact"] button[type="submit"]'); await p.waitForTimeout(300);
     await p.fill('#co-line1', '12 Lake View Road'); await p.fill('#co-pin', pin); await p.fill('#co-city', 'Kanpur'); await p.selectOption('#co-state', 'Uttar Pradesh');
-    await p.click('form[data-form="address"] button[type="submit"]'); await p.waitForTimeout(1200);
+    await p.waitForTimeout(900); // the price is asked for in the background as soon as the PIN is complete
+    p.atAddress = { note: (await p.locator('#ship-note').innerText()).trim(), sum: await row(p, 'Shipping') };
+    await p.click('form[data-form="address"] button[type="submit"]'); await p.waitForTimeout(600);
     return p;
   }
-  const row = async (p, label) => (await p.locator('.totals > div', { hasText: label }).first().innerText()).replace(/\s+/g, ' ');
   try {
     // 1. live rates off: the flat fee
     await setS(base);
     let p = await toPay('a@example.com', '208024');
     let ship = await row(p, 'Shipping');
     ok('off: the flat fee of Rs 99 is charged', num(ship) === 99 && !/quickest/.test(ship), ship);
+    ok('off: nothing is looked up when the PIN is typed', p.atAddress.note === '', p.atAddress.note);
     await p.close();
 
     // 2. live rates on: the quickest courier's price, rounded up to Rs 10 (94 becomes 100), and the order points at the quote
@@ -50,6 +53,8 @@ const DB = 'http://localhost:54321';
     p = await toPay('b@example.com', '208024');
     ship = await row(p, 'Shipping');
     ok('on: the live fee (Rs 100) is shown with the quickest courier', num(ship.replace(/about \d+ days?/, '')) === 100 && /quickest courier, about 2 days/.test(ship), ship);
+    ok('on: the price shows under the PIN field as soon as the PIN is complete, before the payment step', /Shipping to 208024: ₹100 · quickest courier, about 2 days/.test(p.atAddress.note) && num(p.atAddress.sum) === 100, p.atAddress.note + ' | ' + p.atAddress.sum);
+    ok('on: the payment step does not wait for it', !/Working it out/.test(ship));
     const sub = num(await p.locator('.totals > div', { hasText: 'Subtotal' }).first().innerText());
     ok('on: the total is the pieces plus the live fee', num(await p.locator('.checkout-side .grand').innerText()) === sub + 100);
     await p.click('[data-act="pay-method"][data-v="cod"]'); await p.waitForTimeout(200);
@@ -57,6 +62,10 @@ const DB = 'http://localhost:54321';
     let o = (await orders()).find((x) => x.data.email === 'b@example.com');
     ok('on: the order keeps the fee, the courier and the weight band from the quote', o && o.data.ship === 100 && o.data.shipQuote && o.data.shipQuote.courier_id === 2 && o.data.shipKg === 0.5, JSON.stringify(o && o.data.shipQuote));
     await p.close();
+    { const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); await ctx.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: CFG }));
+      const pp = await ctx.newPage(); pp.on('pageerror', (e) => errs.push(e.message)); await pp.goto(url + '#p-bnt-prd-jt-001'); await pp.waitForTimeout(1500);
+      await pp.fill('form[data-form="pin"] input', '208024'); await pp.click('form[data-form="pin"] button[type="submit"]'); await pp.waitForTimeout(1500);
+      const txt = await pp.locator('[role="status"].ok-text').first().innerText().catch(() => ''); ok('on: the product page delivery check also shows the shipping price for that PIN', /Shipping to 208024 for this piece: ₹100/.test(txt), txt); await ctx.close(); }
 
     // 3. free over the limit
     await setS({ ...base, shipAuto: true, freeOver: 100 });
