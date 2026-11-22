@@ -21,6 +21,7 @@ const KEYS = { site_text: 'key', settings: 'key', stock: 'sku', coupons: 'code',
 const T = { bills: [], coupons: [{ code: 'HELLO10', kind: 'percent', amount: 10, min_order: 0, max_off: 0, starts_on: null, ends_on: null, max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true, created_at: new Date().toISOString() }], invoices: [], points_log: [], products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], review_authors: [], customer_meta: [], events: [], notifications: [], profiles: [] };
 const FILES = {};
 let orderNo = 1001;
+const QUOTES = []; // live shipping quotes made by the delivery function (30 minutes)
 const uuid = () => 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
 
 // what a visitor (not signed in) may read and write, as in schema.sql
@@ -48,6 +49,7 @@ const fail = (res, code, message) => send(res, code, { message });
 
 // place_order, as in schema.sql: the order is rebuilt from the products and settings, so the browser can't set prices
 const setting = (k, d) => { const r = T.settings.find((x) => x.key === k); return r ? r.value : d; };
+const on = (k, d) => { const v = setting(k, d); return v === true || /^(true|yes|on|1)$/i.test(String(v)); };
 const num = (k, d) => { const v = setting(k, d); return /^\s*-?\d+(\.\d+)?\s*$/.test(String(v)) ? +v : 0; };
 // Bud Points, as points_of() in schema.sql
 function pointsOf(em) {
@@ -93,6 +95,9 @@ function autoInvoice(o, was) {
     else if (o.status === 'Cancelled' && was !== o.status) { const i = T.invoices.find((x) => x.order_id === o.id && x.kind === 'invoice' && x.status === 'Issued'); if (i) mkInvoice(o, 'credit_note', i.id, 'Order cancelled'); }
   } catch (e) { /* skipped, as in the database */ }
 }
+// grams of one packed piece (the product's weight when it is a plain number), and the half-kilo band Shiprocket charges by
+const pieceG = (p) => (/^[0-9]{1,5}(\.[0-9]+)?$/.test(String(p.data.weight == null ? '' : p.data.weight)) ? Math.round(+p.data.weight) : num('pieceG', 300));
+const slabOf = (grams) => Math.max(Math.ceil((grams + num('packG', 100)) / 500) * 0.5, 0.5);
 function placeOrder(o, em) {
   if (!em) throw new Error('sign_in');
   const c = o.contact || {}, a = o.address || {}, g = o.gift, bad = (w) => { throw new Error('bad_order:' + w); };
@@ -103,20 +108,22 @@ function placeOrder(o, em) {
   if (o.method === 'UPI QR' && !(setting('upiQrOn', false) && /^[a-zA-Z0-9._-]{2,64}@[a-zA-Z0-9]{2,32}$/.test(String(setting('upiId', ''))))) bad('upi_off');
   if (o.method === 'Cash on delivery' && !setting('codOn', false)) bad('cod_off');
   if (!Array.isArray(o.items) || !o.items.length || o.items.length > 20) bad('items');
-  const items = [], seen = new Set(), candles = [], objects = []; let sub = 0, pieces = 0;
+  const items = [], seen = new Set(), candles = [], objects = []; let sub = 0, pieces = 0, grams = 0;
   for (const it of o.items) {
     if (!Number.isInteger(it.qty) || it.qty < 1 || it.qty > num('maxQty', 5)) throw new Error('bad_quantity');
     if (seen.has(it.sku)) bad('items'); seen.add(it.sku);
     const p = T.products.filter((x) => x.live).find((x) => x.data.variants.some((v) => v.sku === it.sku)); if (!p) throw new Error('unknown_item:' + it.sku);
     const v = p.data.variants.find((x) => x.sku === it.sku); const s = T.stock.find((x) => x.sku === it.sku); if (!s || s.qty < it.qty) throw new Error('sold_out:' + it.sku);
-    sub += v.price * it.qty; pieces += it.qty; for (let i = 0; i < it.qty; i++) (p.data.cat === 'candles' ? candles : objects).push(v.price);
+    grams += pieceG(p) * it.qty; sub += v.price * it.qty; pieces += it.qty; for (let i = 0; i < it.qty; i++) (p.data.cat === 'candles' ? candles : objects).push(v.price);
     items.push({ sku: it.sku, name: p.data.name, label: v.label, price: v.price, qty: it.qty });
   }
   if (pieces > num('maxPieces', 10)) throw new Error('bad_quantity');
   candles.sort((x, y) => y - x); objects.sort((x, y) => y - x); let pair = 0; for (let i = 0; i < Math.min(candles.length, objects.length); i++) pair += candles[i] + objects[i];
   const ritual = Math.round(pair * num('ritualOff', 10) / 100); let code = '', codeOff = 0;
   if (o.code) { const cp = couponOff(o.code, sub - ritual, em); code = cp.code; codeOff = cp.off; }
-  const giftOn = !!(g && g.on); const ship = num('freeOver', 1999) > 0 && sub >= num('freeOver', 1999) ? 0 : Math.round(num('shipFee', 99));
+  const giftOn = !!(g && g.on); const slab = slabOf(grams); let flat = Math.round(num('shipFee', 99)), sq = null;
+  if (on('shipAuto', false) && o.quote) { const q = QUOTES.find((x) => x.id === o.quote && x.pin === a.pin && x.slab === slab && x.expires > Date.now()); if (!q) throw new Error('ship_quote'); flat = q.fee; sq = { id: q.id, rate: q.rate, courier_id: q.courier_id, courier: q.courier, days: q.days, kg: q.slab }; }
+  const ship = num('freeOver', 1999) > 0 && sub >= num('freeOver', 1999) ? (num('freeCap', 0) > 0 ? Math.max(flat - Math.round(num('freeCap', 0)), 0) : 0) : flat;
   const wrap = giftOn && g.wrap ? Math.round(num('wrapFee', 99)) : 0; const cod = o.method === 'Cash on delivery' ? Math.round(num('codFee', 49)) : 0;
   if (!/^\d{1,6}$/.test(String(o.usePoints == null ? 0 : o.usePoints))) bad('points'); const usePts = +(o.usePoints || 0);
   if (usePts > 0 && (usePts > pointsOf(em).available || usePts > sub - ritual - codeOff)) throw new Error('points_changed');
@@ -132,7 +139,7 @@ function placeOrder(o, em) {
   const id = 'BT-' + orderNo++ + '-' + Math.random().toString(16).slice(2, 8).toUpperCase().padEnd(6, '0');
   const status = o.method === 'Online' || o.method === 'UPI QR' ? 'Awaiting payment' : 'Placed';
   const data = { id, placedAt: new Date().toISOString(), method: o.method, items, email: em, contact: { name: c.name, phone: c.phone, email: em }, address: { line1: a.line1, line2: a.line2 || '', pin: a.pin, city: a.city, state: a.state },
-    sub, ritual, code, codeOff, pointsUsed: usePts, points: earned, ship, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin, card: card || null, cardOff, ref };
+    sub, ritual, code, codeOff, pointsUsed: usePts, points: earned, ship, shipQuote: sq, shipKg: slab, wrap, cod, total, gift: giftOn ? { on: true, wrap: !!g.wrap, name: g.name, phone: g.phone || '', note: g.note || '', date: g.date || '' } : null, optin: !!o.optin, card: card || null, cardOff, ref };
   const row = { id, data, status, phone: c.phone, total, method: o.method, created_at: data.placedAt }; T.orders.push(row); autoInvoice(row, null);
   let pr = T.profiles.find((x) => x.email === em); if (!pr) T.profiles.push(pr = { email: em, name: '', phone: '', addresses: [], prefs: {} });
   if (!pr.name) pr.name = c.name; if (!pr.phone) pr.phone = c.phone;
@@ -249,9 +256,15 @@ http.createServer((req, res) => {
       if (m && m[1] === 'my_referral') { const who = String(json().contact_in).trim().toLowerCase(); let r = T.referrers.find((x) => x.contact === who); if (!r) { r = { id: Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'), contact: who, created_at: new Date().toISOString() }; T.referrers.push(r); } return send(res, 200, JSON.stringify(r.id), 'application/json'); }
       // the pay (Razorpay) and delivery (Shiprocket) functions: paid at once, every PIN reachable, a made-up AWB number
       if (u.pathname === '/functions/v1/pay') { const b = json(); const o = T.orders.find((x) => x.id === b.order_id); if (!o) return fail(res, 404, 'not_found');
-        if (o.status === 'Awaiting payment') { o.status = 'Placed'; o.data.payment = { by: 'mock' }; autoInvoice(o, 'Awaiting payment'); } return send(res, 200, { status: o.status, paid: true }); }
+        if (o.status === 'Awaiting payment') { o.status = 'Placed'; o.data.payment = { by: 'mock' }; autoInvoice(o, 'Awaiting payment');
+          if (on('autoBook', false)) { o.data.parcel = { awb: 'AUTO' + o.id.slice(3, 7), courier: (o.data.shipQuote && o.data.shipQuote.courier) || 'Mock Express', track: 'https://shiprocket.co/tracking/AUTO', booked: new Date().toISOString(), auto: true }; o.status = 'Packed'; } } return send(res, 200, { status: o.status, paid: true }); }
       if (u.pathname === '/functions/v1/delivery') { const b = json();
         if (b.action === 'pin') return send(res, 200, { ok: /^[1-9]\d{5}$/.test(b.pin || ''), days: 4 });
+        if (b.action === 'quote') { if (!on('shipAuto', false)) return send(res, 200, { ok: false, reason: 'off' }); if (!/^[1-9]\d{5}$/.test(b.pin || '')) return fail(res, 400, 'bad_pin');
+          let value = 0, grams = 0; for (const it of b.items || []) { const p = T.products.filter((x) => x.live).find((x) => x.data.variants.some((v) => v.sku === it.sku)); if (!p) return fail(res, 400, 'bad_items'); value += p.data.variants.find((v) => v.sku === it.sku).price * it.qty; grams += pieceG(p) * it.qty; }
+          if (!value) return fail(res, 400, 'bad_items'); if (num('mockNoCourier', 0)) return send(res, 200, { ok: false, reason: 'no_courier' });
+          const rate = num('mockRate', 94), step = Math.max(num('shipRound', 10) || 10, 1); let fee = Math.ceil(rate / step) * step + num('shipBuffer', 0); if (num('shipMax', 0) > 0) fee = Math.min(fee, num('shipMax', 0)); fee = Math.max(fee, num('shipMin', 0));
+          const q = { id: uuid(), pin: b.pin, slab: slabOf(grams), value, rate, fee, courier_id: 2, courier: 'Mock Fast', days: 2, expires: Date.now() + 30 * 60e3 }; QUOTES.push(q); return send(res, 200, { ok: true, quote: q.id, fee, kg: q.slab, days: 2 }); }
         if (b.action === 'book') { if (!own) return fail(res, 403, 'owner_only'); const o = T.orders.find((x) => x.id === b.order_id); if (!o || !['Placed', 'Packed'].includes(o.status)) return fail(res, 409, 'not_ready');
           o.data.parcel = { awb: 'MOCK' + o.id.slice(3, 7), courier: 'Mock Express', track: 'https://shiprocket.co/tracking/MOCK', booked: new Date().toISOString() }; o.status = 'Packed'; return send(res, 200, { status: o.status, ship: o.data.parcel }); }
         return fail(res, 400, 'bad_request'); }

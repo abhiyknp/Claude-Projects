@@ -212,6 +212,15 @@ alter table review_authors enable row level security;
 alter table customer_meta enable row level security;
 alter table events enable row level security;
 alter table hits enable row level security; -- no rules on purpose: only the functions here read or write it
+
+-- live shipping quotes: the delivery function asks Shiprocket for the quickest courier to a PIN code and saves the price
+-- here for 30 minutes. Customers cannot write or read this table; place_order reads it, so a browser can only point at a
+-- quote, never invent one.
+create table if not exists ship_quotes (
+  id uuid primary key, pin text not null, slab numeric not null, value int not null, rate numeric not null, fee int not null,
+  courier_id int, courier text, days int, created_at timestamptz not null default now(), expires_at timestamptz not null);
+create index if not exists ship_quotes_expiry on ship_quotes (expires_at);
+alter table ship_quotes enable row level security; -- no rules on purpose: only the delivery function and place_order use it
 revoke all on hits from anon, authenticated;
 revoke all on invoice_counters from anon, authenticated;
 revoke insert, update, delete on invoices from anon, authenticated;
@@ -415,11 +424,13 @@ declare
   sub int := 0; ritual int := 0; code_off int := 0; ship int := 0; wrap int := 0; cod int := 0; total int; code text := '';
   gift_on boolean := false; gift jsonb := null; new_id text; st text;
   em text := customer_email(); use_pts int := 0; earned int := 0;
+  grams numeric := 0; pg numeric; slab numeric; flat int; q ship_quotes%rowtype; sq jsonb := null;
   card text := upper(trim(coalesce(o ->> 'card', ''))); card_off int := 0; bal int; ref text := null; cpn jsonb;
 begin
   -- no guest orders: the customer signs in first
   if em is null then raise exception 'sign_in'; end if;
   perform release_unpaid();
+  if random() < 0.05 then delete from ship_quotes where expires_at < now() - interval '1 day'; end if;
   -- how often: per connection, per phone, and for the whole shop
   perform hit('order', client_key(), 5, '1 hour');
   perform hit('order-site', 'site', greatest(cfg_num('maxOrdersHour', 40), 1)::int, '1 hour');
@@ -457,11 +468,13 @@ begin
     if n < 1 or n > greatest(cfg_num('maxQty', 5), 1) then raise exception 'bad_quantity'; end if;
     if (it ->> 'sku') = any (skus) then raise exception 'bad_order:items'; end if;
     skus := skus || (it ->> 'sku');
-    select (v ->> 'price')::int, p.data ->> 'cat', p.data ->> 'name', v ->> 'label' into price, cat, pname, plabel
+    select (v ->> 'price')::int, p.data ->> 'cat', p.data ->> 'name', v ->> 'label',
+      round(case when p.data ->> 'weight' ~ '^[0-9]{1,5}(\.[0-9]+)?$' then (p.data ->> 'weight')::numeric else cfg_num('pieceG', 300) end) into price, cat, pname, plabel, pg
       from products p, jsonb_array_elements(p.data -> 'variants') v where p.live and v ->> 'sku' = it ->> 'sku' limit 1;
     if price is null then raise exception 'unknown_item:%', it ->> 'sku'; end if;
     pieces := pieces + n;
     sub := sub + price * n;
+    grams := grams + pg * n;
     for i in 1 .. n loop if cat = 'candles' then candles := candles || price; else objects := objects || price; end if; end loop;
     items := items || jsonb_build_object('sku', it ->> 'sku', 'name', pname, 'label', plabel, 'price', price, 'qty', n);
     update stock set qty = qty - n, updated_at = now() where sku = it ->> 'sku' and qty >= n;
@@ -480,7 +493,22 @@ begin
     cpn := coupon_off(o ->> 'code', sub - ritual, em, true);
     code := cpn ->> 'code'; code_off := (cpn ->> 'off')::int;
   end if;
-  ship := case when sub = 0 then 0 when cfg_num('freeOver', 1999) > 0 and sub >= cfg_num('freeOver', 1999) then 0 else round(cfg_num('shipFee', 99)) end;
+  -- shipping: the flat fee, or, when the owner has switched on live rates, the fee from the Shiprocket quote this browser
+  -- points at (it must be for this PIN, this weight and still fresh). Free over the owner's limit; freeCap, when set, is
+  -- the most the shop pays: the customer pays anything above it.
+  slab := greatest(ceil((grams + cfg_num('packG', 100)) / 500.0) * 0.5, 0.5);
+  flat := round(cfg_num('shipFee', 99));
+  if cfg_on('shipAuto', false) and coalesce(o ->> 'quote', '') <> '' then
+    if (o ->> 'quote') !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then raise exception 'ship_quote'; end if;
+    select * into q from ship_quotes where id = (o ->> 'quote')::uuid and pin = a ->> 'pin' and slab = place_order.slab and expires_at > now();
+    if not found then raise exception 'ship_quote'; end if;
+    flat := q.fee;
+    sq := jsonb_build_object('id', q.id, 'rate', q.rate, 'courier_id', q.courier_id, 'courier', q.courier, 'days', q.days, 'kg', q.slab);
+  end if;
+  ship := case when sub = 0 then 0
+    when cfg_num('freeOver', 1999) > 0 and sub >= cfg_num('freeOver', 1999) then
+      case when cfg_num('freeCap', 0) > 0 then greatest(flat - round(cfg_num('freeCap', 0)), 0) else 0 end
+    else flat end;
   if gift_on and (gift ->> 'wrap')::boolean then wrap := round(cfg_num('wrapFee', 99)); end if;
   if method = 'Cash on delivery' then cod := round(cfg_num('codFee', 49)); end if;
   -- Bud Points: 1 point is ₹1 off the pieces, up to what the customer has; one order at a time per customer
@@ -514,7 +542,7 @@ begin
     'id', new_id, 'placedAt', now(), 'method', method, 'items', items,
     'email', em, 'contact', jsonb_build_object('name', trim(c ->> 'name'), 'phone', phone, 'email', em),
     'address', jsonb_build_object('line1', trim(a ->> 'line1'), 'line2', coalesce(a ->> 'line2', ''), 'pin', a ->> 'pin', 'city', trim(a ->> 'city'), 'state', a ->> 'state'),
-    'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'pointsUsed', use_pts, 'points', earned, 'ship', ship, 'wrap', wrap, 'cod', cod, 'total', total,
+    'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'pointsUsed', use_pts, 'points', earned, 'ship', ship, 'shipQuote', sq, 'shipKg', slab, 'wrap', wrap, 'cod', cod, 'total', total,
     'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true', 'card', nullif(card, ''), 'cardOff', card_off, 'ref', ref,
     'src', case when o ->> 'src' ~ '^[a-z0-9._-]{1,40}$' then o ->> 'src' end), st, phone, total, method);
   perform remember_details(em, trim(c ->> 'name'), phone, case when gift_on then null else a end);

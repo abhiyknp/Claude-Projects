@@ -9,6 +9,7 @@
 //
 // Set up: see "Online payments (Razorpay)" in supabase/README.md.
 import { env, dbReady, db, getOrder, hmac, same, reply, cors, ORDER_ID, allowed } from '../_shared/util.ts';
+import { autoBook } from '../_shared/shiprocket.ts';
 
 // Saved numbers look like +919876543210 or +447911123456. Compare them as full digits (a bare 10-digit number is Indian).
 const fullPhone = (v: unknown) => { const d = String(v || '').replace(/\D/g, ''); return d.length === 10 ? '91' + d : d; };
@@ -38,7 +39,13 @@ async function settle(o: { id: string; total: number }, ro: any) {
   if (!ro || ro.status !== 'paid' || Number(ro.amount_paid) !== o.total * 100) return null;
   const pays = (await rzp('/orders/' + encodeURIComponent(ro.id) + '/payments'))?.items || [];
   const p = (Array.isArray(pays) ? pays : []).find((x: any) => x.status === 'captured') || {};
-  return markPaid(o.id, { by: 'razorpay', payment: p.id ? String(p.id) : null, method: p.method || null, at: new Date().toISOString() });
+  const first = !(o as any).data?.payment; // only the payment that first settles the order starts a booking
+  const status = await markPaid(o.id, { by: 'razorpay', payment: p.id ? String(p.id) : null, method: p.method || null, at: new Date().toISOString() });
+  if (first && status) { // books the courier by itself when the owner has switched that on, without keeping Razorpay waiting
+    const job = autoBook(o.id), rt = (globalThis as any).EdgeRuntime;
+    if (rt && typeof rt.waitUntil === 'function') rt.waitUntil(job); else await job;
+  }
+  return status;
 }
 
 export async function handle(req: Request) {

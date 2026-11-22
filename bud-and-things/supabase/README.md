@@ -170,6 +170,17 @@ The `delivery` Edge Function (`supabase/functions/delivery`) does three things:
 
 Testing without accounts: `tools/mock-supabase.js` stands in for both functions. A payment goes through at once, every PIN is reachable, and booking gives a made-up AWB.
 
+### Live shipping rates, automatic booking and free shipping (November 2026)
+
+Three switches, all in Owner view → Settings, all **off** until you turn them on:
+
+- **Live shipping rates** (`shipAuto`). At the payment step the shop asks Shiprocket (through `delivery`, action `quote`) for the rates to the customer's PIN code for this cart's weight and value, picks the **quickest** courier (fewest days; the cheaper one if two tie), rounds its price up to `shipRound` (₹10), adds `shipBuffer`, and keeps the result between `shipMin` and `shipMax` (0 = no highest). The price is saved as a quote for 30 minutes in the `ship_quotes` table; `place_order` checks that the quote is for the same PIN and weight band and still fresh, so a browser can never set its own shipping fee. If Shiprocket cannot be reached, or no courier serves the PIN, the flat `shipFee` applies and the order still goes through.
+- **Weight.** A cart weighs the sum of each product's `weight` (grams, set in Owner view → Products; `pieceG`, 300 by default, for a piece with none) plus `packG` (100 by default) for the box and wrap, rounded up to the next half kilo. Set real weights once the team has measured them.
+- **Automatic booking** (`autoBook`). When Razorpay confirms a payment, the `pay` function books the courier by itself: Shiprocket order, AWB, pickup request and label, using the courier saved with the quote (or Shiprocket's own choice if that courier can no longer take it). If it fails the payment stays recorded and the order shows the reason; press **Book courier** as before. Orders paid by hand (UPI QR) or on delivery are still booked with the button.
+- **Free shipping.** `freeOver` works as before: orders at or above it ship free. `freeCap` is new: with 0 the shop pays the whole fee; with, say, 100 the shop pays up to ₹100 of it and the customer pays any amount above (a far PIN where the courier costs ₹140 shows ₹40). The same rule applies to the flat fee.
+
+**To switch on:** run `schema.sql` again (it adds `ship_quotes` and changes `place_order`), redeploy `pay` and `delivery` (GitHub → Actions → Deploy shop functions → "pay and delivery"), make sure `pickupPin` is set, then try one order of each kind with a test payment before ticking **Live shipping rates**. Turn the two switches on separately.
+
 ## Customer profiles (October 2026)
 
 Run `schema.sql` again. Signed-in customers get **Your details** on their account page: name, mobile, up to 5 saved addresses (one is the usual) and how they want to be reached. Checkout starts from these (name, mobile, and the usual address unless the order is a gift), and every order adds its address to the profile. "Clear my saved details" empties the profile and keeps past orders. "Download my data" gives the customer one JSON file with their profile, all their orders, Bud Points adjustments, reviews, sign-ups, restock requests and gift reminders (`export_my_data`, at most 5 a hour). Ashi's private notes and tags about a customer are not in it. A customer can only read and change their own profile (`my_profile`, `save_profile`, `forget_me`); Ashi can read all of them in the `profiles` table.

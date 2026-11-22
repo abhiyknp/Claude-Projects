@@ -64,3 +64,4 @@ jobs:
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-festive.js
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-characters.js
           PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-backup.js
+          PLAYWRIGHT_PATH="$RUNNER_TEMP/audit/node_modules/playwright" node bud-and-things/tools/test-shipping.js
