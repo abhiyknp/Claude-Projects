@@ -2083,7 +2083,7 @@ function ensureQuote() {
   const co = UI.co, lines = cartLines(); if (!liveShip() || !lines.length || !/^[1-9]\d{5}$/.test(String(co.address.pin || '').trim())) return;
   const key = quoteKey(lines); if (co.quoteAsked === key && (!co.quote || co.quote.ok === false || Date.now() - co.quote.at < 25 * 60e3)) return;
   co.quoteAsked = key; co.quote = null; const pin = String(co.address.pin).trim();
-  const done = (q) => { if (co.quoteAsked !== key) return; co.quote = q; if (co.step === 'address') paintShip(); else render(); };
+  const done = (q) => { if (co.quoteAsked !== key) return; co.quote = q; if (co.step === 'pay') render(); else paintShip(); };
   BTDB.fn('delivery', { action: 'quote', pin, items: lines.map((l) => ({ sku: l.sku, qty: l.qty })) })
     .then((r) => done(r && r.ok ? { ok: true, key, at: Date.now(), id: r.quote, fee: +r.fee, days: r.days || null } : { ok: false, key }), () => done({ ok: false, key }));
 }
@@ -2092,7 +2092,7 @@ function totals() {
   const code = codeOk(UI.co.code) ? couponOffFor(UI.co.coupon, sub - ritual) : 0;
   // shipping: the flat fee, or at the payment step with live rates on, the quickest courier's price for this PIN and cart.
   // Free over the owner's limit. place_order works it out again in the database.
-  const q = liveShip() && (UI.co.step === 'pay' || UI.co.step === 'address') ? shipQuoteFor(lines) : null; const shipWait = liveShip() && UI.co.step === 'pay' && !q && !(UI.co.quote && UI.co.quote.ok === false && UI.co.quote.key === quoteKey(lines));
+  const q = liveShip() ? shipQuoteFor(lines) : null; const shipWait = liveShip() && UI.co.step === 'pay' && !q && !(UI.co.quote && UI.co.quote.ok === false && UI.co.quote.key === quoteKey(lines));
   const flat = q ? q.fee : +SET.shipFee || 0; const freeNow = !!(+SET.freeOver && sub >= +SET.freeOver);
   const ship = sub === 0 || freeNow ? 0 : flat;
   const wrap = sub && UI.co.gift.on && UI.co.gift.wrap && !hasBox(lines) ? +SET.wrapFee || 0 : 0;
@@ -2391,8 +2391,8 @@ function viewCheckout() {
   const co = UI.co; const lines = cartLines(); const t = totals(); const g = co.gift;
   if (!lines.length && co.step !== 'done') return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="empty"><strong>Your cart is empty.</strong><span class="muted">Add something before checking out.</span><a class="btn small" href="#shop">Browse the shop</a></div></div>`;
   if (!S.account && co.step !== 'done') { UI.acct.next = 'checkout'; return `<div class="wrap" style="padding-block:var(--s5) var(--section)"><h1 class="sr" tabindex="-1">Checkout</h1><div class="checkout"><div class="checkout-main"><ol class="steps" aria-label="Checkout steps"><li aria-current="step">1 · Sign in</li><li>2 · Contact</li><li>3 · Delivery</li><li>4 · Payment</li></ol><h1 tabindex="-1" class="sr">Sign in to check out</h1>${signInBox('checkout')}</div><aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${totalsHTML(t)}</aside></div></div>`; }
-  if (co.step === 'pay' || co.step === 'address') ensureQuote();
-  loadMine(); loadProfile(); applyProfile(); if (co.method === 'cod' && !SET.codOn) co.method = 'qr'; if (co.method === 'upiqr' && !upiQrOk()) co.method = 'qr';
+  loadMine(); loadProfile(); applyProfile(); ensureQuote(); // the price is asked for as soon as a PIN is known, on any step
+  if (co.method === 'cod' && !SET.codOn) co.method = 'qr'; if (co.method === 'upiqr' && !upiQrOk()) co.method = 'qr';
   if (BTDB.on && !SET.onlineOn && co.method !== 'cod' && co.method !== 'upiqr') co.method = upiQrOk() ? 'upiqr' : SET.codOn ? 'cod' : co.method; // online payment is off: open on the UPI QR
   const stepIdx = { contact: 0, address: 1, pay: 2 }[co.step];
   const steps = `<ol class="steps" aria-label="Checkout steps">${['Contact', 'Delivery', 'Payment'].map((l, i) => `<li ${i === stepIdx ? 'aria-current="step"' : ''}>${i < stepIdx ? '✓ ' : (i + 1) + ' · '}${l}</li>`).join('')}</ol>`;
