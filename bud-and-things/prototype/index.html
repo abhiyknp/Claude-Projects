@@ -2574,7 +2574,7 @@ function viewStory() {
       <ol class="how-steps">${steps.map(([i, h, t], n) => `<li><span class="how-n num">0${n + 1}</span>${hl(i, 28)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></section>
     <section class="section" aria-labelledby="pill-h" style="padding-bottom:0"><div class="section-head"><h2 id="pill-h">What we hold to</h2></div>
       <div class="pillars">${pillars.map(([ic, h, t]) => `<div>${ICON[ic]}<strong>${h}</strong><span class="muted">${t}</span></div>`).join('')}</div></section>
-    <section class="section" style="padding-bottom:0">${discover('story-disc').replace('section wrap', '')}</section></div>`;
+    <section class="section" style="padding-bottom:0">${discover('story-disc', 'story').replace('section wrap', '')}</section></div>`;
 }
 function viewHelp() {
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">We usually reply within a working day.</p></div>
@@ -3970,7 +3970,7 @@ function newArrivals(id) {
 // banners for offers and rewards, and a seasonal one
 function promoBanners() {
   const b = [];
-  if (SET.welcomeCode && +SET.welcomeOff) b.push(`<div class="promo promo-choc"><span class="eyebrow">${T('promo.welcomeEyebrow')}</span><strong>${T('promo.welcomeTitle')}</strong><span>${T('promo.welcomeText')}</span><span class="promo-acts"><button type="button" class="code-chip" data-act="copy-code" data-v="${esc(SET.welcomeCode)}">${hl('copy', 16)} ${esc(SET.welcomeCode)}</button><a class="btn light small" href="#shop">${T('promo.welcomeBtn')}</a></span></div>`);
+  if (SET.welcomeCode && +SET.welcomeOff) b.push(`<div class="promo promo-choc"><span class="eyebrow">${T('promo.welcomeEyebrow')}</span><strong>${T('promo.welcomeTitle')}</strong><span>${T('promo.welcomeText')}</span><span class="promo-acts"><button type="button" class="code-chip" data-act="copy-code" data-v="${esc(SET.welcomeCode)}">${hl('copy', 16)} ${esc(SET.welcomeCode)}</button>${route() === 'shop' ? '' : `<a class="btn light small" href="#shop">${T('promo.welcomeBtn')}</a>`}</span></div>`); // no "Shop now" on the shop page itself
   if (+SET.ritualOff) b.push(`<div class="promo promo-terra"><span class="eyebrow">${T('promo.pairEyebrow')}</span><strong>${T('promo.pairTitle')}</strong><span>${T('promo.pairText')}</span><span class="promo-acts"><a class="btn light small" href="#ritual">${T('promo.pairBtn')}</a></span></div>`);
   return b.length ? `<section class="wrap promos" aria-label="Offers">${b.join('')}</section>` : '';
 }
@@ -4062,9 +4062,11 @@ function storyBand(id) {
 }
 
 // Read Our Story · Why from us · 3D walk-through
-function discover(id) {
+function discover(id, here) {
+  // never a card that leads to the page you are already on (here = that page's route)
   const c = [['#story', IMG.logoPhoto, 'Our Story', 'Read our story', 'How a home studio became BUD & THINGS, and the people we make for.'],
-    ['#why', IMG.seal, 'Why from us', 'Why people buy from us', 'Hand-made pieces, free replacement if something arrives damaged, secure payments and gift-ready parcels.']];
+    ['#why', IMG.seal, 'Why from us', 'Why people buy from us', 'Hand-made pieces, free replacement if something arrives damaged, secure payments and gift-ready parcels.'],
+    ['#journal', IMG.box, 'Journal', 'From the journal', 'Care notes, stories and the thinking behind the pieces.']].filter((x) => x[0] !== '#' + here).slice(0, 2);
   return `<section class="section wrap" aria-labelledby="${id}"><div class="section-head"><h2 id="${id}">${T('home.discover')}</h2></div>
     <div class="discover">${c.map(([h, src, e, t, d]) => `<a class="disc" href="${h}"><img src="${esc(src)}" alt="" loading="lazy"><span class="disc-copy"><span class="eyebrow">${e}</span><strong>${t}</strong><span>${d}</span><span class="go">${h === '#tour' ? 'Step inside' : 'Read more'} →</span></span></a>`).join('')}</div></section>`;
 }
