@@ -424,7 +424,7 @@ declare
   sub int := 0; ritual int := 0; code_off int := 0; ship int := 0; wrap int := 0; cod int := 0; total int; code text := '';
   gift_on boolean := false; gift jsonb := null; new_id text; st text;
   em text := customer_email(); use_pts int := 0; earned int := 0;
-  grams numeric := 0; pg numeric; slab numeric; flat int; q ship_quotes%rowtype; sq jsonb := null;
+  grams numeric := 0; pg numeric; kg_band numeric; flat int; q ship_quotes%rowtype; sq jsonb := null;
   card text := upper(trim(coalesce(o ->> 'card', ''))); card_off int := 0; bal int; ref text := null; cpn jsonb;
 begin
   -- no guest orders: the customer signs in first
@@ -495,11 +495,11 @@ begin
   end if;
   -- shipping: the flat fee, or, when the owner has switched on live rates, the fee from the Shiprocket quote this browser
   -- points at (it must be for this PIN, this weight and still fresh). Free over the owner's limit.
-  slab := greatest(ceil((grams + cfg_num('packG', 100)) / 500.0) * 0.5, 0.5);
+  kg_band := greatest(ceil((grams + cfg_num('packG', 100)) / 500.0) * 0.5, 0.5);
   flat := round(cfg_num('shipFee', 99));
   if cfg_on('shipAuto', false) and coalesce(o ->> 'quote', '') <> '' then
     if (o ->> 'quote') !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then raise exception 'ship_quote'; end if;
-    select * into q from ship_quotes where id = (o ->> 'quote')::uuid and pin = a ->> 'pin' and slab = place_order.slab and expires_at > now();
+    select * into q from ship_quotes sq_ where sq_.id = (o ->> 'quote')::uuid and sq_.pin = a ->> 'pin' and sq_.slab = kg_band and sq_.expires_at > now();
     if not found then raise exception 'ship_quote'; end if;
     flat := q.fee;
     sq := jsonb_build_object('id', q.id, 'rate', q.rate, 'courier_id', q.courier_id, 'courier', q.courier, 'days', q.days, 'kg', q.slab);
@@ -540,7 +540,7 @@ begin
     'id', new_id, 'placedAt', now(), 'method', method, 'items', items,
     'email', em, 'contact', jsonb_build_object('name', trim(c ->> 'name'), 'phone', phone, 'email', em),
     'address', jsonb_build_object('line1', trim(a ->> 'line1'), 'line2', coalesce(a ->> 'line2', ''), 'pin', a ->> 'pin', 'city', trim(a ->> 'city'), 'state', a ->> 'state'),
-    'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'pointsUsed', use_pts, 'points', earned, 'ship', ship, 'shipQuote', sq, 'shipKg', slab, 'wrap', wrap, 'cod', cod, 'total', total,
+    'sub', sub, 'ritual', ritual, 'code', code, 'codeOff', code_off, 'pointsUsed', use_pts, 'points', earned, 'ship', ship, 'shipQuote', sq, 'shipKg', kg_band, 'wrap', wrap, 'cod', cod, 'total', total,
     'gift', gift, 'optin', coalesce(o ->> 'optin', 'false') = 'true', 'card', nullif(card, ''), 'cardOff', card_off, 'ref', ref,
     'src', case when o ->> 'src' ~ '^[a-z0-9._-]{1,40}$' then o ->> 'src' end), st, phone, total, method);
   perform remember_details(em, trim(c ->> 'name'), phone, case when gift_on then null else a end);
