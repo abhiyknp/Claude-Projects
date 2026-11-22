@@ -23,7 +23,7 @@ function policy(html) {
     .map((m) => `'sha256-${crypto.createHash('sha256').update(m[1], 'utf8').digest('base64')}'`);
   return [`default-src 'self'`, `script-src 'self' ${[...ads.script, ...pay.script].join(' ')} ${[...new Set(hashes)].join(' ')}`.trim(),
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, `font-src 'self' https://fonts.gstatic.com`,
-    `img-src ${images.join(' ')}`, `media-src ${images.join(' ')}`, `connect-src ${[...connect, ...ads.connect, ...pay.connect].join(' ')}`, `frame-src ${pay.frame.join(' ')}`,
+    `img-src ${images.join(' ')}`, `media-src ${images.join(' ')}`, `connect-src ${[...connect, ...ads.connect, ...pay.connect].join(' ')}`, `frame-src 'self' ${pay.frame.join(' ')}`, // 'self': the Owner view's Live preview shows the shop in a frame of its own site
     `object-src 'none'`, `base-uri 'self'`, `form-action 'self' ${pay.form.join(' ')}`, `upgrade-insecure-requests`].join('; ');
 }
 

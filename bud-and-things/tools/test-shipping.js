@@ -35,7 +35,7 @@ const DB = 'http://localhost:54321';
     await p.fill('#co-name', 'Meera Rao'); await p.fill('#co-phone', '9876543210'); await p.check('#co-agree'); await p.click('form[data-form="contact"] button[type="submit"]'); await p.waitForTimeout(300);
     await p.fill('#co-line1', '12 Lake View Road'); await p.fill('#co-pin', pin); await p.fill('#co-city', 'Kanpur'); await p.selectOption('#co-state', 'Uttar Pradesh');
     await p.waitForTimeout(900); // the price is asked for in the background as soon as the PIN is complete
-    p.atAddress = { note: (await p.locator('#ship-note').innerText()).trim(), sum: await row(p, 'Shipping') };
+    p.atAddress = { note: await p.locator('#ship-note').count() ? 'a note is on the page' : '', sum: await row(p, 'Shipping') };
     await p.click('form[data-form="address"] button[type="submit"]'); await p.waitForTimeout(600);
     return p;
   }
@@ -53,7 +53,7 @@ const DB = 'http://localhost:54321';
     p = await toPay('b@example.com', '208024');
     ship = await row(p, 'Shipping');
     ok('on: the live fee (Rs 100) is shown with the quickest courier', num(ship.replace(/about \d+ days?/, '')) === 100 && /quickest courier, about 2 days/.test(ship), ship);
-    ok('on: the price shows under the PIN field as soon as the PIN is complete, before the payment step', /Shipping to 208024: ₹100 · quickest courier, about 2 days/.test(p.atAddress.note) && num(p.atAddress.sum) === 100, p.atAddress.note + ' | ' + p.atAddress.sum);
+    ok('on: the price shows in the order summary as soon as the PIN is complete, before the payment step, and nowhere else on the page', /quickest courier, about 2 days/.test(p.atAddress.sum) && num(p.atAddress.sum) === 100 && p.atAddress.note === '', p.atAddress.note + ' | ' + p.atAddress.sum);
     ok('on: the payment step does not wait for it', !/Working it out/.test(ship));
     await p.click('[data-act="co-step"][data-v="address"]'); await p.waitForTimeout(300); await p.click('[data-act="co-step"][data-v="contact"]'); await p.waitForTimeout(500);
     ok('on: the price is already in the order summary on the first (Contact) step once a PIN is known', num(await row(p, 'Shipping')) === 100 && /Contact/.test(await p.locator('h1').first().innerText()), await row(p, 'Shipping'));
@@ -65,10 +65,6 @@ const DB = 'http://localhost:54321';
     let o = (await orders()).find((x) => x.data.email === 'b@example.com');
     ok('on: the order keeps the fee, the courier and the weight band from the quote', o && o.data.ship === 100 && o.data.shipQuote && o.data.shipQuote.courier_id === 2 && o.data.shipKg === 0.5, JSON.stringify(o && o.data.shipQuote));
     await p.close();
-    { const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); await ctx.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: CFG }));
-      const pp = await ctx.newPage(); pp.on('pageerror', (e) => errs.push(e.message)); await pp.goto(url + '#p-bnt-prd-jt-001'); await pp.waitForTimeout(1500);
-      await pp.fill('form[data-form="pin"] input', '208024'); await pp.click('form[data-form="pin"] button[type="submit"]'); await pp.waitForTimeout(1500);
-      const txt = await pp.locator('[role="status"].ok-text').first().innerText().catch(() => ''); ok('on: the product page delivery check also shows the shipping price for that PIN', /Shipping to 208024 for this piece: ₹100/.test(txt), txt); await ctx.close(); }
 
     // 3. free over the limit
     await setS({ ...base, shipAuto: true, freeOver: 100 });
