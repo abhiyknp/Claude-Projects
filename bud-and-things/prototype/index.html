@@ -184,6 +184,23 @@ body.public .proto { display: none; }
 .head-actions { display: flex; }
 .menu-btn { display: none; }
 @media (max-width: 860px) { .nav { display: none; } .menu-btn { display: inline-flex; } }
+.mega { position: absolute; left: 0; right: 0; top: 100%; z-index: 25; background: var(--head-bg); border-bottom: 3px solid #D6A34A; box-shadow: 0 26px 50px rgba(21,2,6,.32); }
+:root[data-skin="silk"] .mega { background: radial-gradient(120% 160% at 0% 0%, rgba(214,163,74,.14), transparent 55%), #0b0204; }
+.mega a { color: inherit; }
+.mega-panel > .wrap { display: flex; flex-wrap: wrap; gap: 8px 64px; padding-block: 28px 32px; align-items: flex-start; animation: megaIn .22s ease both; }
+.mega-col { display: grid; gap: 2px; align-content: start; } .mega-col strong { font-family: var(--display); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #D6A34A; margin-bottom: 8px; }
+.mega-col a { text-decoration: none; padding: 7px 0; font-size: 16px; border-bottom: 1px solid transparent; width: fit-content; } .mega-col a:hover, .mega-col a:focus-visible { border-bottom-color: #D6A34A; }
+.mega-feat { display: grid; gap: 6px; text-decoration: none; padding: 0; width: 300px; margin-left: auto; } .mega-feat img { width: 100%; height: 150px; object-fit: cover; border: 1px solid rgba(214,163,74,.5); } .mega-feat .eyebrow { color: #D6A34A; } .mega-feat strong { font-size: 17px; }
+.mega-wa { padding: 22px; border: 1px solid rgba(214,163,74,.6); background: rgba(214,163,74,.08); }
+@keyframes megaIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 860px) { .mega { display: none !important; } }
+.mm { display: grid; gap: 22px; padding-block: 20px 36px; }
+.mm-search { display: flex; gap: 10px; align-items: center; width: 100%; min-height: 52px; padding: 0 16px; background: transparent; color: inherit; border: 1px solid rgba(214,163,74,.7); font: inherit; font-size: 16px; text-align: left; cursor: pointer; }
+.mm-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .mm-quick a span { font: 600 15px var(--body, Montserrat, sans-serif); } .mm-quick a { display: flex; gap: 10px; align-items: center; min-height: 56px; padding: 0 14px; border: 1px solid rgba(214,163,74,.45); background: rgba(214,163,74,.08); border-bottom: 1px solid rgba(214,163,74,.45) !important; text-decoration: none; font-weight: 600; font-size: 15px; }
+.mm-sec h2 { font: 500 28px var(--display); margin: 0 0 6px; color: inherit; } .mm-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+.mm-grid a { display: flex; align-items: center; min-height: 48px; font-size: 17px; text-decoration: none; }
+.mm-wa { display: flex; gap: 10px; align-items: center; justify-content: center; min-height: 54px; background: #8F1834; color: #fff !important; font-weight: 700; text-decoration: none; border-bottom: 0 !important; }
+.mobile-menu { min-height: calc(100vh - 72px); min-height: calc(100dvh - 72px); }
 .mobile-menu { border-top: 1px solid var(--line); background: var(--ivory); max-height: calc(100vh - 72px); max-height: calc(100dvh - 72px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 /* while a menu, the cart or search is open, the page behind stays put; each panel scrolls on its own */
 html.lock, html.lock body { overflow: hidden; overscroll-behavior: none; touch-action: none; }
@@ -390,6 +407,23 @@ label { font-size: 14px; font-weight: 600; }
 .waiting { display: flex; align-items: center; gap: 8px; font-size: 14px; }
 .waiting::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--olive); animation: pulse 1.4s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .25; } }
+.oj { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; padding: 18px 20px; background: #fff; border: 1px solid var(--line, #E4D3B8); }
+.oj-candle { margin: 0; flex: none; } .oj-body { flex: 1 1 260px; min-width: 0; display: grid; gap: 16px; }
+.oj-candle .oj-glow, .oj-candle .oj-flame, .oj-candle .oj-flame-in, .oj-candle .oj-wick, .oj-candle .oj-spark { opacity: 0; transition: opacity .6s, transform .6s; transform-box: fill-box; transform-origin: 50% 100%; }
+.oj-candle.s1 .oj-wick, .oj-candle.s2 .oj-wick, .oj-candle.s3 .oj-wick { opacity: 1; }
+.oj-candle.s2 .oj-flame, .oj-candle.s2 .oj-flame-in, .oj-candle.s3 .oj-flame, .oj-candle.s3 .oj-flame-in { opacity: 1; animation: ojFlame 2.4s ease-in-out infinite; }
+.oj-candle.s2 { --s: .62; } .oj-candle.s2 .oj-glow { opacity: .45; } .oj-candle.s3 .oj-glow { opacity: 1; animation: ojGlow 3s ease-in-out infinite; } .oj-candle.s3 .oj-spark { opacity: 1; animation: ojSpark 2.8s ease-in-out infinite; }
+.oj-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; } .oj-steps li { display: flex; gap: 14px; padding-bottom: 20px; position: relative; } .oj-steps li:last-child { padding-bottom: 0; }
+.oj-steps li + li::before { content: ""; position: absolute; left: 8px; top: -14px; height: 22px; width: 2px; background: var(--line, #E4D3B8); } .oj-steps li.done + li::before, .oj-steps li.now::before { background: #8F1834; }
+.oj-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line2, #C9B28F); background: #fff; flex: none; margin-top: 3px; position: relative; z-index: 1; }
+.oj-steps li.done .oj-dot { background: #8F1834; border-color: #8F1834; } .oj-steps li.now .oj-dot { background: #D6A34A; border-color: #8F1834; animation: nowGlow 2.2s ease-in-out infinite; }
+.oj-steps li > span:last-child { display: grid; gap: 2px; } .oj-steps strong { font-size: 17px; } .oj-steps .muted { font-size: 14px; } .oj-steps li:not(.done):not(.now) strong { color: #7a6a5a; font-weight: 600; }
+.oj-route { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: center; padding: 14px 16px; background: var(--linen, #F1E6D3); font-size: 14px; } .oj-eta { grid-column: 1 / -1; }
+.oj-line { position: relative; height: 22px; border-bottom: 2px dotted #8F1834; } .oj-truck { position: absolute; bottom: -3px; left: 0; color: #8F1834; display: block; animation: ojTruck 5s ease-in-out infinite alternate; }
+@keyframes ojFlame { 0%, 100% { transform: scale(var(--s, 1)) rotate(-1deg); } 30% { transform: scale(var(--s, 1), 1.06) rotate(1.5deg); } 65% { transform: scale(var(--s, 1), .95) rotate(-1.5deg); } }
+@keyframes ojGlow { 0%, 100% { opacity: .85; } 50% { opacity: 1; } } @keyframes ojSpark { 0%, 100% { opacity: .2; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.25); } }
+@keyframes ojTruck { from { left: 0; } to { left: calc(100% - 22px); } }
+@media (prefers-reduced-motion: reduce) { .oj-candle .oj-flame, .oj-candle .oj-flame-in, .oj-candle .oj-glow, .oj-candle .oj-spark, .oj-truck, .oj-steps li.now .oj-dot { animation: none !important; } }
 .timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .timeline li { display: flex; gap: 14px; padding-bottom: 22px; position: relative; }
 .timeline li::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--line2); margin-top: 4px; flex-shrink: 0; }
@@ -915,6 +949,9 @@ body.app .why-band { padding-bottom: 96px; }
 @keyframes nowGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(214,163,74,.7); } 50% { box-shadow: 0 0 0 9px rgba(214,163,74,0); } }
 @media (max-width: 720px) { .acct-hero { padding: 24px 18px; } .ah-pts { max-width: none; } .jr li { font-size: 11px; } .jr-dot { width: 28px; height: 28px; } .jr.big .jr-dot { width: 38px; height: 38px; } .jr.big li + li::before { top: 18px; } .ord-card a { align-items: flex-start; } }
 @media (prefers-reduced-motion: reduce) { .acct-hero, .acct-live, .acct-shelf, .ah-flame, .embers i, .ring-fg, .jr li.now .jr-dot { animation: none; } .embers { display: none; } }
+.why-extra { font-size: 14px; color: var(--muted, #6b5560); }
+.why-pts, .why-ask { margin-top: 28px; display: flex; gap: 18px 24px; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 22px 26px; border: 1px solid #D6A34A; background: #fff; } .why-pts > div, .why-ask > div { display: grid; gap: 4px; flex: 1 1 260px; } .why-pts strong, .why-ask strong { font-size: 19px; }
+.why-pts { background: #150206; color: #F8F0E4; border-color: #D6A34A; } .why-pts .why-ic { color: #D6A34A; background: transparent; } .why-pts .btn { color: #F3DCA6; border-color: #D6A34A; }
 .acct-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .acct-card { display: flex; flex-direction: column; gap: 6px; padding: 22px; background: var(--linen); text-decoration: none; }
 .acct-card strong { font-family: var(--display); font-size: 48px; font-weight: 500; line-height: 1; }
@@ -1157,6 +1194,7 @@ body.app .why-band { padding-bottom: 96px; }
       <button class="icon-btn menu-btn" type="button" data-act="menu" aria-label="Open menu" aria-expanded="false" id="menu-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
     </div>
   </div>
+  <div class="mega" id="mega" hidden></div>
   <div class="mobile-menu" id="mobile-menu" hidden><div class="wrap" id="mobile-menu-inner"></div></div>
 </header>
 <div id="offers-slot"></div>
@@ -1188,8 +1226,8 @@ body.app .why-band { padding-bottom: 96px; }
 <script src="invoice.js"></script>
 <script src="db.js?v=9"></script>
 <script src="import.js"></script>
-<link rel="stylesheet" href="festive.css?v=2">
-<script src="festive.js?v=2"></script>
+<link rel="stylesheet" href="festive.css?v=3">
+<script src="festive.js?v=3"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -2021,12 +2059,12 @@ window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false;
 // ---------- chrome ----------
 // menus and the FAQ: the owner edits these lists in Owner view (Menus & FAQ); the lists below are what shows until then
 const LIST_DEFAULTS = {
-  navList: [['shop', 'Shop'], ['gifting', 'Gifting'], ['story', 'Our Story']],
+  navList: [['shop', 'Shop'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['help', 'Help']],
   menuList: [['glass', 'Glass Candles'], ['tealight', 'Tealight Candles'], ['moulded', 'Moulded Candles'], ['jesmonite', 'Jesmonite Trays'], ['shop', 'All products'], ['gifting', 'Gifting'], ['story', 'Our Story'], ['journal', 'Journal'], ['track', 'Track your order'], ['help', 'Help & contact']],
   footList: [['Shop', [['glass', 'Glass Candles'], ['tealight', 'Tealight Candles'], ['moulded', 'Moulded Candles'], ['jesmonite', 'Jesmonite Trays'], ['shop', 'All products'], ['bulk', 'Corporate & bulk gifts'], ['giftcard', 'Gift cards'], ['share', 'Share with a friend']]],
     ['Help', [['help', 'Contact us'], ['track', 'Track your order'], ['shipping', 'Shipping & delivery'], ['refunds', 'Cancellations & replacements'], ['faq', 'FAQ'], ['journal-first-burn', 'Product care']]],
     ['About', [['story', 'Our Story'], ['why', 'Why buy from us'], ['journal', 'Journal'], ['account', 'Your account']]],
-    ['Policies', [['privacy', 'Privacy policy'], ['terms', 'Terms & conditions'], ['shipping', 'Shipping policy'], ['refunds', 'Replacement policy']]]]
+    ['Policies', [['privacy', 'Privacy policy'], ['terms', 'Terms & conditions']]]]
 };
 const okLink = (x) => Array.isArray(x) && typeof x[0] === 'string' && typeof x[1] === 'string' && x[1].trim();
 // a saved list is used only if it is well formed; otherwise the built-in one
@@ -2044,10 +2082,47 @@ function faqItems() {
   return out;
 }
 const mdText = (t) => esc(t).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
+// ---------- menus: a panel under each main menu word on desktop, a full-screen menu on phones ----------
+// Built from the same structure as the footer (Shop, Help, About), so a customer finds things in the same places.
+const MEGA = {
+  shop: { cols: [['Candles', [['glass', 'Glass Candles'], ['tealight', 'Tealight Candles'], ['moulded', 'Moulded Candles']]], ['Objects', [['jesmonite', 'Jesmonite Trays']]], ['Find your piece', [['shop', 'All products'], ['feeling', 'Find Your Feeling'], ['under-999', 'Gifts under ₹999'], ['saved', 'Your saved pieces']]]], feat: ['glass', 'jar', 'Hand-poured', 'Glass candles'] },
+  gifting: { cols: [['Give something', [['gifting', 'Gift ideas'], ['ritual', 'Build a ritual'], ['giftcard', 'Gift cards']]], ['For many', [['bulk', 'Corporate & bulk gifts'], ['share', 'Share with a friend']]]], feat: ['gifting', 'box', 'Wrapped by hand', 'Ready to give'] },
+  story: { cols: [['About us', [['story', 'Our Story'], ['why', 'Why buy from us'], ['journal', 'Journal']]], ['Look after it', [['journal-first-burn', 'Product care'], ['faq', 'FAQ']]]], feat: ['story', 'logoPhoto', 'Made in small batches', 'Read our story'] },
+  help: { cols: [['Your order', [['track', 'Track your order'], ['shipping', 'Shipping & delivery'], ['refunds', 'Cancellations & replacements']]], ['Talk to us', [['help', 'Contact us'], ['faq', 'FAQ'], ['account', 'Your account']]]], feat: null },
+};
+const megaCol = ([title, links]) => `<div class="mega-col"><strong>${esc(title)}</strong>${links.map(([k, l]) => linkA(k, l)).join('')}</div>`;
+const megaPanels = () => Object.entries(MEGA).map(([k, m]) => `<div class="mega-panel" data-panel="${k}" hidden><div class="wrap">${m.cols.map(megaCol).join('')}${m.feat ? `<a class="mega-feat" href="#${m.feat[0]}"><img src="${esc(IMG[m.feat[1]] || IMG.box)}" alt="" loading="lazy"><span class="eyebrow">${esc(m.feat[2])}</span><strong>${esc(m.feat[3])} →</strong></a>` : (SET.whatsapp ? `<a class="mega-feat mega-wa" href="${esc(waLink('Hello, I have a question'))}" target="_blank" rel="noopener"><span class="eyebrow">Quickest answer</span><strong>Message us on WhatsApp →</strong></a>` : '')}</div></div>`).join('');
+function mobileMenu() {
+  if (Array.isArray(SET.menuList) && SET.menuList.length && listOf('menuList') === SET.menuList) return listOf('menuList').map(([k, l]) => linkA(k, l)).join('') + `<a href="#account">${S.account ? 'Your account' : 'Sign in'}</a>`; // the owner chose their own menu: keep it as they made it
+  const wa = SET.whatsapp ? waLink('Hello, I have a question') : '';
+  return `<div class="mm"><button class="mm-search" type="button" data-act="menu-search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg> Search candles and objects</button>
+    <div class="mm-quick"><a href="#track">${hl('truck', 20)}<span>Track your order</span></a><a href="#account">${hl('user', 20)}<span>${S.account ? 'Your account' : 'Sign in'}</span></a></div>
+    ${Object.entries(MEGA).map(([k, m]) => `<section class="mm-sec"><h2>${esc((listOf('navList').find((x) => x[0] === k) || [k, { shop: 'Shop', gifting: 'Gifting', story: 'Our Story', help: 'Help' }[k]])[1])}</h2><ul class="mm-grid">${m.cols.flatMap(([, ls]) => ls).filter(([lk], i, a) => a.findIndex((y) => y[0] === lk) === i).map(([lk, l]) => `<li>${linkA(lk, l)}</li>`).join('')}</ul></section>`).join('')}
+    ${wa ? `<a class="mm-wa" href="${esc(wa)}" target="_blank" rel="noopener">${hl('note', 20)} Message us on WhatsApp</a>` : ''}</div>`;
+}
+let megaT = 0;
+function megaShow(k) {
+  clearTimeout(megaT); const m = document.getElementById('mega'); if (!m) return; let any = false;
+  m.querySelectorAll('.mega-panel').forEach((pn) => { const on = pn.dataset.panel === k; pn.hidden = !on; any = any || on; });
+  m.hidden = !any; document.querySelectorAll('#nav a[data-mega]').forEach((a) => a.setAttribute('aria-expanded', String(any && a.dataset.mega === k)));
+}
+const megaHide = (ms) => { clearTimeout(megaT); megaT = setTimeout(() => megaShow(''), ms == null ? 160 : ms); };
+const inMega = (el) => el && el.closest && el.closest('#nav a[data-mega], #mega');
+document.addEventListener('mouseover', (e) => { const a = e.target.closest && e.target.closest('#nav a[data-mega]'); if (a) megaShow(a.dataset.mega); else if (inMega(e.target)) clearTimeout(megaT); });
+document.addEventListener('mouseout', (e) => { if (inMega(e.target) && !inMega(e.relatedTarget)) megaHide(); });
+document.addEventListener('focusin', (e) => { const a = e.target.closest && e.target.closest('#nav a[data-mega]'); if (a) megaShow(a.dataset.mega); else if (!inMega(e.target)) megaHide(0); });
+document.addEventListener('keydown', (e) => {
+  const a = e.target.closest && e.target.closest('#nav a[data-mega]');
+  if (e.key === 'ArrowDown' && a) { e.preventDefault(); megaShow(a.dataset.mega); document.querySelector('#mega .mega-panel:not([hidden]) a')?.focus(); }
+  else if (e.key === 'Escape' && inMega(e.target)) { const open = document.querySelector('#nav a[aria-expanded="true"]'); megaShow(''); if (open) open.focus(); }
+});
+document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('#mega a')) megaShow(''); });
+window.addEventListener('hashchange', () => megaShow(''));
 function renderChrome() {
   const r = route(); const cur = (k) => (r === k || (k === 'shop' && ['candles', 'collection'].concat(Object.keys(SUBS)).includes(r)) || (k === 'shop' && r.startsWith('p-'))) ? ' aria-current="page"' : '';
-  $('#nav').innerHTML = listOf('navList').map(([k, l]) => linkA(k, l, cur(k))).join('');
-  $('#mobile-menu-inner').innerHTML = listOf('menuList').map(([k, l]) => linkA(k, l)).join('') + `<a href="#account">${S.account ? 'Your account' : 'Sign in'}</a>`;
+  $('#nav').innerHTML = listOf('navList').map(([k, l]) => linkA(k, l, cur(k) + (MEGA[k] ? ` data-mega="${k}" aria-haspopup="true" aria-expanded="false"` : ''))).join('');
+  const mg = document.getElementById('mega'); if (mg) { mg.innerHTML = megaPanels(); mg.hidden = true; }
+  $('#mobile-menu-inner').innerHTML = mobileMenu();
   $('#mobile-menu').hidden = !UI.menu; $('#menu-btn').setAttribute('aria-expanded', String(UI.menu)); lockPage();
   const cc = cartCount(); const cb = $('#cart-btn');
   cb.setAttribute('aria-label', `Cart, ${cc} item${cc === 1 ? '' : 's'}`);
@@ -2058,7 +2133,7 @@ function renderChrome() {
   $('#foot-cols').innerHTML = listOf('footList').map(([t, ls]) => `<nav aria-label="${esc(t)}"><strong>${esc(t)}</strong>${ls.map(([k, l]) => linkA(k, l)).join('')}</nav>`).join('');
   $('#foot-tag').innerHTML = T('foot.tagline'); $('#foot-also').innerHTML = Tx('foot.also').split('|').map((x) => x.trim()).filter(Boolean).map((x, i) => `<li>${hl(['spark', 'shield', 'note', 'gift'][i] || 'spark', 22)}<span>${esc(x)}</span></li>`).join(''); $('#foot-social').innerHTML = socialLinks();
   $('#foot-copy').innerHTML = T('foot.copy'); $('#foot-pay').innerHTML = payBadges();
-  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' || /^(pay|bill|i|b)-/.test(r) ? '' : whyBand();
+  const cs = document.body.classList.contains('cs'); $('#offers-slot').innerHTML = ''; $('#why-slot').innerHTML = cs || r === 'admin' || r === 'why' || /^(pay|bill|i|b)-/.test(r) ? '' : whyBand();
   $('#acct-btn').setAttribute('aria-label', S.account ? 'Your account, signed in' : 'Sign in'); $('#acct-btn').classList.toggle('on', !!S.account);
   document.documentElement.dataset.skin = skin(); $('#mode-web').setAttribute('aria-pressed', String(S.mode === 'web')); $('#mode-app').setAttribute('aria-pressed', String(S.mode === 'app'));
   
@@ -2532,6 +2607,26 @@ function payBox(o) {
   }
   return `<div class="pay-panel"><div class="info">${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}${P.busy ? '<span class="waiting" role="status">Checking with Razorpay</span>' : `<span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="pay-order" data-id="${esc(o.id)}">Pay <span class="num">${inr(o.total)}</span> now</button><button class="btn ghost" type="button" data-act="pay-check" data-id="${esc(o.id)}">I’ve paid, check again</button></span>`}<span class="hint">${T('co.payOnline')}</span></div></div>`;
 }
+// ---------- the order journey: a candle that lights as the order moves (Placed, Packed, Shipped, Delivered) ----------
+// A time is shown only where we really have one: when it was placed, when the courier was booked, the courier's latest update.
+const dayOf = (x) => { const d = new Date(x); return isNaN(d) ? '' : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }); };
+function orderJourney(o, { idx, unpaid, cod }) {
+  const pc = o.parcel || {}, city = (o.address && o.address.city) || 'you';
+  const pay = cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + o.method);
+  const steps = [
+    [unpaid ? 'We are waiting for your payment' : 'We have your order', esc(pay) + ' · ' + dayOf(o.placedAt)],
+    ['Packed by hand', idx >= 1 ? (pc.booked ? 'Ready and booked with the courier on ' + dayOf(pc.booked) : 'Wrapped, checked and ready for the courier') : 'Next: wrapped, checked and packed with care'],
+    ['On its way' + (idx >= 2 && pc.courier ? ' with ' + esc(pc.courier) : ''), idx >= 2 ? (pc.status ? esc(String(pc.status).toLowerCase()) + (pc.updated ? ' · ' + dayOf(pc.updated) : '') : 'The tracking link is above') : 'Then it travels with our courier partner'],
+    ['Delivered. Time to light it.', idx >= 3 ? (pc.updated ? 'Delivered ' + dayOf(pc.updated) + '. We hope you love it.' : 'We hope you love it.') : 'Usually ' + esc(SET.deliveryDays) + ' from order'],
+  ];
+  const stage = Math.max(0, Math.min(3, idx));
+  const candle = `<svg viewBox="0 0 120 200" width="104" height="172" aria-hidden="true" focusable="false"><defs><radialGradient id="oj-g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#f3dca6" stop-opacity=".95"/><stop offset="1" stop-color="#f3dca6" stop-opacity="0"/></radialGradient></defs>
+    <circle class="oj-glow" cx="60" cy="58" r="54" fill="url(#oj-g)"/><path class="oj-flame" d="M60 22C70 40 75 52 60 70C45 52 50 40 60 22Z" fill="#D6A34A"/><path class="oj-flame-in" d="M60 44C65 54 66 61 60 68C54 61 55 54 60 44Z" fill="#fff3d4"/>
+    <path class="oj-wick" d="M60 70v22" stroke="#150206" stroke-width="3" stroke-linecap="round" fill="none"/><rect x="36" y="92" width="48" height="92" rx="4" fill="#F8F0E4" stroke="#D6A34A" stroke-width="1.5"/><rect x="36" y="118" width="48" height="24" fill="#8F1834"/><path d="M36 118h48M36 142h48" stroke="#D6A34A" stroke-width="1.5"/>
+    <ellipse cx="60" cy="187" rx="42" ry="6" fill="rgba(21,2,6,.16)"/><g class="oj-spark" fill="#D6A34A"><circle cx="22" cy="44" r="2.2"/><circle cx="98" cy="36" r="2.6"/><circle cx="104" cy="74" r="1.8"/><circle cx="14" cy="80" r="1.8"/></g></svg>`;
+  const route = idx === 2 && pc.awb ? `<div class="oj-route"><span class="oj-end">Our studio</span><span class="oj-line" aria-hidden="true"><i class="oj-truck">${hl('truck', 20)}</i></span><span class="oj-end">${esc(city)}</span><span class="muted oj-eta">${pc.etd ? 'Expected by ' + dayOf(pc.etd) : 'Usually ' + esc(SET.deliveryDays) + ' from order'}</span></div>` : '';
+  return `<div class="oj"><figure class="oj-candle s${stage}">${candle}</figure><div class="oj-body"><ol class="oj-steps" aria-label="Order progress">${steps.map(([h, s], i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"${i === idx ? ' aria-current="step"' : ''}><span class="oj-dot" aria-hidden="true"></span><span><strong>${h}</strong><span class="muted">${s}</span></span></li>`).join('')}</ol>${route}</div></div>`;
+}
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound('order');
   if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel) || JSON.stringify(d.delay) !== JSON.stringify(o.delay))) { o.status = d.status; o.parcel = d.parcel; o.delay = d.delay; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
@@ -2543,7 +2638,7 @@ function viewOrder(id) {
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
   if (fresh && !unpaid && !gone && window.BTFest && !(UI.thx || (UI.thx = {}))[id]) { UI.thx[id] = 1; const nm = o.items.map((l) => l.name).filter((v, i, a) => a.indexOf(v) === i).join(' and '); setTimeout(() => BTFest.thanks({ text: 'Order ' + id + ' is ' + (cod ? 'placed' : 'paid') + '. Your ' + nm + ' will be packed by hand and sent with care.' }), 450); }
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
-    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.delay && canDelay(o) ? `<div class="status delayed" role="status"><strong>Running a little late.</strong> ${delayText(o.delay)}. Thank you for waiting; we’ll update this page as soon as it moves.</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}<ol class="timeline">${STATUSES.map((s, i) => `<li class="${i < idx ? 'done' : i === idx ? 'now' : ''}"><span><strong>${s}</strong><br><span class="muted" style="font-size:14px">${i === 0 ? (cod ? 'Pay ' + inr(o.total) + ' on delivery' : (o.method === 'Online' ? (unpaid ? 'Paying online' : 'Paid online') : (unpaid ? 'Paying by ' : 'Paid by ') + esc(o.method))) + ' · ' + new Date(o.placedAt).toLocaleDateString('en-IN') : i === 2 && idx >= 2 ? 'Courier tracking link appears here' : i === 3 && idx < 3 ? 'Usually ' + esc(SET.deliveryDays) + ' from order' : i <= idx ? 'Done' : 'Not yet'}</span></span></li>`).join('')}</ol>
+    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.delay && canDelay(o) ? `<div class="status delayed" role="status"><strong>Running a little late.</strong> ${delayText(o.delay)}. Thank you for waiting; we’ll update this page as soon as it moves.</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}${gone ? '' : orderJourney(o, { idx, unpaid, cod })}
       ${inv ? `<div class="status ok inv-card"><strong>Invoice ${esc(inv.id)}</strong><span>${esc(inv.data.gst ? 'Tax invoice' : 'Bill of supply')} for this order, ${inr(Math.round(inv.data.totals.total / 100))}.</span><button class="btn small ghost" type="button" data-act="inv-print" data-id="${esc(o.id)}">View or print invoice</button></div>` : ''}
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
@@ -4073,11 +4168,19 @@ function discover(id, here) {
 
 // ---------- pages: why us, policies, FAQ, track an order, account ----------
 function viewWhy() {
+  // This page says each thing once. The strip of six reasons that sits above the footer on other pages is left off here.
+  const w = {}; whyItems().forEach(([ic, h, tx]) => { w[ic] = [h, tx]; });
+  const days = +SET.exchangeDays || 7;
+  const promises = [['shield', `Tell us within ${days} days of delivery, with a photo.`], ['truck', +SET.freeOver ? `Free shipping over ${inr(SET.freeOver)}.` : ''], ['card', ''], ['gift', '']].filter(([ic]) => w[ic]);
+  const wa = SET.whatsapp ? waLink('Hello, I have a question before I order') : '';
   return `<div class="wrap" style="padding-bottom:var(--s7)"><div class="page-head"><span class="eyebrow">Why from us</span><h1 tabindex="-1">${T('why.title')}</h1><p class="muted" style="max-width:620px">${T('why.lead')}</p></div>
-    <ul class="why-grid big">${whyItems().map(([i, h, t]) => `<li><span class="why-ic">${hl(i, 30)}</span><strong>${esc(h)}</strong><span>${esc(t)}</span></li>`).join('')}</ul>
-    <div class="split" style="margin-top:var(--section-sm)"><figure class="photo" style="margin:0"><img src="${IMG.box}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"></figure>
-      <div style="display:flex;flex-direction:column;gap:14px"><h2 style="font-size:clamp(30px,3.4vw,44px)">Small batches, real care</h2><p class="muted">We are not a factory. Every candle is poured and every tray is cast by hand, then checked, wrapped and packed in our studio. If something is not right when it reaches you, we put it right.</p>
-      <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#story">Read our story</a><a class="btn ghost" href="#shipping">Shipping &amp; delivery</a></span></div></div></div>`;
+    <div class="split"><figure class="photo" style="margin:0"><img src="${IMG.box}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"></figure>
+      <div style="display:flex;flex-direction:column;gap:14px"><span class="eyebrow">${hl('hand', 20)} ${esc((w.hand || ['Made by hand'])[0])}</span><h2 style="font-size:clamp(30px,3.4vw,44px)">Small batches, real care</h2><p class="muted">${esc((w.hand || ['', ''])[1])} Each piece is then checked, wrapped and packed by hand. If something is not right when it reaches you, we put it right.</p>
+      <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#story">Read our story</a><a class="btn ghost" href="#shipping">Shipping &amp; delivery</a></span></div></div>
+    <h2 class="acct-h" style="margin-top:var(--section-sm)">What we promise</h2>
+    <ul class="why-grid big">${promises.map(([ic, extra]) => `<li><span class="why-ic">${hl(ic, 30)}</span><strong>${esc(w[ic][0])}</strong><span>${esc(w[ic][1])}</span>${extra ? `<span class="why-extra">${esc(extra)}</span>` : ''}</li>`).join('')}</ul>
+    ${w.star ? `<section class="why-pts"><span class="why-ic">${hl('star', 30)}</span><div><strong>${esc(w.star[0])}</strong><span>${esc(w.star[1])} 1 point is ₹1 off.</span></div><a class="btn small ghost" href="#account">${S.account ? 'See your points' : 'Sign in to start'}</a></section>` : ''}
+    <section class="why-ask"><div><strong>Questions before you order?</strong><span class="muted">Message us and we will write back.</span></div><span style="display:flex;gap:10px;flex-wrap:wrap">${wa ? `<a class="btn" href="${esc(wa)}" target="_blank" rel="noopener">Message us on WhatsApp</a>` : ''}<a class="btn ghost" href="#help">Contact us</a><a class="btn ghost" href="#faq">FAQ</a></span></section></div>`;
 }
 const LEGAL = { privacy: ['Privacy policy', 'legal.privacy'], terms: ['Terms & conditions', 'legal.terms'], shipping: ['Shipping & delivery', 'legal.shipping'], refunds: ['Cancellations & replacements', 'legal.refunds'] };
 function legalMap() { const m = Object.assign({}, LEGAL); (Array.isArray(SET.policyPages) ? SET.policyPages : []).forEach((x) => { if (x && x.id && x.title) m['policy-' + x.id] = [x.title, null, x.body || '']; }); return m; }
@@ -4983,6 +5086,7 @@ document.addEventListener('click', (e) => {
     case 'mode': S.mode = d.v; save(); renderChrome(); say(d.v === 'app' ? 'Showing the installed-app layout.' : 'Showing the website layout.'); break;
     case 'reset': { const mode = S.mode, db = S.db; S = defaults(); S.mode = mode; if (db) S.db = db; save(); loadData(); UI.pdp = {}; UI.finder = { step: 0, mood: null, space: null, who: null, kind: null, budget: null, done: false }; UI.co = coFresh(); render(); say('Demo reset. Cart, saved items, orders and stock are back to the start.'); break; }
     case 'menu': UI.menu = !UI.menu; renderChrome(); break;
+    case 'menu-search': UI.menu = false; UI.search = true; renderChrome(); renderOverlay(); setTimeout(() => $('#search-q')?.focus(), 0); break;
     case 'search': UI.search = true; renderOverlay(); setTimeout(() => $('#search-q')?.focus(), 0); break;
     case 'close-search': UI.search = false; renderOverlay(); break;
     case 'added-close': hideAdded(); break;
