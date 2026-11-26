@@ -97,12 +97,12 @@ update products set data = jsonb_set(data, '{c}', '"#F88D0C"'::jsonb) where id =
 update products set data = jsonb_set(data, '{c}', '"#B12C39"'::jsonb) where id = 'bnt-prd-tl-004' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#704CA8"'::jsonb) where id = 'bnt-prd-tl-005' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#E75C8A"'::jsonb) where id = 'bnt-prd-tl-006' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#E36811"'::jsonb) where id = 'bnt-prd-cg-012' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#B08A64"'::jsonb) where id = 'bnt-prd-cg-012' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#7E57B5"'::jsonb) where id = 'bnt-prd-cg-013' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#E08A2E"'::jsonb) where id = 'bnt-prd-cg-014' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#B6182B"'::jsonb) where id = 'bnt-prd-cg-015' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#D4A23A"'::jsonb) where id = 'bnt-prd-cg-016' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#D79B25"'::jsonb) where id = 'bnt-prd-cg-017' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#A3C93A"'::jsonb) where id = 'bnt-prd-cg-017' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#E4607A"'::jsonb) where id = 'bnt-prd-mc-010' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#596C0B"'::jsonb) where id = 'bnt-prd-mc-013' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#AB0408"'::jsonb) where id = 'bnt-prd-mc-014' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
