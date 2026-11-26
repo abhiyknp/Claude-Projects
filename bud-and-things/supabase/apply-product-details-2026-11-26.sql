@@ -89,6 +89,12 @@ update products set data = jsonb_set(data, '{c}', '"#4A5FA5"'::jsonb) where id =
 update products set data = jsonb_set(data, '{c}', '"#E08A2E"'::jsonb) where id = 'bnt-prd-cg-014' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#D96A8A"'::jsonb) where id = 'bnt-prd-cg-015' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#D4A23A"'::jsonb) where id = 'bnt-prd-cg-016' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#8B5A3C"'::jsonb) where id = 'bnt-prd-cg-012' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#E58FB0"'::jsonb) where id = 'bnt-prd-mc-010' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#2F6B3A"'::jsonb) where id = 'bnt-prd-mc-013' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#A6764A"'::jsonb) where id = 'bnt-prd-mc-014' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#C0561B"'::jsonb) where id = 'bnt-prd-mc-015' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#A3C93A"'::jsonb) where id = 'bnt-prd-cg-017' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#E8892B"'::jsonb) where id = 'bnt-prd-mc-011' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#F3E5C8"'::jsonb) where id = 'bnt-prd-mc-012' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["cosy"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-001';
