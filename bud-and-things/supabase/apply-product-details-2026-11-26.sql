@@ -53,6 +53,18 @@ update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) w
 update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) where id = 'bnt-prd-cg-015';
 update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) where id = 'bnt-prd-cg-016';
 update products set data = jsonb_set(data, '{variants,0,price}', '329'::jsonb) where id = 'bnt-prd-cg-017';
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"170 g"'::jsonb), '{size}', '"170 g"'::jsonb), '{weight}', '170'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Kesar Elaichi"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-012';
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"61 g"'::jsonb), '{size}', '"61 g"'::jsonb), '{weight}', '61'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Nargis"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-013';
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"65 g"'::jsonb), '{size}', '"65 g"'::jsonb), '{weight}', '65'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Sandalwood"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-014';
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"56 g"'::jsonb), '{size}', '"56 g"'::jsonb), '{weight}', '56'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Rose"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-015';
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"56 g"'::jsonb), '{size}', '"56 g"'::jsonb), '{weight}', '56'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Ocean Breeze"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-016';
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"145 g"'::jsonb), '{size}', '"145 g"'::jsonb), '{weight}', '145'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Ocean Breeze"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-017';
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"88 g"'::jsonb), '{size}', '"88 g"'::jsonb), '{weight}', '88'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Rose"]'::jsonb else data->'notes' end) where id = 'bnt-prd-mc-010';
+-- (not on the site yet: MC-013)
+-- (not on the site yet: MC-014)
+-- (not on the site yet: MC-015)
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"18 g"'::jsonb), '{size}', '"18 g"'::jsonb), '{weight}', '18'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Nargis"]'::jsonb else data->'notes' end) where id = 'bnt-prd-mc-011';
+update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"18 g"'::jsonb), '{size}', '"18 g"'::jsonb), '{weight}', '18'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Nargis"]'::jsonb else data->'notes' end) where id = 'bnt-prd-mc-012';
 update products set data = jsonb_set(data, '{c}', '"#994E20"'::jsonb) where id = 'bnt-prd-cg-001' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#C27417"'::jsonb) where id = 'bnt-prd-cg-002' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#454C69"'::jsonb) where id = 'bnt-prd-cg-003' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
@@ -85,17 +97,17 @@ update products set data = jsonb_set(data, '{c}', '"#F88D0C"'::jsonb) where id =
 update products set data = jsonb_set(data, '{c}', '"#B12C39"'::jsonb) where id = 'bnt-prd-tl-004' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#704CA8"'::jsonb) where id = 'bnt-prd-tl-005' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#E75C8A"'::jsonb) where id = 'bnt-prd-tl-006' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#4A5FA5"'::jsonb) where id = 'bnt-prd-cg-013' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#B08A64"'::jsonb) where id = 'bnt-prd-cg-012' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#7E57B5"'::jsonb) where id = 'bnt-prd-cg-013' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#E08A2E"'::jsonb) where id = 'bnt-prd-cg-014' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#D96A8A"'::jsonb) where id = 'bnt-prd-cg-015' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#B6182B"'::jsonb) where id = 'bnt-prd-cg-015' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#D4A23A"'::jsonb) where id = 'bnt-prd-cg-016' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#8B5A3C"'::jsonb) where id = 'bnt-prd-cg-012' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#A3C93A"'::jsonb) where id = 'bnt-prd-cg-017' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#E58FB0"'::jsonb) where id = 'bnt-prd-mc-010' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#2F6B3A"'::jsonb) where id = 'bnt-prd-mc-013' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#A6764A"'::jsonb) where id = 'bnt-prd-mc-014' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#C0561B"'::jsonb) where id = 'bnt-prd-mc-015' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#A3C93A"'::jsonb) where id = 'bnt-prd-cg-017' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
-update products set data = jsonb_set(data, '{c}', '"#E8892B"'::jsonb) where id = 'bnt-prd-mc-011' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#B6182B"'::jsonb) where id = 'bnt-prd-mc-014' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#7A1229"'::jsonb) where id = 'bnt-prd-mc-015' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
+update products set data = jsonb_set(data, '{c}', '"#E08A2E"'::jsonb) where id = 'bnt-prd-mc-011' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = jsonb_set(data, '{c}', '"#F3E5C8"'::jsonb) where id = 'bnt-prd-mc-012' and (data->>'c' is null or data->>'c' in ('#F4ECE0','#DCC9AE'));
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["cosy"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-001';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["cosy"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-002';
