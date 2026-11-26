@@ -1,6 +1,6 @@
 -- Product details, order and prices for the live products (26 Nov 2026). Run once in Supabase -> SQL editor.
 -- It FILLS BLANKS ONLY for feelings, rooms and occasions (anything you already set stays), fixes the Order on the site numbers (10, 20, 30 ...),
--- and sets the master price for Chai + Parle G and Tulip Tower, and makes the two Daisy Candles like the other glass candles (329, 165 g). It does NOT touch stock, photos, orders, settings or the five Urli / Lime Glass products that are not in the team sheet (except their order number).
+-- and sets the master price for Chai + Parle G and Tulip Tower, prices the two Daisy Candles like the moulded candles (129) and Lime Glass like the glass candles (329, 165 g). It does NOT touch stock, photos, orders, settings or the four Urli products that are not in the team sheet (except their order number).
 -- Safe to run again.
 begin;
 update products set sort = 10 where id = 'bnt-prd-cg-001';
@@ -15,23 +15,23 @@ update products set sort = 90 where id = 'bnt-prd-cg-009';
 update products set sort = 100 where id = 'bnt-prd-cg-010';
 update products set sort = 110 where id = 'bnt-prd-cg-011';
 update products set sort = 120 where id = 'bnt-prd-cg-012';
-update products set sort = 130 where id = 'bnt-prd-mc-011';
-update products set sort = 140 where id = 'bnt-prd-mc-012';
-update products set sort = 150 where id = 'bnt-prd-cg-013';
-update products set sort = 160 where id = 'bnt-prd-cg-014';
-update products set sort = 170 where id = 'bnt-prd-cg-015';
-update products set sort = 180 where id = 'bnt-prd-cg-016';
-update products set sort = 190 where id = 'bnt-prd-cg-017';
-update products set sort = 200 where id = 'bnt-prd-mc-001';
-update products set sort = 210 where id = 'bnt-prd-mc-002';
-update products set sort = 220 where id = 'bnt-prd-mc-003';
-update products set sort = 230 where id = 'bnt-prd-mc-004';
-update products set sort = 240 where id = 'bnt-prd-mc-005';
-update products set sort = 250 where id = 'bnt-prd-mc-006';
-update products set sort = 260 where id = 'bnt-prd-mc-007';
-update products set sort = 270 where id = 'bnt-prd-mc-008';
-update products set sort = 280 where id = 'bnt-prd-mc-009';
-update products set sort = 290 where id = 'bnt-prd-mc-010';
+update products set sort = 130 where id = 'bnt-prd-cg-013';
+update products set sort = 140 where id = 'bnt-prd-cg-014';
+update products set sort = 150 where id = 'bnt-prd-cg-015';
+update products set sort = 160 where id = 'bnt-prd-cg-016';
+update products set sort = 170 where id = 'bnt-prd-cg-017';
+update products set sort = 180 where id = 'bnt-prd-mc-001';
+update products set sort = 190 where id = 'bnt-prd-mc-002';
+update products set sort = 200 where id = 'bnt-prd-mc-003';
+update products set sort = 210 where id = 'bnt-prd-mc-004';
+update products set sort = 220 where id = 'bnt-prd-mc-005';
+update products set sort = 230 where id = 'bnt-prd-mc-006';
+update products set sort = 240 where id = 'bnt-prd-mc-007';
+update products set sort = 250 where id = 'bnt-prd-mc-008';
+update products set sort = 260 where id = 'bnt-prd-mc-009';
+update products set sort = 270 where id = 'bnt-prd-mc-010';
+update products set sort = 280 where id = 'bnt-prd-mc-011';
+update products set sort = 290 where id = 'bnt-prd-mc-012';
 update products set sort = 300 where id = 'bnt-prd-tl-001';
 update products set sort = 310 where id = 'bnt-prd-tl-002';
 update products set sort = 320 where id = 'bnt-prd-tl-003';
@@ -46,8 +46,9 @@ update products set sort = 400 where id = 'bnt-prd-jt-005';
 update products set sort = 410 where id = 'bnt-prd-diy-001';
 update products set data = jsonb_set(data, '{variants,0,price}', '279'::jsonb) where id = 'bnt-prd-cg-012';
 update products set data = jsonb_set(data, '{variants,0,price}', '299'::jsonb) where id = 'bnt-prd-mc-010';
-update products set data = jsonb_set(jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,price}', '329'::jsonb), '{variants,0,label}', '"165 g"'::jsonb), '{size}', '"165 g"'::jsonb), '{weight}', '165'::jsonb) where id = 'bnt-prd-mc-011';
-update products set data = jsonb_set(jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,price}', '329'::jsonb), '{variants,0,label}', '"165 g"'::jsonb), '{size}', '"165 g"'::jsonb), '{weight}', '165'::jsonb) where id = 'bnt-prd-mc-012';
+update products set data = jsonb_set(data, '{variants,0,price}', '129'::jsonb) where id = 'bnt-prd-mc-011';
+update products set data = jsonb_set(data, '{variants,0,price}', '129'::jsonb) where id = 'bnt-prd-mc-012';
+update products set data = jsonb_set(jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,price}', '329'::jsonb), '{variants,0,label}', '"165 g"'::jsonb), '{size}', '"165 g"'::jsonb), '{weight}', '165'::jsonb) where id = 'bnt-prd-cg-017';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["cosy"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-001';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["cosy"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-002';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-003';
@@ -60,8 +61,7 @@ update products set data = data || jsonb_build_object('mood', case when jsonb_ar
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["cosy", "gift-ready"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["birthday", "anniversary", "housewarming"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-010';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["cosy"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-011';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["cosy"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-012';
-update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-011';
-update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-012';
+update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["bedroom", "living"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["housewarming", "thank-you", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-cg-017';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh", "creative"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["workspace", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-001';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh", "creative"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["workspace", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-002';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh", "creative"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["workspace", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-003';
@@ -72,6 +72,8 @@ update products set data = data || jsonb_build_object('mood', case when jsonb_ar
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh", "creative"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["workspace", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-008';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh", "creative"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["workspace", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-009';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh", "creative"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["workspace", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-010';
+update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh", "creative"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["workspace", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-011';
+update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["fresh", "creative"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["workspace", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "just-because"]'::jsonb else data->'occ' end) where id = 'bnt-prd-mc-012';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["calm"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["living", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "self-care"]'::jsonb else data->'occ' end) where id = 'bnt-prd-tl-001';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["calm"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["living", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "self-care"]'::jsonb else data->'occ' end) where id = 'bnt-prd-tl-002';
 update products set data = data || jsonb_build_object('mood', case when jsonb_array_length(coalesce(data->'mood','[]'::jsonb)) = 0 then '["calm"]'::jsonb else data->'mood' end, 'space', case when jsonb_array_length(coalesce(data->'space','[]'::jsonb)) = 0 then '["living", "entrance"]'::jsonb else data->'space' end, 'occ', case when jsonb_array_length(coalesce(data->'occ','[]'::jsonb)) = 0 then '["festive", "self-care"]'::jsonb else data->'occ' end) where id = 'bnt-prd-tl-003';
