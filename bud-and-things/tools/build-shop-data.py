@@ -15,8 +15,9 @@ for r in rows:
 out = []
 for r in rows:
     if r['show'] != 'YES' or not r['price']: continue
-    n = tidy(r['name']); sku = r['id']; g = r['grams']
-    if len(names[r['name']]) > 1: n += ' · ' + r['colour'].strip().replace('+', ' + ').replace('  ', ' ').title().replace('Baby Pink', 'Baby pink')
+    n = tidy(r['name']); sku = r['id']; pack = r.get('pack') or 1; g = r['grams'] * pack
+    if pack > 1: n += f' · Pack of {pack}'
+    if len(names[r['name']]) > 1 and pack == 1: n += ' · ' + r['colour'].strip().replace('+', ' + ').replace('  ', ' ').title().replace('Baby Pink', 'Baby pink')
     kind = r['type'].lower()
     jes = kind.startswith('jesmonite')
     scent = tidy(r['scent'])
@@ -41,7 +42,7 @@ for r in rows:
     else:
         word = {'glass candle': 'hand-poured glass candle', 'murphy candle': 'hand-poured Murphy candle', 'jar candle': 'hand-poured jar candle', 'moulded candle': 'hand-moulded candle', 'tealight candle': 'hand-poured tealight'}.get(kind, 'hand-poured candle')
         sc = f'{notes[0]} scent' if notes and not notes[0].startswith('Assorted') else ('Assorted scent' if notes else '')
-        desc = f'A {word}{", " + sc.lower() if sc else ""}, in {c}. About {g} g.'
+        desc = f'A {word}{", " + sc.lower() if sc else ""}, in {c}. About {g} g.' if pack == 1 else f'A pack of {pack} hand-poured tealights{", " + sc.lower() if sc else ""}, in {c}. About {g} g in all.'
         line = f'{sc + " · " if sc else ""}{c.capitalize()}'
         mat = {'glass candle': 'Hand-poured candle in a glass.', 'murphy candle': 'Hand-poured Murphy candle.', 'jar candle': 'Hand-poured candle in a jar.', 'moulded candle': 'Hand-moulded candle.', 'tealight candle': 'Hand-poured tealight.'}.get(kind, 'Hand-poured candle.')
         care = ['Let the first burn melt to the edges.', 'Trim the wick to 5 mm before each light.', 'Never leave a burning candle unattended.']
@@ -49,7 +50,7 @@ for r in rows:
     pid = sku.lower()
     o = {'id': pid, 'name': n, 'cat': cat, 'type': typ, 'line': line, 'desc': desc}
     if notes: o['notes'] = notes
-    o.update({'variants': [{'sku': sku, 'label': f'{g} g', 'price': r['price'], 'stock': r['stock']}], 'material': mat, 'size': f'{g} g', 'weight': g,
+    o.update({'variants': [{'sku': sku, 'label': f'{g} g' if pack == 1 else f'Pack of {pack}', 'price': r['price'], 'stock': r['stock']}], 'material': mat, 'size': f'{g} g' if pack == 1 else f'Pack of {pack} · {g} g', 'weight': g,
               'care': care, 'mood': [], 'space': [], 'occ': [], 'gift': True, 'art': art, 'c': '#F4ECE0', 'img': f'assets/catalogue/{pid}.jpg'})
     out.append(o)
 js = 'let P = [\n' + ',\n'.join('  ' + json.dumps(o, ensure_ascii=False) for o in out) + '\n];\n'

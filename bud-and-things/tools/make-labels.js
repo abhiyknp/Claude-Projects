@@ -12,11 +12,12 @@ const t0 = (t) => /tealight/i.test(t) ? '1.5 to 3 h' : /moulded/i.test(t) ? '2 t
 const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const label = (r) => {
   const candle = /candle/i.test(r.type); const kit = /kit/i.test(r.type);
-  const net = candle ? `1 candle, ${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `1 piece, about ${r.grams} g`;
+  const pack = r.pack || 1;
+  const net = pack > 1 ? `Pack of ${pack} candles, ${r.grams * pack} g in all` : candle ? `1 candle, ${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `1 piece, about ${r.grams} g`;
   const b = candle ? burn(r.type) : '';
   return `<div class="l">
 <div class="top"><span class="brand">BUD &amp; THINGS <small>by Ashi</small></span></div>
-<h2>${esc(r.name)}</h2><p class="sub">${esc(r.type)}${r.scent ? ' · ' + esc(r.scent) + ' scent' : ''}</p>
+<h2>${esc(r.name + (pack > 1 ? ' · Pack of ' + pack : ''))}</h2><p class="sub">${esc(r.type)}${r.scent ? ' · ' + esc(r.scent) + ' scent' : ''}</p>
 <div class="key"><div><small>Net quantity</small><b>${esc(net)}</b></div><div><small>MRP (incl. of all taxes)</small><b>₹${r.price}</b></div><div><small>Packed</small><b>${packed}</b></div>${b ? `<div><small>Burn time</small><b>about ${b}</b></div>` : ''}</div>
 ${candle ? '<p class="care"><b>Care:</b> Trim wick to 5 mm. Burn 2 to 3 h at a time. Never leave burning unattended. Keep away from children, pets and curtains. Use on a flat, heat-safe surface. Stop at 1 cm of wax.</p>' : '<p class="care"><b>Care:</b> Decorative item. Handle with care.</p>'}
 <p class="small"><b>Country of origin:</b> India. <b>Made and packed by:</b> ${esc(MAKER)}</p><p class="small"><b>Consumer care:</b> ${esc(CARE)}</p></div>`;
@@ -30,4 +31,4 @@ h2{margin:0;font:700 14pt/1.15 Georgia,serif;color:#7A1229}.sub{margin:.5mm 0 2m
 .key{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 3mm;margin-bottom:2mm}.key small{display:block;font-size:7pt;color:#555;text-transform:uppercase;letter-spacing:.04em}.key b{font-size:10.5pt}
 .care{margin:0 0 1.5mm;font-size:8pt}.small{margin:0 0 .8mm;font-size:7.5pt}</style>
 <div class="g">${rows.filter((r) => r.show !== 'NO').map(label).join('\n')}</div>`);
-console.log('Wrote ' + out + ' (' + rows.length + ' labels, packed ' + packed + ')');
+console.log('Wrote ' + out + ' (' + rows.filter((r) => r.show !== 'NO').length + ' labels, packed ' + packed + ')');
