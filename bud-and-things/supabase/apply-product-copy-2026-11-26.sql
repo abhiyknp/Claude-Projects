@@ -26,6 +26,10 @@ update products set data = data || jsonb_build_object('line', to_jsonb($j$A hazy
 update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-moulded daisy candle in orange, 18 g.$j$::text)) where id = 'bnt-prd-mc-011';
 update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-moulded daisy candle in cream, 18 g.$j$::text)) where id = 'bnt-prd-mc-012';
 update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-poured lime glass candle.$j$::text)) where id = 'bnt-prd-cg-017';
+update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-poured urli candle topped with butterfly pea flowers.$j$::text)) where id = 'bnt-prd-cg-013';
+update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-poured urli candle in the colours of imarti.$j$::text)) where id = 'bnt-prd-cg-014';
+update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-poured urli candle topped with rose petals.$j$::text)) where id = 'bnt-prd-cg-015';
+update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-poured urli candle finished with gold leaf.$j$::text)) where id = 'bnt-prd-cg-016';
 update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-moulded tulip tower candle, 20 g.$j$::text)) where id = 'bnt-prd-mc-010';
 update products set data = data || jsonb_build_object('line', to_jsonb($j$Pack of 6 yellow tealights in assorted scents, 72 g in all.$j$::text), 'smellsLike', to_jsonb($j$Each tealight in the pack carries one of our assorted scents. Bright yellow, like a sunflower field.$j$::text)) where id = 'bnt-prd-tl-001';
 update products set data = data || jsonb_build_object('line', to_jsonb($j$Pack of 6 blue-and-yellow tealights in assorted scents, 72 g in all.$j$::text), 'smellsLike', to_jsonb($j$Each tealight in the pack carries one of our assorted scents. Deep blue with a sunflower glow.$j$::text)) where id = 'bnt-prd-tl-002';
