@@ -77,6 +77,10 @@ To change a limit, add a row with the name in brackets as its key and a number a
 - **Cancel** in the Owner view puts an order's pieces back in stock. It works until the order is shipped.
 - Order numbers have a random part, such as `BT-1042-7F3A9C`, so nobody can find other people's orders by counting.
 
+## Locked prices (26 November 2026)
+
+Run `apply-price-master-2026-11-26.sql` once in the SQL editor. It sets the locked names and prices on the 31 live products (tealights become packs of 6) and hides Paint Your Starfish. It does not touch stock, photos, orders or settings. The check query at the end lists every live product with its price. Then, in Owner view → Settings, set the shipping fee to 79 and the free-shipping limit to 699 (the code defaults are now the same). The source of truth is `data/BUD-and-THINGS_MASTER_Products-and-Prices.xlsx`.
+
 ## Photos and videos
 
 Upload them in the Owner view under **Photos & videos**. Pick the product (or "Brand" for packaging, gifting and story shots), say what each one shows, and describe it for screen readers. Photos are resized to 2000 px before upload. Videos up to 50 MB are accepted; keep loops short (6 to 10 seconds) and silent.

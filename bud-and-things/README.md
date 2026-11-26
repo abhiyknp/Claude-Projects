@@ -49,6 +49,8 @@ Check current India pricing before committing.
 
 ## Catalogue
 
+**Source of truth for product codes, names and prices: `data/BUD-and-THINGS_MASTER_Products-and-Prices.xlsx`** (locked by the owner on 26 Nov 2026, version 9). One row per product, codes `BNT-PRD-XX-000`, unique. Prices come from the shares on its Shares sheet; change a price there first, then copy it into `data/catalogue.sheet.json`, run `python3 -I tools/build-shop-data.py`, and run `supabase/apply-price-master-2026-11-26.sql`-style updates for the live database. Paint Your Starfish is hidden until its cost is lowered; five new products (CG-012, MC-010 to MC-013) are in the sheet and hidden until their photos arrive. The shop's Owner view can also read this file with its product import.
+
 `data/catalogue.sheet.json`: snapshot of the team sheet (prices, weights, scent, colour, stock, Show on website). `python3 -I tools/build-shop-data.py` writes the shop's built-in products into `prototype/index.html`: only rows with Show on website = YES and a price (22 products). Photos are in `prototype/assets/catalogue/`, taken from the images in the sheet (marked temporary there); replace them with final photos before launch. The live site reads products from the database, so after a change use Owner view, Import from sheet (or Copy into the database).
 
 Once the database is connected, the catalogue lives there and this file is only the starting point the Owner view copies in.

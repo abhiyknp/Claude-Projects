@@ -22,6 +22,13 @@ Sources: `audit/legal/TODO.md`, `audit/28_CLOSEOUT_STATUS.md`, `audit/26_MASTER_
 7. [ ] **One real test order**, end to end, with a courier test label: customer email, shop email, order Paid, stock down, then Book courier for a tracking number and label. Cancel the test shipment in Shiprocket afterwards (live test row 13).
 8. [ ] **Last: turn off the Coming soon page** (live test row 17). **Then run the site build by hand** (GitHub → Actions → *Prototype preview (GitHub Pages)* → Run workflow): while Coming soon is on, the published home page has the Coming soon screen drawn into it so it shows fast, and the build only removes it when it sees the setting off. Without the run, visitors may see Coming soon for a moment before the shop, until the daily build. Then open the home page, the catalogue and one product on a phone.
 
+## Prices (locked 2026-11-26)
+- [x] Master sheet `data/BUD-and-THINGS_MASTER_Products-and-Prices.xlsx` locked; site, catalogue, labels, tests and the price-update SQL changed to match (PR).
+- [ ] Run `supabase/apply-price-master-2026-11-26.sql` in Supabase after the PR is merged, then set shipping 79 and free over 699 in Owner view → Settings.
+- [ ] Tealight stock counts now mean packs of 6: check them in Owner view.
+- [ ] Paint Your Starfish: hidden. Team to lower its cost (about 104 for a 249 price), then add the price in the master and show it.
+- [ ] Add the five new products (CG-012, MC-010 to MC-013) in Owner view when their photos, weights, scent and colour are ready.
+
 ## Skipped by the owner (decided 2026-11-17)
 - The four licence enquiry letters: UP Labour Department (Shop and Establishment), Greater Noida Authority (trade licence), District Fire Office, the society RWA. The letters are written and kept separately. The risk to remember: the society can object to a home business whatever the law says.
 

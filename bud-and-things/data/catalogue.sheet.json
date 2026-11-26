@@ -6,7 +6,7 @@
   "scent": "Coffee",
   "colour": "Brown + White",
   "grams": 170,
-  "price": 199,
+  "price": 329,
   "stock": 2,
   "show": "YES"
  },
@@ -17,7 +17,7 @@
   "scent": "Vanila",
   "colour": "White + Gold",
   "grams": 160,
-  "price": 169,
+  "price": 329,
   "stock": 1,
   "show": "YES"
  },
@@ -28,7 +28,7 @@
   "scent": "BlueBerry",
   "colour": "Purple + White",
   "grams": 165,
-  "price": 199,
+  "price": 329,
   "stock": 0,
   "show": "YES"
  },
@@ -39,7 +39,7 @@
   "scent": "Strawberry",
   "colour": "Pink + White",
   "grams": 165,
-  "price": 169,
+  "price": 329,
   "stock": 0,
   "show": "YES"
  },
@@ -50,18 +50,18 @@
   "scent": "Chocolate",
   "colour": "Brown",
   "grams": 165,
-  "price": 169,
+  "price": 329,
   "stock": 0,
   "show": "YES"
  },
  {
   "id": "BNT-PRD-CG-006",
-  "name": "Angle & Amber",
+  "name": "Angel & Amber",
   "type": "Glass candle",
   "scent": "Rose",
   "colour": "Red + White",
   "grams": 172,
-  "price": 199,
+  "price": 329,
   "stock": 1,
   "show": "YES"
  },
@@ -72,10 +72,9 @@
   "scent": "Berries",
   "colour": "Red + Blue + Transperent",
   "grams": 223,
-  "price": 299,
+  "price": 549,
   "stock": 1,
-  "show": "YES",
-  "note": "price 299 per owner message 2026-10-31; sheet (4) still says 249"
+  "show": "YES"
  },
  {
   "id": "BNT-PRD-CG-008",
@@ -84,7 +83,7 @@
   "scent": "Nargis",
   "colour": "Yellow+White",
   "grams": 200,
-  "price": 249,
+  "price": 479,
   "stock": 1,
   "show": "YES"
  },
@@ -95,7 +94,7 @@
   "scent": "White Oud",
   "colour": "Purple",
   "grams": 216,
-  "price": 249,
+  "price": 449,
   "stock": 1,
   "show": "YES"
  },
@@ -106,7 +105,7 @@
   "scent": "Vanilla",
   "colour": "Yellow+White",
   "grams": 240,
-  "price": 299,
+  "price": 479,
   "stock": 1,
   "show": "YES",
   "note": "price 299 per owner message 2026-10-31; sheet (4) still says 249"
@@ -118,7 +117,7 @@
   "scent": "Strawberry",
   "colour": "Red+White",
   "grams": 78,
-  "price": 99,
+  "price": 249,
   "stock": 1,
   "show": "YES"
  },
@@ -129,7 +128,7 @@
   "scent": "N/A",
   "colour": "Yellow",
   "grams": 34,
-  "price": 49,
+  "price": 149,
   "stock": 1,
   "show": "YES"
  },
@@ -140,7 +139,7 @@
   "scent": "Mithai ",
   "colour": "Yellow+Brown",
   "grams": 17,
-  "price": 39,
+  "price": 129,
   "stock": 4,
   "show": "YES"
  },
@@ -151,7 +150,7 @@
   "scent": "Mithai ",
   "colour": "Yellow",
   "grams": 28,
-  "price": 29,
+  "price": 129,
   "stock": 14,
   "show": "YES"
  },
@@ -162,7 +161,7 @@
   "scent": "Flower",
   "colour": "Purple+white",
   "grams": 20,
-  "price": 39,
+  "price": 129,
   "stock": 2,
   "show": "YES"
  },
@@ -173,7 +172,7 @@
   "scent": "Whit Oud",
   "colour": "Baby Pink",
   "grams": 35,
-  "price": 49,
+  "price": 149,
   "stock": 1,
   "show": "YES"
  },
@@ -184,7 +183,7 @@
   "scent": "Ocean Breeze",
   "colour": "Pink",
   "grams": 35,
-  "price": 49,
+  "price": 149,
   "stock": 1,
   "show": "YES"
  },
@@ -195,7 +194,7 @@
   "scent": "White Oud",
   "colour": "Orange",
   "grams": 18,
-  "price": 39,
+  "price": 129,
   "stock": 1,
   "show": "YES"
  },
@@ -206,7 +205,7 @@
   "scent": "Ocean Breeze",
   "colour": "Purple+white",
   "grams": 18,
-  "price": 39,
+  "price": 129,
   "stock": 1,
   "show": "YES"
  },
@@ -217,7 +216,7 @@
   "scent": "Ocean Breeze",
   "colour": "Red+White",
   "grams": 20,
-  "price": 39,
+  "price": 129,
   "stock": 1,
   "show": "YES"
  },
@@ -228,9 +227,10 @@
   "scent": "Any/Random",
   "colour": "Yellow",
   "grams": 12,
-  "price": 15,
+  "price": 149,
   "stock": 5,
-  "show": "YES"
+  "show": "YES",
+  "pack": 6
  },
  {
   "id": "BNT-PRD-TL-002",
@@ -239,20 +239,22 @@
   "scent": "Any/Random",
   "colour": "Blue+Yellow",
   "grams": 12,
-  "price": 15,
+  "price": 149,
   "stock": 1,
-  "show": "YES"
+  "show": "YES",
+  "pack": 6
  },
  {
   "id": "BNT-PRD-TL-003",
-  "name": "Marrigold Glow",
+  "name": "Marigold Glow",
   "type": "Tealight candle",
   "scent": "Any/Random",
   "colour": "Orange+White",
   "grams": 12,
-  "price": 15,
+  "price": 149,
   "stock": 6,
-  "show": "YES"
+  "show": "YES",
+  "pack": 6
  },
  {
   "id": "BNT-PRD-TL-004",
@@ -261,9 +263,10 @@
   "scent": "Any/Random",
   "colour": "Red+White",
   "grams": 12,
-  "price": 15,
+  "price": 149,
   "stock": 6,
-  "show": "YES"
+  "show": "YES",
+  "pack": 6
  },
  {
   "id": "BNT-PRD-TL-005",
@@ -272,9 +275,10 @@
   "scent": "Any/Random",
   "colour": "Purple+White",
   "grams": 12,
-  "price": 15,
+  "price": 149,
   "stock": 6,
-  "show": "YES"
+  "show": "YES",
+  "pack": 6
  },
  {
   "id": "BNT-PRD-TL-006",
@@ -283,9 +287,10 @@
   "scent": "Any/Random",
   "colour": "Pink+White",
   "grams": 12,
-  "price": 15,
+  "price": 149,
   "stock": 2,
-  "show": "YES"
+  "show": "YES",
+  "pack": 6
  },
  {
   "id": "BNT-PRD-JT-001",
@@ -294,7 +299,7 @@
   "scent": "N/A",
   "colour": "Rose Gold + White",
   "grams": 172,
-  "price": 149,
+  "price": 229,
   "stock": 1,
   "show": "YES"
  },
@@ -305,7 +310,7 @@
   "scent": "N/A",
   "colour": "Ivory + Gold",
   "grams": 172,
-  "price": 149,
+  "price": 229,
   "stock": 1,
   "show": "YES"
  },
@@ -316,7 +321,7 @@
   "scent": "N/A",
   "colour": "White + Grey",
   "grams": 100,
-  "price": 79,
+  "price": 199,
   "stock": 1,
   "show": "YES"
  },
@@ -327,7 +332,7 @@
   "scent": "N/A",
   "colour": "Red + White",
   "grams": 124,
-  "price": 79,
+  "price": 199,
   "stock": 1,
   "show": "YES"
  },
@@ -338,7 +343,7 @@
   "scent": "N/A",
   "colour": "Multi Color",
   "grams": 100,
-  "price": 79,
+  "price": 199,
   "stock": 1,
   "show": "YES"
  },
@@ -349,8 +354,63 @@
   "scent": "N/A",
   "colour": "White",
   "grams": 43,
-  "price": 69,
+  "price": 0,
   "stock": 1,
-  "show": "YES"
+  "show": "NO"
+ },
+ {
+  "id": "BNT-PRD-CG-012",
+  "name": "Chai + Parle G",
+  "type": "Glass candle",
+  "scent": "N/A",
+  "colour": "",
+  "grams": 0,
+  "price": 279,
+  "stock": 0,
+  "show": "NO"
+ },
+ {
+  "id": "BNT-PRD-MC-010",
+  "name": "Tulip Tower",
+  "type": "Moulded candle",
+  "scent": "N/A",
+  "colour": "",
+  "grams": 0,
+  "price": 299,
+  "stock": 0,
+  "show": "NO"
+ },
+ {
+  "id": "BNT-PRD-MC-011",
+  "name": "Christmas Tree",
+  "type": "Moulded candle",
+  "scent": "N/A",
+  "colour": "",
+  "grams": 0,
+  "price": 299,
+  "stock": 0,
+  "show": "NO"
+ },
+ {
+  "id": "BNT-PRD-MC-012",
+  "name": "Teddy",
+  "type": "Moulded candle",
+  "scent": "N/A",
+  "colour": "",
+  "grams": 0,
+  "price": 129,
+  "stock": 0,
+  "show": "NO"
+ },
+ {
+  "id": "BNT-PRD-MC-013",
+  "name": "Evening Ember / Classic Pillar",
+  "type": "Moulded candle",
+  "scent": "N/A",
+  "colour": "",
+  "grams": 0,
+  "price": 399,
+  "stock": 0,
+  "show": "NO"
  }
 ]

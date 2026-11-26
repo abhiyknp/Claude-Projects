@@ -1,133 +1,133 @@
 {
- "_source": "sheet (4) 2026-10-31 + owner price update CG-007, CG-010 = 299",
+ "_source": "Master products and prices sheet v9 (locked 26 Nov 2026)",
  "rows": {
   "BNT-PRD-CG-001": [
-   199,
+   329,
    "YES"
   ],
   "BNT-PRD-CG-002": [
-   169,
+   329,
    "YES"
   ],
   "BNT-PRD-CG-003": [
-   199,
+   329,
    "YES"
   ],
   "BNT-PRD-CG-004": [
-   169,
+   329,
    "YES"
   ],
   "BNT-PRD-CG-005": [
-   169,
+   329,
    "YES"
   ],
   "BNT-PRD-CG-006": [
-   199,
+   329,
    "YES"
   ],
   "BNT-PRD-CG-007": [
-   299,
+   549,
    "YES"
   ],
   "BNT-PRD-CG-008": [
-   249,
+   479,
    "YES"
   ],
   "BNT-PRD-CG-009": [
-   249,
+   449,
    "YES"
   ],
   "BNT-PRD-CG-010": [
-   299,
+   479,
    "YES"
   ],
   "BNT-PRD-CG-011": [
-   99,
+   249,
    "YES"
   ],
   "BNT-PRD-MC-001": [
-   49,
+   149,
    "YES"
   ],
   "BNT-PRD-MC-002": [
-   39,
+   129,
    "YES"
   ],
   "BNT-PRD-MC-003": [
-   29,
+   129,
    "YES"
   ],
   "BNT-PRD-MC-004": [
-   39,
+   129,
    "YES"
   ],
   "BNT-PRD-MC-005": [
-   49,
+   149,
    "YES"
   ],
   "BNT-PRD-MC-006": [
-   49,
+   149,
    "YES"
   ],
   "BNT-PRD-MC-007": [
-   39,
+   129,
    "YES"
   ],
   "BNT-PRD-MC-008": [
-   39,
+   129,
    "YES"
   ],
   "BNT-PRD-MC-009": [
-   39,
+   129,
    "YES"
   ],
   "BNT-PRD-TL-001": [
-   15,
+   149,
    "YES"
   ],
   "BNT-PRD-TL-002": [
-   15,
+   149,
    "YES"
   ],
   "BNT-PRD-TL-003": [
-   15,
+   149,
    "YES"
   ],
   "BNT-PRD-TL-004": [
-   15,
+   149,
    "YES"
   ],
   "BNT-PRD-TL-005": [
-   15,
+   149,
    "YES"
   ],
   "BNT-PRD-TL-006": [
-   15,
+   149,
    "YES"
   ],
   "BNT-PRD-JT-001": [
-   149,
+   229,
    "YES"
   ],
   "BNT-PRD-JT-002": [
-   149,
+   229,
    "YES"
   ],
   "BNT-PRD-JT-003": [
-   79,
+   199,
    "YES"
   ],
   "BNT-PRD-JT-004": [
-   79,
+   199,
    "YES"
   ],
   "BNT-PRD-JT-005": [
-   79,
+   199,
    "YES"
   ],
   "BNT-PRD-DIY-001": [
-   69,
-   "YES"
+   329,
+   "NO"
   ]
  }
 }
