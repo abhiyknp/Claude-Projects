@@ -27,7 +27,10 @@ Sources: `audit/legal/TODO.md`, `audit/28_CLOSEOUT_STATUS.md`, `audit/26_MASTER_
 - [ ] Run `supabase/apply-price-master-2026-11-26.sql` in Supabase after the PR is merged, then set shipping 79 and free over 699 in Owner view → Settings.
 - [ ] Tealight stock counts now mean packs of 6: check them in Owner view.
 - [ ] Paint Your Starfish: hidden. Team to lower its cost (about 104 for a 249 price), then add the price in the master and show it.
-- [ ] Add the five new products (CG-012, MC-010 to MC-013) in Owner view when their photos, weights, scent and colour are ready.
+- [ ] Run `supabase/apply-product-details-2026-11-26.sql` (order numbers, Chai and Tulip Tower prices, feelings, rooms and occasions where blank).
+- [ ] Seven live products are not in the team sheet (Urli x4, Lime Glass, Daisy Candle x2): send their costs, or hide them until you have.
+- [ ] Fill the yellow cells on the master's Product details sheet (burn time after a real test, package size, packed on, scent story, barcode if any), then enter them in Owner view → Products.
+- [ ] Add the five new products (Christmas Tree MC-013, Teddy MC-014, Evening Ember MC-015) in Owner view when their photos, weights, scent and colour are ready.
 
 ## Skipped by the owner (decided 2026-11-17)
 - The four licence enquiry letters: UP Labour Department (Shop and Establishment), Greater Noida Authority (trade licence), District Fire Office, the society RWA. The letters are written and kept separately. The risk to remember: the society can object to a home business whatever the law says.
