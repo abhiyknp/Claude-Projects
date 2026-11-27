@@ -1,6 +1,6 @@
 -- Product details, order and prices for the live products (26 Nov 2026). Run once in Supabase -> SQL editor.
 -- It FILLS BLANKS ONLY for feelings, rooms and occasions (anything you already set stays), fixes the Order on the site numbers (10, 20, 30 ...),
--- and sets the master price for Chai + Parle G and Tulip Tower, sets the four Urli candles to 349, prices the two Daisy Candles like the moulded candles (129) and Lime Glass like the glass candles (329, 165 g). It does NOT touch stock, photos, orders, settings or the four Urli products that are not in the team sheet (except their order number and the 349 price).
+-- and sets the master price for Chai + Parle G and Tulip Tower, sets the four Urli candles to 349, prices the two Daisy Candles like the tiny candles (99) and Lime Glass like the glass candles (329, 165 g). It does NOT touch stock, photos, orders, settings or the four Urli products that are not in the team sheet (except their order number and the 349 price).
 -- Safe to run again.
 begin;
 update products set sort = 10 where id = 'bnt-prd-cg-001';
@@ -46,14 +46,25 @@ update products set sort = 400 where id = 'bnt-prd-jt-005';
 update products set sort = 410 where id = 'bnt-prd-diy-001';
 update products set data = jsonb_set(data, '{variants,0,price}', '279'::jsonb) where id = 'bnt-prd-cg-012';
 update products set data = jsonb_set(data, '{variants,0,price}', '299'::jsonb) where id = 'bnt-prd-mc-010';
-update products set data = jsonb_set(data, '{variants,0,price}', '129'::jsonb) where id = 'bnt-prd-mc-011';
-update products set data = jsonb_set(data, '{variants,0,price}', '129'::jsonb) where id = 'bnt-prd-mc-012';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-011';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-012';
 update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) where id = 'bnt-prd-cg-013';
 update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) where id = 'bnt-prd-cg-014';
 update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) where id = 'bnt-prd-cg-015';
 update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) where id = 'bnt-prd-cg-016';
 update products set data = jsonb_set(data, '{variants,0,price}', '329'::jsonb) where id = 'bnt-prd-cg-017';
 update products set data = jsonb_set(data, '{variants,0,price}', '249'::jsonb) where id = 'bnt-prd-diy-001';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-002';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-007';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-003';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-004';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-009';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-008';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-011';
+update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-012';
+update products set data = jsonb_set(data, '{variants,0,price}', '129'::jsonb) where id = 'bnt-prd-mc-001';
+update products set data = jsonb_set(data, '{variants,0,price}', '129'::jsonb) where id = 'bnt-prd-mc-005';
+update products set data = jsonb_set(data, '{variants,0,price}', '129'::jsonb) where id = 'bnt-prd-mc-006';
 update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"170 g"'::jsonb), '{size}', '"170 g"'::jsonb), '{weight}', '170'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Kesar Elaichi"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-012';
 update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"61 g"'::jsonb), '{size}', '"61 g"'::jsonb), '{weight}', '61'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Nargis"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-013';
 update products set data = jsonb_set(jsonb_set(jsonb_set(data, '{variants,0,label}', '"65 g"'::jsonb), '{size}', '"65 g"'::jsonb), '{weight}', '65'::jsonb) || jsonb_build_object('notes', case when jsonb_array_length(coalesce(data->'notes','[]'::jsonb)) = 0 then '["Sandalwood"]'::jsonb else data->'notes' end) where id = 'bnt-prd-cg-014';

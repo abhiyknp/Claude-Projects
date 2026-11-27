@@ -26,9 +26,9 @@ const tier = (r) => {
   return 'M';
 };
 const info = (r) => {
-  const candle = /candle/i.test(r.type); const kit = /kit/i.test(r.type); const pack = r.pack || 1;
-  const net = pack > 1 ? `Pack of ${pack} candles, ${r.grams * pack} g in all` : candle ? `1 candle, ${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `1 piece, about ${r.grams} g`;
-  const short = pack > 1 ? `${pack} candles, ${r.grams * pack} g` : candle ? `${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `about ${r.grams} g`;
+  const candle = /candle/i.test(r.type) || !!r.set; const kit = /kit/i.test(r.type); const pack = r.pack || 1;
+  const net = r.set ? `Set of ${r.set} candles, ${r.grams} g in all` : pack > 1 ? `Pack of ${pack} candles, ${r.grams * pack} g in all` : candle ? `1 candle, ${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `1 piece, about ${r.grams} g`;
+  const short = r.set ? `Set of ${r.set}, ${r.grams} g` : pack > 1 ? `${pack} candles, ${r.grams * pack} g` : candle ? `${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `about ${r.grams} g`;
   const name = r.name + (pack > 1 ? ' · Pack of ' + pack : '');
   return { candle, net, short, name, b: candle ? burn(r.type) : '' };
 };
@@ -37,13 +37,13 @@ const labelL = (r) => { const i = info(r); return `<div class="l L"><div class="
 <div class="key"><div><small>Net quantity</small><b>${esc(i.net)}</b></div><div><small>MRP (incl. of all taxes)</small><b>₹${r.price}</b></div><div><small>Packed</small><b>${packed}</b></div>${i.b ? `<div><small>Burn time</small><b>about ${i.b}</b></div>` : ''}</div>
 <p class="care"><b>Care:</b> ${i.candle ? CARE_C : CARE_O}</p>
 <p class="small"><b>Made in India by</b> ${esc(MAKER)}. <b>Consumer care:</b> ${esc(CARE)}</p></div>`; };
-const labelM = (r) => { const i = info(r); return `<div class="l M"><div class="brand">BUD &amp; THINGS <small>by Ashi</small></div>
-<h2>${esc(i.name)}</h2><p class="sub">${esc(r.type)}${r.scent ? ' · ' + esc(r.scent) : ''}</p>
-<p class="row"><b>${esc(i.net)}</b> · <b>MRP ₹${r.price}</b> <small>(incl. of all taxes)</small> · Packed <b>${packed}</b></p>
-<p class="small"><b>Made in India by</b> ${esc(MAKER)}. <b>Care:</b> ${esc(CARE)}</p></div>`; };
+// Minimal labels: only the mandatory legal-metrology facts (name, net quantity, MRP, packing month, maker and address, consumer care contact). Safety and care text is on the care card.
+const labelM = (r) => { const i = info(r); return `<div class="l M"><h2>${esc(i.name)}</h2>
+<p class="row"><b>${esc(i.net)}</b></p><p class="row"><b>MRP ₹${r.price}</b> <small>(incl. of all taxes)</small> · Packed <b>${packed}</b></p>
+<p class="small">Made in India by ${esc(MAKER)}. Care: ${esc(CARE)}</p></div>`; };
 const labelS = (r) => { const i = info(r); return `<div class="l S"><h2>${esc(i.name)}</h2>
 <p class="row"><b>${esc(i.short)}</b> · <b>MRP ₹${r.price}</b> <small>(incl. of all taxes)</small> · Packed <b>${packed}</b></p>
-<p class="small"><b>Made in India by</b> ${esc(MAKER)}. <b>Care:</b> ${esc(CARE)}</p></div>`; };
+<p class="small">Made in India by ${esc(MAKER)}. Care: ${esc(CARE)}</p></div>`; };
 const list = rows.filter((r) => r.show !== 'NO'); const by = { M: [], S: [] };
 list.forEach((r) => { for (let c = 0; c < COPIES; c++) by[tier(r)].push(r); });
 const page = (title, cls, items, fn) => items.length ? `<section class="pg"><h3 class="noprint">${title}</h3><div class="g ${cls}">${items.map(fn).join('\n')}</div></section>` : '';
@@ -57,10 +57,10 @@ fs.writeFileSync(out, `<!doctype html><meta charset="utf-8"><title>Labels ${pack
 .M{width:63.5mm;height:38.1mm;padding:2mm 2.6mm}.S{width:45.7mm;height:25.4mm;padding:1.3mm 1.7mm}.card{width:85mm;height:55mm;padding:4mm}
 .brand{font-weight:700;letter-spacing:.1em;font-size:5.5pt;color:#8F1834}.brand small{font-weight:400;letter-spacing:0;font-size:5.5pt}
 .top{border-bottom:.25mm solid #D6A34A;padding-bottom:.8mm;margin-bottom:1mm}
-h2{margin:0;font:700 10.5pt/1.1 Georgia,serif;color:#7A1229}.M h2{font-size:10pt;margin-top:.6mm}.S h2{font-size:7.4pt}.card h2{font-size:13pt;margin:2mm 0}
+h2{margin:0;font:700 10.5pt/1.1 Georgia,serif;color:#7A1229}.M h2{font-size:12pt;margin:0 0 1.6mm}.S h2{font-size:8pt}.card h2{font-size:13pt;margin:2mm 0}
 .sub{margin:.3mm 0 1.2mm;font-size:6.5pt}.M .sub{margin:.2mm 0 .8mm;font-size:6pt}
 .key{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:1mm 2mm;margin-bottom:1mm}.key small{display:block;font-size:4.8pt;color:#555;text-transform:uppercase;letter-spacing:.03em}.key b{font-size:7.2pt}
-.row{margin:.4mm 0 1mm;font-size:6.8pt}.S .row{font-size:5pt;margin:.4mm 0}.row small{font-size:4.6pt}
-.care{margin:0 0 .8mm;font-size:5.6pt}.small{margin:0;font-size:4.9pt;line-height:1.22}.M .small{font-size:5pt}.S .small{font-size:4pt;line-height:1.16}.card p{font-size:8.5pt;margin:0 0 2mm}.card .small{font-size:6.5pt}
+.row{margin:.4mm 0 1mm;font-size:7.6pt}.S .row{font-size:5pt;margin:.4mm 0}.row small{font-size:4.6pt}
+.care{margin:0 0 .8mm;font-size:5.6pt}.small{margin:0;font-size:4.9pt;line-height:1.22}.M .small{font-size:5.8pt}.S .small{font-size:4pt;line-height:1.16}.card p{font-size:8.5pt;margin:0 0 2mm}.card .small{font-size:6.5pt}
 </style>${page('Labels 63.5 x 38.1 mm (21 to a sheet)', 'M', by.M, labelM)}${page('Labels 45.7 x 25.4 mm (40 to a sheet)', 'S', by.S, labelS)}${cards}`);
 console.log('Wrote ' + out + ' (' + list.length + ' products; 63.5 x 38.1 mm: ' + by.M.length + ', 45.7 x 25.4 mm: ' + by.S.length + '; packed ' + packed + ')');

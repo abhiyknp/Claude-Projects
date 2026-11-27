@@ -176,7 +176,7 @@
   "scent": "",
   "colour": "Yellow",
   "grams": 34,
-  "price": 149,
+  "price": 129,
   "show": "YES"
  },
  {
@@ -186,7 +186,7 @@
   "scent": "Mithai",
   "colour": "Yellow + Brown",
   "grams": 17,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -196,7 +196,7 @@
   "scent": "Mithai",
   "colour": "Yellow",
   "grams": 28,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -206,7 +206,7 @@
   "scent": "Flower",
   "colour": "Purple + White",
   "grams": 20,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -216,7 +216,7 @@
   "scent": "White Oud",
   "colour": "Baby Pink",
   "grams": 35,
-  "price": 149,
+  "price": 129,
   "show": "YES"
  },
  {
@@ -226,7 +226,7 @@
   "scent": "Ocean Breeze",
   "colour": "Pink",
   "grams": 35,
-  "price": 149,
+  "price": 129,
   "show": "YES"
  },
  {
@@ -236,7 +236,7 @@
   "scent": "White Oud",
   "colour": "Orange",
   "grams": 18,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -246,7 +246,7 @@
   "scent": "Ocean Breeze",
   "colour": "Purple + White",
   "grams": 18,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -256,7 +256,7 @@
   "scent": "Ocean Breeze",
   "colour": "Red + White",
   "grams": 20,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -276,7 +276,7 @@
   "scent": "Nargis",
   "colour": "Orange",
   "grams": 18,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -286,7 +286,7 @@
   "scent": "Nargis",
   "colour": "Cream",
   "grams": 18,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -306,7 +306,7 @@
   "scent": "Strawberry + White Oud",
   "colour": "Red + White",
   "grams": 19,
-  "price": 129,
+  "price": 99,
   "show": "YES"
  },
  {
@@ -318,6 +318,39 @@
   "grams": 217,
   "price": 399,
   "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-ST-001",
+  "name": "Float & Bloom Trio",
+  "type": "Moulded candle set",
+  "scent": "Assorted",
+  "colour": "Assorted",
+  "grams": 55,
+  "price": 249,
+  "show": "YES",
+  "set": 3
+ },
+ {
+  "id": "BNT-PRD-ST-002",
+  "name": "Moulded Six",
+  "type": "Moulded candle set",
+  "scent": "Assorted",
+  "colour": "Assorted",
+  "grams": 121,
+  "price": 479,
+  "show": "YES",
+  "set": 6
+ },
+ {
+  "id": "BNT-PRD-ST-003",
+  "name": "Mini Bubble Trio",
+  "type": "Moulded candle set",
+  "scent": "Assorted",
+  "colour": "Assorted",
+  "grams": 104,
+  "price": 349,
+  "show": "YES",
+  "set": 3
  },
  {
   "id": "BNT-PRD-TL-001",
