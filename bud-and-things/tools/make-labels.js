@@ -38,14 +38,23 @@ const labelL = (r) => { const i = info(r); return `<div class="l L"><div class="
 <p class="care"><b>Care:</b> ${i.candle ? CARE_C : CARE_O}</p>
 <p class="small"><b>Made in India by</b> ${esc(MAKER)}. <b>Consumer care:</b> ${esc(CARE)}</p></div>`; };
 // Minimal labels: only the mandatory legal-metrology facts (name, net quantity, MRP, packing month, maker and address, consumer care contact). Safety and care text is on the care card.
+// Designed layout: maroon monogram panel, scent line (from the approved shop copy), big weight and price, QR to the product page, legal strip.
+const BR = path.join(__dirname, '..', 'brand');
+const mono = 'data:image/svg+xml;base64,' + fs.readFileSync(path.join(BR, 'monograms', 'encircled', 'bud-and-things-monogram-encircled-gold.svg')).toString('base64');
+const qrgen = require(path.join(__dirname, '..', 'prototype', 'vendor', 'qrcode', 'qrcode.js'));
+const qrSvg = (url) => { const q = qrgen(0, 'M'); q.addData(url); q.make(); return q.createSvgTag({ cellSize: 1, margin: 0, scalable: true }); };
+const smell = {};
+try { fs.readFileSync(path.join(__dirname, '..', 'supabase', 'apply-product-copy-2026-11-26.sql'), 'utf8').split('\n').forEach((l) => { const m = l.match(/'smellsLike', to_jsonb\(\$j\$(.*?)\$j\$::text\)/); const k = l.match(/where id = '([a-z0-9-]+)'/); if (m && k) smell[k[1].toUpperCase()] = m[1]; }); } catch (e) { /* no scent lines */ }
 const LEGAL = 'Made in India by BUD & THINGS by Ashi, Amarpali Verona Heights, Tech Zone 4, Greater Noida West, UP 201318 · hello@budandthings.com';
-const price = (r) => `₹${r.price}`;
-const qty = (i) => i.set ? `Set of ${i.set} · ${i.grams} g` : i.short;
-const labelM = (r) => { const i = info(r); return `<div class="l M"><div class="nm">${esc(i.name)}</div><div class="rule"></div>
-<div class="big"><span>${esc(qty({...i, set: r.set, grams: r.grams}))}</span><b>${price(r)}</b></div><div class="fine">MRP incl. of all taxes · Packed ${packed}</div>
+const qty = (r, i) => r.set ? `Set of ${r.set} · ${r.grams} g` : i.short;
+const url = (r) => 'https://budandthings.com/#p-' + String(r.id).toLowerCase();
+const labelM = (r) => { const i = info(r); const sm = smell[r.id]; return `<div class="l M"><div class="pn"><img src="${mono}"></div>
+<div class="bd"><div class="eb">${esc(r.type)}</div><div class="nm${i.name.length > 24 ? ' long' : ''}">${esc(i.name)}</div>${sm ? `<div class="sc">${esc(sm)}</div>` : ''}
+<div class="rule"></div><div class="big"><span>${esc(qty(r, i))}</span><b>₹${r.price}</b></div><div class="fine">MRP incl. of all taxes · Packed ${packed}</div></div>
+<div class="qr">${qrSvg(url(r))}<small>Scan: see it<br>in the shop</small></div>
 <div class="legal">${esc(LEGAL)}</div></div>`; };
-const labelS = (r) => { const i = info(r); return `<div class="l S"><div class="nm">${esc(i.name)}</div><div class="rule"></div>
-<div class="big"><span>${esc(qty({...i, set: r.set, grams: r.grams}))}</span><b>${price(r)}</b></div><div class="fine">MRP incl. taxes · Packed ${packed}</div>
+const labelS = (r) => { const i = info(r); return `<div class="l S"><div class="bar"></div><div class="top"><div class="nm">${esc(i.name)}</div><img src="${mono}"></div>
+<div class="big"><span>${esc(qty(r, i))}</span><b>₹${r.price}</b></div><div class="fine">MRP incl. taxes · Packed ${packed}</div>
 <div class="legal">${esc(LEGAL)}</div></div>`; };
 const list = rows.filter((r) => r.show !== 'NO'); const by = { M: [], S: [] };
 list.forEach((r) => { for (let c = 0; c < COPIES; c++) by[tier(r)].push(r); });
@@ -65,8 +74,18 @@ h2{margin:0;font:700 10.5pt/1.1 Georgia,serif;color:#7A1229}.M h2{font-size:12pt
 .key{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:1mm 2mm;margin-bottom:1mm}.key small{display:block;font-size:4.8pt;color:#555;text-transform:uppercase;letter-spacing:.03em}.key b{font-size:7.2pt}
 .row{margin:.4mm 0 1mm;font-size:7.6pt}.S .row{font-size:5pt;margin:.4mm 0}.row small{font-size:4.6pt}
 .care{margin:0 0 .8mm;font-size:5.6pt}.small{margin:0;font-size:4.9pt;line-height:1.22}.M .small{font-size:5.8pt}.S .small{font-size:4pt;line-height:1.16}.card p{font-size:8.5pt;margin:0 0 2mm}.card .small{font-size:6.5pt}
-.nm{font:700 12pt/1.05 Georgia,serif;color:#7A1229}.S .nm{font-size:8.6pt}.rule{height:.3mm;width:14mm;background:#D6A34A;margin:1.4mm 0}.S .rule{margin:.8mm 0;width:9mm}
-.big{display:flex;justify-content:space-between;align-items:baseline;font-size:8pt}.big b{font:700 13pt Georgia,serif;color:#150206}.S .big{font-size:5.8pt}.S .big b{font-size:9pt}
-.fine{font-size:5.4pt;color:#555;margin:.6mm 0}.S .fine{font-size:4.2pt}.legal{margin-top:auto;font-size:4.4pt;line-height:1.2;color:#444}.S .legal{font-size:3.5pt}.l{display:flex;flex-direction:column}
+@font-face{font-family:PF;src:url("file://${BR}/fonts/PlayfairDisplay[wght].ttf");font-weight:400 900}@font-face{font-family:PF;font-style:italic;src:url("file://${BR}/fonts/PlayfairDisplay-Italic[wght].ttf");font-weight:400 900}@font-face{font-family:MS;src:url("file://${BR}/fonts/Montserrat[wght].ttf");font-weight:100 900}
+.l{font-family:MS,Arial,sans-serif;display:grid;position:relative;color:#150206}
+.M{grid-template-columns:11mm 1fr 11mm;grid-template-rows:1fr auto;padding:0}.M .pn{background:#8F1834;grid-row:1/3;display:flex;align-items:center;justify-content:center}.M .pn img{width:8mm}
+.M .bd{padding:2.2mm 1.2mm 0 2.6mm}.M .qr{padding:2.2mm 2.2mm 0 0;text-align:center}.M .qr svg{width:9.5mm;height:9.5mm;display:block;margin:0 auto}.M .qr small{display:block;font-size:3.3pt;line-height:1.2;color:#7A1229;margin-top:.7mm}
+.eb{font-size:4.2pt;letter-spacing:.16em;text-transform:uppercase;color:#B07F1E;font-weight:600}
+.nm{font:700 11.5pt/1.05 PF,Georgia,serif;color:#7A1229;margin-top:.5mm}
+.sc{font:italic 400 5.6pt/1.25 PF,Georgia,serif;color:#3a2a2e;margin-top:.9mm;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.M .nm.long{font-size:9.4pt}.rule{height:.3mm;width:12mm;background:#D6A34A;margin:1.2mm 0}
+.big{display:flex;justify-content:space-between;align-items:baseline;font-size:6.6pt;font-weight:600;gap:2mm}.big b{font:700 14pt PF,Georgia,serif;color:#150206}
+.fine{font-size:4.2pt;color:#6b5a5e;margin:.4mm 0 0}
+.legal{font-size:3.7pt;line-height:1.2;color:#6b5a5e;padding:.6mm 2.2mm 1.3mm 2.6mm}.M .legal{grid-column:2/4}
+.S{padding:0;grid-template-rows:auto auto auto 1fr}.S .bar{height:1.3mm;background:#8F1834}.S .top{display:flex;justify-content:space-between;align-items:flex-start;padding:1.1mm 1.7mm 0}.S .top img{width:5.4mm;background:#8F1834;border-radius:50%;padding:.5mm}
+.S .nm{font-size:8.4pt}.S .big{padding:.6mm 1.7mm 0;font-size:5.6pt}.S .big b{font-size:10pt}.S .fine{padding:0 1.7mm}.S .legal{font-size:3.2pt;padding:.5mm 1.7mm 1mm;align-self:end}
 </style>${page('Labels 63.5 x 38.1 mm (21 to a sheet)', 'M', by.M, labelM)}${page('Labels 45.7 x 25.4 mm (40 to a sheet)', 'S', by.S, labelS)}${cards}`);
 console.log('Wrote ' + out + ' (' + list.length + ' products; 63.5 x 38.1 mm: ' + by.M.length + ', 45.7 x 25.4 mm: ' + by.S.length + '; packed ' + packed + ')');
