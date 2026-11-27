@@ -1,0 +1,448 @@
+[
+ {
+  "id": "BNT-PRD-CG-001",
+  "name": "Iced Latte",
+  "type": "Glass candle",
+  "scent": "Coffee",
+  "colour": "Brown + White",
+  "grams": 170,
+  "price": 329,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-002",
+  "name": "Vanilla Gold",
+  "type": "Glass candle",
+  "scent": "Vanilla",
+  "colour": "White + Gold",
+  "grams": 160,
+  "price": 329,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-003",
+  "name": "BlueBerry Swirl",
+  "type": "Glass candle",
+  "scent": "BlueBerry",
+  "colour": "Purple + White",
+  "grams": 165,
+  "price": 329,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-004",
+  "name": "Strawberry Cream",
+  "type": "Glass candle",
+  "scent": "Strawberry",
+  "colour": "Pink + White",
+  "grams": 165,
+  "price": 329,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-005",
+  "name": "Cocoa Bites",
+  "type": "Glass candle",
+  "scent": "Chocolate",
+  "colour": "Brown",
+  "grams": 165,
+  "price": 329,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-006",
+  "name": "Angel & Amber",
+  "type": "Glass candle",
+  "scent": "Rose",
+  "colour": "Red + White",
+  "grams": 172,
+  "price": 329,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-007",
+  "name": "Berry Blast",
+  "type": "Murphy candle",
+  "scent": "Berries",
+  "colour": "Red + Blue + Transparent",
+  "grams": 223,
+  "price": 549,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-008",
+  "name": "Daisy Pop",
+  "type": "Murphy candle",
+  "scent": "Nargis",
+  "colour": "Yellow + White",
+  "grams": 200,
+  "price": 479,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-009",
+  "name": "Petal & Pour",
+  "type": "Murphy candle",
+  "scent": "White Oud",
+  "colour": "Purple",
+  "grams": 216,
+  "price": 449,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-010",
+  "name": "Sunlit Gel",
+  "type": "Murphy candle",
+  "scent": "Vanilla",
+  "colour": "Yellow + White",
+  "grams": 240,
+  "price": 479,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-011",
+  "name": "Dessert Jar",
+  "type": "Jar candle",
+  "scent": "Strawberry",
+  "colour": "Red + White",
+  "grams": 78,
+  "price": 249,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-012",
+  "name": "Chai + Parle G",
+  "type": "Glass candle",
+  "scent": "Kesar Elaichi",
+  "colour": "Light Brown",
+  "grams": 170,
+  "price": 279,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-013",
+  "name": "Urli Butterfly Pea",
+  "type": "Urli candle",
+  "scent": "Nargis",
+  "colour": "White + Purple",
+  "grams": 61,
+  "price": 399,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-014",
+  "name": "Urli Imarti",
+  "type": "Urli candle",
+  "scent": "Sandalwood",
+  "colour": "White + Orange",
+  "grams": 65,
+  "price": 399,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-015",
+  "name": "Urli Rose Petals",
+  "type": "Urli candle",
+  "scent": "Rose",
+  "colour": "White + Red",
+  "grams": 56,
+  "price": 399,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-016",
+  "name": "Urli Gold Leaf",
+  "type": "Urli candle",
+  "scent": "Ocean Breeze",
+  "colour": "White + Gold",
+  "grams": 56,
+  "price": 399,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-CG-017",
+  "name": "Lime Glass",
+  "type": "Glass candle",
+  "scent": "Ocean Breeze",
+  "colour": "White + Lime",
+  "grams": 145,
+  "price": 329,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-001",
+  "name": "Mini Bubble Candle · Yellow",
+  "type": "Moulded candle",
+  "scent": "",
+  "colour": "Yellow",
+  "grams": 34,
+  "price": 149,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-002",
+  "name": "Sunflower Float · Yellow + Brown",
+  "type": "Moulded candle",
+  "scent": "Mithai",
+  "colour": "Yellow + Brown",
+  "grams": 17,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-003",
+  "name": "Ladoo-shaped candle",
+  "type": "Moulded candle",
+  "scent": "Mithai",
+  "colour": "Yellow",
+  "grams": 28,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-004",
+  "name": "Blooming Rose · Purple + White",
+  "type": "Moulded candle",
+  "scent": "Flower",
+  "colour": "Purple + White",
+  "grams": 20,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-005",
+  "name": "Mini Bubble Candle · Baby pink",
+  "type": "Moulded candle",
+  "scent": "White Oud",
+  "colour": "Baby Pink",
+  "grams": 35,
+  "price": 149,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-006",
+  "name": "Mini Bubble Candle · Pink",
+  "type": "Moulded candle",
+  "scent": "Ocean Breeze",
+  "colour": "Pink",
+  "grams": 35,
+  "price": 149,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-007",
+  "name": "Sunflower Float · Orange",
+  "type": "Moulded candle",
+  "scent": "White Oud",
+  "colour": "Orange",
+  "grams": 18,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-008",
+  "name": "Purple Haze",
+  "type": "Moulded candle",
+  "scent": "Ocean Breeze",
+  "colour": "Purple + White",
+  "grams": 18,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-009",
+  "name": "Blooming Rose · Red + White",
+  "type": "Moulded candle",
+  "scent": "Ocean Breeze",
+  "colour": "Red + White",
+  "grams": 20,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-010",
+  "name": "Tulip Tower",
+  "type": "Moulded candle",
+  "scent": "Rose",
+  "colour": "Pink + Green",
+  "grams": 88,
+  "price": 299,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-011",
+  "name": "Daisy Candle, Orange",
+  "type": "Moulded candle",
+  "scent": "Nargis",
+  "colour": "Orange",
+  "grams": 18,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-012",
+  "name": "Daisy Candle, Cream",
+  "type": "Moulded candle",
+  "scent": "Nargis",
+  "colour": "Cream",
+  "grams": 18,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-013",
+  "name": "Christmas Tree",
+  "type": "Moulded candle",
+  "scent": "White Oud",
+  "colour": "Green",
+  "grams": 75,
+  "price": 299,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-014",
+  "name": "Teddy",
+  "type": "Moulded candle",
+  "scent": "Strawberry + White Oud",
+  "colour": "Red + White",
+  "grams": 19,
+  "price": 129,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-MC-015",
+  "name": "Evening Ember / Classic Pillar",
+  "type": "Moulded candle",
+  "scent": "Strawberry + Rose",
+  "colour": "Maroon",
+  "grams": 217,
+  "price": 399,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-TL-001",
+  "name": "Sunflower Glow",
+  "type": "Tealight candle",
+  "scent": "Assorted",
+  "colour": "Yellow",
+  "grams": 12,
+  "price": 149,
+  "show": "YES",
+  "pack": 6
+ },
+ {
+  "id": "BNT-PRD-TL-002",
+  "name": "Midnight Sunflower",
+  "type": "Tealight candle",
+  "scent": "Assorted",
+  "colour": "Blue + Yellow",
+  "grams": 12,
+  "price": 149,
+  "show": "YES",
+  "pack": 6
+ },
+ {
+  "id": "BNT-PRD-TL-003",
+  "name": "Marigold Glow",
+  "type": "Tealight candle",
+  "scent": "Assorted",
+  "colour": "Orange + White",
+  "grams": 12,
+  "price": 149,
+  "show": "YES",
+  "pack": 6
+ },
+ {
+  "id": "BNT-PRD-TL-004",
+  "name": "Love Note",
+  "type": "Tealight candle",
+  "scent": "Assorted",
+  "colour": "Red + White",
+  "grams": 12,
+  "price": 149,
+  "show": "YES",
+  "pack": 6
+ },
+ {
+  "id": "BNT-PRD-TL-005",
+  "name": "Violet Whisper",
+  "type": "Tealight candle",
+  "scent": "Assorted",
+  "colour": "Purple + White",
+  "grams": 12,
+  "price": 149,
+  "show": "YES",
+  "pack": 6
+ },
+ {
+  "id": "BNT-PRD-TL-006",
+  "name": "Rosé Whirl",
+  "type": "Tealight candle",
+  "scent": "Assorted",
+  "colour": "Pink + White",
+  "grams": 12,
+  "price": 149,
+  "show": "YES",
+  "pack": 6
+ },
+ {
+  "id": "BNT-PRD-JT-001",
+  "name": "Rose Dawn",
+  "type": "Tray",
+  "scent": "",
+  "colour": "Rose Gold + White",
+  "grams": 172,
+  "price": 229,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-JT-002",
+  "name": "Ivory Gilt",
+  "type": "Tray",
+  "scent": "",
+  "colour": "Ivory + Gold",
+  "grams": 172,
+  "price": 229,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-JT-003",
+  "name": "Cloud Marble",
+  "type": "Dish",
+  "scent": "",
+  "colour": "White + Grey",
+  "grams": 100,
+  "price": 199,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-JT-004",
+  "name": "Little Hearts",
+  "type": "Dish",
+  "scent": "",
+  "colour": "Red + White",
+  "grams": 124,
+  "price": 199,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-JT-005",
+  "name": "Holi Bloom",
+  "type": "Dish",
+  "scent": "",
+  "colour": "Multicolour",
+  "grams": 100,
+  "price": 199,
+  "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-DIY-001",
+  "name": "Paint Your Starfish",
+  "type": "DIY Paint Kit",
+  "scent": "",
+  "colour": "White",
+  "grams": 43,
+  "price": 299,
+  "show": "YES"
+ }
+]

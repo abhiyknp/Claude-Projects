@@ -1,7 +1,9 @@
 // Builds printable candle and object labels from the catalogue sheet. Usage: node tools/make-labels.js [out.html] [MM/YYYY]
 // Packing month and year default to the current month; pass MM/YYYY to override. Details come from audit/legal/label-details.md.
 const fs = require('fs'); const path = require('path');
-const rows = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'catalogue.sheet.json'), 'utf8'));
+// the label list comes from the master sheet (data/labels.products.json, every live product); the older sheet snapshot is the fallback
+const LABELS = path.join(__dirname, '..', 'data', 'labels.products.json');
+const rows = JSON.parse(fs.readFileSync(fs.existsSync(LABELS) ? LABELS : path.join(__dirname, '..', 'data', 'catalogue.sheet.json'), 'utf8'));
 const out = process.argv[2] || 'labels.html';
 const now = new Date(); const packed = process.argv[3] || String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
 const MAKER = 'BUD & THINGS by Ashi, Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318, India';
