@@ -126,7 +126,7 @@
   "scent": "Nargis",
   "colour": "White + Purple",
   "grams": 61,
-  "price": 399,
+  "price": 349,
   "show": "YES"
  },
  {
@@ -136,7 +136,7 @@
   "scent": "Sandalwood",
   "colour": "White + Orange",
   "grams": 65,
-  "price": 399,
+  "price": 349,
   "show": "YES"
  },
  {
@@ -146,7 +146,7 @@
   "scent": "Rose",
   "colour": "White + Red",
   "grams": 56,
-  "price": 399,
+  "price": 349,
   "show": "YES"
  },
  {
@@ -156,7 +156,7 @@
   "scent": "Ocean Breeze",
   "colour": "White + Gold",
   "grams": 56,
-  "price": 399,
+  "price": 349,
   "show": "YES"
  },
  {
@@ -442,7 +442,7 @@
   "scent": "",
   "colour": "White",
   "grams": 43,
-  "price": 299,
+  "price": 249,
   "show": "YES"
  }
 ]
