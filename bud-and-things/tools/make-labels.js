@@ -72,10 +72,11 @@ const labelM = process.env.LABEL_STYLE === 'rich' ? labelMrich : process.env.LAB
 const labelS = process.env.LABEL_STYLE === 'rich' ? labelSrich : (r) => labelMin(r, 'S');
 const list = rows.filter((r) => r.show !== 'NO'); const by = { M: [], S: [] };
 list.forEach((r) => { for (let c = 0; c < COPIES; c++) by[tier(r)].push(r); });
-const page = (title, cls, items, fn) => { const n = cls === 'M' ? 21 : 40; let h = ''; for (let k = 0; k < items.length; k += n) h += `<section class="pg"><h3 class="noprint">${title}${items.length > n ? ' (sheet ' + (k / n + 1) + ')' : ''}</h3><div class="g ${cls}">${items.slice(k, k + n).map(fn).join('\n')}</div></section>`; return h; };
+const SINGLE = process.env.LABEL_PAGES === 'single';
+const page = (title, cls, items, fn) => SINGLE ? items.map((r) => `<section class="one" data-id="${r.id}">${fn(r)}</section>`).join('') : (() => { const n = cls === 'M' ? 21 : 40; let h = ''; for (let k = 0; k < items.length; k += n) h += `<section class="pg"><h3 class="noprint">${title}${items.length > n ? ' (sheet ' + (k / n + 1) + ')' : ''}</h3><div class="g ${cls}">${items.slice(k, k + n).map(fn).join('\n')}</div></section>`; return h; })();
 const card = (title, text) => `<div class="card"><div class="brand">BUD &amp; THINGS <small>by Ashi</small></div><h2>${title}</h2><p>${text}</p><p class="small">Questions? ${esc(CARE)}</p></div>`;
 const cards = `<section class="pg"><h3 class="noprint">Care cards, 85 x 55 mm (one for each box; print as many as you need)</h3><div class="g C">${card('Care for your candle', CARE_C)}${card('Care for your piece', CARE_O + ' Wipe with a soft, damp cloth. Not dishwasher-safe and not for food.')}</div></section>`;
-fs.writeFileSync(out, `<!doctype html><meta charset="utf-8"><title>Labels ${packed}</title><style>
+fs.writeFileSync(out, `<!doctype html>${SINGLE ? '<style>@page{size:63.5mm 38.1mm;margin:0}body{margin:0}.one{width:63.5mm;height:38.1mm;break-after:page;overflow:hidden}.one .l{margin:0;border-radius:0}</style>' : ''}<meta charset="utf-8"><title>Labels ${packed}</title><style>
 @page{size:A4;margin:8mm}*{box-sizing:border-box}body{font:7pt/1.25 Arial,Helvetica,sans-serif;margin:0;color:#150206}
 .pg{break-after:page}.noprint{font:700 9pt Arial;color:#8F1834;margin:0 0 3mm}@media print{.noprint{display:none}}
 .g{display:grid;gap:2mm;justify-content:start}.g.M{grid-template-columns:repeat(3,63.5mm)}.g.S{grid-template-columns:repeat(4,45.7mm)}.g.C{grid-template-columns:repeat(2,85mm)}
