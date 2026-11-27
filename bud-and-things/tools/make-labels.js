@@ -1,9 +1,10 @@
 // Builds printable labels from the master sheet, in three sizes so small pieces get a label that fits.
 // Usage: node tools/make-labels.js [out.html] [MM/YYYY]    (COPIES=3 prints three of each label)
 // The packing month and year default to the current month; pass MM/YYYY to override. Details come from audit/legal/label-details.md.
-// L 70 x 50 mm: glass, Murphy, jar, urli, pillar candles, Jesmonite trays and dishes, the paint kit.
-// M 56 x 36 mm: moulded candles over 20 g, the dessert jar, tealight packs.
-// S 45 x 28 mm: small moulded candles of 20 g or less. A "care card" page is added for the candle and object care lines.
+// Two sizes that match the common A4 sticker sheets (21 and 40 labels to a sheet):
+// M 63.5 x 38.1 mm (3 x 7 per sheet): glass, Murphy, urli, pillar and larger moulded candles, tealight packs, Jesmonite trays and dishes, the paint kit.
+// S 45.7 x 25.4 mm (4 x 10 per sheet): small moulded candles of 35 g or less and the dessert jar.
+// A "care card" page is added for the candle and object care lines (it carries the safety text the small labels have no room for).
 const fs = require('fs'); const path = require('path');
 const LABELS = path.join(__dirname, '..', 'data', 'labels.products.json');
 const rows = JSON.parse(fs.readFileSync(fs.existsSync(LABELS) ? LABELS : path.join(__dirname, '..', 'data', 'catalogue.sheet.json'), 'utf8'));
@@ -20,9 +21,9 @@ const CARE_C = 'Trim wick to 5 mm. Burn 2 to 3 h at a time. Never leave burning 
 const CARE_O = 'Decorative item. Handle with care.';
 const tier = (r) => {
   const t = String(r.type || '').toLowerCase(); const g = +r.grams || 0;
-  if (/moulded/.test(t)) return g <= 20 ? 'S' : g <= 100 ? 'M' : 'L';
-  if (/tealight/.test(t) || /jar candle/.test(t)) return 'M';
-  return 'L';
+  if (/moulded/.test(t)) return g <= 35 ? 'S' : 'M';
+  if (/jar candle/.test(t)) return 'S';
+  return 'M';
 };
 const info = (r) => {
   const candle = /candle/i.test(r.type); const kit = /kit/i.test(r.type); const pack = r.pack || 1;
@@ -43,7 +44,7 @@ const labelM = (r) => { const i = info(r); return `<div class="l M"><div class="
 const labelS = (r) => { const i = info(r); return `<div class="l S"><h2>${esc(i.name)}</h2>
 <p class="row"><b>${esc(i.short)}</b> · <b>MRP ₹${r.price}</b> <small>(incl. of all taxes)</small> · Packed <b>${packed}</b></p>
 <p class="small"><b>Made in India by</b> ${esc(MAKER)}. <b>Care:</b> ${esc(CARE)}</p></div>`; };
-const list = rows.filter((r) => r.show !== 'NO'); const by = { L: [], M: [], S: [] };
+const list = rows.filter((r) => r.show !== 'NO'); const by = { M: [], S: [] };
 list.forEach((r) => { for (let c = 0; c < COPIES; c++) by[tier(r)].push(r); });
 const page = (title, cls, items, fn) => items.length ? `<section class="pg"><h3 class="noprint">${title}</h3><div class="g ${cls}">${items.map(fn).join('\n')}</div></section>` : '';
 const card = (title, text) => `<div class="card"><div class="brand">BUD &amp; THINGS <small>by Ashi</small></div><h2>${title}</h2><p>${text}</p><p class="small">Questions? ${esc(CARE)}</p></div>`;
@@ -51,15 +52,15 @@ const cards = `<section class="pg"><h3 class="noprint">Care cards, 85 x 55 mm (o
 fs.writeFileSync(out, `<!doctype html><meta charset="utf-8"><title>Labels ${packed}</title><style>
 @page{size:A4;margin:8mm}*{box-sizing:border-box}body{font:7pt/1.25 Arial,Helvetica,sans-serif;margin:0;color:#150206}
 .pg{break-after:page}.noprint{font:700 9pt Arial;color:#8F1834;margin:0 0 3mm}@media print{.noprint{display:none}}
-.g{display:grid;gap:2mm;justify-content:start}.g.L{grid-template-columns:repeat(2,70mm)}.g.M{grid-template-columns:repeat(3,56mm)}.g.S{grid-template-columns:repeat(4,45mm)}.g.C{grid-template-columns:repeat(2,85mm)}
+.g{display:grid;gap:2mm;justify-content:start}.g.M{grid-template-columns:repeat(3,63.5mm)}.g.S{grid-template-columns:repeat(4,45.7mm)}.g.C{grid-template-columns:repeat(2,85mm)}
 .l,.card{border:.25mm solid #8F1834;border-radius:1.5mm;background:#F8F0E4;overflow:hidden;break-inside:avoid}
-.L{width:70mm;height:50mm;padding:2.2mm 2.8mm}.M{width:56mm;height:36mm;padding:1.8mm 2.2mm}.S{width:45mm;height:28mm;padding:1.4mm 1.8mm}.card{width:85mm;height:55mm;padding:4mm}
+.M{width:63.5mm;height:38.1mm;padding:2mm 2.6mm}.S{width:45.7mm;height:25.4mm;padding:1.3mm 1.7mm}.card{width:85mm;height:55mm;padding:4mm}
 .brand{font-weight:700;letter-spacing:.1em;font-size:5.5pt;color:#8F1834}.brand small{font-weight:400;letter-spacing:0;font-size:5.5pt}
 .top{border-bottom:.25mm solid #D6A34A;padding-bottom:.8mm;margin-bottom:1mm}
-h2{margin:0;font:700 10.5pt/1.1 Georgia,serif;color:#7A1229}.M h2{font-size:9pt;margin-top:.6mm}.S h2{font-size:7.6pt}.card h2{font-size:13pt;margin:2mm 0}
+h2{margin:0;font:700 10.5pt/1.1 Georgia,serif;color:#7A1229}.M h2{font-size:10pt;margin-top:.6mm}.S h2{font-size:7.4pt}.card h2{font-size:13pt;margin:2mm 0}
 .sub{margin:.3mm 0 1.2mm;font-size:6.5pt}.M .sub{margin:.2mm 0 .8mm;font-size:6pt}
 .key{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:1mm 2mm;margin-bottom:1mm}.key small{display:block;font-size:4.8pt;color:#555;text-transform:uppercase;letter-spacing:.03em}.key b{font-size:7.2pt}
-.row{margin:.4mm 0 .8mm;font-size:6.2pt}.S .row{font-size:5.2pt;margin:.6mm 0}.row small{font-size:4.6pt}
-.care{margin:0 0 .8mm;font-size:5.6pt}.small{margin:0;font-size:4.9pt;line-height:1.22}.M .small{font-size:4.7pt}.S .small{font-size:4.2pt;line-height:1.18}.card p{font-size:8.5pt;margin:0 0 2mm}.card .small{font-size:6.5pt}
-</style>${page('Large labels, 70 x 50 mm', 'L', by.L, labelL)}${page('Medium labels, 56 x 36 mm', 'M', by.M, labelM)}${page('Small labels, 45 x 28 mm', 'S', by.S, labelS)}${cards}`);
-console.log('Wrote ' + out + ' (' + list.length + ' products; large ' + by.L.length + ', medium ' + by.M.length + ', small ' + by.S.length + '; packed ' + packed + ')');
+.row{margin:.4mm 0 1mm;font-size:6.8pt}.S .row{font-size:5pt;margin:.4mm 0}.row small{font-size:4.6pt}
+.care{margin:0 0 .8mm;font-size:5.6pt}.small{margin:0;font-size:4.9pt;line-height:1.22}.M .small{font-size:5pt}.S .small{font-size:4pt;line-height:1.16}.card p{font-size:8.5pt;margin:0 0 2mm}.card .small{font-size:6.5pt}
+</style>${page('Labels 63.5 x 38.1 mm (21 to a sheet)', 'M', by.M, labelM)}${page('Labels 45.7 x 25.4 mm (40 to a sheet)', 'S', by.S, labelS)}${cards}`);
+console.log('Wrote ' + out + ' (' + list.length + ' products; 63.5 x 38.1 mm: ' + by.M.length + ', 45.7 x 25.4 mm: ' + by.S.length + '; packed ' + packed + ')');
