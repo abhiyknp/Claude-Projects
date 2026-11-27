@@ -19,12 +19,7 @@ const t0 = (t) => /tealight/i.test(t) ? '1.5 to 3 h' : /moulded/i.test(t) ? '2 t
 const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const CARE_C = 'Trim wick to 5 mm. Burn 2 to 3 h at a time. Never leave burning unattended. Keep away from children, pets and curtains. Use on a flat, heat-safe surface. Stop at 1 cm of wax.';
 const CARE_O = 'Decorative item. Handle with care.';
-const tier = (r) => {
-  const t = String(r.type || '').toLowerCase(); const g = +r.grams || 0;
-  if (/moulded/.test(t)) return g <= 35 ? 'S' : 'M';
-  if (/jar candle/.test(t)) return 'S';
-  return 'M';
-};
+const tier = () => 'M'; // one label size for every product (stuck on the pouch or card, so the piece size does not matter)
 const info = (r) => {
   const candle = /candle/i.test(r.type) || !!r.set; const kit = /kit/i.test(r.type); const pack = r.pack || 1;
   const net = r.set ? `Set of ${r.set} candles, ${r.grams} g in all` : pack > 1 ? `Pack of ${pack} candles, ${r.grams * pack} g in all` : candle ? `1 candle, ${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `1 piece, about ${r.grams} g`;
@@ -60,7 +55,20 @@ const labelSrich = (r) => { const i = info(r); return `<div class="l S"><div cla
 // Minimal style (default): gold monogram, name, weight and price, one small legal line. LABEL_STYLE=rich gives the designed version with scent line and QR.
 const LEGAL_MIN = 'Packed ' + packed + ' · MRP incl. of all taxes · Made in India by BUD & THINGS by Ashi, Amarpali Verona Heights, Tech Zone 4, Greater Noida West, UP 201318 · hello@budandthings.com';
 const labelMin = (r, t) => { const i = info(r); return `<div class="l ${t} mn"><img class="mo" src="${mono}"><div class="nm${i.name.length > 24 ? ' long' : ''}">${esc(i.name)}</div><div class="wp">${esc(qty(r, i))} <i>·</i> <b>₹${r.price}</b></div><div class="lg">${esc(LEGAL_MIN)}</div></div>`; };
-const labelM = process.env.LABEL_STYLE === 'rich' ? labelMrich : (r) => labelMin(r, 'M');
+
+// LOCKED DESIGN (Silk & Gold): maroon silk, double gold frame, leaf, brand line, diamond divider, type line, name, tagline,
+// weight bottom-left, price bottom-right, web and email centre, care line under a gold rule. One size, 63.5 x 38.1 mm.
+const AS = 'file://' + path.join(__dirname, '..', 'prototype', 'assets');
+const labelPrem = (r) => { const i = info(r); const obj = !i.candle && !(/kit/i.test(r.type));
+  const tag = esc(String(r.type).replace(/ candle set$/i, ' candle set')) + (r.scent && !/^(random|n\/a)$/i.test(r.scent) ? ' · ' + esc(r.scent) : '');
+  const care = i.candle ? 'Trim wick to 5 mm · Never leave a burning candle unattended' : /kit/i.test(r.type) ? 'Handle with care' : 'Decorative item · Handle with care';
+  const q = r.set ? `Set of ${r.set} · ${r.grams} g` : i.short;
+  const nm = r.name + (r.pack > 1 ? ' · Pack of ' + r.pack : ''); const cls = nm.length > 30 ? ' xl' : nm.length > 22 ? ' lg' : '';
+  return `<div class="l M pm"><div class="fr"></div><div class="fr2"></div><img class="leaf" src="${AS}/silk/leaf.webp"><div class="br">BUD &amp; THINGS <i>by Ashi</i></div>
+<div class="dv"><span></span></div><div class="ty">${tag}</div><div class="nm${cls}">${esc(nm)}</div><div class="tg">Made with thought. Given with feeling.</div>
+<div class="bt"><span class="q${q.length > 9 ? ' ql' : ''}">${esc(q)}</span><span class="ft${q.length > 9 ? ' fl' : ''}">www.budandthings.com · hello@budandthings.com</span><span class="p">₹${r.price}</span></div>
+<div class="cr">Packed ${packed} · ${esc(care)}</div></div>`; };
+const labelM = process.env.LABEL_STYLE === 'rich' ? labelMrich : process.env.LABEL_STYLE === 'min' ? (r) => labelMin(r, 'M') : labelPrem;
 const labelS = process.env.LABEL_STYLE === 'rich' ? labelSrich : (r) => labelMin(r, 'S');
 const list = rows.filter((r) => r.show !== 'NO'); const by = { M: [], S: [] };
 list.forEach((r) => { for (let c = 0; c < COPIES; c++) by[tier(r)].push(r); });
@@ -97,5 +105,16 @@ h2{margin:0;font:700 10.5pt/1.1 Georgia,serif;color:#7A1229}.M h2{font-size:12pt
 .mn .nm{font-size:12.5pt;margin:1.2mm 2mm 0;color:#7A1229}.mn .nm.long{font-size:9.6pt}.S.mn .nm{font-size:8.6pt;margin-top:.8mm}
 .mn .wp{font:600 7.6pt MS,Arial,sans-serif;margin-top:1mm;letter-spacing:.04em}.mn .wp b{font:700 11pt PF,Georgia,serif;letter-spacing:0}.mn .wp i{color:#D6A34A;font-style:normal}.S.mn .wp{font-size:5.6pt}.S.mn .wp b{font-size:8.6pt}
 .mn .lg{margin-top:auto;font-size:4.4pt;line-height:1.25;color:#6b5a5e;padding:0 3mm 1.8mm}.S.mn .lg{font-size:3.5pt;padding:0 1.6mm 1.1mm}
+.pm{background:#2a0610 url(${AS}/silk/velvet.webp) center/cover;padding:3mm 4mm 2.8mm;display:flex;flex-direction:column;align-items:center;text-align:center;color:#F6E3B4;border:0;position:relative}
+.pm .fr{position:absolute;inset:1.3mm;border:.22mm solid #D6A34A;border-radius:1mm}.pm .fr2{position:absolute;inset:2mm;border:.12mm solid rgba(214,163,74,.55);border-radius:.7mm}
+.pm .leaf{height:7.4mm;filter:drop-shadow(0 .2mm .4mm rgba(0,0,0,.5))}
+.pm .br{font:700 10.4pt/1.1 PF,Georgia,serif;color:#F6E3B4;text-shadow:0 .2mm .5mm rgba(0,0,0,.6);margin-top:.6mm}.pm .br i{font:italic 400 7pt PF,Georgia,serif;color:#D9B96E;letter-spacing:.03em}
+.pm .dv{display:flex;align-items:center;gap:1.4mm;margin:1.2mm 0 .9mm}.pm .dv:before,.pm .dv:after{content:"";width:10mm;height:.2mm;background:linear-gradient(90deg,transparent,#D6A34A)}.pm .dv:after{background:linear-gradient(90deg,#D6A34A,transparent)}.pm .dv span{width:1mm;height:1mm;background:#D6A34A;transform:rotate(45deg)}
+.pm .ty{font:600 3.6pt MS,Arial,sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#B99A55;margin-bottom:.5mm}
+.pm .nm{font:500 7pt/1.15 PF,Georgia,serif;letter-spacing:.06em;color:#E9C46A;margin-top:0}.pm .nm.lg{font-size:6.2pt}.pm .nm.xl{font-size:5.4pt}
+.pm .tg{font:italic 400 4.6pt PF,Georgia,serif;letter-spacing:.04em;color:#D9B96E;margin-top:1mm}
+.pm .bt{position:absolute;left:3.4mm;right:3.4mm;bottom:5.4mm;display:flex;justify-content:space-between;align-items:flex-end}
+.pm .q,.pm .p{font:600 6.4pt MS,Arial,sans-serif;color:#F1DDB0;letter-spacing:.04em;white-space:nowrap}.pm .ft{font:500 3.7pt/1.5 MS,Arial,sans-serif;letter-spacing:.06em;white-space:nowrap;color:#D9B96E}
+.pm .q.ql{font-size:5pt;letter-spacing:.02em}.pm .ft.fl{font-size:3.3pt;letter-spacing:.03em}.pm .cr{position:absolute;left:3.4mm;right:3.4mm;bottom:2.9mm;text-align:center;font:500 3.5pt/1.3 MS,Arial,sans-serif;letter-spacing:.05em;color:#C9AA68;white-space:nowrap}.pm .cr:before{content:"";display:block;width:100%;height:.12mm;background:linear-gradient(90deg,transparent,rgba(214,163,74,.6),transparent);margin-bottom:.7mm}
 </style>${page('Labels 63.5 x 38.1 mm (21 to a sheet)', 'M', by.M, labelM)}${page('Labels 45.7 x 25.4 mm (40 to a sheet)', 'S', by.S, labelS)}${cards}`);
 console.log('Wrote ' + out + ' (' + list.length + ' products; 63.5 x 38.1 mm: ' + by.M.length + ', 45.7 x 25.4 mm: ' + by.S.length + '; packed ' + packed + ')');
