@@ -67,7 +67,7 @@ const labelPrem = (r) => { const i = info(r); const obj = !i.candle && !(/kit/i.
   return `<div class="l M pm"><div class="fr"></div><div class="fr2"></div><img class="leaf" src="${AS}/silk/leaf.webp"><div class="br">BUD &amp; THINGS <i>by Ashi</i></div>
 <div class="dv"><span></span></div><div class="ty">${tag}</div><div class="nm${cls}">${esc(nm)}</div><div class="tg">Made with thought. Given with feeling.</div>
 <div class="bt"><span class="q${q.length > 9 ? ' ql' : ''}">${esc(q)}</span><span class="ft${q.length > 9 ? ' fl' : ''}">www.budandthings.com · hello@budandthings.com</span><span class="p">₹${r.price}</span></div>
-<div class="cr">Packed ${packed} · ${esc(care)}</div></div>`; };
+<div class="cr">${esc(care)}</div></div>`; };
 const labelM = process.env.LABEL_STYLE === 'rich' ? labelMrich : process.env.LABEL_STYLE === 'min' ? (r) => labelMin(r, 'M') : labelPrem;
 const labelS = process.env.LABEL_STYLE === 'rich' ? labelSrich : (r) => labelMin(r, 'S');
 const list = rows.filter((r) => r.show !== 'NO'); const by = { M: [], S: [] };
@@ -108,13 +108,13 @@ h2{margin:0;font:700 10.5pt/1.1 Georgia,serif;color:#7A1229}.M h2{font-size:12pt
 .pm{background:#2a0610 url(${AS}/silk/velvet.webp) center/cover;padding:3mm 4mm 2.8mm;display:flex;flex-direction:column;align-items:center;text-align:center;color:#F6E3B4;border:0;position:relative}
 .pm .fr{position:absolute;inset:1.3mm;border:.22mm solid #D6A34A;border-radius:1mm}.pm .fr2{position:absolute;inset:2mm;border:.12mm solid rgba(214,163,74,.55);border-radius:.7mm}
 .pm .leaf{height:7.4mm;filter:drop-shadow(0 .2mm .4mm rgba(0,0,0,.5))}
-.pm .br{font:700 10.4pt/1.1 PF,Georgia,serif;color:#F6E3B4;text-shadow:0 .2mm .5mm rgba(0,0,0,.6);margin-top:.6mm}.pm .br i{font:italic 400 7pt PF,Georgia,serif;color:#D9B96E;letter-spacing:.03em}
+.pm .br{font:700 10.4pt/1.1 PF,Georgia,serif;color:#F6E3B4;text-shadow:0 .2mm .5mm rgba(0,0,0,.6);margin-top:.6mm}.pm .br i{font:italic 400 7pt PF,Georgia,serif;color:#F3D68A;letter-spacing:.03em}
 .pm .dv{display:flex;align-items:center;gap:1.4mm;margin:1.2mm 0 .9mm}.pm .dv:before,.pm .dv:after{content:"";width:10mm;height:.2mm;background:linear-gradient(90deg,transparent,#D6A34A)}.pm .dv:after{background:linear-gradient(90deg,#D6A34A,transparent)}.pm .dv span{width:1mm;height:1mm;background:#D6A34A;transform:rotate(45deg)}
-.pm .ty{font:600 3.6pt MS,Arial,sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#B99A55;margin-bottom:.5mm}
-.pm .nm{font:500 7pt/1.15 PF,Georgia,serif;letter-spacing:.06em;color:#E9C46A;margin-top:0}.pm .nm.lg{font-size:6.2pt}.pm .nm.xl{font-size:5.4pt}
-.pm .tg{font:italic 400 4.6pt PF,Georgia,serif;letter-spacing:.04em;color:#D9B96E;margin-top:1mm}
+.pm .ty{font:600 3.9pt MS,Arial,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#F0D083;margin-bottom:.5mm}
+.pm .nm{font:500 7pt/1.15 PF,Georgia,serif;letter-spacing:.06em;color:#FFE9A8;margin-top:0}.pm .nm.lg{font-size:6.2pt}.pm .nm.xl{font-size:5.4pt}
+.pm .tg{font:italic 400 4.9pt PF,Georgia,serif;letter-spacing:.04em;color:#FBE6A6;margin-top:1mm}
 .pm .bt{position:absolute;left:3.4mm;right:3.4mm;bottom:5.4mm;display:flex;justify-content:space-between;align-items:flex-end}
-.pm .q,.pm .p{font:600 6.4pt MS,Arial,sans-serif;color:#F1DDB0;letter-spacing:.04em;white-space:nowrap}.pm .ft{font:500 3.7pt/1.5 MS,Arial,sans-serif;letter-spacing:.06em;white-space:nowrap;color:#D9B96E}
-.pm .q.ql{font-size:5pt;letter-spacing:.02em}.pm .ft.fl{font-size:3.3pt;letter-spacing:.03em}.pm .cr{position:absolute;left:3.4mm;right:3.4mm;bottom:2.9mm;text-align:center;font:500 3.5pt/1.3 MS,Arial,sans-serif;letter-spacing:.05em;color:#C9AA68;white-space:nowrap}.pm .cr:before{content:"";display:block;width:100%;height:.12mm;background:linear-gradient(90deg,transparent,rgba(214,163,74,.6),transparent);margin-bottom:.7mm}
+.pm .q,.pm .p{font:600 6.4pt MS,Arial,sans-serif;color:#FFF4D6;letter-spacing:.04em;white-space:nowrap}.pm .ft{font:600 3.8pt/1.5 MS,Arial,sans-serif;letter-spacing:.05em;white-space:nowrap;color:#FFE3A0}
+.pm .q.ql{font-size:5pt;letter-spacing:.02em}.pm .ft.fl{font-size:3.5pt;letter-spacing:.03em}.pm .cr{position:absolute;left:3.4mm;right:3.4mm;bottom:2.9mm;text-align:center;font:600 4pt/1.3 MS,Arial,sans-serif;letter-spacing:.05em;color:#FBE0A0;white-space:nowrap}.pm .cr:before{content:"";display:block;width:100%;height:.12mm;background:linear-gradient(90deg,transparent,rgba(214,163,74,.6),transparent);margin-bottom:.7mm}
 </style>${page('Labels 63.5 x 38.1 mm (21 to a sheet)', 'M', by.M, labelM)}${page('Labels 45.7 x 25.4 mm (40 to a sheet)', 'S', by.S, labelS)}${cards}`);
 console.log('Wrote ' + out + ' (' + list.length + ' products; 63.5 x 38.1 mm: ' + by.M.length + ', 45.7 x 25.4 mm: ' + by.S.length + '; packed ' + packed + ')');
