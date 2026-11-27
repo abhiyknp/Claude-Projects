@@ -59,7 +59,7 @@ const labelSrich = (r) => { const i = info(r); return `<div class="l S"><div cla
 
 // Minimal style (default): gold monogram, name, weight and price, one small legal line. LABEL_STYLE=rich gives the designed version with scent line and QR.
 const LEGAL_MIN = 'Packed ' + packed + ' · MRP incl. of all taxes · Made in India by BUD & THINGS by Ashi, Amarpali Verona Heights, Tech Zone 4, Greater Noida West, UP 201318 · hello@budandthings.com';
-const labelMin = (r, t) => { const i = info(r); return `<div class="l ${t} mn"><div class="nm${i.name.length > 24 ? ' long' : ''}">${esc(i.name)}</div><div class="wp">${esc(qty(r, i))} <i>·</i> <b>₹${r.price}</b></div><div class="lg">${esc(LEGAL_MIN)}</div></div>`; };
+const labelMin = (r, t) => { const i = info(r); return `<div class="l ${t} mn"><img class="mo" src="${mono}"><div class="nm${i.name.length > 24 ? ' long' : ''}">${esc(i.name)}</div><div class="wp">${esc(qty(r, i))} <i>·</i> <b>₹${r.price}</b></div><div class="lg">${esc(LEGAL_MIN)}</div></div>`; };
 const labelM = process.env.LABEL_STYLE === 'rich' ? labelMrich : (r) => labelMin(r, 'M');
 const labelS = process.env.LABEL_STYLE === 'rich' ? labelSrich : (r) => labelMin(r, 'S');
 const list = rows.filter((r) => r.show !== 'NO'); const by = { M: [], S: [] };
@@ -93,8 +93,8 @@ h2{margin:0;font:700 10.5pt/1.1 Georgia,serif;color:#7A1229}.M h2{font-size:12pt
 .legal{font-size:3.7pt;line-height:1.2;color:#6b5a5e;padding:.6mm 2.2mm 1.3mm 2.6mm}.M .legal{grid-column:2/4}
 .S{padding:0;grid-template-rows:auto auto auto 1fr}.S .bar{height:1.3mm;background:#8F1834}.S .top{display:flex;justify-content:space-between;align-items:flex-start;padding:1.1mm 1.7mm 0}.S .top img{width:5.4mm;background:#8F1834;border-radius:50%;padding:.5mm}
 .S .nm{font-size:8.4pt}.S .big{padding:.6mm 1.7mm 0;font-size:5.6pt}.S .big b{font-size:10pt}.S .fine{padding:0 1.7mm}.S .legal{font-size:3.2pt;padding:.5mm 1.7mm 1mm;align-self:end}
-.mn{text-align:center;align-items:center;justify-content:flex-start;flex-direction:column;display:flex;padding:0}.mn .mo{width:6.5mm;margin-top:2.4mm}.S.mn .mo{width:4.6mm;margin-top:1.4mm}
-.mn .nm{font-size:13pt;margin:4.2mm 2mm 0;color:#7A1229}.mn .nm.long{font-size:9.6pt}.S.mn .nm{font-size:9pt;margin-top:2.4mm}
+.mn{text-align:center;align-items:center;justify-content:flex-start;flex-direction:column;display:flex;padding:0}.mn .mo{width:7.5mm;margin-top:2.4mm}.S.mn .mo{width:4.6mm;margin-top:1.4mm}
+.mn .nm{font-size:12.5pt;margin:1.2mm 2mm 0;color:#7A1229}.mn .nm.long{font-size:9.6pt}.S.mn .nm{font-size:8.6pt;margin-top:.8mm}
 .mn .wp{font:600 7.6pt MS,Arial,sans-serif;margin-top:1mm;letter-spacing:.04em}.mn .wp b{font:700 11pt PF,Georgia,serif;letter-spacing:0}.mn .wp i{color:#D6A34A;font-style:normal}.S.mn .wp{font-size:5.6pt}.S.mn .wp b{font-size:8.6pt}
 .mn .lg{margin-top:auto;font-size:4.4pt;line-height:1.25;color:#6b5a5e;padding:0 3mm 1.8mm}.S.mn .lg{font-size:3.5pt;padding:0 1.6mm 1.1mm}
 </style>${page('Labels 63.5 x 38.1 mm (21 to a sheet)', 'M', by.M, labelM)}${page('Labels 45.7 x 25.4 mm (40 to a sheet)', 'S', by.S, labelS)}${cards}`);
