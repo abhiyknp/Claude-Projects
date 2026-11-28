@@ -24,7 +24,7 @@ function policy(html) {
   return [`default-src 'self'`, `script-src 'self' ${[...ads.script, ...pay.script].join(' ')} ${[...new Set(hashes)].join(' ')}`.trim(),
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, `font-src 'self' https://fonts.gstatic.com`,
     `img-src ${images.join(' ')}`, `media-src ${images.join(' ')}`, `connect-src ${[...connect, ...ads.connect, ...pay.connect].join(' ')}`, `frame-src 'self' ${pay.frame.join(' ')}`, // 'self': the Owner view's Live preview shows the shop in a frame of its own site
-    `object-src 'none'`, `base-uri 'self'`, `form-action 'self' ${pay.form.join(' ')}`, `upgrade-insecure-requests`].join('; ');
+    `object-src 'none'`, `base-uri 'self'`, `form-action 'self' ${pay.form.join(' ')}`, ...(process.env.BT_CSP_NO_UPGRADE ? [] : [`upgrade-insecure-requests`])].join('; '); // BT_CSP_NO_UPGRADE: local preview in Safari's engine, which would turn http://localhost into https (never set for the published site)
 }
 
 const pages = []; if (/\.html$/.test(dir)) pages.push(dir); else (function walk(d) { for (const f of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, f.name); if (f.isDirectory()) walk(p); else if (/\.html$/.test(f.name)) pages.push(p); } })(dir);
