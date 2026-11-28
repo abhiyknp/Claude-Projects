@@ -277,8 +277,8 @@ body.ft-world #ft-foot:after{content:"";position:absolute;left:0;right:0;top:-1p
 .ft-hat svg{width:100%;height:auto;display:block}
 @media (max-width:640px){.ft-sit{width:70px!important;height:65px!important;left:8px!important}.ft-spacer{height:58px!important}.ft-hat{left:-8px!important;top:-11px!important;width:24px}}
 .ft-sit svg{overflow:hidden!important}
-.ft-hat{left:-2px!important;top:-9px!important}
-@media (max-width:640px){.ft-hat{left:-2px!important;top:-8px!important}}
+.ft-hat{left:6px!important;top:-6px!important}
+@media (max-width:640px){.ft-hat{left:9px!important;top:-4px!important}}
 
 /* ---- v3: a real photographed Santa leaning over the button, snow cap on top ---- */
 .ft-sit{width:104px!important;height:101px!important;left:8px!important;margin-bottom:-5px!important;overflow:hidden!important;z-index:3!important;filter:none!important;animation:none!important}

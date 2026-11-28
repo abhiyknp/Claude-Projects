@@ -128,7 +128,7 @@
   "scent": "N/A",
   "colour": "Yellow",
   "grams": 34,
-  "price": 149,
+  "price": 129,
   "stock": 1,
   "show": "YES"
  },
@@ -139,7 +139,7 @@
   "scent": "Mithai ",
   "colour": "Yellow+Brown",
   "grams": 17,
-  "price": 129,
+  "price": 99,
   "stock": 4,
   "show": "YES"
  },
@@ -150,7 +150,7 @@
   "scent": "Mithai ",
   "colour": "Yellow",
   "grams": 28,
-  "price": 129,
+  "price": 99,
   "stock": 14,
   "show": "YES"
  },
@@ -161,7 +161,7 @@
   "scent": "Flower",
   "colour": "Purple+white",
   "grams": 20,
-  "price": 129,
+  "price": 99,
   "stock": 2,
   "show": "YES"
  },
@@ -172,7 +172,7 @@
   "scent": "Whit Oud",
   "colour": "Baby Pink",
   "grams": 35,
-  "price": 149,
+  "price": 129,
   "stock": 1,
   "show": "YES"
  },
@@ -183,7 +183,7 @@
   "scent": "Ocean Breeze",
   "colour": "Pink",
   "grams": 35,
-  "price": 149,
+  "price": 129,
   "stock": 1,
   "show": "YES"
  },
@@ -194,7 +194,7 @@
   "scent": "White Oud",
   "colour": "Orange",
   "grams": 18,
-  "price": 129,
+  "price": 99,
   "stock": 1,
   "show": "YES"
  },
@@ -205,7 +205,7 @@
   "scent": "Ocean Breeze",
   "colour": "Purple+white",
   "grams": 18,
-  "price": 129,
+  "price": 99,
   "stock": 1,
   "show": "YES"
  },
@@ -216,7 +216,7 @@
   "scent": "Ocean Breeze",
   "colour": "Red+White",
   "grams": 20,
-  "price": 129,
+  "price": 99,
   "stock": 1,
   "show": "YES"
  },
