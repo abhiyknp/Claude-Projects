@@ -134,11 +134,11 @@ body.pv-on #save-bar { left: calc(50% - 220px); }
 .pv-stage { flex: 1; min-height: 0; padding: 10px; display: flex; justify-content: center; overflow: auto; }
 #pv-frame { width: 100%; height: 100%; border: 1px solid var(--line2); background: #fff; }
 body.pv-phone #pv-frame { width: 390px; max-width: 100%; border-radius: 22px; border: 8px solid #080102; }
-.pv-note { margin: 0; padding: 6px 12px 10px; font-size: 13px; }
+.pv-note { margin: 0; padding: 6px 12px 10px; font-size: 14px; }
 body.framed .proto, body.framed #save-bar { display: none; }
 @media (max-width: 1100px) { body.pv-on { padding-right: 0; } body.pv-on #save-bar { left: 50%; } #pv-panel { left: 0; width: auto; z-index: 80; } }
 .dirty { outline: 2px solid var(--caramel); outline-offset: 1px; }
-#save-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 60; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 24px); padding: 10px 14px; background: #2a0510; color: #FBE9C2; border: 1px solid #D6A34A; border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.35); font-size: 15px; }
+#save-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 60; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 24px); padding: 10px 14px; background: #2a0510; color: #FBE9C2; border: 1px solid #D6A34A; border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.35); font-size: 16px; }
 #save-bar strong { color: #fff; }
 body:has(#save-bar) { padding-bottom: 96px; }
 @media (max-width: 700px) { #save-bar { left: 0; right: 0; bottom: 0; transform: none; max-width: none; border-radius: 0; border-width: 1px 0 0; flex-wrap: nowrap; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); } #save-bar span { flex: 1 1 auto; font-size: 14px; } #save-bar .btn { padding-inline: 14px; } }
@@ -149,7 +149,7 @@ body:has(#save-bar) { padding-bottom: 96px; }
 .skip-link:focus { top: 12px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px; border: 1.5px solid var(--cta); background: var(--cta); color: var(--on-cta); font-weight: 600; font-size: 15px; text-decoration: none; cursor: pointer; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px; border: 1.5px solid var(--cta); background: var(--cta); color: var(--on-cta); font-weight: 600; font-size: 16px; text-decoration: none; cursor: pointer; }
 .btn:hover { background: var(--choc); border-color: var(--choc); color: var(--ivory); }
 .btn.ghost { background: transparent; color: var(--choc); border-color: var(--choc); }
 .btn.ghost:hover { background: var(--linen); color: var(--choc); }
@@ -165,20 +165,20 @@ body:has(#save-bar) { padding-bottom: 96px; }
 
 /* prototype bar */
 body.public .proto { display: none; }
-.proto { background: var(--choc); color: var(--ivory); font-size: 13px; }
+.proto { background: var(--choc); color: var(--ivory); font-size: 14px; }
 .proto .wrap { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; padding-block: 6px; }
 .proto a, .proto button { color: var(--ivory); }
 .proto .seg { display: inline-flex; border: 1px solid rgba(245,239,228,.5); }
-.proto .seg button { min-height: 32px; padding: 0 10px; border: 0; background: transparent; cursor: pointer; font-size: 13px; }
+.proto .seg button { min-height: 32px; padding: 0 10px; border: 0; background: transparent; cursor: pointer; font-size: 14px; }
 .proto .seg button[aria-pressed="true"] { background: var(--ivory); color: var(--choc); font-weight: 600; }
 .proto .links { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
-.proto .links button { background: transparent; border: 0; cursor: pointer; text-decoration: underline; min-height: 32px; font-size: 13px; }
+.proto .links button { background: transparent; border: 0; cursor: pointer; text-decoration: underline; min-height: 32px; font-size: 14px; }
 
 /* header */
 .site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--head-bg); border-bottom: 1px solid var(--line); }
 .site-head > .wrap { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.logo { font-family: var(--display); font-size: 19px; letter-spacing: .14em; text-decoration: none; white-space: nowrap; }
-.nav { display: flex; gap: 26px; font-size: 15px; font-weight: 500; }
+.logo { font-family: var(--display); font-size: 20px; letter-spacing: .14em; text-decoration: none; white-space: nowrap; }
+.nav { display: flex; gap: 26px; font-size: 16px; font-weight: 500; }
 .nav a { text-decoration: none; padding: 10px 0; border-bottom: 2px solid transparent; }
 .nav a[aria-current="page"] { border-bottom-color: var(--choc); }
 .head-actions { display: flex; }
@@ -188,17 +188,17 @@ body.public .proto { display: none; }
 :root[data-skin="silk"] .mega { background: radial-gradient(120% 160% at 0% 0%, rgba(214,163,74,.14), transparent 55%), #0b0204; }
 .mega a { color: inherit; }
 .mega-panel > .wrap { display: flex; flex-wrap: wrap; gap: 8px 64px; padding-block: 28px 32px; align-items: flex-start; animation: megaIn .22s ease both; }
-.mega-col { display: grid; gap: 2px; align-content: start; } .mega-col strong { font-family: var(--display); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #D6A34A; margin-bottom: 8px; }
+.mega-col { display: grid; gap: 2px; align-content: start; } .mega-col strong { font-family: var(--display); font-size: 14px; letter-spacing: .16em; text-transform: uppercase; color: #D6A34A; margin-bottom: 8px; }
 .mega-col a { text-decoration: none; padding: 7px 0; font-size: 16px; border-bottom: 1px solid transparent; width: fit-content; } .mega-col a:hover, .mega-col a:focus-visible { border-bottom-color: #D6A34A; }
-.mega-feat { display: grid; gap: 6px; text-decoration: none; padding: 0; width: 300px; margin-left: auto; } .mega-feat img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 58%; border: 1px solid rgba(214,163,74,.5); } .mega-feat .eyebrow { color: #D6A34A; } .mega-feat strong { font-size: 17px; }
+.mega-feat { display: grid; gap: 6px; text-decoration: none; padding: 0; width: 300px; margin-left: auto; } .mega-feat img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 58%; border: 1px solid rgba(214,163,74,.5); } .mega-feat .eyebrow { color: #D6A34A; } .mega-feat strong { font-size: 16px; }
 .mega-wa { padding: 22px; border: 1px solid rgba(214,163,74,.6); background: rgba(214,163,74,.08); }
 @keyframes megaIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 @media (max-width: 860px) { .mega { display: none !important; } }
 .mm { display: grid; gap: 22px; padding-block: 20px 36px; }
 .mm-search { display: flex; gap: 10px; align-items: center; width: 100%; min-height: 52px; padding: 0 16px; background: transparent; color: inherit; border: 1px solid rgba(214,163,74,.7); font: inherit; font-size: 16px; text-align: left; cursor: pointer; }
-.mm-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .mm-quick a span { font: 600 15px var(--body, Montserrat, sans-serif); } .mm-quick a { display: flex; gap: 10px; align-items: center; min-height: 56px; padding: 0 14px; border: 1px solid rgba(214,163,74,.45); background: rgba(214,163,74,.08); border-bottom: 1px solid rgba(214,163,74,.45) !important; text-decoration: none; font-weight: 600; font-size: 15px; }
+.mm-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .mm-quick a span { font: 600 15px var(--body, Montserrat, sans-serif); } .mm-quick a { display: flex; gap: 10px; align-items: center; min-height: 56px; padding: 0 14px; border: 1px solid rgba(214,163,74,.45); background: rgba(214,163,74,.08); border-bottom: 1px solid rgba(214,163,74,.45) !important; text-decoration: none; font-weight: 600; font-size: 16px; }
 .mm-sec h2 { font: 500 28px var(--display); margin: 0 0 6px; color: inherit; } .mm-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
-.mm-grid a { display: flex; align-items: center; min-height: 48px; font-size: 17px; text-decoration: none; }
+.mm-grid a { display: flex; align-items: center; min-height: 48px; font-size: 16px; text-decoration: none; }
 .mm-wa { display: flex; gap: 10px; align-items: center; justify-content: center; min-height: 54px; background: #8F1834; color: #fff !important; font-weight: 700; text-decoration: none; border-bottom: 0 !important; }
 .mobile-menu { min-height: calc(100vh - 72px); min-height: calc(100dvh - 72px); }
 .mobile-menu { border-top: 1px solid var(--line); background: var(--ivory); max-height: calc(100vh - 72px); max-height: calc(100dvh - 72px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
@@ -207,7 +207,7 @@ html.lock, html.lock body { overflow: hidden; overscroll-behavior: none; touch-a
 html.lock .mobile-menu, html.lock .drawer-body, html.lock .search-panel { touch-action: pan-y; }
 .drawer-body, .search-panel { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 #mobile-menu-inner { display: block; }
-.mobile-menu a { display: flex; align-items: center; min-height: 52px; text-decoration: none; border-bottom: 1px solid var(--linen); font-family: var(--display); font-size: 21px; }
+.mobile-menu a { display: flex; align-items: center; min-height: 52px; text-decoration: none; border-bottom: 1px solid var(--linen); font-family: var(--display); font-size: 20px; }
 
 /* app mode */
 .tabbar { display: none; }
@@ -221,12 +221,12 @@ body.app .site-foot { display: none; }
 
 /* living canvas: one sticky stage, a canvas scene, and HTML copy above it */
 .paths { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: min(1000px, 100%); }
-.paths a { min-height: 92px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; background: var(--linen); font-family: var(--display); font-size: 21px; }
-.paths a span { font-family: var(--body); font-size: 13px; font-weight: 600; }
+.paths a { min-height: 92px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; background: var(--linen); font-family: var(--display); font-size: 20px; }
+.paths a span { font-family: var(--body); font-size: 14px; font-weight: 600; }
 .paths a.feel { background: var(--terra-ink); color: var(--ivory); font-style: italic; }
 @media (max-width: 760px) {
   .paths { grid-template-columns: 1fr; }
-  .paths a { min-height: 56px; flex-direction: row; align-items: center; font-size: 19px; }
+  .paths a { min-height: 56px; flex-direction: row; align-items: center; font-size: 20px; }
 }
 .hm-btn { background: rgba(255,248,237,.92); color: #4B2E1E; border: 0; padding: 9px 13px; font: 13px Lato, sans-serif; cursor: pointer; box-shadow: 0 6px 18px rgba(30,18,10,.18); min-height: 40px; }
 .hm-pop { margin-top: 8px; background: rgba(255,248,237,.97); color: #4B2E1E; padding: 14px 16px; width: min(330px, calc(100vw - 40px)); text-align: left; box-shadow: 0 12px 40px rgba(30,18,10,.25); }
@@ -239,13 +239,13 @@ body.app .site-foot { display: none; }
 /* phones: walk captions sit above the shop and room buttons, never under them */
 .world { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .world-cell { padding: 22px; border: 1px dashed var(--line2); display: flex; flex-direction: column; gap: 6px; min-height: 170px; text-decoration: none; }
-.world-cell strong { font-family: var(--display); font-weight: 500; font-size: 28px; }
+.world-cell strong { font-family: var(--display); font-weight: 500; font-size: 30px; }
 .world-cell.now { border: 0; background: var(--choc); color: var(--ivory); }
 .world-cell.now .muted, .world-cell.now .eyebrow { color: var(--glow); }
 .world-cell .go { margin-top: auto; font-weight: 700; }
 .world-cell.now:hover { background: var(--terra-ink); color: var(--ivory); }
 .photo-tile img { width: 100%; height: 100%; object-fit: contain; }
-.proto select { min-height: 32px; padding: 0 8px; background: var(--choc); color: var(--ivory); border: 1px solid rgba(245,239,228,.5); font-size: 13px; }
+.proto select { min-height: 32px; padding: 0 8px; background: var(--choc); color: var(--ivory); border: 1px solid rgba(245,239,228,.5); font-size: 14px; }
 
 /* sections */
 .section { padding-block: var(--section); }
@@ -257,7 +257,7 @@ body.app .site-foot { display: none; }
 .cat { text-decoration: none; display: flex; flex-direction: column; gap: 12px; }
 .cat .tile { height: 380px; }
 .cat .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.cat .row strong { font-family: var(--display); font-weight: 300; font-size: 28px; }
+.cat .row strong { font-family: var(--display); font-weight: 300; font-size: 30px; }
 .band { background: var(--terra-ink); color: var(--ivory); }
 .band .wrap { display: flex; flex-wrap: wrap; gap: var(--s6); align-items: center; padding-block: var(--section); }
 .band h2 { flex: 1 1 360px; font-size: var(--fs-h2); }
@@ -278,7 +278,7 @@ body.app .site-foot { display: none; }
 .tile { display: flex; align-items: center; justify-content: center; gap: 14px; background: var(--linen); position: relative; overflow: hidden; text-decoration: none; }
 .tile.alt { background: var(--sand2); }
 .card .tile { height: 280px; }
-.card .name { font-family: var(--display); font-weight: 300; font-size: 22px; text-decoration: none; line-height: 1.2; }
+.card .name { font-family: var(--display); font-weight: 300; font-size: 24px; text-decoration: none; line-height: 1.2; }
 .card .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 /* product cards are a panel: the words and buttons sit inside it with room on every side, never against its edge */
 .grid > .card { background: var(--card); border: 1px solid var(--line); gap: 8px; padding-bottom: var(--s4); }
@@ -288,16 +288,16 @@ body.app .site-foot { display: none; }
 .badge.out { background: var(--choc); color: var(--ivory); }
 :root[data-skin="silk"] .badge.out { background: #150206; color: #F8F0E4; }
 .card .tile.is-out > img.fill, .card .tile.is-out > svg { filter: grayscale(1); opacity: .5; }
-.soldnote { margin: 0; font-size: 15px; }
+.soldnote { margin: 0; font-size: 16px; }
 .swatches { display: flex; gap: 6px; }
 .swatches span { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--line2); }
 .obj { display: block; flex-shrink: 0; }
 .note-card { background: var(--choc); color: var(--ivory); padding: 26px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; min-height: 360px; }
 .note-card a { color: var(--ivory); font-weight: 600; }
-.note-card h3, .note-card h2 { font-size: 26px; }
+.note-card h3, .note-card h2 { font-size: 24px; }
 .note-card .eyebrow { color: var(--glow); }
 .feel-card { border: 1.5px solid var(--terra-ink); padding: 26px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; min-height: 360px; text-decoration: none; }
-.feel-card h3, .feel-card h2 { font-style: italic; color: var(--terra-ink); font-size: 26px; }
+.feel-card h3, .feel-card h2 { font-style: italic; color: var(--terra-ink); font-size: 24px; }
 
 /* shop */
 .page-head { padding-block: var(--s6) var(--s4); display: flex; flex-direction: column; gap: var(--s3); }
@@ -320,19 +320,19 @@ label { font-size: 14px; font-weight: 600; }
 .pdp-gallery .tile { height: min(620px, 80vw); }
 .pdp-info { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 18px; }
 .pdp-info h1 { font-size: var(--fs-h1); }
-.pdp-info .line { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 22px; color: var(--terra-ink); }
-.price { font-size: 26px; font-weight: 600; }
+.pdp-info .line { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 24px; color: var(--terra-ink); }
+.price { font-size: 24px; font-weight: 600; }
 .qty { display: inline-flex; align-items: center; border: 1px solid var(--line2); height: 52px; }
-.qty button { width: 46px; height: 50px; border: 0; background: transparent; font-size: 22px; cursor: pointer; }
+.qty button { width: 46px; height: 50px; border: 0; background: transparent; font-size: 24px; cursor: pointer; }
 .qty span { min-width: 28px; text-align: center; font-weight: 600; }
 .buy { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .buy .btn.add { flex: 1 1 200px; min-height: 52px; }
 @media (max-width: 760px) { .buy { position: sticky; bottom: calc(env(safe-area-inset-bottom, 0px) + 0px); background: var(--ivory); padding-block: 10px; border-top: 1px solid var(--line); z-index: 5; } body.app .buy { bottom: 72px; } }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px 28px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 15px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px 28px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 16px; }
 .facts strong { display: block; margin-bottom: 2px; }
 .facts .social { margin-top: 10px; }
 .pair { background: var(--linen); padding: 26px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
-.status { padding: 12px 14px; background: var(--sand2); font-size: 15px; }
+.status { padding: 12px 14px; background: var(--sand2); font-size: 16px; }
 .status.ok { background: var(--ok-bg); }
 .status.err { background: var(--err-bg); color: var(--terra-ink); }
 .status.delayed { background: var(--sand2); border-left: 4px solid var(--terra-ink); }
@@ -363,7 +363,7 @@ label { font-size: 14px; font-weight: 600; }
 .builder .sum { flex: 1 1 220px; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
 .check { display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 16px; }
 .check input { width: 20px; height: 20px; accent-color: var(--choc); }
-.pts-use { padding: 8px 12px; background: var(--ok-bg); font-size: 15px; }
+.pts-use { padding: 8px 12px; background: var(--ok-bg); font-size: 16px; }
 
 /* cart drawer */
 .scrim { position: fixed; inset: 0; background: rgba(58,41,32,.4); z-index: 40; }
@@ -375,11 +375,11 @@ label { font-size: 14px; font-weight: 600; }
 .line-item .tile { width: 76px; height: 90px; flex-shrink: 0; gap: 4px; }
 .line-item .meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 .line-item .qty { height: 40px; }
-.line-item .qty button { width: 38px; height: 38px; font-size: 18px; }
+.line-item .qty button { width: 38px; height: 38px; font-size: 20px; }
 .linkbtn { background: transparent; border: 0; padding: 0; text-decoration: underline; cursor: pointer; min-height: 32px; font-size: 14px; color: var(--choc); text-align: left; }
-.totals { display: flex; flex-direction: column; gap: 8px; font-size: 15px; }
+.totals { display: flex; flex-direction: column; gap: 8px; font-size: 16px; }
 .totals div { display: flex; justify-content: space-between; gap: 12px; }
-.totals .grand { font-weight: 600; font-size: 18px; padding-top: 6px; border-top: 1px solid var(--line); }
+.totals .grand { font-weight: 600; font-size: 20px; padding-top: 6px; border-top: 1px solid var(--line); }
 
 /* checkout */
 .checkout { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 40px); padding-block: var(--s6) var(--section); }
@@ -393,14 +393,14 @@ label { font-size: 14px; font-weight: 600; }
 .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .field .err { color: var(--terra-ink); font-size: 14px; font-weight: 500; }
 .field input[aria-invalid="true"], .field select[aria-invalid="true"] { border: 1.5px solid var(--terra-ink); }
-.hint { font-size: 13px; color: var(--choc2); font-weight: 400; }
+.hint { font-size: 14px; color: var(--choc2); font-weight: 400; }
 @media (max-width: 560px) { .form { grid-template-columns: 1fr; } }
 .pay-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
 .pay-tabs .chip { flex: 1 1 200px; flex-direction: column; justify-content: center; gap: 2px; min-height: 60px; padding: 8px 16px; border: 2px solid var(--line2); background: var(--card); color: var(--choc); font-size: 16px; font-weight: 600; text-align: center; }
-.pay-tabs .chip small { font-size: 12.5px; font-weight: 400; opacity: .85; }
+.pay-tabs .chip small { font-size: 12px; font-weight: 400; opacity: .85; }
 .pay-tabs .chip:hover { border-color: var(--choc); }
 .pay-tabs .chip[aria-checked="true"] { border-color: var(--choc); box-shadow: 0 0 0 3px var(--glow); }
-.pay-tabs .chip[aria-checked="true"]::before { content: '✓ Selected'; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.pay-tabs .chip[aria-checked="true"]::before { content: '✓ Selected'; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .pay-panel { display: flex; flex-wrap: wrap; gap: 26px; align-items: center; padding: 24px; background: var(--card); border: 1px solid var(--line); }
 .pay-panel canvas { width: 196px; height: 196px; background: #fff; border: 1px solid var(--line); image-rendering: pixelated; }
 .pay-panel .info { flex: 1 1 240px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -417,7 +417,7 @@ label { font-size: 14px; font-weight: 600; }
 .oj-steps li + li::before { content: ""; position: absolute; left: 8px; top: -14px; height: 22px; width: 2px; background: var(--line, #E4D3B8); } .oj-steps li.done + li::before, .oj-steps li.now::before { background: #8F1834; }
 .oj-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line2, #C9B28F); background: #fff; flex: none; margin-top: 3px; position: relative; z-index: 1; }
 .oj-steps li.done .oj-dot { background: #8F1834; border-color: #8F1834; } .oj-steps li.now .oj-dot { background: #D6A34A; border-color: #8F1834; animation: nowGlow 2.2s ease-in-out infinite; }
-.oj-steps li > span:last-child { display: grid; gap: 2px; } .oj-steps strong { font-size: 17px; } .oj-steps .muted { font-size: 14px; } .oj-steps li:not(.done):not(.now) strong { color: #7a6a5a; font-weight: 600; }
+.oj-steps li > span:last-child { display: grid; gap: 2px; } .oj-steps strong { font-size: 16px; } .oj-steps .muted { font-size: 14px; } .oj-steps li:not(.done):not(.now) strong { color: #7a6a5a; font-weight: 600; }
 .oj-route { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: center; padding: 14px 16px; background: var(--linen, #F1E6D3); font-size: 14px; } .oj-eta { grid-column: 1 / -1; }
 .oj-line { position: relative; height: 22px; border-bottom: 2px dotted #8F1834; } .oj-truck { position: absolute; bottom: -3px; left: 0; color: #8F1834; display: block; animation: ojTruck 5s ease-in-out infinite alternate; }
 @keyframes ojFlame { 0%, 100% { transform: scale(var(--s, 1)) rotate(-1deg); } 30% { transform: scale(var(--s, 1), 1.06) rotate(1.5deg); } 65% { transform: scale(var(--s, 1), .95) rotate(-1.5deg); } }
@@ -445,7 +445,7 @@ td input[type="number"] { width: 84px; min-height: 40px; }
 .pill.out { background: var(--choc); color: var(--ivory); }
 .owner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 30px; }
 .stat { background: var(--linen); padding: 18px; display: flex; flex-direction: column; gap: 4px; }
-.stat strong { font-family: var(--display); font-weight: 300; font-size: 32px; }
+.stat strong { font-family: var(--display); font-weight: 300; font-size: 30px; }
 
 /* toast & search */
 /* publish pop-up: fill what is still missing */
@@ -471,7 +471,7 @@ body.app #bt-consent.cc-chip { bottom: 88px; }
 .added-x { position: absolute; top: 4px; right: 4px; }
 .added-row { display: flex; gap: 12px; align-items: center; padding-right: 36px; }
 .added-pop .tile { width: 76px; height: 90px; flex-shrink: 0; gap: 4px; }
-.added-txt { display: grid; gap: 2px; min-width: 0; } .added-txt strong { font-size: 17px; line-height: 1.2; overflow-wrap: anywhere; }
+.added-txt { display: grid; gap: 2px; min-width: 0; } .added-txt strong { font-size: 16px; line-height: 1.2; overflow-wrap: anywhere; }
 .added-actions { display: flex; gap: 8px; } .added-actions .btn { flex: 1; justify-content: center; text-align: center; }
 .added-pop .shipbar { margin: 0; }
 @keyframes addedIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
@@ -480,14 +480,14 @@ body.app #bt-consent.cc-chip { bottom: 88px; }
 @media (max-width: 720px) { .added-pop { top: auto; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 12px; right: 12px; width: auto; animation-name: addedUp; } }
 @keyframes addedUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .added-pop, #cart-btn.bump { animation: none; } }
-.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 60; background: var(--choc); color: var(--ivory); padding: 12px 18px; font-size: 15px; max-width: calc(100% - 32px); box-shadow: 0 10px 30px rgba(58,41,32,.25); }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 60; background: var(--choc); color: var(--ivory); padding: 12px 18px; font-size: 16px; max-width: calc(100% - 32px); box-shadow: 0 10px 30px rgba(58,41,32,.25); }
 body.app .toast { bottom: 96px; }
 .search-panel { position: fixed; inset: 0; z-index: 50; background: var(--ivory); overflow: auto; padding-top: env(safe-area-inset-top, 0px); }
 .search-panel .wrap { padding-block: 20px 60px; display: flex; flex-direction: column; gap: 16px; }
 .result { display: flex; gap: 12px; align-items: center; text-decoration: none; min-height: 64px; }
 .result .tile { width: 64px; height: 64px; flex-shrink: 0; }
 .site-foot { background: var(--linen); border-top: 1px solid var(--line); }
-.site-foot .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s6) var(--s5); padding-block: var(--section-sm) var(--s6); font-size: 15px; }
+.site-foot .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s6) var(--s5); padding-block: var(--section-sm) var(--s6); font-size: 16px; }
 .site-foot nav { display: flex; flex-direction: column; gap: 6px; }
 /* focus rings only for keyboard users; headings focused after a page change stay quiet */
 [tabindex="-1"]:focus { outline: none; }
@@ -503,8 +503,8 @@ body.app .toast { bottom: 96px; }
 .totals .save span:last-child { color: var(--ok); font-weight: 600; }
 .pill.save { background: var(--ok-bg); color: var(--ok); }
 .save-note { color: var(--ok); font-weight: 600; }
-.ritual-price { font-family: var(--display); font-size: 36px; font-weight: 300; }
-.ritual-price s { font-size: 22px; color: var(--choc2); }
+.ritual-price { font-family: var(--display); font-size: 38px; font-weight: 300; }
+.ritual-price s { font-size: 24px; color: var(--choc2); }
 .suggest { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 14px; margin-block: 12px; background: var(--linen); }
 .suggest .tile { width: 64px; height: 72px; flex-shrink: 0; background: var(--plaster); }
 .suggest .meta { flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
@@ -525,17 +525,17 @@ input:disabled { background: var(--sand); color: var(--ink-2, #5b4a46); opacity:
 input[type="date"], input[type="password"], input[type="file"], input[type="color"] { min-height: 48px; border: 1px solid var(--line2); background: var(--card); padding: 0 12px; font-size: 16px; border-radius: 0; }
 input[type="file"] { padding: 10px 12px; }
 .gift-sum { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--card); border-left: 3px solid var(--terra-ink); font-size: 14px; }
-.gift-sum.small { margin-top: 6px; padding: 6px 10px; font-size: 13px; }
+.gift-sum.small { margin-top: 6px; padding: 6px 10px; font-size: 14px; }
 /* product page */
 .stars { color: var(--terra-ink); font-size: 14px; letter-spacing: .04em; }
 .stars .num { color: var(--choc2); letter-spacing: 0; }
 .stars.big { font-size: 16px; }
-.batch { font-size: 13px; color: var(--choc2); letter-spacing: .04em; }
+.batch { font-size: 14px; color: var(--choc2); letter-spacing: .04em; }
 .trust { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px 18px; font-size: 14px; }
 .trust li { display: flex; gap: 8px; align-items: baseline; }
 .trust li::before { content: "✓"; color: var(--ok); font-weight: 700; }
 .scent { background: var(--linen); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-.scent .smells { font-family: var(--display); font-style: italic; font-size: 22px; line-height: 1.3; margin: 0; }
+.scent .smells { font-family: var(--display); font-style: italic; font-size: 24px; line-height: 1.3; margin: 0; }
 .pyramid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; font-size: 14px; }
 .pyramid div { display: flex; flex-direction: column; gap: 2px; border-top: 1px solid var(--line2); padding-top: 8px; }
 .repour { font-size: 14px; padding: 12px 14px; border: 1px dashed var(--line2); }
@@ -548,7 +548,7 @@ input[type="file"] { padding: 10px 12px; }
 .reviews { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 18px; }
 .review { margin: 0; padding: 20px; background: var(--linen); display: flex; flex-direction: column; gap: 8px; }
 .review p { margin: 0; }
-.review footer { font-size: 13px; }
+.review footer { font-size: 14px; }
 .review-form { margin-top: 12px; max-width: 720px; }
 .rating { border: 0; padding: 0; margin: 0; }
 .rating > span { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -565,7 +565,7 @@ input[type="file"] { padding: 10px 12px; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
   .card .tile { height: auto; aspect-ratio: 4 / 5; }
   .card .tile .obj { width: 72% !important; height: auto !important; }
-  .card .name { font-size: 19px; }
+  .card .name { font-size: 20px; }
   .card .row { flex-wrap: wrap; }
   .card .row .btn.small { min-height: 40px; padding: 0 12px; }
   .note-card, .feel-card { grid-column: 1 / -1; min-height: 0; }
@@ -611,12 +611,12 @@ input[type="file"] { padding: 10px 12px; }
 .adm-thumb img, .adm-thumb video { width: 100%; height: 100%; object-fit: contain; display: block; }
 .adm-review p { margin: 0; }
 .pfx { display: flex; align-items: stretch; }
-.pfx-c { display: inline-flex; align-items: center; gap: 2px; padding: 0 10px; min-height: 48px; border: 1px solid var(--line2); border-right: 0; background: var(--linen); font-weight: 600; font-size: 15px; color: var(--choc2); }
+.pfx-c { display: inline-flex; align-items: center; gap: 2px; padding: 0 10px; min-height: 48px; border: 1px solid var(--line2); border-right: 0; background: var(--linen); font-weight: 600; font-size: 16px; color: var(--choc2); }
 .pfx input { flex: 1; min-width: 0; }
 .pfx-c input { flex: none; width: 44px; min-width: 0; min-height: 44px; align-self: stretch; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; }
 .adm-filters { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .adm-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 18px; }
-.rv-reply { background: var(--linen); padding: 12px 14px; border-left: 3px solid var(--olive); font-size: 15px; }
+.rv-reply { background: var(--linen); padding: 12px 14px; border-left: 3px solid var(--olive); font-size: 16px; }
 .rv-reply p { margin: 4px 0 0; }
 .rv-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--olive); }
 .ch { margin: 0; }
@@ -647,8 +647,8 @@ input[type="file"] { padding: 10px 12px; }
 @media (max-width: 900px) {
   .toolbar .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 12px; width: 100%; }
   .toolbar .tf { flex-direction: column; align-items: stretch; gap: 4px; }
-  .toolbar .tf label { font-size: 13px; }
-  .toolbar .tf select { width: 100%; min-height: 46px; font-size: 15px; padding: 0 36px 0 12px; text-overflow: ellipsis; }
+  .toolbar .tf label { font-size: 14px; }
+  .toolbar .tf select { width: 100%; min-height: 46px; font-size: 16px; padding: 0 36px 0 12px; text-overflow: ellipsis; }
 }
 @media (max-width: 560px) { .toolbar .filters { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); } .toolbar .tf select { font-size: 14px; padding: 0 32px 0 10px; background-position: right 12px center; } .toolbar { margin-bottom: 18px; } .toolbar .group:first-child .chip { flex: 1 1 auto; justify-content: center; } }
 /* phones, round 2: tidy cards, buttons and the payment row */
@@ -663,7 +663,7 @@ input[type="file"] { padding: 10px 12px; }
   .card .row .btn.small { flex: 1 1 auto; }
   .band .opts { display: grid; grid-template-columns: 1fr; gap: 10px; }
   .band .opts button { width: 100%; justify-content: flex-start; }
-  .foot-base { font-size: 13px; }
+  .foot-base { font-size: 14px; }
 }
 /* Coming soon: one quiet page for visitors until launch */
 body.cs .proto, body.cs .site-head, body.cs .site-foot, body.cs .tabbar, body.cs #overlay { display: none !important; }
@@ -705,7 +705,7 @@ body.cs main { padding-bottom: 0; }
   input[type="checkbox"], input[type="radio"] { width: 22px; height: 22px; }
 }
 /* see it in your room: the piece on the visitor's own photo */
-.room-try { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; border: 1.5px dashed var(--terra-ink); background: var(--plaster); color: var(--choc); font-weight: 700; font-size: 15px; cursor: pointer; width: 100%; justify-content: center; }
+.room-try { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px; border: 1.5px dashed var(--terra-ink); background: var(--plaster); color: var(--choc); font-weight: 700; font-size: 16px; cursor: pointer; width: 100%; justify-content: center; }
 .room-try svg { flex: none; }
 .room { position: fixed; inset: 0; z-index: 80; background: #1E130D; color: #FFF8ED; display: flex; flex-direction: column; animation: gh-rise .35s cubic-bezier(.2,.8,.2,1) both; }
 .room-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 18px; }
@@ -716,20 +716,20 @@ body.cs main { padding-bottom: 0; }
 .room-frame .room-bg { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 .room-obj { position: absolute; left: 0; top: 0; transform-origin: 50% 86.7%; cursor: grab; filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)); touch-action: none; outline-offset: 4px; animation: room-drop .55s cubic-bezier(.2,1.5,.4,1) both; }
 .room-obj:active { cursor: grabbing; }
-.room-hint { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); background: rgba(30,19,13,.78); padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap; pointer-events: none; animation: room-hint 4s 1s ease both; }
+.room-hint { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); background: rgba(30,19,13,.78); padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; white-space: nowrap; pointer-events: none; animation: room-hint 4s 1s ease both; }
 .room-pick { max-width: 420px; display: flex; flex-direction: column; gap: 12px; text-align: center; padding: 20px; }
 .room-pick .room-demo { width: 180px; height: 180px; margin: 0 auto; border-radius: 50%; background: rgba(255,248,237,.08); display: flex; align-items: center; justify-content: center; }
 .room-pick .room-demo img { width: 150px; height: 150px; animation: room-float 3s ease-in-out infinite; }
-.room-pick p { margin: 0; font-size: 17px; line-height: 1.45; }
+.room-pick p { margin: 0; font-size: 16px; line-height: 1.45; }
 .room-pick .btn.ghost { color: #FFF8ED; border-color: #FFF8ED; background: transparent; }
-.room-pick small { opacity: .75; font-size: 13px; }
+.room-pick small { opacity: .75; font-size: 14px; }
 .room-pick .linkbtn { color: #FFF8ED; align-self: center; text-align: center; }
 .room-bar { padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12px; background: #2A1B13; }
 .room-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.room-row label { font-size: 13px; font-weight: 700; }
+.room-row label { font-size: 14px; font-weight: 700; }
 .room-row input[type="range"] { flex: 1; min-width: 140px; accent-color: #C9A227; height: 44px; }
 .room-sw { display: flex; gap: 8px; flex-wrap: wrap; }
-.room-sw button { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(255,248,237,.35); background: transparent; color: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.room-sw button { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(255,248,237,.35); background: transparent; color: inherit; font-size: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .room-sw button[aria-pressed="true"] { border-color: #C9A227; background: rgba(201,162,39,.18); }
 .room-sw i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
 .room-acts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -760,7 +760,7 @@ body.cs main { padding-bottom: 0; }
 .gh-chips .chip[aria-pressed="true"] { box-shadow: none; }
 .gh-unwrap { width: 100%; min-height: 112px; display: flex; align-items: center; gap: 16px; padding: 18px; border: 2px dashed var(--caramel); background: var(--plaster); color: var(--choc); text-align: left; cursor: pointer; font: inherit; }
 .gh-unwrap .gh-box { flex: none; width: 60px; height: 60px; background: var(--cta); display: flex; align-items: center; justify-content: center; animation: gh-wob 2.8s ease-in-out infinite; }
-.gh-unwrap strong, .gh-won strong { font-family: var(--display); font-size: 26px; line-height: 1.05; display: block; }
+.gh-unwrap strong, .gh-won strong { font-family: var(--display); font-size: 24px; line-height: 1.05; display: block; }
 .gh-won { background: var(--olive); color: var(--ivory); padding: 18px; animation: gh-flip .6s ease both; display: flex; flex-direction: column; gap: 6px; }
 .gh-won code { background: var(--ivory); color: var(--choc); padding: 2px 8px; font-weight: 700; }
 .gh-ship { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
@@ -771,7 +771,7 @@ body.cs main { padding-bottom: 0; }
 .gh-trust { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (min-width: 900px) { .gh-trust { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .gh-trust > * { background: var(--card); border: 1px solid var(--line); padding: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--choc2); text-decoration: none; }
-.gh-trust strong { color: var(--choc); font-size: 15px; }
+.gh-trust strong { color: var(--choc); font-size: 16px; }
 .gh-trust svg { color: var(--terra-ink); }
 .gh-boxes { background: var(--plaster); }
 .gh-tour { position: relative; display: block; overflow: hidden; color: #FFF8ED; text-decoration: none; min-height: 300px; background: #1E130D; }
@@ -789,7 +789,7 @@ body.cs main { padding-bottom: 0; }
 .gh-boxph img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
 .gh-boxcard:hover .gh-boxph img { transform: scale(1.05); }
 .gh-boxbody { padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.gh-boxbody .name { font-family: var(--display); font-size: 26px; line-height: 1.05; color: var(--choc); text-decoration: none; }
+.gh-boxbody .name { font-family: var(--display); font-size: 24px; line-height: 1.05; color: var(--choc); text-decoration: none; }
 .gh-boxbody .row { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .gh-perks { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; font-weight: 600; color: var(--choc2); }
 .gh-perks li::before { content: "✓ "; color: var(--olive); }
@@ -811,19 +811,19 @@ body.cs main { padding-bottom: 0; }
 body.app .why-band { padding-bottom: 96px; }
 .why-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .why-grid li { display: flex; flex-direction: column; gap: 6px; padding: 18px; background: var(--card); border: 1px solid var(--line); font-size: 14px; color: var(--choc2); }
-.why-grid strong { color: var(--choc); font-size: 15px; }
+.why-grid strong { color: var(--choc); font-size: 16px; }
 .why-ic { width: 48px; height: 48px; border-radius: 50%; background: var(--linen); color: var(--terra-ink); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 4px; flex: none; }
 .why-grid.big { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
-.why-grid.big li { padding: 26px; font-size: 15px; }
-.why-grid.big strong { font-family: var(--display); font-size: 26px; font-weight: 500; }
+.why-grid.big li { padding: 26px; font-size: 16px; }
+.why-grid.big strong { font-family: var(--display); font-size: 24px; font-weight: 500; }
 .why-grid.big .why-ic { width: 60px; height: 60px; }
 .cat-tiles { display: grid; gap: 14px; grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); }
 .cat-tile { display: flex; flex-direction: column; gap: 10px; text-decoration: none; min-width: 0; }
 .cat-tile .tile { aspect-ratio: 4 / 5; height: auto; border-radius: 2px; transition: transform .35s ease; }
 .cat-tile .tile .obj { max-width: 72%; height: auto; }
 .cat-label { display: flex; flex-direction: column; gap: 2px; }
-.cat-label strong { font-family: var(--display); font-size: 22px; font-weight: 500; line-height: 1.1; }
-.cat-label span { font-size: 13px; color: var(--choc2); }
+.cat-label strong { font-family: var(--display); font-size: 24px; font-weight: 500; line-height: 1.1; }
+.cat-label span { font-size: 14px; color: var(--choc2); }
 @media (max-width: 900px) { .cat-tiles { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 42%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; scrollbar-width: none; } .cat-tile { scroll-snap-align: start; } }
 @media (max-width: 560px) { .cat-tiles { grid-auto-columns: 62%; } }
 .badge.new { background: var(--olive); color: var(--ivory); }
@@ -864,7 +864,7 @@ body.app .why-band { padding-bottom: 96px; }
 .spot .hl-row li { background: var(--ivory); }
 .rv-sum { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; padding: 20px 24px; background: var(--card); border: 1px solid var(--line); margin-bottom: 18px; }
 .rv-avg { font-family: var(--display); font-size: 56px; line-height: 1; }
-.rv-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; flex: 1 1 240px; max-width: 420px; font-size: 13px; }
+.rv-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; flex: 1 1 240px; max-width: 420px; font-size: 14px; }
 .rv-bars li { display: grid; grid-template-columns: 30px 1fr 24px; gap: 10px; align-items: center; }
 .rv-bars .bar { height: 6px; background: var(--linen); display: block; overflow: hidden; }
 .rv-bars .bar span { display: block; height: 100%; background: var(--terra-ink); }
@@ -873,13 +873,13 @@ body.app .why-band { padding-bottom: 96px; }
 .post { display: flex; flex-direction: column; gap: 10px; text-decoration: none; min-width: 0; }
 .post .tile { aspect-ratio: 4 / 3; height: auto; }
 .post:hover strong { text-decoration: underline; text-underline-offset: 4px; }
-.post strong { font-family: var(--display); font-size: 26px; font-weight: 500; line-height: 1.1; }
-.post .muted { font-size: 15px; }
+.post strong { font-family: var(--display); font-size: 24px; font-weight: 500; line-height: 1.1; }
+.post .muted { font-size: 16px; }
 .article-head { max-width: 760px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 28px; }
 .article-head h1 { font-size: var(--fs-h1); }
 .lead { font-family: var(--display); font-size: 24px; line-height: 1.35; color: var(--choc2); }
 .article-ph { aspect-ratio: 21 / 9; height: auto; margin-bottom: 36px; }
-.article-body { max-width: 720px; display: flex; flex-direction: column; gap: 14px; font-size: 17px; line-height: 1.7; }
+.article-body { max-width: 720px; display: flex; flex-direction: column; gap: 14px; font-size: 16px; line-height: 1.7; }
 .article-body h2 { font-size: clamp(26px, 2.6vw, 30px); margin-top: var(--s4); }
 .story-band { background: var(--plaster); }
 .story-band-ph { position: relative; padding: 0 0 40px 0; }
@@ -897,14 +897,14 @@ body.app .why-band { padding-bottom: 96px; }
 .disc-copy { position: absolute; inset: auto 0 0 0; display: flex; flex-direction: column; gap: 6px; padding: 90px 22px 22px; background: linear-gradient(0deg, rgba(30,19,13,.96) 55%, rgba(30,19,13,0)); }
 .disc-copy .eyebrow { color: #F3D9B8; }
 .disc-copy strong { font-family: var(--display); font-size: 30px; font-weight: 500; line-height: 1.05; }
-.disc-copy span { font-size: 15px; }
+.disc-copy span { font-size: 16px; }
 .disc-copy .go { font-weight: 700; margin-top: 4px; }
 .legal-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; padding-top: 12px; }
 .legal-nav { position: sticky; top: 88px; display: flex; flex-direction: column; border-left: 1px solid var(--line); }
-.legal-nav a { text-decoration: none; padding: 10px 16px; min-height: 44px; display: flex; align-items: center; font-size: 15px; border-left: 2px solid transparent; margin-left: -1px; }
+.legal-nav a { text-decoration: none; padding: 10px 16px; min-height: 44px; display: flex; align-items: center; font-size: 16px; border-left: 2px solid transparent; margin-left: -1px; }
 .legal-nav a[aria-current="page"] { border-left-color: var(--terra-ink); font-weight: 700; }
 .legal .article-body { font-size: 16px; }
-.legal .article-body h2 { font-size: 26px; }
+.legal .article-body h2 { font-size: 24px; }
 .legal .page-head .status { max-width: 760px; }
 @media (max-width: 760px) { .legal-grid { grid-template-columns: 1fr; gap: 20px; } .legal-nav { position: static; flex-direction: row; overflow-x: auto; border-left: 0; border-bottom: 1px solid var(--line); scrollbar-width: none; } .legal-nav a { white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; margin: 0 0 -1px; padding: 10px 12px; } .legal-nav a[aria-current="page"] { border-bottom-color: var(--terra-ink); } }
 .order-list { list-style: none; margin: 0 0 32px; padding: 0; border-top: 1px solid var(--line); }
@@ -921,9 +921,9 @@ body.app .why-band { padding-bottom: 96px; }
 .acct-hero .eyebrow { color: #D6A34A; } .acct-hero h1 { color: #fff; font-size: clamp(34px, 5vw, 52px); margin: 6px 0 8px; } .acct-hero p { margin: 0 0 8px; } .acct-hero .muted { color: #e6d3b6; }
 .ah-main { display: flex; gap: 20px; align-items: flex-start; position: relative; z-index: 1; min-width: 0; flex: 1 1 380px; }
 .ah-flame { color: #D6A34A; flex: none; margin-top: 4px; transform-origin: 50% 90%; animation: flicker 2.6s ease-in-out infinite; filter: drop-shadow(0 0 14px rgba(214,163,74,.55)); }
-.ah-story { font-size: 18px; max-width: 46ch; } .ah-sub { font-size: 13px; color: #e6d3b6; } .ah-sub .linkbtn { color: #f3dca6; }
+.ah-story { font-size: 20px; max-width: 46ch; } .ah-sub { font-size: 14px; color: #e6d3b6; } .ah-sub .linkbtn { color: #f3dca6; }
 .ah-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-.ah-chip { display: inline-flex; gap: 6px; align-items: baseline; padding: 8px 14px; border: 1px solid rgba(214,163,74,.7); color: #fff; text-decoration: none; font-size: 14px; } .ah-chip:hover { background: rgba(214,163,74,.18); } .ah-chip strong { color: #f3dca6; font-size: 18px; }
+.ah-chip { display: inline-flex; gap: 6px; align-items: baseline; padding: 8px 14px; border: 1px solid rgba(214,163,74,.7); color: #fff; text-decoration: none; font-size: 14px; } .ah-chip:hover { background: rgba(214,163,74,.18); } .ah-chip strong { color: #f3dca6; font-size: 20px; }
 .ah-pts { display: flex; gap: 18px; align-items: center; position: relative; z-index: 1; flex: 1 1 300px; max-width: 420px; padding: 18px; background: rgba(255,252,246,.06); border: 1px solid rgba(214,163,74,.45); }
 .ring-wrap { position: relative; width: 92px; height: 92px; flex: none; display: grid; place-items: center; } .ring { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ring-bg { fill: none; stroke: rgba(255,255,255,.14); stroke-width: 7; } .ring-fg { fill: none; stroke: #D6A34A; stroke-width: 7; stroke-linecap: round; animation: ringIn 1.4s .3s ease-out both; }
@@ -936,10 +936,10 @@ body.app .why-band { padding-bottom: 96px; }
 .jr-dot { position: relative; z-index: 1; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #F8F0E4; border: 2px solid var(--line, #E4D3B8); color: #8a7466; } .jr.big .jr-dot { width: 46px; height: 46px; }
 .jr li.done .jr-dot { background: #8F1834; border-color: #8F1834; color: #fff; } .jr li.done + li::before, .jr li.now::before { background: #8F1834; }
 .jr li.now { color: #150206; font-weight: 700; } .jr li.now .jr-dot { background: #8F1834; border-color: #D6A34A; color: #fff; animation: nowGlow 2.2s ease-in-out infinite; }
-.acct-h { font-size: 28px; margin: 40px 0 14px; } .acct-shelf { margin-top: 36px; animation: acctRise .7s .25s ease both; }
-.shelf-head { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: baseline; margin-bottom: 12px; } .shelf-head h2 { font-size: 26px; }
+.acct-h { font-size: 30px; margin: 40px 0 14px; } .acct-shelf { margin-top: 36px; animation: acctRise .7s .25s ease both; }
+.shelf-head { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: baseline; margin-bottom: 12px; } .shelf-head h2 { font-size: 24px; }
 .shelf { list-style: none; margin: 0; padding: 0 0 8px; display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
-.shelf-card { flex: 0 0 150px; scroll-snap-align: start; display: grid; gap: 6px; align-content: start; padding: 12px; background: var(--linen); } .shelf-card .tile { width: 100%; height: 130px; } .shelf-card strong { font-size: 15px; line-height: 1.25; }
+.shelf-card { flex: 0 0 150px; scroll-snap-align: start; display: grid; gap: 6px; align-content: start; padding: 12px; background: var(--linen); } .shelf-card .tile { width: 100%; height: 130px; } .shelf-card strong { font-size: 16px; line-height: 1.25; }
 .ord-cards { list-style: none; margin: 0 0 32px; padding: 0; display: grid; gap: 12px; } .ord-card a { display: flex; gap: 16px; align-items: center; padding: 14px 16px; background: #fff; border: 1px solid var(--line, #E4D3B8); text-decoration: none; transition: box-shadow .2s, transform .2s; } .ord-card a:hover { box-shadow: 0 10px 26px rgba(21,2,6,.12); transform: translateY(-2px); }
 .ord-ths { display: flex; flex: none; } .ord-th { width: 46px; height: 56px; margin-left: -10px; border: 2px solid #fff; } .ord-th:first-child { margin-left: 0; } .ord-main { display: grid; gap: 8px; flex: 1; min-width: 0; }
 @keyframes acctRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
@@ -947,10 +947,10 @@ body.app .why-band { padding-bottom: 96px; }
 @keyframes ember { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: .9; } 100% { transform: translateY(-260px) translateX(18px); opacity: 0; } }
 @keyframes ringIn { from { stroke-dashoffset: var(--c); } }
 @keyframes nowGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(214,163,74,.7); } 50% { box-shadow: 0 0 0 9px rgba(214,163,74,0); } }
-@media (max-width: 720px) { .acct-hero { padding: 24px 18px; } .ah-pts { max-width: none; } .jr li { font-size: 11px; } .jr-dot { width: 28px; height: 28px; } .jr.big .jr-dot { width: 38px; height: 38px; } .jr.big li + li::before { top: 18px; } .ord-card a { align-items: flex-start; } }
+@media (max-width: 720px) { .acct-hero { padding: 24px 18px; } .ah-pts { max-width: none; } .jr li { font-size: 12px; } .jr-dot { width: 28px; height: 28px; } .jr.big .jr-dot { width: 38px; height: 38px; } .jr.big li + li::before { top: 18px; } .ord-card a { align-items: flex-start; } }
 @media (prefers-reduced-motion: reduce) { .acct-hero, .acct-live, .acct-shelf, .ah-flame, .embers i, .ring-fg, .jr li.now .jr-dot { animation: none; } .embers { display: none; } }
 .why-extra { font-size: 14px; color: var(--muted, #6b5560); }
-.why-pts, .why-ask { margin-top: 28px; display: flex; gap: 18px 24px; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 22px 26px; border: 1px solid #D6A34A; background: #fff; } .why-pts > div, .why-ask > div { display: grid; gap: 4px; flex: 1 1 260px; } .why-pts strong, .why-ask strong { font-size: 19px; }
+.why-pts, .why-ask { margin-top: 28px; display: flex; gap: 18px 24px; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 22px 26px; border: 1px solid #D6A34A; background: #fff; } .why-pts > div, .why-ask > div { display: grid; gap: 4px; flex: 1 1 260px; } .why-pts strong, .why-ask strong { font-size: 20px; }
 .why-pts { background: #150206; color: #F8F0E4; border-color: #D6A34A; } .why-pts .why-ic { color: #D6A34A; background: transparent; } .why-pts .btn { color: #F3DCA6; border-color: #D6A34A; }
 .acct-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .acct-card { display: flex; flex-direction: column; gap: 6px; padding: 22px; background: var(--linen); text-decoration: none; }
@@ -959,7 +959,7 @@ body.app .why-band { padding-bottom: 96px; }
 .acct-card.points .eyebrow { color: var(--glow); }
 #acct-btn.on { color: var(--terra-ink); }
 .offers-card { padding: 16px 18px; border: 1px dashed var(--terra-ink); background: var(--card); display: flex; flex-direction: column; gap: 10px; }
-.oc-h { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--terra-ink); }
+.oc-h { font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--terra-ink); }
 .offers-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
 .offers-card li { display: flex; gap: 10px; align-items: flex-start; }
 .offers-card li svg { color: var(--terra-ink); flex: none; margin-top: 1px; }
@@ -972,10 +972,10 @@ body.app .why-band { padding-bottom: 96px; }
 .deliv .ok-text { color: var(--ok); font-weight: 600; }
 .deliv .err { color: var(--terra-ink); }
 .order-by { display: flex; gap: 8px; align-items: center; font-weight: 700; color: var(--terra-ink); }
-.pdp-desc { font-size: 17px; line-height: 1.65; color: var(--choc2); max-width: 560px; }
+.pdp-desc { font-size: 16px; line-height: 1.65; color: var(--choc2); max-width: 560px; }
 .pdp-info .hl-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .gal-main { position: relative; }
-.room-try { position: absolute; right: 14px; top: 14px; width: auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(248,240,228,.94); color: #8F1834; box-shadow: 0 6px 18px rgba(21,2,6,.18); font-size: 13px; font-weight: 700; z-index: 2; }
+.room-try { position: absolute; right: 14px; top: 14px; width: auto; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: rgba(248,240,228,.94); color: #8F1834; box-shadow: 0 6px 18px rgba(21,2,6,.18); font-size: 14px; font-weight: 700; z-index: 2; }
 .room-try:hover { background: #8F1834; color: #F8F0E4; }
 .accs { border-top: 1px solid var(--line); }
 .acc { border-bottom: 1px solid var(--line); }
@@ -987,7 +987,7 @@ body.app .why-band { padding-bottom: 96px; }
 .acc-ic::before, .acc-ic::after { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 2px; background: currentColor; transition: transform .25s; }
 .acc-ic::after { transform: rotate(90deg); }
 .acc[open] .acc-ic::after { transform: rotate(0); }
-.acc-body { padding: 0 0 18px 32px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; }
+.acc-body { padding: 0 0 18px 32px; display: flex; flex-direction: column; gap: 10px; font-size: 16px; }
 .spec { display: grid; grid-template-columns: 110px 1fr; gap: 6px 14px; margin: 0; }
 .spec dt { font-weight: 700; } .spec dd { margin: 0; color: var(--choc2); }
 .care { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; color: var(--choc2); }
@@ -995,7 +995,7 @@ body.app .why-band { padding-bottom: 96px; }
 .combo { display: flex; flex-direction: column; gap: 10px; padding: 18px; background: var(--card); border: 1px solid var(--line); }
 .combo-tiles { display: flex; align-items: center; gap: 6px; }
 .combo-tiles .tile { width: 100px; height: 110px; flex: none; }
-.plus { font-family: var(--display); font-size: 26px; color: var(--terra-ink); }
+.plus { font-family: var(--display); font-size: 24px; color: var(--terra-ink); }
 .combo-buy { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: auto; }
 .combo-buy .btn { margin-left: auto; }
 .best { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
@@ -1003,11 +1003,11 @@ body.app .why-band { padding-bottom: 96px; }
 .best-item .tile { width: 88px; height: 100px; flex: none; }
 .best-item .meta { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .best-item .eyebrow { font-size: 12px; }
-.best-item .name { font-family: var(--display); font-size: 22px; text-decoration: none; line-height: 1.1; }
+.best-item .name { font-family: var(--display); font-size: 24px; text-decoration: none; line-height: 1.1; }
 @media (max-width: 400px) { .combo-tiles .tile { width: 78px; height: 92px; } }
 .pay-badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .pay-badges li { display: inline-flex; align-items: center; justify-content: center; gap: 0; min-width: 48px; height: 28px; padding: 0 8px; background: #fff; border: 1px solid var(--line); border-radius: 4px; font-size: 12px; font-weight: 600; color: var(--choc); }
-.pay-badges b { font-weight: 800; font-size: 13px; letter-spacing: 0; }
+.pay-badges b { font-weight: 800; font-size: 14px; letter-spacing: 0; }
 .pay-badges i + i { margin-left: -5px; }
 .pay-badges i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
 .pay-badges svg { width: 14px; height: 14px; }
@@ -1029,9 +1029,9 @@ body.app .why-band { padding-bottom: 96px; }
 .foot-brand .mark.lockup { max-width: 100%; }
 .foot-pay { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px 32px; padding-block: 20px; border-top: 1px solid var(--line); font-size: 14px; }
 .foot-pay > div:first-child { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.foot-pay > div:first-child > strong { font-family: var(--body); font-size: 15px; font-weight: 700; letter-spacing: .04em; color: #FBE9C2; }
+.foot-pay > div:first-child > strong { font-family: var(--body); font-size: 16px; font-weight: 700; letter-spacing: .04em; color: #FBE9C2; }
 .foot-assure-row { border-top: 1px solid rgba(214,163,74,.35); padding-block: 22px; }
-.foot-assure { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 28px; list-style: none; margin: 0; padding: 0; font-size: 15px; }
+.foot-assure { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 28px; list-style: none; margin: 0; padding: 0; font-size: 16px; }
 .foot-assure li { display: flex; align-items: center; gap: 12px; }
 .foot-assure svg { width: 22px; height: 22px; flex: none; color: var(--caramel); }
 @media (max-width: 700px) { .foot-assure { grid-template-columns: 1fr; } }
@@ -1060,8 +1060,8 @@ body.app .why-band { padding-bottom: 96px; }
 .how-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .how-steps li { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 24px 22px; border: 1px solid var(--line); background: var(--card); }
 .how-steps svg { color: var(--terra-ink); }
-.how-steps strong { font-family: var(--display); font-size: 26px; font-weight: 500; }
-.how-n { position: absolute; right: 18px; top: 14px; font-family: var(--display); font-size: 40px; color: #8A6F58; }
+.how-steps strong { font-family: var(--display); font-size: 24px; font-weight: 500; }
+.how-n { position: absolute; right: 18px; top: 14px; font-family: var(--display); font-size: 38px; color: #8A6F58; }
 .grow { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border-top: 2px solid var(--line2); }
 .grow li { display: flex; flex-direction: column; gap: 4px; padding: 18px 18px 0 0; position: relative; font-size: 14px; color: var(--choc2); }
 .grow li::before { content: ""; position: absolute; top: -8px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--ivory); border: 2px solid var(--line2); }
@@ -1150,20 +1150,57 @@ body.app .why-band { padding-bottom: 96px; }
 .ft-note .linkbtn{min-height:44px}
 .ft-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:60;max-width:calc(100% - 24px);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;padding:10px 14px;border-radius:30px;background:#150206;color:#f3dca6;border:1px solid #D6A34A;box-shadow:0 10px 40px rgba(0,0,0,.4);font-size:14px}
 .ft-bar button{min-height:40px}
-.ft-cel{margin:0 0 16px;padding:14px 18px;border-radius:14px;background:linear-gradient(135deg,#fdf0d3,#f5deb0);border:1px solid #D6A34A;color:#7A1229;font-family:var(--display);font-style:italic;font-size:19px}
+.ft-cel{margin:0 0 16px;padding:14px 18px;border-radius:14px;background:linear-gradient(135deg,#fdf0d3,#f5deb0);border:1px solid #D6A34A;color:#7A1229;font-family:var(--display);font-style:italic;font-size:20px}
 .ft-cel small{display:block;font:600 10px var(--body,sans-serif);letter-spacing:.24em;text-transform:uppercase;color:#9a6b1a;margin-bottom:4px;font-style:normal}
 .adm-today{display:grid;gap:14px}
 .adm-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
 .adm-tiles button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:84px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card,#fff);cursor:pointer;font:inherit;color:inherit}
 .adm-tiles button:hover{border-color:var(--choc)}
-.adm-tiles strong{font-size:15px}.adm-tiles span{font-size:13px;color:var(--muted,#6b5a50)}
+.adm-tiles strong{font-size:16px}.adm-tiles span{font-size:14px;color:var(--muted,#6b5a50)}
 .adm-tiles .nb{display:inline-block;min-width:22px;padding:0 7px;border-radius:12px;background:#D6A34A;color:#150206;font-weight:700;font-size:12px;text-align:center}
-.adm-grp{margin-bottom:6px}.adm-gl{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted,#6b5a50);margin:10px 0 2px}
+.adm-grp{margin-bottom:6px}.adm-gl{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted,#6b5a50);margin:10px 0 2px}
 .adm-help{margin:-12px 0 18px;font-size:14px}
 .adm-mode{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
 .ft-ocard,.ft-card{border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--card,#fff)}
 .ft-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 @keyframes ft-wi{to{opacity:1;transform:none}}
+/* PETAL & ARCH: shape language from the leaf mark and the arches in the site patterns. Type scale 12 14 16 20 24 30 38 48. Photos fill their frames. */
+:root{--r-petal:18px 4px 18px 4px;--r-petal-s:12px 3px 12px 3px;--r-field:10px;--r-arch:999px 999px 22px 22px}
+.btn,.btn.ghost,.btn.light,.btn.small,button.add,.promo .btn{border-radius:var(--r-petal-s)!important}
+.card{border-radius:var(--r-petal)}
+.card>a.tile,.card>.tile{border-radius:18px 4px 0 0;overflow:hidden}
+.cat-tile .tile.photo-tile{border-radius:var(--r-arch);overflow:hidden}
+.gh-ph img{border-radius:var(--r-arch)}
+.gh-ph .badge,.gh-ph .pill,.gh-ph>span:not(.tile){left:50%!important;right:auto!important;top:auto!important;bottom:18px!important;transform:translateX(-50%)}
+.spot-ph.tile{border-radius:34px 6px 34px 6px;overflow:hidden}
+.pack-grid figure img,.media-main,.gallery img{border-radius:14px 3px 14px 3px}
+.gh-boxcard,.promo,.offers-card,.deliv,.accs,.why-pts,.why-ask,.signin,.feel-card,.gh-pair,.gh-unwrap,.empty,.status,.adm-card,.toolbar{border-radius:var(--r-petal)}
+.chip,.code-chip,.pill,.badge,.count{border-radius:999px}
+input:not([type=checkbox]):not([type=radio]),select,textarea,.qty{border-radius:var(--r-field)}
+.drawer{border-radius:22px 0 0 22px}
+.pm-box{border-radius:22px 6px 22px 6px}
+.eyebrow::before{content:"";display:inline-block;width:.55em;height:.55em;margin-right:.7em;background:#D6A34A;transform:rotate(45deg) translateY(-.08em)}
+.section-head h2::after{content:"";display:block;width:56px;height:2px;margin-top:12px;background:linear-gradient(90deg,#D6A34A,transparent)}
+/* spacing and tap targets */
+.btn{min-height:44px}
+input:not([type=checkbox]):not([type=radio]),select{min-height:48px}
+.card .body,.card>div:not(.tile){padding-inline:16px}
+@media (max-width:640px){.btn.small,.card .btn,.card button.add{min-height:44px}}
+/* type scale: 12 14 16 20 24 30 38 48 (about 1.2 to 1.25 between steps) */
+
+.gh-ph .badge,.gh-ph .pill,.gh-ph>span:not(.tile){white-space:nowrap}
+.cat-tile .tile.photo-tile img,.cat-tile .tile img{object-fit:cover!important}
+.note-card,.promo-choc,.promos .promo{border-radius:var(--r-petal)}
+.promo-choc{overflow:hidden}
+.pdp-main,.pdp-media>div:first-child{border-radius:var(--r-petal)}
+.facts>div,.trust>div,.pdp-pills>*{border-radius:var(--r-petal-s)}
+
+/* photos fill their frames: no cream bands inside arches, cards or tiles */
+.tile img,.tile .fill,.photo-tile img{object-fit:cover!important;object-position:50% 45%}
+.card>a.tile,.card>.tile{aspect-ratio:4/5;height:auto!important}
+.cat-tile .tile.photo-tile{height:auto!important;aspect-ratio:4/5}
+.cat-tile .tile.photo-tile img{width:100%;height:100%;display:block}
+
 </style>
 
 <div class="proto" role="region" aria-label="Preview controls">
@@ -1226,8 +1263,8 @@ body.app .why-band { padding-bottom: 96px; }
 <script src="invoice.js"></script>
 <script src="db.js?v=9"></script>
 <script src="import.js"></script>
-<link rel="stylesheet" href="festive.css?v=3">
-<script src="festive.js?v=3"></script>
+<link rel="stylesheet" href="festive.css?v=4">
+<script src="festive.js?v=4"></script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
 <script>
 (function () {
@@ -1925,7 +1962,7 @@ async function phSave() {
 function phSheet() {
   const p = UI.ph; if (!p) return '';
   return `<div class="scrim" data-act="ph-close"></div><div class="ov-sheet" role="dialog" aria-modal="true" aria-labelledby="ph-h" data-noedit>
-    <h2 id="ph-h" style="font-size:22px">${p.row ? 'Replace this photo' : 'Use your own photo here'}</h2>
+    <h2 id="ph-h" style="font-size:24px">${p.row ? 'Replace this photo' : 'Use your own photo here'}</h2>
     <img src="${esc(p.src)}" alt="" style="max-height:140px;width:auto;max-width:100%;object-fit:contain;align-self:flex-start;border:1px solid var(--line)" data-noedit>
     ${p.row ? '' : `<p class="muted" style="margin:0">This is a built-in photo. Once you add your own for this spot, only your photos show there.</p><span class="field"><label for="ph-role">Where it shows</label><select id="ph-role">${PH_ROLES.map(([k, l]) => `<option value="${k}" ${k === p.role ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></span>`}
     <span class="field"><label for="ph-file">${p.row ? 'New photo (leave empty to keep it)' : 'Photo'}</label><input id="ph-file" type="file" accept="image/*"></span>
@@ -1959,7 +1996,7 @@ function ovSheet() {
   if (UI.ph) return phSheet();
   const o = UI.ov; if (!o) return '';
   return `<div class="scrim" data-act="ov-close"></div><div class="ov-sheet" role="dialog" aria-modal="true" aria-labelledby="ov-h" data-noedit>
-    <h2 id="ov-h" style="font-size:22px">Edit text</h2><p class="muted" style="margin:0">${esc(o.label)}${o.keyed ? '' : '. Changes every place this exact wording appears.'}</p>
+    <h2 id="ov-h" style="font-size:24px">Edit text</h2><p class="muted" style="margin:0">${esc(o.label)}${o.keyed ? '' : '. Changes every place this exact wording appears.'}</p>
     <textarea id="ov-text" rows="${Math.min(8, Math.max(2, Math.ceil(o.cur.length / 50) + (o.cur.split('\n').length - 1)))}" aria-label="Wording">${esc(o.cur)}</textarea>
     <div class="ov-actions"><button class="btn" type="button" data-act="ov-save">Save</button><button class="btn ghost" type="button" data-act="ov-close">Cancel</button>${o.cur !== o.def ? '<button class="linkbtn" type="button" data-act="ov-reset">Back to the original</button>' : ''}</div></div>`;
 }
@@ -2407,7 +2444,7 @@ function viewProduct(id) {
     <h1 tabindex="-1">${esc(p.name)}</h1>${stars(id, true)}<p class="line">${esc(p.line)}</p>
     <p class="pdp-desc">${esc(descOf(p))}</p>
     <ul class="hl-row">${highlightsOf(p).map(([i, t]) => `<li>${hl(i, 22)}<span>${esc(t)}</span></li>`).join('')}</ul>
-    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="price num">${inr(v.price)}</span>${stockNote}${batchLine(p, left)}<span class="muted" style="font-size:13px">Inclusive of all taxes</span></div>
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="price num">${inr(v.price)}</span>${stockNote}${batchLine(p, left)}<span class="muted" style="font-size:14px">Inclusive of all taxes</span></div>
     ${left === 0 ? `<p class="soldnote"><strong>Sold out.</strong> ${T('pdp.soldout')}</p>` : ''}
     ${one ? '' : `<div role="radiogroup" aria-label="${optName}" style="display:flex;flex-direction:column;gap:8px"><span style="font-size:14px;font-weight:600">${optName}</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${p.variants.map((x, i) => `<button class="chip" type="button" role="radio" aria-checked="${i === st.vi}" data-act="variant" data-id="${id}" data-i="${i}">${p.art !== 'jar' && x.label !== 'Set of 3' ? `<span style="width:14px;height:14px;border-radius:50%;margin-right:8px;background:${colorFor(p, i)};border:1px solid var(--line2)"></span>` : ''}${esc(x.label)}${new Set(p.variants.map((y) => y.price)).size > 1 ? ' · ' + inr(x.price) : ''}${stockOf(x.sku) === 0 ? ' · sold out' : ''}</button>`).join('')}</div></div>`}
@@ -2469,13 +2506,13 @@ function viewFeeling() {
     const pair = PAIRINGS.find((x) => r.list.length && x.items.some(([pid]) => pid === r.list[0].p.id));
     return `<div class="finder"><aside class="finder-side"><span class="eyebrow">Your answers</span><h1 tabindex="-1">${f.mood ? esc(MOODS.find((m) => m[0] === f.mood)[1]) : 'Your matches'}</h1>
       <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px">${FSTEPS.map((s) => `<li>${s.k === 'mood' ? 'Feeling' : s.k === 'space' ? 'Place' : s.k === 'who' ? 'For' : s.k === 'kind' ? 'Kind' : 'Budget'}: ${f[s.k] ? esc(s.opts.find((o) => o[0] === f[s.k])[1]) : 'skipped'}</li>`).join('')}</ul>
-      <button class="btn light" type="button" data-act="finder-edit">Change answers</button><span style="margin-top:auto;font-size:13px;opacity:.88">Matches come from simple tags on each product. No account needed, and nothing is added to your cart.</span></aside>
+      <button class="btn light" type="button" data-act="finder-edit">Change answers</button><span style="margin-top:auto;font-size:14px;opacity:.88">Matches come from simple tags on each product. No account needed, and nothing is added to your cart.</span></aside>
       <div class="finder-main"><span class="eyebrow num">${r.list.length} matches from the draft range</span>${r.fallback ? '<div class="status">Nothing matched every answer, so these are the closest pieces.</div>' : ''}
       <div class="grid">${r.list.map((x, i) => `<div class="card"><a class="tile${i % 2 ? ' alt' : ''}" href="#p-${x.p.id}" data-act="finder-pick" data-id="${x.p.id}" aria-label="${esc(x.p.name)}">${tileArt(x.p, 0, 1)}</a><span class="eyebrow">${x.p.cat === 'candles' ? 'Candle' : 'Jesmonite'}</span><a class="name" href="#p-${x.p.id}" data-act="finder-pick" data-id="${x.p.id}">${esc(x.p.name)}</a><span class="num" style="font-weight:600">${priceFrom(x.p)}</span><span class="why">Why: ${esc(x.why.join(', ') || 'a good place to start')}</span></div>`).join('')}</div>
       ${pair ? `<div class="pair"><span><strong>Make it a ritual:</strong> ${esc(pair.name)}. ${esc(pair.why)}</span><a class="btn small ghost" href="#ritual" data-act="pick-ritual" data-v="${pair.id}">Build Your Ritual</a></div>` : ''}</div></div>`;
   }
   const s = FSTEPS[f.step];
-  return `<div class="finder"><aside class="finder-side"><span class="eyebrow num">Find Your Feeling · step ${f.step + 1} of 5</span><div class="progress" aria-hidden="true">${FSTEPS.map((_, i) => `<span class="${i <= f.step ? 'on' : ''}"></span>`).join('')}</div><h1 tabindex="-1">${esc(s.q)}</h1><span style="margin-top:auto;font-size:13px;opacity:.88">Every step can be skipped. Back keeps your answers.</span></aside>
+  return `<div class="finder"><aside class="finder-side"><span class="eyebrow num">Find Your Feeling · step ${f.step + 1} of 5</span><div class="progress" aria-hidden="true">${FSTEPS.map((_, i) => `<span class="${i <= f.step ? 'on' : ''}"></span>`).join('')}</div><h1 tabindex="-1">${esc(s.q)}</h1><span style="margin-top:auto;font-size:14px;opacity:.88">Every step can be skipped. Back keeps your answers.</span></aside>
     <div class="finder-main"><div class="options" role="radiogroup" aria-label="${esc(s.q)}">${s.opts.map(([k, l]) => `<button type="button" role="radio" aria-checked="${f[s.k] === k}" data-act="finder-opt" data-k="${s.k}" data-v="${k}">${s.k === 'mood' ? ICON[MOOD_ICON[k]] || '' : ''}<span>${esc(l)}</span></button>`).join('')}</div>
     <div class="finder-nav">${f.step > 0 ? '<button class="btn ghost" type="button" data-act="finder-back">Back</button>' : ''}<button class="btn" type="button" data-act="finder-next">${f.step === 4 ? 'See my matches' : 'Next'}</button><button class="linkbtn" type="button" data-act="finder-skip">Skip this question</button></div></div></div>`;
 }
@@ -2497,7 +2534,7 @@ function viewRitual() {
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Build Your Ritual</span><h1 tabindex="-1">Pair a candle with an object</h1><p class="muted" style="max-width:620px">Start from a pairing we like, or make your own.${+SET.ritualOff ? ` A candle and an object bought together are ${SET.ritualOff}% off, in any combination.` : ''} Nothing goes into your cart until you add it.</p></div>
     <div class="rituals" role="group" aria-label="Pairings">${PAIRINGS.map((x) => `<button type="button" aria-pressed="${R.preset === x.id}" data-act="ritual" data-v="${x.id}"><strong>${esc(x.name)}</strong><span class="muted" style="font-size:14px">${esc(x.why)}</span></button>`).join('')}<button type="button" aria-pressed="${R.preset === 'custom'}" data-act="ritual" data-v="custom"><strong>Make your own</strong><span class="muted" style="font-size:14px">Choose any candle and any object.</span></button></div>
     ${R.preset === 'custom' ? `<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px"><span class="field" style="flex:1 1 240px"><label for="r-candle">Candle</label><select id="r-candle" data-act="ritual-custom" data-k="candle">${P.filter((x) => x.cat === 'candles').map((x) => `<option value="${x.id}" ${R.custom.candle === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span><span class="field" style="flex:1 1 240px"><label for="r-object">Object</label><select id="r-object" data-act="ritual-custom" data-k="object">${P.filter((x) => x.cat !== 'candles').map((x) => `<option value="${x.id}" ${R.custom.object === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></span></div>` : ''}
-    <div class="builder">${lines.map((l) => `<label class="piece"><span class="tile">${tileArt(l.p, l.vi, .9)}</span><span class="check"><input type="checkbox" id="rit-${l.i}" data-act="ritual-pick" data-i="${l.i}" ${sel[l.i] ? 'checked' : ''} ${stockOf(l.v.sku) ? '' : 'disabled'}> ${esc(l.p.name)} · ${esc(l.v.label)}</span><span class="num">${inr(l.v.price)}${stockOf(l.v.sku) ? '' : ' · sold out'}</span><a href="#p-${l.p.id}" style="font-size:14px">View details</a></label>`).join('<span aria-hidden="true" style="align-self:center;font-family:var(--display);font-size:32px">+</span>')}
+    <div class="builder">${lines.map((l) => `<label class="piece"><span class="tile">${tileArt(l.p, l.vi, .9)}</span><span class="check"><input type="checkbox" id="rit-${l.i}" data-act="ritual-pick" data-i="${l.i}" ${sel[l.i] ? 'checked' : ''} ${stockOf(l.v.sku) ? '' : 'disabled'}> ${esc(l.p.name)} · ${esc(l.v.label)}</span><span class="num">${inr(l.v.price)}${stockOf(l.v.sku) ? '' : ' · sold out'}</span><a href="#p-${l.p.id}" style="font-size:14px">View details</a></label>`).join('<span aria-hidden="true" style="align-self:center;font-family:var(--display);font-size:30px">+</span>')}
       <div class="sum"><span class="muted">Together</span><span class="num ritual-price">${rp.save ? `<s>${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span>${rp.save ? `<span class="pill save">You save ${inr(rp.save)}</span>` : `<span class="hint">${+SET.ritualOff ? `Choose both to save ${SET.ritualOff}%.` : 'Prices are the same as buying separately.'}</span>`}<button class="btn" type="button" data-act="ritual-add" ${rp.sum ? '' : 'disabled'}>Add selected to cart</button></div></div></div>`;
 }
 
@@ -2539,14 +2576,14 @@ function viewCheckout() {
   const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" id="co-deliv" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
   let main = '';
   if (co.step === 'contact') {
-    main = `<h1 tabindex="-1" style="font-size:40px">Contact</h1><p class="muted">Signed in as <strong>${esc(S.account.email)}</strong>. We use these only for your delivery and order updates.</p>
+    main = `<h1 tabindex="-1" style="font-size:38px">Contact</h1><p class="muted">Signed in as <strong>${esc(S.account.email)}</strong>. We use these only for your delivery and order updates.</p>
       <form data-form="contact" class="form" novalidate>${field('name', 'Full name', co.contact.name || (S.account && S.account.name) || '', { ac: 'name', full: true })}${field('phone', 'Mobile number', co.contact.phone, { type: 'tel', mode: 'tel', ac: 'tel-national', max: 20, hint: '10 digits, for delivery and WhatsApp updates' })}
       <label class="check full"><input type="checkbox" data-co="optin" ${co.optin ? 'checked' : ''}> ${T('co.optin')}</label>
       <label class="check full" style="font-size:14px"><input type="checkbox" id="co-agree" ${co.agree ? 'checked' : ''}> <span>I agree to the <a href="#terms">terms</a> and <a href="#privacy">privacy policy</a>. We use my details only to deliver my order.</span></label>
       <span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue to delivery</button><a class="btn ghost" href="#cart">Back to cart</a></span></form>`;
   } else if (co.step === 'address') {
     const err = co.errors.state;
-    main = `<h1 tabindex="-1" style="font-size:40px">Delivery</h1>
+    main = `<h1 tabindex="-1" style="font-size:38px">Delivery</h1>
       <form data-form="address" class="form" novalidate>
       <div class="gift-box full"><label class="check"><input type="checkbox" id="co-g-on" data-co="g-on" data-act="gift-toggle" ${g.on ? 'checked' : ''}> <strong>${T('co.giftTitle')}</strong></label>
         ${g.on ? `<p class="muted" style="font-size:14px">${T('co.giftNote')}</p><div class="form" style="padding:0">${field('g-name', 'Their name', g.name, { ac: 'off' })}${field('g-phone', 'Their mobile', g.phone, { type: 'tel', mode: 'tel', ac: 'off', max: 20, hint: 'optional, for the courier' })}
@@ -2564,12 +2601,12 @@ function viewCheckout() {
     const m = co.method; const tab = (k, l) => `<button class="chip" type="button" role="radio" aria-checked="${k === 'online' ? BTDB.on && m !== 'cod' && m !== 'upiqr' : m === k}" data-act="pay-method" data-v="${k}">${l}</button>`;
     let panel = '';
     if (co.placing) panel = '<div class="pay-panel"><span class="waiting" role="status">Placing your order</span></div>';
-    else if (BTDB.on && !t.total) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Nothing more to pay</strong><span class="muted">Your ${t.card ? 'gift card' : 'Bud Points'} cover${t.card ? 's' : ''} the whole order.</span><button class="btn" type="button" data-act="pay-success" data-via="Gift card or points">Place order</button></div></div>`;
-    else if (BTDB.on && m === 'upiqr' && upiQrOk()) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay by UPI QR</strong><span class="muted">We save your order first and start preparing it while you pay. Next you’ll see a UPI QR with <strong class="num">${inr(t.total)}</strong> and your order number filled in: scan it with any UPI app. We confirm your order as soon as the payment shows in our bank account, and it ships right after.</span><button class="btn" type="button" data-act="pay-success" data-via="UPI QR">Place order and show QR</button><span class="hint">Your pieces are held while we wait for the payment.</span></div></div>`;
-    else if (BTDB.on && !SET.onlineOn && m !== 'cod') panel = '<div class="pay-panel"><div class="info"><strong style="font-size:18px">Payment isn’t open just yet</strong><span class="muted">Please message us on WhatsApp and we’ll help you place and pay for this order.</span></div></div>';
-    else if (BTDB.on && m !== 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay securely with Razorpay</strong><span class="muted">${T('co.payOnline')}</span><button class="btn" type="button" data-act="pay-success" data-via="Online">Pay <span class="num">${inr(t.total)}</span></button><span class="hint">Your order is saved first, so if the payment doesn’t go through you can try again from the order page.</span></div></div>`;
-    else if (m === 'qr') panel = `<div class="pay-panel"><canvas id="qr" width="29" height="29" aria-label="Demo UPI QR code for ${inr(t.total)}"></canvas><div class="info"><strong style="font-size:18px">Scan with any UPI app</strong><span class="muted">Open your UPI app, scan the code and approve <strong class="num">${inr(t.total)}</strong>. The amount is fixed in the code, and this page updates on its own once the payment arrives.</span><span class="waiting" role="status">Waiting for your payment</span><span class="hint">Demo QR made for this order. It is not a real payment code.</span><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI QR">Demo: simulate payment received</button></div></div>`;
-    else if (m === 'app') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay with a UPI app on this phone</strong><span class="muted">Opens the UPI apps installed on this phone. You approve <strong class="num">${inr(t.total)}</strong> and come straight back here.</span>${co.appSheet ? `<div class="status" role="status">Demo: your UPI app would now ask you to approve ${inr(t.total)} to BUD &amp; THINGS.</div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI app">Simulate: approved</button><button class="btn small ghost" type="button" data-act="pay-fail">Simulate: declined</button></span>` : '<button class="btn" type="button" data-act="pay-app">Open UPI app</button>'}<span class="hint">If you are shopping on a computer, use the QR code instead.</span></div></div>`;
+    else if (BTDB.on && !t.total) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:20px">Nothing more to pay</strong><span class="muted">Your ${t.card ? 'gift card' : 'Bud Points'} cover${t.card ? 's' : ''} the whole order.</span><button class="btn" type="button" data-act="pay-success" data-via="Gift card or points">Place order</button></div></div>`;
+    else if (BTDB.on && m === 'upiqr' && upiQrOk()) panel = `<div class="pay-panel"><div class="info"><strong style="font-size:20px">Pay by UPI QR</strong><span class="muted">We save your order first and start preparing it while you pay. Next you’ll see a UPI QR with <strong class="num">${inr(t.total)}</strong> and your order number filled in: scan it with any UPI app. We confirm your order as soon as the payment shows in our bank account, and it ships right after.</span><button class="btn" type="button" data-act="pay-success" data-via="UPI QR">Place order and show QR</button><span class="hint">Your pieces are held while we wait for the payment.</span></div></div>`;
+    else if (BTDB.on && !SET.onlineOn && m !== 'cod') panel = '<div class="pay-panel"><div class="info"><strong style="font-size:20px">Payment isn’t open just yet</strong><span class="muted">Please message us on WhatsApp and we’ll help you place and pay for this order.</span></div></div>';
+    else if (BTDB.on && m !== 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:20px">Pay securely with Razorpay</strong><span class="muted">${T('co.payOnline')}</span><button class="btn" type="button" data-act="pay-success" data-via="Online">Pay <span class="num">${inr(t.total)}</span></button><span class="hint">Your order is saved first, so if the payment doesn’t go through you can try again from the order page.</span></div></div>`;
+    else if (m === 'qr') panel = `<div class="pay-panel"><canvas id="qr" width="29" height="29" aria-label="Demo UPI QR code for ${inr(t.total)}"></canvas><div class="info"><strong style="font-size:20px">Scan with any UPI app</strong><span class="muted">Open your UPI app, scan the code and approve <strong class="num">${inr(t.total)}</strong>. The amount is fixed in the code, and this page updates on its own once the payment arrives.</span><span class="waiting" role="status">Waiting for your payment</span><span class="hint">Demo QR made for this order. It is not a real payment code.</span><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI QR">Demo: simulate payment received</button></div></div>`;
+    else if (m === 'app') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:20px">Pay with a UPI app on this phone</strong><span class="muted">Opens the UPI apps installed on this phone. You approve <strong class="num">${inr(t.total)}</strong> and come straight back here.</span>${co.appSheet ? `<div class="status" role="status">Demo: your UPI app would now ask you to approve ${inr(t.total)} to BUD &amp; THINGS.</div><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI app">Simulate: approved</button><button class="btn small ghost" type="button" data-act="pay-fail">Simulate: declined</button></span>` : '<button class="btn" type="button" data-act="pay-app">Open UPI app</button>'}<span class="hint">If you are shopping on a computer, use the QR code instead.</span></div></div>`;
     else if (m === 'upi') panel = `<form data-form="upi" class="pay-panel" novalidate><div class="info"><span class="field"><label for="co-upi">UPI ID <span class="hint">for example name@bank</span></label><input id="co-upi" data-co="upi" autocomplete="off" value="${esc(co.upi)}" ${co.errors.upi ? 'aria-invalid="true" aria-describedby="co-upi-err"' : ''}>${co.errors.upi ? `<span class="err" id="co-upi-err">${esc(co.errors.upi)}</span>` : ''}</span>
       ${co.upiSent ? `<div class="status" role="status">Payment request for ${inr(t.total)} sent to ${esc(co.upi)}. Approve it in your UPI app.</div><span class="waiting">Waiting for approval</span><button class="btn small demo" type="button" data-act="pay-success" data-via="UPI ID">Demo: simulate approval</button>` : '<button class="btn" type="submit">Send payment request</button>'}</div></form>`;
     else if (m === 'card') { const c = co.card; const e = co.errors; panel = `<form data-form="card" class="pay-panel" novalidate><div class="info"><div class="form">
@@ -2577,8 +2614,8 @@ function viewCheckout() {
       <span class="field"><label for="co-cexp">Expiry (MM/YY)</label><input id="co-cexp" data-co="cexp" autocomplete="cc-exp" maxlength="5" value="${esc(c.cexp || '')}" ${e.cexp ? 'aria-invalid="true" aria-describedby="co-cexp-err"' : ''}>${e.cexp ? `<span class="err" id="co-cexp-err">${esc(e.cexp)}</span>` : ''}</span>
       <span class="field"><label for="co-ccvv">CVV</label><input id="co-ccvv" data-co="ccvv" inputmode="numeric" autocomplete="cc-csc" maxlength="4" value="${esc(c.ccvv || '')}" ${e.ccvv ? 'aria-invalid="true" aria-describedby="co-ccvv-err"' : ''}>${e.ccvv ? `<span class="err" id="co-ccvv-err">${esc(e.ccvv)}</span>` : ''}</span></div>
       <button class="btn" type="submit">Pay ${inr(t.total)} by card</button><span class="hint">In the real site this form belongs to the payment gateway. BUD &amp; THINGS never sees card details.</span></div></form>`; }
-    else if (m === 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:18px">Pay when it arrives</strong><span class="muted">${T('co.cod')}</span><button class="btn" type="button" data-act="pay-success" data-via="Cash on delivery">Place order · pay <span class="num">${inr(t.total)}</span> on delivery</button></div></div>`;
-    main = `<h1 tabindex="-1" style="font-size:40px">Pay <span class="num">${inr(t.total)}</span></h1>${co.payErr ? `<div class="status err" role="alert">${esc(co.payErr)}</div>` : ''}${BTDB.on ? ((SET.codOn || upiQrOk()) && t.total ? `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${SET.onlineOn ? tab('online', 'Pay online<small>UPI, cards, net banking</small>') : ''}${upiQrOk() ? tab('upiqr', 'UPI QR<small>Scan and pay, we confirm by hand</small>') : ''}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>` : '') : `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('qr', 'UPI QR')}${tab('app', 'UPI app')}${tab('upi', 'UPI ID')}${tab('card', 'Card')}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>`}${panel}<button class="linkbtn" type="button" data-act="co-step" data-v="address">Back to delivery</button>`;
+    else if (m === 'cod') panel = `<div class="pay-panel"><div class="info"><strong style="font-size:20px">Pay when it arrives</strong><span class="muted">${T('co.cod')}</span><button class="btn" type="button" data-act="pay-success" data-via="Cash on delivery">Place order · pay <span class="num">${inr(t.total)}</span> on delivery</button></div></div>`;
+    main = `<h1 tabindex="-1" style="font-size:38px">Pay <span class="num">${inr(t.total)}</span></h1>${co.payErr ? `<div class="status err" role="alert">${esc(co.payErr)}</div>` : ''}${BTDB.on ? ((SET.codOn || upiQrOk()) && t.total ? `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${SET.onlineOn ? tab('online', 'Pay online<small>UPI, cards, net banking</small>') : ''}${upiQrOk() ? tab('upiqr', 'UPI QR<small>Scan and pay, we confirm by hand</small>') : ''}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>` : '') : `<div class="pay-tabs" role="radiogroup" aria-label="Payment method">${tab('qr', 'UPI QR')}${tab('app', 'UPI app')}${tab('upi', 'UPI ID')}${tab('card', 'Card')}${SET.codOn ? tab('cod', 'Cash on delivery') : ''}</div>`}${panel}<button class="linkbtn" type="button" data-act="co-step" data-v="address">Back to delivery</button>`;
   }
   return `<div class="wrap"><div class="checkout"><div class="checkout-main">${steps}${main}</div>${side}</div></div>`;
 }
@@ -2606,7 +2643,7 @@ function payBox(o) {
   const P = UI.pay && UI.pay.id === o.id ? UI.pay : {};
   if (o.method === 'UPI QR') {
     if (!upiQrOk()) return '<div class="pay-panel"><div class="info"><span class="muted">Please message us on WhatsApp and we’ll help you pay this order.</span></div></div>';
-    return `<div class="pay-panel"><canvas id="upi-qr" data-id="${esc(o.id)}" width="200" height="200" role="img" aria-label="UPI QR code for ${inr(o.total)}" style="width:200px;height:200px;max-width:100%"></canvas><div class="info"><strong style="font-size:18px">Scan and pay <span class="num">${inr(o.total)}</span></strong>
+    return `<div class="pay-panel"><canvas id="upi-qr" data-id="${esc(o.id)}" width="200" height="200" role="img" aria-label="UPI QR code for ${inr(o.total)}" style="width:200px;height:200px;max-width:100%"></canvas><div class="info"><strong style="font-size:20px">Scan and pay <span class="num">${inr(o.total)}</span></strong>
       <span class="muted">Open any UPI app, scan the code and approve <strong class="num">${inr(o.total)}</strong>. Don’t change the amount or the note. Paying from a phone? <a href="${esc(upiUri(o))}">Open your UPI app</a>.</span>
       <span class="hint">Or pay to UPI ID <strong>${esc(SET.upiId)}</strong> with the note <strong>Order ${esc(o.id)}</strong>.</span>
       ${P.err ? `<div class="status err" role="alert">${esc(P.err)}</div>` : ''}
@@ -2646,7 +2683,7 @@ function viewOrder(id) {
   const candles = o.items.some((l) => skuMap[l.sku] && skuMap[l.sku].p.cat === 'candles');
   if (fresh && !unpaid && !gone && window.BTFest && !(UI.thx || (UI.thx = {}))[id]) { UI.thx[id] = 1; const nm = o.items.map((l) => l.name).filter((v, i, a) => a.indexOf(v) === i).join(' and '); setTimeout(() => BTFest.thanks({ text: 'Order ' + id + ' is ' + (cod ? 'placed' : 'paid') + '. Your ' + nm + ' will be packed by hand and sent with care.' }), 450); }
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head">${fresh ? `<span class="eyebrow">${cod ? 'Order placed' : unpaid ? 'Order received' : 'Payment received'}</span>` : '<span class="eyebrow">Order</span>'}<h1 tabindex="-1">${fresh ? 'Thank you, ' + esc(o.contact.name.split(' ')[0]) + '.' : 'Order ' + esc(o.id)}</h1><p class="muted">${fresh ? `Order <strong>${esc(o.id)}</strong> is ${unpaid ? 'saved' : 'confirmed'}. ${BTDB.on ? 'Keep this page or the order number to check on it.' : `We’ve sent the details to ${esc(o.contact.email || o.contact.phone)} (simulated).`}` : 'Placed ' + new Date(o.placedAt).toLocaleString('en-IN')}</p></div>
-    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:28px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.delay && canDelay(o) ? `<div class="status delayed" role="status"><strong>Running a little late.</strong> ${delayText(o.delay)}. Thank you for waiting; we’ll update this page as soon as it moves.</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}${gone ? '' : orderJourney(o, { idx, unpaid, cod })}
+    <div class="checkout" style="padding-top:0"><div class="checkout-main"><h2 style="font-size:30px">Where it is</h2>${unpaid ? `<div class="status">We’re waiting for your payment to reach us. Your pieces are held for you, and the order goes ahead as soon as it’s confirmed.</div>${BTDB.on ? payBox(o) : ''}` : ''}${gone ? `<div class="status err">${o.refundDue ? 'Your payment reached us after this order’s pieces were released, so it was cancelled. We’re refunding the full amount to you.' : 'This order was cancelled and nothing will be sent. If you paid, the money comes back to you.'}</div>` : ''}${o.delay && canDelay(o) ? `<div class="status delayed" role="status"><strong>Running a little late.</strong> ${delayText(o.delay)}. Thank you for waiting; we’ll update this page as soon as it moves.</div>` : ''}${o.parcel && o.parcel.awb && !gone ? `<div class="status ok">${o.status === 'Packed' ? 'Packed and booked with' : 'On its way with'} ${esc(o.parcel.courier || 'our courier')} · tracking number <span class="num">${esc(o.parcel.awb)}</span>${o.parcel.status ? ' · ' + esc(o.parcel.status.toLowerCase()) : ''}. <a href="${esc(o.parcel.track || 'https://shiprocket.co/tracking/' + o.parcel.awb)}" target="_blank" rel="noopener">Track the parcel</a></div>` : ''}${gone ? '' : orderJourney(o, { idx, unpaid, cod })}
       ${inv ? `<div class="status ok inv-card"><strong>Invoice ${esc(inv.id)}</strong><span>${esc(inv.data.gst ? 'Tax invoice' : 'Bill of supply')} for this order, ${inr(Math.round(inv.data.totals.total / 100))}.</span><button class="btn small ghost" type="button" data-act="inv-print" data-id="${esc(o.id)}">View or print invoice</button></div>` : ''}
       ${o.optin ? `<div class="status ok">We’ll send updates and candle care tips on WhatsApp to ${esc(o.contact.phone)}.</div>` : ''}
       ${candles && +SET.repourPrice ? `<p class="repour">${T('pdp.repour')}</p>` : ''}
@@ -2809,7 +2846,7 @@ function viewAdmin() {
     : DB.state === 'error' ? `<div class="status err adm-banner">The database didn’t answer: ${esc(DB.error || '')}. The site is showing its last saved copy.</div>` : '';
   if (BTDB.on && !BTDB.owner() && A.mfa && BTDB.awaitingCode()) {
     const m = A.mfa;
-    return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}<form data-form="owner-code" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">${m.step === 'enrol' ? 'Set up your second step' : 'Enter your code'}</h2>
+    return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}<form data-form="owner-code" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:24px">${m.step === 'enrol' ? 'Set up your second step' : 'Enter your code'}</h2>
       ${m.step === 'enrol' ? `<p class="full muted">Once, on this sign-in: open an authenticator app on your phone (Google Authenticator, Microsoft Authenticator or 1Password), add an account and scan this code. From then on, signing in needs your password and the 6-digit code the app shows, so a stolen password alone can’t change the shop.</p>
       ${m.uri && window.qrcode ? '<canvas id="mfa-qr" class="full" role="img" aria-label="Set-up code for the authenticator app" style="width:200px;height:200px;border-radius:8px"></canvas>'
         : m.qr ? `<img class="full" src="${esc(m.qr)}" alt="Set-up code for the authenticator app" width="180" height="180" style="background:#fff;padding:8px;border-radius:8px">` : ''}${m.secret ? `<p class="full muted" style="font-size:14px">Can’t scan it? Type this key into the app: <strong class="num" style="word-break:break-all">${esc(m.secret)}</strong></p>` : ''}`
@@ -2818,7 +2855,7 @@ function viewAdmin() {
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="submit">Continue</button><button class="btn ghost" type="button" data-act="adm-signout">Start again</button></span></form></div>`;
   }
   if (BTDB.on && !BTDB.owner()) {
-    return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}<form data-form="owner-signin" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:26px">Sign in</h2>
+    return `<div class="wrap adm" style="padding-bottom:var(--section)">${head}${banner}<form data-form="owner-signin" class="form adm-card" style="max-width:460px" novalidate><h2 class="full" style="font-size:24px">Sign in</h2>
       <span class="field full"><label for="own-email">Email</label><input id="own-email" type="email" autocomplete="username" value="${esc(A.email || '')}" required></span>
       <span class="field full"><label for="own-pass">Password</label><input id="own-pass" type="password" autocomplete="current-password" required></span>
       ${A.err ? `<span class="err full" role="alert">${esc(A.err)}</span>` : ''}<span class="full"><button class="btn" type="submit">Sign in</button></span></form></div>`;
@@ -2833,12 +2870,12 @@ function viewAdmin() {
 }
 
 // what Shiprocket booked for an order, for the Owner view
-const parcelNote = (o) => { const p = o.parcel; if (p && !p.awb && p.autoErr) return `<span class="muted" style="display:block;font-size:13px;margin-top:6px;color:#b00020">Automatic booking did not work (${esc(p.autoErr)}). Use Book courier to try again.</span>`; if (!p || !p.awb) return ''; return `<span class="muted" style="display:block;font-size:13px;margin-top:6px">${esc(p.courier || 'Courier')} · AWB <span class="num sel">${esc(p.awb)}</span>${p.status ? ' · ' + esc(p.status) : ''}${p.label ? ` · <a href="${esc(p.label)}" target="_blank" rel="noopener">Print label</a>` : ''}${p.pickupErr ? ` · pickup not booked: ${esc(p.pickupErr)}` : ''}</span>`; };
+const parcelNote = (o) => { const p = o.parcel; if (p && !p.awb && p.autoErr) return `<span class="muted" style="display:block;font-size:14px;margin-top:6px;color:#b00020">Automatic booking did not work (${esc(p.autoErr)}). Use Book courier to try again.</span>`; if (!p || !p.awb) return ''; return `<span class="muted" style="display:block;font-size:14px;margin-top:6px">${esc(p.courier || 'Courier')} · AWB <span class="num sel">${esc(p.awb)}</span>${p.status ? ' · ' + esc(p.status) : ''}${p.label ? ` · <a href="${esc(p.label)}" target="_blank" rel="noopener">Print label</a>` : ''}${p.pickupErr ? ` · pickup not booked: ${esc(p.pickupErr)}` : ''}</span>`; };
 // an order running late is a flag on the order (a reason, maybe a new date), not a new step
 const DELAY_REASONS = ['Courier is running late', 'Bad weather', 'Festival rush', 'Your piece is taking longer to make', 'We need to check your address', 'Something else'];
 const canDelay = (o) => ['Placed', 'Packed', 'Shipped'].includes(o.status);
 const delayText = (dl) => `${esc(dl.reason)}${dl.note ? ': ' + esc(dl.note) : ''}${dl.until ? ' · now expected by ' + niceDay(dl.until) : ''}`;
-const delayNote = (o) => (o.delay ? `<span style="display:block;margin-top:6px"><span class="pill out">Delayed</span> <span class="muted" style="font-size:13px">${delayText(o.delay)}</span></span>` : '');
+const delayNote = (o) => (o.delay ? `<span style="display:block;margin-top:6px"><span class="pill out">Delayed</span> <span class="muted" style="font-size:14px">${delayText(o.delay)}</span></span>` : '');
 // the less-used actions sit in one "More" menu so a row shows at most two buttons
 const moreMenu = (o) => {
   const items = [];
@@ -2951,7 +2988,7 @@ function admProducts() {
   const A = UI.adm; const rows = prodRows();
   if (A.edit != null) return admProductForm(A.edit === '' ? null : rows.find((r) => r.id === A.edit));
   return `<div class="adm-bar"><p class="muted">Turn a product off to take it off the site without losing it. Lower numbers show first.</p><button class="btn small" type="button" data-act="adm-edit" data-id="">Add a product</button></div>
-    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span>${marketGaps(d).length ? `<br><span class="muted" style="font-size:13px">Marketplace: add ${esc(marketGaps(d).join(', '))}</span>` : ''}</td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Published', 'Draft')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
+    <div class="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Options and prices</th><th>Photos</th><th>Order</th><th>On the site</th><th></th></tr></thead><tbody>${rows.map((r) => { const d = r.data || {}; const n = DATA.media.filter((m) => m.product_id === r.id).length; return `<tr><td><strong>${esc(d.name || r.id)}</strong><br><span class="muted num">${esc(r.id)}</span>${marketGaps(d).length ? `<br><span class="muted" style="font-size:14px">Marketplace: add ${esc(marketGaps(d).join(', '))}</span>` : ''}</td><td>${d.cat === 'candles' ? 'Candles' : 'Jesmonite'}</td><td class="num">${(d.variants || []).map((v) => esc(v.label) + ' · ' + inr(v.price)).join('<br>')}</td><td class="num">${n}</td><td class="num">${r.sort || 0}</td><td>${pill(r.live !== false, 'Published', 'Draft')}</td><td><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="adm-edit" data-id="${esc(r.id)}">Edit</button>${r.live !== false ? `<a class="btn small ghost" href="#p-${esc(r.id)}">View</a>` : ''}</span></td></tr>`; }).join('')}</tbody></table></div>`;
 }
 // ---------- import products from a sheet (Excel file, Google Sheet link or .csv; the reading rules are in import.js) ----------
 const IMP_TABS = 'Glass Candles, Moulded Candles, Tealight Candles, Jesmonite Tray, DIY Items';
@@ -3024,7 +3061,7 @@ function admProductForm(r) {
   const checks = (k, l, opts, sel) => `<fieldset class="field full adm-checks"><legend>${l}</legend><span>${opts.map(([v, t]) => `<label><input type="checkbox" name="${k}" value="${v}" ${(sel || []).includes(v) ? 'checked' : ''}> ${esc(t)}</label>`).join('')}</span></fieldset>`;
   const vs = (d.variants || []).concat([{ sku: '', label: '', price: '' }]);
   return `<form data-form="adm-product" data-id="${r ? esc(r.id) : ''}" class="form adm-card" novalidate>
-    <div class="full adm-bar"><h2 style="font-size:28px">${r ? esc(d.name || r.id) : 'New product'}</h2><button class="btn small ghost" type="button" data-act="adm-edit-close">Back to the list</button></div>
+    <div class="full adm-bar"><h2 style="font-size:30px">${r ? esc(d.name || r.id) : 'New product'}</h2><button class="btn small ghost" type="button" data-act="adm-edit-close">Back to the list</button></div>
     ${r ? '' : f('id', 'Web address name', '', { hint: 'lowercase words and dashes, for example rose-and-oud; it can’t change later', req: true })}
     ${f('name', 'Name', d.name, { req: true })}
     <span class="field"><label for="ap-cat">Category</label><select id="ap-cat" name="cat"><option value="candles" ${d.cat === 'candles' ? 'selected' : ''}>Candles</option><option value="jesmonite" ${d.cat !== 'candles' && d.cat !== 'gifts' ? 'selected' : ''}>Jesmonite objects</option><option value="gifts" ${d.cat === 'gifts' ? 'selected' : ''}>Gift boxes</option></select></span>
@@ -3083,7 +3120,7 @@ function admMedia() {
   const pid = A.upProd || owners[1][0]; const p = byId[pid] || (prodRows().find((r) => r.id === pid) || {}).data;
   const need = (id) => { const pp = byId[id]; const list = id === 'brand' ? NEED.brand : pp && pp.cat === 'candles' ? NEED.candles : NEED.other; return list.map(([role, kind, l]) => { const n = DATA.media.filter((m) => m.product_id === id && m.role === role && m.kind === kind).length; return `<span class="need${n ? ' have' : ''}">${n ? '✓' : '○'} ${l}${n > 1 ? ' · ' + n : ''}</span>`; }).join(''); };
   const list = DATA.media.filter((m) => m.product_id === pid).sort((a, b) => ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role) || (a.sort || 0) - (b.sort || 0));
-  return `<form data-form="adm-upload" class="form adm-card" novalidate><h2 class="full" style="font-size:26px">Add photos or videos</h2>
+  return `<form data-form="adm-upload" class="form adm-card" novalidate><h2 class="full" style="font-size:24px">Add photos or videos</h2>
       <span class="field"><label for="up-prod">For</label><select id="up-prod" name="prod" data-act="adm-up-prod">${owners.map(([k, l]) => `<option value="${esc(k)}" ${k === pid ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></span>
       <span class="field"><label for="up-role">What it shows</label><select id="up-role" name="role">${roleOpts(A.upRole)}</select></span>
       ${pid !== 'brand' && p ? `<span class="field"><label for="up-var">Option</label><select id="up-var" name="variant"><option value="">Every option</option>${(p.variants || []).map((v) => `<option>${esc(v.label)}</option>`).join('')}</select></span>` : ''}
@@ -3125,14 +3162,14 @@ const lrow = (key, c, i, to, label) => `<div class="lrow"><span class="field"><l
   <span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="${key}" data-c="${c}" data-i="${i}" data-v="-1" aria-label="Move ${esc(label)} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="${key}" data-c="${c}" data-i="${i}" data-v="1" aria-label="Move ${esc(label)} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="${key}" data-c="${c}" data-i="${i}" aria-label="Remove ${esc(label)}">Remove</button></span></div>`;
 function admLists() {
   const draft = (key) => (UI.adm.draft && UI.adm.draft[key]) || null;
-  const simple = (key, title, hint) => { const ls = draft(key) || listOf(key); return `<div class="adm-card"><h2 style="font-size:22px">${title}</h2><p class="muted">${hint}</p><div id="ls-${key}">${ls.map(([to, l], i) => lrow(key, 0, i, to, l)).join('')}</div>
+  const simple = (key, title, hint) => { const ls = draft(key) || listOf(key); return `<div class="adm-card"><h2 style="font-size:24px">${title}</h2><p class="muted">${hint}</p><div id="ls-${key}">${ls.map(([to, l], i) => lrow(key, 0, i, to, l)).join('')}</div>
     <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-list-add" data-k="${key}" data-c="0">Add a link</button>${Array.isArray(SET[key]) ? `<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="${key}">Put back the original</button>` : ''}</p></div>`; };
   const cols = draft('footList') || listOf('footList');
-  const foot = `<div class="adm-card"><h2 style="font-size:22px">Footer links</h2><p class="muted">Columns at the bottom of every page. Add or remove columns and links, and change the order.</p><div id="ls-footList">${cols.map(([t, ls], c) => `<div class="lcol" data-col="${c}"><div class="lhead"><span class="field"><label for="l-foot-${c}-title">Column title</label><input id="l-foot-${c}-title" class="l-title" data-act="adm-list" data-k="footList" value="${esc(t)}"></span><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="footList" data-c="${c}" data-i="col" data-v="-1" aria-label="Move column ${esc(t)} left">←</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="footList" data-c="${c}" data-i="col" data-v="1" aria-label="Move column ${esc(t)} right">→</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="footList" data-c="${c}" data-i="col" aria-label="Remove column ${esc(t)}">Remove column</button></div>
+  const foot = `<div class="adm-card"><h2 style="font-size:24px">Footer links</h2><p class="muted">Columns at the bottom of every page. Add or remove columns and links, and change the order.</p><div id="ls-footList">${cols.map(([t, ls], c) => `<div class="lcol" data-col="${c}"><div class="lhead"><span class="field"><label for="l-foot-${c}-title">Column title</label><input id="l-foot-${c}-title" class="l-title" data-act="adm-list" data-k="footList" value="${esc(t)}"></span><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="footList" data-c="${c}" data-i="col" data-v="-1" aria-label="Move column ${esc(t)} left">←</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="footList" data-c="${c}" data-i="col" data-v="1" aria-label="Move column ${esc(t)} right">→</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="footList" data-c="${c}" data-i="col" aria-label="Remove column ${esc(t)}">Remove column</button></div>
       <div class="rows">${ls.map(([to, l], i) => lrow('footList', c, i, to, l)).join('')}</div><p style="padding:10px 18px"><button class="btn small" type="button" data-act="adm-list-add" data-k="footList" data-c="${c}">Add a link</button></p></div>`).join('')}</div>
     <p style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small" type="button" data-act="adm-list-add" data-k="footList" data-c="col">Add a column</button>${Array.isArray(SET.footList) ? '<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="footList">Put back the original</button>' : ''}</p></div>`;
   const qs = draft('faqList') || faqRaw();
-  const faq = `<div class="adm-card"><h2 style="font-size:22px">Questions and answers (FAQ)</h2><p class="muted">Add as many as you like. *Stars* make italics. Words in {braces} come from Settings, for example {deliveryDays}.</p><div id="ls-faqList">${qs.map((x, i) => `<div class="lrow faq"><span class="field"><label for="l-faq-${i}-q">Question ${i + 1}</label><input id="l-faq-${i}-q" class="l-q" data-act="adm-list" data-k="faqList" value="${esc(x.q)}"></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="-1" aria-label="Move question ${i + 1} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="1" aria-label="Move question ${i + 1} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="faqList" data-c="0" data-i="${i}" aria-label="Remove question ${i + 1}">Remove</button></span><span class="field full"><label for="l-faq-${i}-a">Answer ${i + 1}</label><textarea id="l-faq-${i}-a" class="l-a" rows="3" data-act="adm-list" data-k="faqList">${esc(x.a)}</textarea></span></div>`).join('')}</div>
+  const faq = `<div class="adm-card"><h2 style="font-size:24px">Questions and answers (FAQ)</h2><p class="muted">Add as many as you like. *Stars* make italics. Words in {braces} come from Settings, for example {deliveryDays}.</p><div id="ls-faqList">${qs.map((x, i) => `<div class="lrow faq"><span class="field"><label for="l-faq-${i}-q">Question ${i + 1}</label><input id="l-faq-${i}-q" class="l-q" data-act="adm-list" data-k="faqList" value="${esc(x.q)}"></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="-1" aria-label="Move question ${i + 1} up">↑</button><button class="btn small ghost" type="button" data-act="adm-list-move" data-k="faqList" data-c="0" data-i="${i}" data-v="1" aria-label="Move question ${i + 1} down">↓</button><button class="btn small ghost" type="button" data-act="adm-list-del" data-k="faqList" data-c="0" data-i="${i}" aria-label="Remove question ${i + 1}">Remove</button></span><span class="field full"><label for="l-faq-${i}-a">Answer ${i + 1}</label><textarea id="l-faq-${i}-a" class="l-a" rows="3" data-act="adm-list" data-k="faqList">${esc(x.a)}</textarea></span></div>`).join('')}</div>
     <p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-list-add" data-k="faqList" data-c="0">Add a question</button>${Array.isArray(SET.faqList) ? '<button class="linkbtn" type="button" data-act="adm-list-reset" data-k="faqList">Put back the original</button>' : ''}</p></div>`;
   return `<p class="muted">Edit a box, then click outside it to save. Changes show on the site at once.</p><datalist id="route-hints">${ROUTE_HINTS.concat(newSections().map((x) => 's-' + x.id)).map((x) => `<option value="${esc(x)}"></option>`).join('')}</datalist>
     ${simple('navList', 'Top menu', 'The links across the top of the site on a laptop.')}${simple('menuList', 'Phone menu', 'The list that opens from the menu button on a phone. “Sign in / Your account” is always added at the end.')}${foot}${faq}`;
@@ -3170,7 +3207,7 @@ function listAction(d) {
 }
 
 // Policy pages: the four built-in ones keep their text in Site text; extra pages are saved in Settings. A Word or text file can fill the box.
-const polBox = (id, title, body, custom) => `<div class="adm-card" data-pol="${esc(id)}"><h2 style="font-size:22px">${custom ? `<span class="field"><label for="pol-${esc(id)}-t">Page title</label><input id="pol-${esc(id)}-t" data-act="adm-pol" data-id="${esc(id)}" class="pol-title" value="${esc(title)}"></span>` : esc(title)}</h2>
+const polBox = (id, title, body, custom) => `<div class="adm-card" data-pol="${esc(id)}"><h2 style="font-size:24px">${custom ? `<span class="field"><label for="pol-${esc(id)}-t">Page title</label><input id="pol-${esc(id)}-t" data-act="adm-pol" data-id="${esc(id)}" class="pol-title" value="${esc(title)}"></span>` : esc(title)}</h2>
   <span class="field"><label for="pol-${esc(id)}">Page text <span class="hint">a line starting with ## is a heading; a blank line starts a new paragraph</span></label><textarea id="pol-${esc(id)}" class="pol-body" rows="12" data-act="adm-pol" data-id="${esc(id)}">${esc(body)}</textarea></span>
   <p style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px"><label class="btn small ghost" for="polf-${esc(id)}" style="cursor:pointer">Fill from a Word or text file</label><input id="polf-${esc(id)}" class="sr" type="file" accept=".docx,.txt,.md,text/plain" data-act="adm-pol-file" data-id="${esc(id)}">${custom ? `<a class="btn small ghost" href="#policy-${esc(id)}">View page</a><button class="btn small ghost danger" type="button" data-act="adm-pol-del" data-id="${esc(id)}">Remove this page</button>` : `<a class="btn small ghost" href="#${esc(id)}">View page</a>${('legal.' + id) in TXT ? `<button class="linkbtn" type="button" data-act="adm-text-reset" data-k="legal.${esc(id)}">Put back the original</button>` : ''}`}</p></div>`;
 function admPolicies() {
@@ -3243,8 +3280,8 @@ const saveJournal = (list) => dbPut('settings', { key: 'journalList', value: lis
 function admFilters() {
   const rows = (k, arr) => arr.map(([key, l], i) => `<div class="lrow"><span class="field"><label for="f-${k}-${i}">Words shown <span class="hint">tag: ${esc(key)}</span></label><input id="f-${k}-${i}" class="f-label" data-act="adm-tags" data-k="${k}" data-key="${esc(key)}" value="${esc(l)}"></span><span></span><span class="lbtns"><button class="btn small ghost" type="button" data-act="adm-tags-move" data-k="${k}" data-i="${i}" data-v="-1" aria-label="Move ${esc(l)} up">↑</button><button class="btn small ghost" type="button" data-act="adm-tags-move" data-k="${k}" data-i="${i}" data-v="1" aria-label="Move ${esc(l)} down">↓</button><button class="btn small ghost" type="button" data-act="adm-tags-del" data-k="${k}" data-i="${i}" aria-label="Remove ${esc(l)}">Remove</button></span></div>`).join('');
   return `<p class="muted">These choices feed the shop filters, Find Your Feeling quiz, product tags and gift dates. Edit a box, then click outside it to save.</p>
-    ${Object.entries(TAG_LISTS).map(([k, [arr, title]]) => `<div class="adm-card"><h2 style="font-size:22px">${title}</h2><div id="tg-${k}">${rows(k, arr)}</div><p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-tags-add" data-k="${k}">Add a choice</button>${Array.isArray(SET[k]) ? `<button class="linkbtn" type="button" data-act="adm-tags-reset" data-k="${k}">Put back the original</button>` : ''}</p></div>`).join('')}
-    <div class="adm-card"><h2 style="font-size:22px">Find Your Feeling questions</h2><div id="tg-quiz">${FSTEPS.map((x, i) => `<span class="field full"><label for="qz-${i}">Question ${i + 1}</label><input id="qz-${i}" class="q-text" data-act="adm-quiz" value="${esc(x.q)}"></span>`).join('')}</div>${Array.isArray(SET.quizQ) ? '<p><button class="linkbtn" type="button" data-act="adm-quiz-reset">Put back the original</button></p>' : ''}</div>`;
+    ${Object.entries(TAG_LISTS).map(([k, [arr, title]]) => `<div class="adm-card"><h2 style="font-size:24px">${title}</h2><div id="tg-${k}">${rows(k, arr)}</div><p style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn small" type="button" data-act="adm-tags-add" data-k="${k}">Add a choice</button>${Array.isArray(SET[k]) ? `<button class="linkbtn" type="button" data-act="adm-tags-reset" data-k="${k}">Put back the original</button>` : ''}</p></div>`).join('')}
+    <div class="adm-card"><h2 style="font-size:24px">Find Your Feeling questions</h2><div id="tg-quiz">${FSTEPS.map((x, i) => `<span class="field full"><label for="qz-${i}">Question ${i + 1}</label><input id="qz-${i}" class="q-text" data-act="adm-quiz" value="${esc(x.q)}"></span>`).join('')}</div>${Array.isArray(SET.quizQ) ? '<p><button class="linkbtn" type="button" data-act="adm-quiz-reset">Put back the original</button></p>' : ''}</div>`;
 }
 function readTags(k) { const box = document.getElementById('tg-' + k); return box ? [...box.querySelectorAll('.f-label')].map((i) => [i.dataset.key, i.value.trim()]).filter((x) => x[1]) : TAG_LISTS[k][0].map((x) => x.slice()); }
 const tagKey = (label, list) => { let b = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30) || 'choice'; let k = b, n = 2; while (list.some((x) => x[0] === k)) k = b + '-' + n++; return k; };
@@ -3289,7 +3326,7 @@ function admToday() {
   const sc = B ? B.scenes.filter((s) => s.m >= 0).map((s) => ({ s, n: daysTo(s.m, s.d) })).sort((a, b) => a.n - b.n)[0] : null;
   const occ = sc && sc.n <= 45 ? `<div class="ft-cel"><small>${sc.n === 0 ? 'Today' : 'Coming up'}</small>${sc.n === 0 ? `Today is ${esc(sc.s.name)}. Wishing you a bright day.` : `${esc(sc.s.name)} is ${sc.n} days away.`} <button class="linkbtn" type="button" data-act="adm-tab" data-v="festive">${SET.festiveScene ? 'Festive looks' : 'Preview the look'}</button></div>` : '';
   const tiles = [['orders', 'See and pack orders', waiting ? waiting + ' waiting' : 'Nothing waiting', waiting], ['products', 'Add or change a product', 'Name, price, photos'], ['stock', 'Update stock', 'How many are left'], ['media', 'Change a photo', 'Pictures and videos'], ['text', 'Change words on the site', 'Any line you can read'], ['festive', 'Festive looks', SET.festiveScene ? 'One is on' : 'Off for now'], ['settings', 'Shop details', 'Contact, shipping, payment'], ['guide', 'Help and guide', 'Plain-English steps']];
-  return `<div class="adm-today"><div class="adm-card"><span class="eyebrow">${g}</span><h2 style="font-size:26px;margin:4px 0 6px">What would you like to do?</h2><p class="muted" style="margin:0 0 12px;font-style:italic">${esc(B ? B.ownerNote() : '')}</p>${occ}
+  return `<div class="adm-today"><div class="adm-card"><span class="eyebrow">${g}</span><h2 style="font-size:24px;margin:4px 0 6px">What would you like to do?</h2><p class="muted" style="margin:0 0 12px;font-style:italic">${esc(B ? B.ownerNote() : '')}</p>${occ}
     <div class="adm-tiles">${tiles.map(([k, a, b, n]) => `<button type="button" data-act="adm-tab" data-v="${k}"><strong>${a}${n ? ` <span class="nb">${n}</span>` : ''}</strong><span>${b}</span></button>`).join('')}</div></div></div>`;
 }
 const ADM_SIMPLE = ['start', 'orders', 'products', 'stock', 'media', 'festive', 'settings', 'guide'];
@@ -3298,7 +3335,7 @@ const TAB_HELP = { start: 'Your starting point: quick jumps, what is coming up, 
 function admTabsHTML(A) {
   let mode = A.mode; if (!mode) { try { mode = localStorage.getItem('bt-adm-mode'); } catch (e) { /* private window */ } mode = mode === 'full' ? 'full' : 'simple'; A.mode = mode; }
   const label = Object.fromEntries(ADM_TABS); const btn = (k) => `<button type="button" role="tab" aria-selected="${A.tab === k}" data-act="adm-tab" data-v="${k}">${label[k]}</button>`;
-  const toggle = `<div class="adm-mode"><span class="muted" style="font-size:13px">${mode === 'full' ? 'Showing every tool, grouped by job.' : 'Showing the everyday tools. Need something else? Use the search above, or show everything.'}</span><button type="button" class="btn small ghost" data-act="adm-mode" aria-pressed="${mode === 'full'}">${mode === 'full' ? 'Show fewer tools' : 'Show all tools'}</button></div>`;
+  const toggle = `<div class="adm-mode"><span class="muted" style="font-size:14px">${mode === 'full' ? 'Showing every tool, grouped by job.' : 'Showing the everyday tools. Need something else? Use the search above, or show everything.'}</span><button type="button" class="btn small ghost" data-act="adm-mode" aria-pressed="${mode === 'full'}">${mode === 'full' ? 'Show fewer tools' : 'Show all tools'}</button></div>`;
   if (mode === 'full') return toggle + `<div role="tablist" aria-label="Sections">${ADM_GROUPS.map(([g, ks]) => `<div class="adm-grp"><span class="adm-gl">${g}</span><div class="adm-tabs" style="margin-bottom:6px">${ks.map(btn).join('')}</div></div>`).join('')}</div><div style="margin-bottom:18px"></div>`;
   const ks = ADM_SIMPLE.includes(A.tab) ? ADM_SIMPLE : ADM_SIMPLE.concat([A.tab]);
   return toggle + `<div class="adm-tabs" role="tablist" aria-label="Sections">${ks.map(btn).join('')}</div>`;
@@ -3311,7 +3348,7 @@ function admFestive() {
     ${SET.festiveCode && couponKnown(String(SET.festiveCode).toUpperCase()) === false ? '<span class="err" role="alert">That code is not in Coupons yet, so customers could not use it. Add it there first.</span>' : ''}</div>
     <p class="muted" style="font-size:14px">To keep the shop calm, each look switches itself off a couple of days after its festival, its snow and sparkle thin out after half a minute, and nothing ever covers your product photos or buttons.</p></div>
   <div class="ft-cards">${B.scenes.map((s) => { const live = on === s.id; const n = s.m >= 0 ? daysTo(s.m, s.d) : -1; const ask = A.ftAsk === s.id;
-    return `<div class="ft-card"><strong style="font-size:18px">${esc(s.name)}</strong><span class="muted" style="font-size:13px">${esc(s.m >= 0 ? s.when + (n === 0 ? ' (today)' : ' · ' + n + ' days to go') : s.when)}</span><span style="font-size:14px">${esc(s.line)}</span>${s.hint ? `<span class="muted" style="font-size:13px">${esc(s.hint)}</span>` : ''}
+    return `<div class="ft-card"><strong style="font-size:20px">${esc(s.name)}</strong><span class="muted" style="font-size:14px">${esc(s.m >= 0 ? s.when + (n === 0 ? ' (today)' : ' · ' + n + ' days to go') : s.when)}</span><span style="font-size:14px">${esc(s.line)}</span>${s.hint ? `<span class="muted" style="font-size:14px">${esc(s.hint)}</span>` : ''}
       ${live ? '<span class="pill">Live now</span><button class="btn small ghost" type="button" data-act="ft-off">Turn off</button>'
       : ask ? `<span style="font-size:14px"><strong>Show this look to every visitor${festUntil(s.id) ? ` until ${esc(niceDay(festUntil(s.id)))}` : ' until you turn it off'}?</strong> Nothing changes until you confirm.</span><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" type="button" data-act="ft-apply" data-v="${s.id}">Yes, apply it</button><button class="btn small ghost" type="button" data-act="ft-noask">Not now</button></span>`
       : `<span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-act="ft-prev" data-v="${s.id}">Preview only</button><button class="btn small" type="button" data-act="ft-ask" data-v="${s.id}">Apply for customers</button></span>`}</div>`; }).join('')}</div>`;
@@ -3390,7 +3427,7 @@ function ordersCsv(rows) {
 function admStart() {
   const items = launchItems(); const today = admToday(); const done = items.filter((x) => x[2]).length; const pct = Math.round(done * 100 / items.length); const groups = [...new Set(items.map((x) => x[0]))];
   const bd = daysSinceBackup(); const bk = `<div class="adm-card"><h2 style="font-size:20px">Backup</h2><p class="muted" style="margin:0 0 10px">${bd === null ? 'No backup downloaded from this device yet.' : bd === 0 ? 'Last backup from this device: today.' : 'Last backup from this device: ' + bd + ' day' + (bd === 1 ? '' : 's') + ' ago.'}${bd === null || bd >= 7 ? ' <strong>Do one now, then once a week.</strong>' : ''} It saves every order, product, stock count, setting and customer record to one file. Keep it private (your own Drive, with 2-step sign-in). Never email it.</p><span style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" type="button" data-act="adm-backup">Download full backup</button><button class="btn ghost" type="button" data-act="adm-backup-csv">Orders as a spreadsheet</button></span></div>`;
-  return `${today}${bk}<div class="adm-card"><h2 style="font-size:26px">${done} of ${items.length} ready to launch</h2><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Launch progress" style="height:14px;border-radius:7px;background:var(--linen);overflow:hidden;margin:10px 0"><div style="height:100%;width:${pct}%;background:var(--cta)"></div></div>
+  return `${today}${bk}<div class="adm-card"><h2 style="font-size:24px">${done} of ${items.length} ready to launch</h2><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Launch progress" style="height:14px;border-radius:7px;background:var(--linen);overflow:hidden;margin:10px 0"><div style="height:100%;width:${pct}%;background:var(--cta)"></div></div>
     <p class="muted">${pct === 100 ? 'Everything on the list is done. Switch the Coming soon page off to open the shop.' : 'Work down the list. “Fix” takes you to the right tab. This list checks what is saved now; it cannot judge photo quality or legal wording.'}</p></div>
     ${groups.map((g) => `<div class="adm-card"><h2 style="font-size:20px">${esc(g)}</h2>${items.filter((x) => x[0] === g).map(([, l, ok, tab, hint]) => `<div class="lrow" style="grid-template-columns:auto 1fr auto;align-items:center"><span aria-hidden="true" style="font-size:20px">${ok ? '✓' : '○'}</span><span><strong>${esc(l)}</strong>${hint ? `<br><span class="muted">${esc(hint)}</span>` : ''}<span class="sr"> ${ok ? 'done' : 'not done'}</span></span>${ok ? '<span></span>' : `<button class="btn small ghost" type="button" data-act="adm-goto" data-v="${tab}" aria-label="Fix: ${esc(l)}">Fix</button>`}</div>`).join('')}</div>`).join('')}`;
 }
@@ -3434,7 +3471,7 @@ function admSettings() {
     <div class="form adm-card"><h2 class="full" style="font-size:24px">Coming soon for single sections</h2><p class="muted full">Tick a section to show visitors a small Coming soon page for it, while the rest of the shop stays open. You and anyone with the preview link still see the real page. Untick it when the section is ready. New products stay hidden until you publish them, so you do not need this for those.</p>
       <fieldset class="full" style="border:0;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 16px"><legend class="sr">Sections that show Coming soon</legend>${SOON_OPTS.map(([k, l]) => `<label class="chk" style="display:flex;align-items:center;gap:10px;min-height:44px"><input type="checkbox" data-act="adm-soon" data-k="${k}" ${(SET.soonPages || []).includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</fieldset></div>
     <div class="form adm-card" id="ns-card"><h2 class="full" style="font-size:24px">New sections</h2><p class="muted full">Launching a new kind of product? Add a section here. It gets its own page and stays on Coming soon until you tick “Open to visitors”. Then add it to the menu in Menus &amp; FAQ (choose the page named s-…), and put products in it with the “New section” choice on the product form.</p>
-      ${((UI.adm.draftNs || newSections()).map((x, i) => `<div class="lrow" style="grid-column:1/-1"><span class="field"><label for="ns-${i}-n">Section name</label><input id="ns-${i}-n" class="ns-n" data-act="adm-ns" value="${esc(x.name)}"></span><span class="field"><label for="ns-${i}-l">One line about it</label><input id="ns-${i}-l" class="ns-l" data-act="adm-ns" value="${esc(x.line || '')}"></span><label class="chk" style="display:flex;align-items:center;gap:10px;min-height:44px"><input id="ns-${i}-o" class="ns-o" type="checkbox" data-act="adm-ns" ${x.live ? 'checked' : ''}> Open to visitors</label><span class="muted" style="font-size:13px">${x.id ? 'Page: <code>s-' + esc(x.id) + '</code>' : 'Page name is made when you save'}</span><button class="btn small ghost" type="button" data-act="adm-ns-del" data-i="${i}">Remove</button></div>`).join(''))}
+      ${((UI.adm.draftNs || newSections()).map((x, i) => `<div class="lrow" style="grid-column:1/-1"><span class="field"><label for="ns-${i}-n">Section name</label><input id="ns-${i}-n" class="ns-n" data-act="adm-ns" value="${esc(x.name)}"></span><span class="field"><label for="ns-${i}-l">One line about it</label><input id="ns-${i}-l" class="ns-l" data-act="adm-ns" value="${esc(x.line || '')}"></span><label class="chk" style="display:flex;align-items:center;gap:10px;min-height:44px"><input id="ns-${i}-o" class="ns-o" type="checkbox" data-act="adm-ns" ${x.live ? 'checked' : ''}> Open to visitors</label><span class="muted" style="font-size:14px">${x.id ? 'Page: <code>s-' + esc(x.id) + '</code>' : 'Page name is made when you save'}</span><button class="btn small ghost" type="button" data-act="adm-ns-del" data-i="${i}">Remove</button></div>`).join(''))}
       <div class="full"><button class="btn small" type="button" data-act="adm-ns-add">Add a section</button></div></div>
     <div class="form adm-card"><h2 class="full" style="font-size:24px">Site theme</h2><p class="muted full">The colours every visitor sees. Choosing a mood in the house still recolours the site for that visitor while they browse.</p>
       <span class="field full"><label for="set-theme">Theme</label><select id="set-theme" data-act="adm-set" data-k="theme">${Object.entries(SKINS).map(([k, v]) => `<option value="${k}" ${k === skin('site') ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select></span>
@@ -3497,7 +3534,7 @@ function admReviews() {
       <span class="field"><label for="ra-prod">Piece</label><select id="ra-prod">${P.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></span><span class="field"><label for="ra-name">Their name, as it should show</label><input id="ra-name" maxlength="60" placeholder="Name, city"></span>
       <span class="field"><label for="ra-rating">Stars</label><select id="ra-rating">${[5, 4, 3, 2, 1].map((n) => `<option value="${n}">${n}★</option>`).join('')}</select></span><span class="field"><label for="ra-src">Where it came from</label><select id="ra-src">${['Instagram', 'WhatsApp', 'Email', 'In person', 'Other'].map((v) => `<option>${v}</option>`).join('')}</select></span>
       <span class="field full"><label for="ra-body">What they said</label><textarea id="ra-body" rows="3" maxlength="1500"></textarea></span><label class="check full"><input id="ra-pub" type="checkbox" checked> Publish it now</label>${A.rvErr ? `<span class="err full" role="alert">${esc(A.rvErr)}</span>` : ''}<span class="full"><button class="btn small" type="submit">Add the review</button></span></form></details>
-    <div class="form adm-card"><h3 class="full" style="font-size:22px">Asking and thanking</h3>${setF('reviewAskDays')}${setF('reviewPoints')}<p class="muted full" style="margin:0">The review request is an email with a button straight to the piece, sent once per order. Bud Points go to signed-in writers when you publish their review.</p></div>
+    <div class="form adm-card"><h3 class="full" style="font-size:24px">Asking and thanking</h3>${setF('reviewAskDays')}${setF('reviewPoints')}<p class="muted full" style="margin:0">The review request is an email with a button straight to the piece, sent once per order. Bud Points go to signed-in writers when you publish their review.</p></div>
     <div class="facts" style="border-top:0"><div><strong>Last 6 months</strong><span class="muted">${months.map(([m, n, a]) => `${m}: ${n}${n ? ' (' + a + '★)' : ''}`).join(' · ')}</span></div>
       <div><strong>Pieces with no published review · ${none.length}</strong><span class="muted">${none.length ? esc(none.slice(0, 12).map((p) => p.name).join(', ')) + (none.length > 12 ? '…' : '') : 'None: every piece has one.'}</span></div></div>`;
 }
@@ -3610,12 +3647,12 @@ function admCustomer(c) {
       <span style="display:flex;gap:8px;flex-wrap:wrap">${wa}${mail}</span>
       <p class="muted" style="margin:0">${c.joined ? 'First seen ' + fmtDay(c.joined) : ''}${c.cameFrom ? ' · came from ' + esc(c.cameFrom) : ''}${c.signedUpOn ? ' · signed up on ' + esc(c.signedUpOn) : ''}${[...c.emails.slice(1), ...c.phones.slice(1)].length ? ' · also ' + esc([...c.emails.slice(1), ...c.phones.slice(1)].join(', ')) : ''}</p></div>
     <div class="owner-grid">${stat('Orders', c.good.length)}${stat('Spent', inr(c.spent))}${stat('Average order', c.aov ? inr(c.aov) : '—')}${stat('First order', c.first ? fmtDay(c.first.placedAt) : '—')}${stat('Last order', c.last ? fmtDay(c.last.placedAt) + ` <span class="muted" style="font-size:14px">(${ago(c.last.placedAt)} days)</span>` : '—')}${stat('Bud Points', c.points)}</div>
-    <form class="form adm-card" data-form="adm-cust-meta" data-key="${esc(c.key)}" novalidate><h3 class="full" style="font-size:22px">Your notes</h3>
+    <form class="form adm-card" data-form="adm-cust-meta" data-key="${esc(c.key)}" novalidate><h3 class="full" style="font-size:24px">Your notes</h3>
       <span class="field"><label for="cm-tags">Tags <span class="hint">separate with commas, e.g. corporate, wholesale</span></label><input id="cm-tags" value="${esc(c.tags.join(', '))}" maxlength="200"></span>
       <span class="field"><label for="cm-bday">Birthday <span class="hint">optional</span></label><input id="cm-bday" type="date" value="${esc(c.birthday || '')}"></span>
       <span class="field full"><label for="cm-notes">Private note <span class="hint">only you see it</span></label><textarea id="cm-notes" rows="3" maxlength="2000">${esc(c.notes)}</textarea></span>
       <span class="full"><button class="btn small" type="submit">Save notes</button></span></form>
-    <div class="adm-card"><h3 style="font-size:22px">Orders · ${c.orders.length}</h3>${c.orders.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Date</th><th>Pieces</th><th>Total</th><th>Paid by</th><th>Status</th></tr></thead><tbody>${c.orders.map((o) => `<tr><td class="num">${esc(o.id)}</td><td class="num">${fmtDay(o.placedAt)}</td><td>${esc((o.items || []).map((l) => l.name + ' × ' + l.qty).join(', '))}${o.gift && o.gift.on ? ' <span class="pill">Gift</span>' : ''}${o.code ? ` <span class="pill">${esc(o.code)}</span>` : ''}</td><td class="num">${inr(o.total || 0)}</td><td>${esc(o.method || '')}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No orders yet.</p>'}</div>
+    <div class="adm-card"><h3 style="font-size:24px">Orders · ${c.orders.length}</h3>${c.orders.length ? `<div class="table-wrap"><table><thead><tr><th>Order</th><th>Date</th><th>Pieces</th><th>Total</th><th>Paid by</th><th>Status</th></tr></thead><tbody>${c.orders.map((o) => `<tr><td class="num">${esc(o.id)}</td><td class="num">${fmtDay(o.placedAt)}</td><td>${esc((o.items || []).map((l) => l.name + ' × ' + l.qty).join(', '))}${o.gift && o.gift.on ? ' <span class="pill">Gift</span>' : ''}${o.code ? ` <span class="pill">${esc(o.code)}</span>` : ''}</td><td class="num">${inr(o.total || 0)}</td><td>${esc(o.method || '')}</td><td><span class="pill ${esc(o.status)}">${esc(o.status)}</span></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">No orders yet.</p>'}</div>
     <div class="facts" style="border-top:0">
       <div><strong>Addresses</strong>${addrs.length ? addrs.map((a) => `<span class="muted" style="display:block">${esc([a.line1, a.line2, a.city, a.state, a.pin].filter(Boolean).join(', '))}</span>`).join('') : '<span class="muted">None saved</span>'}</div>
       <div><strong>What they said yes to</strong><ul class="muted" style="margin:0;padding-left:18px">${cons}</ul></div>
@@ -3623,8 +3660,8 @@ function admCustomer(c) {
       <div><strong>Share link</strong><span class="muted">${c.refs.length ? `${esc(c.refs.map((r) => r.id).join(', '))} · ${c.refOrders} order${c.refOrders === 1 ? '' : 's'} from friends` : 'None'}</span></div>
       <div><strong>Reviews</strong>${c.reviews.length ? c.reviews.map((r) => `<span class="muted" style="display:block">${esc((byId[r.product_id] || { name: r.product_id }).name)} · ${r.rating}★ · ${r.published ? 'published' : 'waiting'}</span>`).join('') : '<span class="muted">None</span>'}</div>
       <div><strong>Waiting for a restock</strong>${c.restock.length ? c.restock.map((r) => `<span class="muted" style="display:block">${esc(skuMap[r.sku] ? skuMap[r.sku].p.name + ' · ' + skuMap[r.sku].v.label : r.sku)}</span>`).join('') : '<span class="muted">Nothing</span>'}</div></div>
-    <div class="adm-card"><h3 style="font-size:22px">Timeline</h3>${tl.length ? `<ul class="muted" style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px">${tl.slice(0, 60).map(([d, t]) => `<li><span class="num">${fmtDay(d)}</span> · ${t}</li>`).join('')}</ul>` : '<p class="muted">Nothing yet.</p>'}</div>
-    <div class="adm-card"><h3 style="font-size:22px">Delete this customer</h3><p class="muted" style="margin:0">For a request to remove their data. Their sign-ups, gift dates, restock requests, your notes, saved details and share link go. Orders and invoices stay, as the law asks you to keep them.</p><button class="btn small ghost danger" type="button" data-act="adm-cust-del" data-v="${esc(c.id)}" style="align-self:flex-start">Delete their details</button></div>`;
+    <div class="adm-card"><h3 style="font-size:24px">Timeline</h3>${tl.length ? `<ul class="muted" style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px">${tl.slice(0, 60).map(([d, t]) => `<li><span class="num">${fmtDay(d)}</span> · ${t}</li>`).join('')}</ul>` : '<p class="muted">Nothing yet.</p>'}</div>
+    <div class="adm-card"><h3 style="font-size:24px">Delete this customer</h3><p class="muted" style="margin:0">For a request to remove their data. Their sign-ups, gift dates, restock requests, your notes, saved details and share link go. Orders and invoices stay, as the law asks you to keep them.</p><button class="btn small ghost danger" type="button" data-act="adm-cust-del" data-v="${esc(c.id)}" style="align-self:flex-start">Delete their details</button></div>`;
 }
 // the next time a yearly date comes round, counting from today
 const nextDay = (iso) => { const d = new Date(iso + 'T00:00:00'), t = new Date(); t.setHours(0, 0, 0, 0); const n = new Date(t.getFullYear(), d.getMonth(), d.getDate()); if (n < t) n.setFullYear(n.getFullYear() + 1); return n; };
@@ -3673,14 +3710,14 @@ const INV_CSS = `.inv{--band:#7A1229;--band-ink:#F8F0E4;--gold:#D6A34A;--maroon:
 .inv .iv-band{background:var(--band);color:var(--band-ink);padding:22px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.inv .iv-band img{height:46px;width:auto;display:block}.inv .iv-title{text-align:right}.inv .iv-title h1{font:600 28px/1.1 'Playfair Display',Georgia,serif;margin:0;color:var(--gold);letter-spacing:.04em;text-transform:uppercase}.inv .iv-title span{font-size:12px;letter-spacing:.12em;color:var(--band-ink)}
 .inv .iv-body{padding:20px 28px 8px}.inv .iv-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:1px solid var(--rule);background:#fff;margin-bottom:18px}.inv .iv-meta div{padding:8px 12px;border-right:1px solid var(--line)}.inv .iv-meta div:last-child{border-right:0}.inv .iv-meta small{display:block;font:700 10px/1.4 Montserrat,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--dgold)}.inv .iv-meta strong{font:600 14px/1.3 Montserrat,Arial,sans-serif;font-variant-numeric:tabular-nums}.inv .iv-meta .iv-no strong{color:var(--maroon);font-size:16px}
 .inv .iv-parties{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:18px}.inv .iv-parties>div{flex:1 1 220px;min-width:0}.inv h2{font:700 10px/1.4 Montserrat,Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;margin:0 0 5px;color:var(--dgold);border-bottom:1px solid var(--rule);padding-bottom:3px}.inv .iv-parties p{margin:0}
-.inv .inv-tw{overflow-x:auto;background:#fff;border:1px solid var(--rule)}.inv table{width:100%;border-collapse:collapse;font-size:12.5px}.inv th,.inv td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top;font-variant-numeric:tabular-nums}.inv th:nth-child(2),.inv td:nth-child(2){text-align:left}.inv th:first-child,.inv td:first-child{text-align:left;width:34px}.inv td:first-child{color:var(--soft)}.inv th{background:var(--maroon);color:var(--cream);font:600 11px/1.3 Montserrat,Arial,sans-serif;letter-spacing:.06em;white-space:nowrap}.inv tbody tr:last-child td{border-bottom:0}
-.inv .iv-two{display:flex;gap:24px;flex-wrap:wrap;margin-top:16px;align-items:flex-start}.inv .iv-two>div{flex:1 1 280px;min-width:0}.inv .iv-sum{max-width:330px;margin-left:auto}.inv .iv-sum div{display:flex;justify-content:space-between;gap:16px;padding:3px 0;font-variant-numeric:tabular-nums}.inv .iv-sum .grand{margin-top:6px;padding:8px 10px;background:var(--band);color:var(--gold);font:600 17px/1.2 'Playfair Display',Georgia,serif}.inv .iv-words{font-style:italic;color:var(--soft);margin:0 0 12px}.inv .iv-note{font-size:11.5px;color:var(--soft);margin:0 0 6px}
-.inv .iv-codes{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}.inv .iv-bar svg{display:block;max-width:100%;height:auto;border:1px solid var(--line)}.inv .iv-bar small,.inv .iv-qr small{display:block;font-size:10.5px;color:var(--soft);margin-top:3px;letter-spacing:.04em}.inv .iv-qr{text-align:center}.inv .iv-qr svg{width:84px;height:84px;display:block;margin:0 auto;background:#fff;padding:4px;border:1px solid var(--line)}
-.inv .iv-sign{margin-top:18px;text-align:center;min-width:190px}.inv .iv-stamp{position:relative;height:92px;width:190px;margin:0 auto}.inv .iv-stamp svg,.inv .iv-stamp>img{position:absolute;left:8px;top:8px;height:76px;width:auto;opacity:.62}.inv .iv-stamp>img{opacity:1;height:84px}.inv .iv-sig-name{position:absolute;left:52px;top:18px;font:400 52px/1 'Mrs Saint Delafield','Playfair Display',cursive;color:#1b2a6b;transform:rotate(-6deg);white-space:nowrap}.inv .iv-sign small{display:block;font-size:11px;border-top:1px solid var(--ink);padding-top:3px}
+.inv .inv-tw{overflow-x:auto;background:#fff;border:1px solid var(--rule)}.inv table{width:100%;border-collapse:collapse;font-size:12px}.inv th,.inv td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top;font-variant-numeric:tabular-nums}.inv th:nth-child(2),.inv td:nth-child(2){text-align:left}.inv th:first-child,.inv td:first-child{text-align:left;width:34px}.inv td:first-child{color:var(--soft)}.inv th{background:var(--maroon);color:var(--cream);font:600 11px/1.3 Montserrat,Arial,sans-serif;letter-spacing:.06em;white-space:nowrap}.inv tbody tr:last-child td{border-bottom:0}
+.inv .iv-two{display:flex;gap:24px;flex-wrap:wrap;margin-top:16px;align-items:flex-start}.inv .iv-two>div{flex:1 1 280px;min-width:0}.inv .iv-sum{max-width:330px;margin-left:auto}.inv .iv-sum div{display:flex;justify-content:space-between;gap:16px;padding:3px 0;font-variant-numeric:tabular-nums}.inv .iv-sum .grand{margin-top:6px;padding:8px 10px;background:var(--band);color:var(--gold);font:600 17px/1.2 'Playfair Display',Georgia,serif}.inv .iv-words{font-style:italic;color:var(--soft);margin:0 0 12px}.inv .iv-note{font-size:12px;color:var(--soft);margin:0 0 6px}
+.inv .iv-codes{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}.inv .iv-bar svg{display:block;max-width:100%;height:auto;border:1px solid var(--line)}.inv .iv-bar small,.inv .iv-qr small{display:block;font-size:12px;color:var(--soft);margin-top:3px;letter-spacing:.04em}.inv .iv-qr{text-align:center}.inv .iv-qr svg{width:84px;height:84px;display:block;margin:0 auto;background:#fff;padding:4px;border:1px solid var(--line)}
+.inv .iv-sign{margin-top:18px;text-align:center;min-width:190px}.inv .iv-stamp{position:relative;height:92px;width:190px;margin:0 auto}.inv .iv-stamp svg,.inv .iv-stamp>img{position:absolute;left:8px;top:8px;height:76px;width:auto;opacity:.62}.inv .iv-stamp>img{opacity:1;height:84px}.inv .iv-sig-name{position:absolute;left:52px;top:18px;font:400 52px/1 'Mrs Saint Delafield','Playfair Display',cursive;color:#1b2a6b;transform:rotate(-6deg);white-space:nowrap}.inv .iv-sign small{display:block;font-size:12px;border-top:1px solid var(--ink);padding-top:3px}
 .inv .iv-foot{margin-top:18px;background:var(--band);color:var(--band-ink);padding:12px 28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px}.inv .iv-foot em{font:italic 500 14px/1.3 'Playfair Display',Georgia,serif;color:var(--gold)}
 .inv .inv-void{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font:700 72px/1 Montserrat,Arial,sans-serif;color:rgba(143,24,52,.28);border:6px solid rgba(143,24,52,.28);padding:6px 24px;pointer-events:none;letter-spacing:.1em}
 .inv-bw{--band:#fff;--band-ink:#000;--gold:#000;--maroon:#000;--cream:#fff;--ink:#000;--soft:#333;--line:#bbb;--rule:#000;--dgold:#000}.inv-bw .iv-band{border-bottom:2px solid #000}.inv-bw th{background:#eee;color:#000;border-bottom:1px solid #000}.inv-bw .iv-sum .grand{border-top:2px solid #000;border-bottom:2px solid #000}.inv-bw .iv-foot{border-top:2px solid #000}.inv-bw .iv-band img{filter:grayscale(1) invert(1) contrast(1.6)}.inv-bw .iv-sign svg{filter:grayscale(1)}.inv-bw .iv-sig-name{color:#000}
-@media (max-width:560px){.inv .iv-band,.inv .iv-body,.inv .iv-foot{padding-left:16px;padding-right:16px}.inv .iv-title{text-align:left}.inv .inv-void{font-size:44px}}@media print{@page{size:A4;margin:10mm}.inv{max-width:none}.iv-tools{display:none!important}}`;
+@media (max-width:560px){.inv .iv-band,.inv .iv-body,.inv .iv-foot{padding-left:16px;padding-right:16px}.inv .iv-title{text-align:left}.inv .inv-void{font-size:48px}}@media print{@page{size:A4;margin:10mm}.inv{max-width:none}.iv-tools{display:none!important}}`;
 // the round BUD & THINGS seal, drawn here so every invoice has one; owners can upload their own under Photos & videos → Brand → Signature and seal
 const INV_SEAL = '<svg viewBox="0 0 120 120" width="74" height="74" role="img" aria-label="BUD &amp; THINGS seal"><defs><path id="ivarc" d="M60 60m-43 0a43 43 0 1 1 86 0a43 43 0 1 1-86 0"/></defs><circle cx="60" cy="60" r="56" fill="none" stroke="#8F1834" stroke-width="3"/><circle cx="60" cy="60" r="50" fill="none" stroke="#D6A34A" stroke-width="1.2"/><text font-family="Montserrat,Arial,sans-serif" font-size="8.5" font-weight="700" fill="#8F1834"><textPath href="#ivarc" startOffset="0" textLength="262" lengthAdjust="spacing">MADE WITH THOUGHT · GIVEN WITH FEELING ·</textPath></text><text x="60" y="58" text-anchor="middle" font-family="Playfair Display,Georgia,serif" font-size="20" font-weight="600" fill="#8F1834">B&amp;T</text><text x="60" y="76" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="7" letter-spacing="2" fill="#7A5A18">HANDMADE</text></svg>';
 function invoiceHTML(inv) {
@@ -3914,7 +3951,7 @@ function admEvents() {
   const revCur = rev(cur), revPrev = rev(prev); const items = cur.reduce((a, o) => a + (o.items || []).reduce((b, l) => b + l.qty, 0), 0);
   const change = (a, b) => (b ? `${a >= b ? '▲' : '▼'} ${Math.abs(Math.round((a - b) / b * 100))}% on the ${days} days before` : 'nothing to compare yet');
   const goal = +SET.monthlyGoal || 0; const mStart = new Date(); mStart.setDate(1); mStart.setHours(0, 0, 0, 0); const revMonth = rev(good.filter((o) => new Date(o.placedAt) >= mStart));
-  const tile = (l, v, sub, sp) => `<div class="stat"><span class="muted">${l}</span><strong class="num">${v}</strong>${sub ? `<span class="muted" style="font-size:13px">${sub}</span>` : ''}${sp || ''}</div>`;
+  const tile = (l, v, sub, sp) => `<div class="stat"><span class="muted">${l}</span><strong class="num">${v}</strong>${sub ? `<span class="muted" style="font-size:14px">${sub}</span>` : ''}${sp || ''}</div>`;
   // revenue per day (per week for a year)
   const step = days > 120 ? 7 : 1; const pts = []; for (let t = since; t < now; t += step * dayMs) { const e = t + step * dayMs; const l = good.filter((o) => { const d = +new Date(o.placedAt); return d >= t && d < e; }); const d = new Date(t); pts.push({ label: (step > 1 ? 'Week of ' : '') + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), short: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }), v: rev(l), tip: l.length + ' order' + (l.length === 1 ? '' : 's') }); }
   // products
@@ -3948,7 +3985,7 @@ function admEvents() {
   const rv = revs.filter((r) => new Date(r.created_at) >= since); const pubRv = revs.filter((r) => r.published);
   const unpaid = orders.filter((o) => o.status === 'Awaiting payment' && now - new Date(o.placedAt) > 30 * 60e3).slice(0, 10);
   const fu = st.funnel || {}; const fMax = fu.visits || 0; const srcMax = Math.max(1, ...(st.sources || []).map((s) => s.sessions)); const catMax = Math.max(1, ...Object.values(cat));
-  const box = (title, body, note) => `<div class="adm-card"><h3 style="font-size:22px">${title}</h3>${note ? `<p class="muted" style="margin:0">${note}</p>` : ''}${body}</div>`;
+  const box = (title, body, note) => `<div class="adm-card"><h3 style="font-size:24px">${title}</h3>${note ? `<p class="muted" style="margin:0">${note}</p>` : ''}${body}</div>`;
   const small = (rows, head) => rows.length ? `<div class="table-wrap"><table>${head ? `<thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead>` : ''}<tbody>${rows.map((r) => `<tr>${r.map((c, i) => `<td${i ? ' class="num"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="muted">Nothing yet.</p>';
   const setF = (k) => { const m = SET_META.find((x) => x[0] === k); return m ? setField(m) : ''; };
   return `<div class="adm-bar"><div class="gh-chips" role="group" aria-label="Period">${[[7, '7 days'], [30, '30 days'], [90, '90 days'], [365, '12 months']].map(([d, l]) => `<button type="button" class="chip" data-act="adm-days" data-v="${d}" aria-pressed="${days === d}">${l}</button>`).join('')}</div>${BTDB.on ? '' : '<span class="muted">Demo mode: visits counted in this browser only.</span>'}</div>
@@ -3977,7 +4014,7 @@ function admEvents() {
     ${box('Reviews', `<div class="facts" style="border-top:0;padding-top:0"><div><strong class="num">${rv.length}</strong><span class="muted">new in this period${rv.length ? ', average ' + (rv.reduce((a, r) => a + r.rating, 0) / rv.length).toFixed(1) + '★' : ''}</span></div><div><strong class="num">${pubRv.length ? (pubRv.reduce((a, r) => a + r.rating, 0) / pubRv.length).toFixed(1) + '★' : '—'}</strong><span class="muted">average of all published</span></div><div><strong class="num">${P.filter((p) => !pubRv.some((r) => r.product_id === p.id)).length}</strong><span class="muted">pieces with no review yet</span></div></div>`)}
     ${box('Not paid yet', unpaid.length ? small(unpaid.map((o) => [esc(o.id), fmtDay(o.placedAt), inr(o.total || 0), (o.contact || {}).phone ? `<a href="https://wa.me/${waNumber(o.contact.phone)}?text=${encodeURIComponent(`Hi ${(o.contact.name || '').split(' ')[0]}, this is BUD & THINGS. Your order ${o.id} is waiting for payment. Can we help with anything?`)}" target="_blank" rel="noopener">Message</a>` : '']), ['Order', 'Placed', 'Total', 'WhatsApp']) : '<p class="muted">None waiting.</p>', 'Checkouts that reached payment and stopped. A friendly message often brings them back.')}
     </div>
-    <div class="form adm-card"><h3 class="full" style="font-size:22px">Goal and weekly email</h3>${setF('monthlyGoal')}${setF('weeklySummary')}<p class="muted full" style="margin:0">The weekly email goes every Monday to ${esc(SET.orderAlerts || SET.email || 'the shop’s email')}: orders, sales, visitors, new sign-ups, reviews waiting and stock running low.</p></div>
+    <div class="form adm-card"><h3 class="full" style="font-size:24px">Goal and weekly email</h3>${setF('monthlyGoal')}${setF('weeklySummary')}<p class="muted full" style="margin:0">The weekly email goes every Monday to ${esc(SET.orderAlerts || SET.email || 'the shop’s email')}: orders, sales, visitors, new sign-ups, reviews waiting and stock running low.</p></div>
     <details class="adm-group"><summary>Every event in this period</summary><div style="padding:12px 18px">${small(Object.entries(nm).sort((a, b) => b[1] - a[1]).map(([k, n]) => [esc(k), n]), ['Event', 'Times'])}</div></details>`;
 }
 function admSetup() {
@@ -4171,7 +4208,7 @@ function storyBand(id) {
   const m = mediaFor('brand', { role: ['founder', 'story', 'process'] })[0];
   return `<section class="story-band" aria-labelledby="${id}"><div class="wrap section"><div class="split">
     <div class="story-band-ph">${m ? mediaEl(m) : `<img src="${IMG.jar}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"><img class="inset" src="${IMG.seal}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy">`}</div>
-    <div style="display:flex;flex-direction:column;gap:18px"><span class="eyebrow">Our Story</span><h2 id="${id}" style="font-size:clamp(34px,4vw,52px)">${T('home.storyBand')}</h2><p class="muted" style="font-size:17px;max-width:540px">${T('home.storyBandText')}</p>
+    <div style="display:flex;flex-direction:column;gap:18px"><span class="eyebrow">Our Story</span><h2 id="${id}" style="font-size:clamp(34px,4vw,52px)">${T('home.storyBand')}</h2><p class="muted" style="font-size:16px;max-width:540px">${T('home.storyBandText')}</p>
       <span class="signature">— Ashi</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#story">Read our story</a><a class="btn ghost" href="#journal">From the journal</a></span></div></div></div></section>`;
 }
 
@@ -4248,10 +4285,10 @@ const PAY_CSS = `
 .pay-pg{--m:#7A1229;--g:#D6A34A;--c:#F8F0E4;background:#F8F0E4;color:#150206;min-height:100vh;overflow:hidden;position:relative;font-family:Montserrat,Arial,sans-serif}
 .pay-pg *{box-sizing:border-box}.pay-in{max-width:520px;margin:0 auto;padding:20px 20px 40px;position:relative;z-index:2}
 .pay-diya{display:block;margin:14px auto 4px;width:64px}.pay-diya .fl{transform-origin:50% 90%;animation:fl 1.6s ease-in-out infinite}.pay-diya .gl{opacity:.25}
-.pay-hello{text-align:center;opacity:0;animation:rise .8s .1s forwards}.pay-hello small{letter-spacing:.2em;text-transform:uppercase;color:#7A5A18;font-size:11px}.pay-hello h1{font:600 28px/1.15 'Playfair Display',Georgia,serif;margin:6px 0 4px;color:var(--m)}.pay-hello p{margin:0;color:#5b3a42;font-size:14px}
+.pay-hello{text-align:center;opacity:0;animation:rise .8s .1s forwards}.pay-hello small{letter-spacing:.2em;text-transform:uppercase;color:#7A5A18;font-size:12px}.pay-hello h1{font:600 28px/1.15 'Playfair Display',Georgia,serif;margin:6px 0 4px;color:var(--m)}.pay-hello p{margin:0;color:#5b3a42;font-size:14px}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.pay-card{margin:20px 0 0;background:#fff;color:#150206;padding:20px 16px;text-align:center;border:1.5px solid var(--g);opacity:0;animation:rise .8s .3s forwards}.pay-card small{text-transform:uppercase;letter-spacing:.14em;color:#7A5A18;font-size:11px}.pay-amt{font:700 42px/1.1 Georgia,serif;color:var(--m);margin:4px 0 12px}.pay-btn{display:block;min-height:54px;line-height:54px;background:var(--m);color:var(--c);font-weight:700;text-decoration:none;letter-spacing:.04em}.pay-btn.alt{background:transparent;color:var(--m);border:1.5px solid var(--m);line-height:48px;min-height:50px;margin-top:10px;cursor:pointer;width:100%;font:600 14px Montserrat,Arial,sans-serif}
-.pay-qr{display:block;margin-top:14px}.pay-qr svg{background:#fff;padding:6px}.pay-id{margin:6px 0 0;font-size:13px;word-break:break-all;user-select:all}.pay-qr svg{width:200px;height:200px;display:block;margin:0 auto 4px}.pay-card .pu{margin:10px 0 0;font-size:13px}
+.pay-card{margin:20px 0 0;background:#fff;color:#150206;padding:20px 16px;text-align:center;border:1.5px solid var(--g);opacity:0;animation:rise .8s .3s forwards}.pay-card small{text-transform:uppercase;letter-spacing:.14em;color:#7A5A18;font-size:12px}.pay-amt{font:700 42px/1.1 Georgia,serif;color:var(--m);margin:4px 0 12px}.pay-btn{display:block;min-height:54px;line-height:54px;background:var(--m);color:var(--c);font-weight:700;text-decoration:none;letter-spacing:.04em}.pay-btn.alt{background:transparent;color:var(--m);border:1.5px solid var(--m);line-height:48px;min-height:50px;margin-top:10px;cursor:pointer;width:100%;font:600 14px Montserrat,Arial,sans-serif}
+.pay-qr{display:block;margin-top:14px}.pay-qr svg{background:#fff;padding:6px}.pay-id{margin:6px 0 0;font-size:14px;word-break:break-all;user-select:all}.pay-qr svg{width:200px;height:200px;display:block;margin:0 auto 4px}.pay-card .pu{margin:10px 0 0;font-size:14px}
 @media(min-width:760px){.pay-btn:not(.alt){display:none}}
 .pay-sec{margin-top:22px;opacity:0;animation:rise .8s .5s forwards}.pay-sec h2{font:600 18px 'Playfair Display',Georgia,serif;color:var(--m);margin:0 0 6px}.pay-sec p{margin:0 0 8px;font-size:14px;line-height:1.55}
 .pay-list{list-style:none;margin:0;padding:0}.pay-list li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #E0CBB0;font-size:14px}.pay-list li.t{font-weight:700;color:var(--m)}
@@ -4320,7 +4357,7 @@ function viewTrack() {
   const tr = UI.track || {}; loadMine();
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Orders</span><h1 tabindex="-1">${T('track.title')}</h1><p class="muted" style="max-width:620px">${T('track.sub')}</p></div>
     <form data-form="track" class="track-form" novalidate><span class="field"><label for="tr-id">Order number</label><input id="tr-id" placeholder="BT-1001" value="${esc(tr.id || '')}" autocomplete="off"></span><span class="field"><label for="tr-phone">Mobile number</label>${pfx('tr-phone', '', tr.phone)}</span><button class="btn" type="submit">Track order</button>${tr.msg ? `<span class="err" role="alert">${esc(tr.msg)}</span>` : ''}</form>
-    ${S.account ? `<h2 style="font-size:28px;margin-bottom:14px">Your orders</h2>${orderRows(myOrders())}` : `<p class="muted"><a href="#account">Sign in</a> to see all your orders here.</p>`}
+    ${S.account ? `<h2 style="font-size:30px;margin-bottom:14px">Your orders</h2>${orderRows(myOrders())}` : `<p class="muted"><a href="#account">Sign in</a> to see all your orders here.</p>`}
     <ol class="track-steps">${[['box', 'Placed', 'We have your order and payment.'], ['gift', 'Packed', 'Wrapped by hand, usually within 1 to 3 working days.'], ['truck', 'Shipped', 'We email the courier tracking link.'], ['home', 'Delivered', 'Usually ' + SET.deliveryDays + ' after it ships.']].map(([i, h, t]) => `<li>${hl(i, 26)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></div>`;
 }
 // ---------- the customer's profile ----------
@@ -4350,7 +4387,7 @@ const CHANNELS = [['whatsapp', 'WhatsApp', 'whatsappOn'], ['sms', 'Text message 
 function profileBox() {
   loadProfile(); const pf = UI.prof; if (!pf) return loadingRow;
   const P = UI.profForm || {}, chans = CHANNELS.filter((c) => SET[c[2]] === true || SET[c[2]] === 'true');
-  return `<h2 style="font-size:28px;margin:36px 0 14px">Your details</h2>
+  return `<h2 style="font-size:30px;margin:36px 0 14px">Your details</h2>
     <form data-form="profile" class="form" novalidate>
       <span class="field"><label for="pf-name">Full name</label><input id="pf-name" autocomplete="name" maxlength="80" value="${esc(P.name ?? pf.name)}"></span>
       <span class="field"><label for="pf-phone">Mobile number <span class="hint">for delivery</span></label>${pfx('pf-phone', P.err && P.err.phone ? 'aria-invalid="true"' : '', P.phone ?? pf.phone)}</span>
@@ -4371,7 +4408,7 @@ function profileBox() {
 }
 function signInBox(next) {
   const A = UI.acct;
-  return `<div class="signin"><span class="why-ic">${hl('user', 26)}</span><h2 style="font-size:32px">${T('acct.title')}</h2><p class="muted">${T('acct.sub')}</p>
+  return `<div class="signin"><span class="why-ic">${hl('user', 26)}</span><h2 style="font-size:30px">${T('acct.title')}</h2><p class="muted">${T('acct.sub')}</p>
     ${A.sent ? `<form data-form="acct-code" data-next="${esc(next || '')}" class="form" style="grid-template-columns:1fr" novalidate><p>We sent a code to <strong>${esc(A.email)}</strong>. <button class="linkbtn" type="button" data-act="acct-change">Change</button></p>
       ${A.demo ? `<div class="status" role="status">Preview: no email is sent. Your code is <strong class="num">${esc(A.demo)}</strong>.</div>` : ''}
       <span class="field"><label for="acct-code">Code from the email</label><input id="acct-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" ${A.err ? 'aria-invalid="true" aria-describedby="acct-err"' : ''}></span>${A.err ? `<span class="err" id="acct-err" role="alert">${esc(A.err)}</span>` : ''}
@@ -4410,7 +4447,7 @@ function acctHero(a, list, pm) {
 }
 function viewAccount() {
   const a = S.account;
-  if (!a && BTDB.on && BTDB.owner()) return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Account</h1><div class="signin"><span class="why-ic">${hl('user', 26)}</span><h2 style="font-size:32px">You are signed in as the Owner</h2><p class="muted">That sign-in (password plus your authenticator code) is for running the shop. This Account page is for customers, who sign in with a code sent to their email, so it is a separate sign-in. You can stay as the Owner, or try the customer side below.</p><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#admin">Open Owner view</a><button class="btn ghost" type="button" data-act="adm-signout">Sign out of Owner</button></span></div><details style="max-width:520px;margin:24px auto 0"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600">Try signing in as a customer</summary>${signInBox(UI.acct.next || '')}</details></div>`;
+  if (!a && BTDB.on && BTDB.owner()) return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Account</h1><div class="signin"><span class="why-ic">${hl('user', 26)}</span><h2 style="font-size:30px">You are signed in as the Owner</h2><p class="muted">That sign-in (password plus your authenticator code) is for running the shop. This Account page is for customers, who sign in with a code sent to their email, so it is a separate sign-in. You can stay as the Owner, or try the customer side below.</p><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#admin">Open Owner view</a><button class="btn ghost" type="button" data-act="adm-signout">Sign out of Owner</button></span></div><details style="max-width:520px;margin:24px auto 0"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600">Try signing in as a customer</summary>${signInBox(UI.acct.next || '')}</details></div>`;
   if (!a) return `<div class="wrap" style="padding-block:var(--s6) var(--section)"><h1 class="sr" tabindex="-1">Sign in</h1>${signInBox(UI.acct.next || '')}</div>`;
   loadMine(); const list = myOrders().slice().sort((x, y) => new Date(y.placedAt) - new Date(x.placedAt)); const pm = ptsMine();
   const active = list.find((o) => ['Placed', 'Packed', 'Shipped'].includes(o.status));
@@ -4457,7 +4494,7 @@ function comboHTML(p) {
   return `<section class="section" aria-labelledby="combo-h" style="padding-top:var(--section-sm);padding-bottom:0"><div class="section-head"><h2 id="combo-h">${T('pdp.combo')}</h2>${+SET.ritualOff ? `<span class="muted" style="font-size:14px">Candle and object together save ${esc(SET.ritualOff)}%</span>` : ''}</div>
     <div class="combos">${sets.map((c) => { const rp = ritualPrice(c.items); return `<div class="combo"><span class="combo-tiles">${c.items.map(([x, vi], i) => `${i ? '<span class="plus" aria-hidden="true">+</span>' : ''}<a class="tile${i % 2 ? ' alt' : ''}" href="#p-${x.id}" aria-label="${esc(x.name)}">${tileArt(x, vi, .55)}</a>`).join('')}</span>
       <strong>${c.items.map(([x, vi]) => esc(x.name) + (x.variants.length > 1 ? ' <span class="muted">(' + esc(x.variants[vi].label) + ')</span>' : '')).join(' + ')}</strong><span class="muted" style="font-size:14px">${esc(c.why)}</span>
-      <span class="combo-buy"><span class="num" style="font-weight:700;font-size:18px">${rp.save ? `<s class="muted" style="font-weight:400">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span>${rp.save ? `<span class="pill save">Save ${inr(rp.save)}</span>` : ''}<button class="btn small" type="button" data-act="combo-add" data-skus="${c.items.map(([x, vi]) => x.variants[vi].sku).join(',')}">Add set</button></span></div>`; }).join('')}</div></section>`;
+      <span class="combo-buy"><span class="num" style="font-weight:700;font-size:20px">${rp.save ? `<s class="muted" style="font-weight:400">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span>${rp.save ? `<span class="pill save">Save ${inr(rp.save)}</span>` : ''}<button class="btn small" type="button" data-act="combo-add" data-skus="${c.items.map(([x, vi]) => x.variants[vi].sku).join(',')}">Add set</button></span></div>`; }).join('')}</div></section>`;
 }
 function bestWith(p) {
   if (!+SET.ritualOff) return ''; // pairings are off until there are real pairs
@@ -4489,7 +4526,7 @@ function payBadges() {
 
 function viewNotFound(kind) {
   const title = kind === 'product' ? T('err.product') : kind === 'order' ? T('err.order') : kind === 'article' ? T('err.article') : T('err.title');
-  return `<div class="wrap" style="padding-block:var(--section) calc(var(--section) + 20px)"><div class="empty" style="gap:14px"><span class="eyebrow">${T('err.eyebrow')}</span><h1 tabindex="-1" style="font-size:34px">${title}</h1><p class="muted" style="margin:0;max-width:52ch">${T('err.text')}</p>
+  return `<div class="wrap" style="padding-block:var(--section) calc(var(--section) + 20px)"><div class="empty" style="gap:14px"><span class="eyebrow">${T('err.eyebrow')}</span><h1 tabindex="-1" style="font-size:38px">${title}</h1><p class="muted" style="margin:0;max-width:52ch">${T('err.text')}</p>
     <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn small" href="#shop">See all products</a><a class="btn small ghost" href="#feeling">Find Your Feeling</a><a class="btn small ghost" href="#gifting">Gifting</a><a class="btn small ghost" href="#help">Contact us</a><button class="btn small ghost" type="button" data-act="search">Search</button></span></div></div>`;
 }
 
@@ -4635,7 +4672,7 @@ function viewGiftHome() {
       <span class="gh-badge"><svg width="14" height="18" viewBox="0 0 14 18" aria-hidden="true"><path d="M7 1C9 5 13 7 13 11.5A6 6 0 0 1 1 11.5C1 8 4 7 4 4c1.5 1 2 2.5 2 4C7 6 7 3 7 1z" fill="#C9A227"/></svg>${T('ghome.badge')}</span></div>
     <div style="display:flex;flex-direction:column;gap:16px">
       <h1 id="gh-h" class="gh-rise">${T('ghome.title')}</h1>
-      <p class="muted gh-rise d1" style="font-size:17px;max-width:520px">${T('ghome.sub')}</p>
+      <p class="muted gh-rise d1" style="font-size:16px;max-width:520px">${T('ghome.sub')}</p>
       <div class="gh-cta gh-rise d2"><a class="btn gh-shine" href="#gifting">${T('ghome.cta1')}</a><a class="btn ghost" href="#shop">${T('ghome.cta2')}</a></div>
     </div>
   </section>`,
@@ -4658,7 +4695,7 @@ function viewGiftHome() {
     <div class="gh-chips">${occLive().map(([k, l]) => `<a class="chip" href="#shop" data-act="occasion" data-v="${k}">${l}</a>`).join('')}</div></section>`,
     rituals: () => `  ${pairs.length ? `<section style="background:var(--linen)" aria-labelledby="gh-pairs"><div class="wrap section"><div class="section-head"><div style="display:flex;flex-direction:column;gap:6px"><h2 id="gh-pairs">${T('ghome.pairs')}</h2><span class="muted">${T('ghome.pairsSub')}</span></div><a href="#ritual" style="font-weight:600">Make your own →</a></div>
     <div class="gh-pairs">${pairs.map((fo) => { const rp = ritualPrice(fo.items.map(([pid, vi]) => [byId[pid], vi])); return `<div class="gh-pair"><span class="tiles">${fo.items.map(([pid, vi]) => `<span class="tile">${tileArt(byId[pid], vi, .7)}</span>`).join('')}</span>
-      <span style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0"><strong style="font-family:var(--display);font-size:22px;line-height:1.05">${esc(fo.name)}</strong><span class="muted" style="font-size:13px">${fo.items.map(([pid]) => esc(byId[pid].name)).join(' + ')}</span>
+      <span style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0"><strong style="font-family:var(--display);font-size:24px;line-height:1.05">${esc(fo.name)}</strong><span class="muted" style="font-size:14px">${fo.items.map(([pid]) => esc(byId[pid].name)).join(' + ')}</span>
       <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="num" style="font-weight:600">${rp.save ? `<s class="muted">${inr(rp.sum)}</s> ` : ''}${inr(rp.sum - rp.save)}</span><button class="btn small" type="button" data-act="gh-pair" data-v="${fo.id}">Add the pair</button></span></span></div>`; }).join('')}</div></div></section>` : ''}`,
     spotlight: () => spotlight('gh-spot'),
     reviews: () => homeReviews('gh-rev'),
@@ -4668,7 +4705,7 @@ function viewGiftHome() {
     journal: () => homeJournal('gh-jr'),
     discover: () => discover('gh-disc'),
     festive: () => festiveBanner(),
-    news: () => `  <section class="section wrap" aria-labelledby="gh-news"><div class="intro" style="gap:14px"><h2 id="gh-news" style="font-size:40px">${T('home.news')}</h2><p class="muted" style="font-family:var(--body);font-size:16px">${T('home.newsText')}</p>
+    news: () => `  <section class="section wrap" aria-labelledby="gh-news"><div class="intro" style="gap:14px"><h2 id="gh-news" style="font-size:38px">${T('home.news')}</h2><p class="muted" style="font-family:var(--body);font-size:16px">${T('home.newsText')}</p>
     <form data-form="news" style="width:100%;max-width:520px;display:flex;flex-wrap:wrap;gap:10px;text-align:left" novalidate><label for="news-email" style="flex:1 1 100%">Email</label><input id="news-email" type="email" autocomplete="email" placeholder="name@example.com" style="flex:1 1 240px"><button class="btn" type="submit">Join the list</button><span id="news-msg" style="flex:1 1 100%"></span></form></div></section>`
   };
   return homeOrder().map((id) => (BLOCKS[id] ? BLOCKS[id]() : '')).join('\n');

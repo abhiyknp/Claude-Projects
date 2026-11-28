@@ -188,13 +188,26 @@ const HAT='<span class="ft-hat" aria-hidden="true"><svg viewBox="0 0 52 40" widt
 const WL={on:false,cv:null,cx:null,flakes:[],raf:0,mo:null,lights:null,t:0};
 const worldWanted=()=>!!fest&&fest.id==='xmas'&&strapOn;
 function wResize(){if(!WL.cv)return;const r=Math.min(devicePixelRatio||1,1.5);WL.cv.width=innerWidth*r;WL.cv.height=innerHeight*r;WL.cx.setTransform(r,0,0,r,0,0)}
-function wFlake(top){const s=Math.random(),r=s>.88?rnd(3.8,6):s>.5?rnd(2.2,3.3):rnd(1.3,2.1);return{x:rnd(0,innerWidth),y:top?-10:rnd(0,innerHeight),r,vy:.25+r*.16+rnd(0,.25),ph:rnd(0,6.28),o:rnd(.8,1)}}
+/* v4 snow: three depths (sharp far flakes, small mid flakes, soft close-up bokeh), a few six-armed crystals that turn and twinkle,
+   per-flake sway, a slow gust of wind, frame-rate independent motion and a cool rim so flakes read on cream as well as on dark */
+const WLS={};function wSprites(){if(WLS.ball)return WLS;const mk=(z,f)=>{const c=document.createElement('canvas');c.width=c.height=z*2;const g=c.getContext('2d');g.scale(2,2);f(g,z);return c};
+ WLS.ball=mk(48,(g,z)=>{g.shadowColor='rgba(70,92,130,.28)';g.shadowBlur=5;g.shadowOffsetY=1;const r=g.createRadialGradient(z*.4,z*.38,1,z/2,z/2,z*.34);r.addColorStop(0,'#fff');r.addColorStop(.6,'#f6f9fd');r.addColorStop(.92,'#dbe6f3');r.addColorStop(1,'rgba(165,185,213,.9)');g.fillStyle=r;g.beginPath();g.arc(z/2,z/2,z*.3,0,6.283);g.fill()});
+ WLS.bokeh=mk(64,(g,z)=>{const r=g.createRadialGradient(z/2,z/2,0,z/2,z/2,z/2);r.addColorStop(0,'rgba(255,255,255,.85)');r.addColorStop(.7,'rgba(240,247,255,.55)');r.addColorStop(.92,'rgba(220,232,248,.5)');r.addColorStop(1,'rgba(220,232,248,0)');g.fillStyle=r;g.fillRect(0,0,z,z)});
+ WLS.crystal=mk(64,(g,z)=>{g.translate(z/2,z/2);g.lineCap='round';g.shadowColor='rgba(70,92,130,.35)';g.shadowBlur=3;for(let i=0;i<6;i++){g.save();g.rotate(i*Math.PI/3);g.strokeStyle='#fff';g.lineWidth=2.2;g.beginPath();g.moveTo(0,0);g.lineTo(0,-24);g.stroke();g.lineWidth=1.6;[[-10,8],[-17,6]].forEach(([y,l])=>{g.beginPath();g.moveTo(0,y);g.lineTo(-l,y-l*.7);g.moveTo(0,y);g.lineTo(l,y-l*.7);g.stroke()});g.restore()}g.fillStyle='#fff';g.beginPath();g.arc(0,0,3,0,6.283);g.fill()});
+ return WLS}
+function wBuild(){const m=innerWidth<640,N=m?{far:20,mid:20,near:5,cry:4}:{far:40,mid:38,near:10,cry:8},out=[];
+ const add=(kind,n,z0,z1)=>{for(let i=0;i<n;i++)out.push({kind,z:rnd(z0,z1),x:rnd(0,innerWidth),y:rnd(-20,innerHeight),ph:rnd(0,6.28),f:rnd(.5,1.2),rot:rnd(0,6.28),spin:rnd(-.5,.5),tw:rnd(0,6.28)})};
+ add('far',N.far,0,.3);add('mid',N.mid,.3,.7);add('near',N.near,.7,1);add('cry',N.cry,.5,.6);return out}
 function wStart(){if(reduce)return;if(!WL.cv){WL.cv=document.createElement('canvas');WL.cv.className='ft-wcv';WL.cv.setAttribute('aria-hidden','true');document.body.appendChild(WL.cv);WL.cx=WL.cv.getContext('2d');addEventListener('resize',wResize)}
- wResize();WL.cv.style.display='';if(!WL.flakes.length)WL.flakes=Array.from({length:innerWidth<640?34:70},()=>wFlake(false));if(!WL.raf){WL.on=true;WL.raf=requestAnimationFrame(wLoop)}}
-function wLoop(){if(!WL.on||document.hidden){WL.raf=0;if(WL.on)document.addEventListener('visibilitychange',wWake,{once:true});return}
- const c=WL.cx;c.clearRect(0,0,innerWidth,innerHeight);const wd=Math.sin(Date.now()/5000)*.4;
- const sy=scrollY,dsy=sy-(WL.sy==null?sy:WL.sy);WL.sy=sy;for(const f of WL.flakes){f.ph+=.012;f.y-=dsy*(.08+f.r*.07);if(f.y<-12)f.y=innerHeight+8;f.x+=Math.sin(f.ph)*.5+wd*(f.r/3);f.y+=f.vy;if(f.y>innerHeight+8){Object.assign(f,wFlake(true))}if(f.x>innerWidth+8)f.x=-8;if(f.x<-8)f.x=innerWidth+8;
-  const near=f.r>3.3;c.globalAlpha=near?f.o*.8:f.o;const sz=near?f.r*5.2:f.r*2.7;c.drawImage(snowSprite(near?'near':'ball'),f.x-sz/2,f.y-sz/2,sz,sz)}
+ wResize();WL.cv.style.display='';if(!WL.flakes.length)WL.flakes=wBuild();if(!WL.raf){WL.on=true;WL.raf=requestAnimationFrame(wLoop)}}
+function wLoop(){if(!WL.on||document.hidden){WL.raf=0;WL.last=0;if(WL.on)document.addEventListener('visibilitychange',wWake,{once:true});return}
+ const now=performance.now(),dt=Math.min((now-(WL.last||now))/1000,.05);WL.last=now;WL.t=(WL.t||0)+dt;const t=WL.t,c=WL.cx,S=wSprites(),W=innerWidth,H=innerHeight;c.clearRect(0,0,W,H);
+ const gust=Math.sin(t/6.5)*.5+Math.sin(t/2.3+1.7)*.25,sy=scrollY,dsy=sy-(WL.sy==null?sy:WL.sy);WL.sy=sy;const L=(p,q,k)=>p+(q-p)*k;
+ for(const f of WL.flakes){const z=f.kind==='cry'?.55:f.z;const sz=f.kind==='far'?L(2.2,4,f.z/.3):f.kind==='mid'?L(4,7.5,(f.z-.3)/.4):f.kind==='near'?L(16,36,(f.z-.7)/.3):L(15,24,f.z);
+  f.y+=L(16,80,z)*dt+(f.kind==='near'?22*dt:0)-dsy*(.04+.16*z);f.x+=(Math.sin(t*f.f+f.ph)*L(5,22,z)+gust*L(10,46,z))*dt*2.2;f.rot+=f.spin*dt;
+  if(f.y>H+30){f.y=-30;f.x=rnd(0,W)}if(f.y<-40)f.y=H+20;if(f.x>W+30)f.x=-30;if(f.x<-30)f.x=W+30;
+  if(f.kind==='cry'){c.globalAlpha=.75+.2*Math.sin(t*2+f.tw);c.save();c.translate(f.x,f.y);c.rotate(f.rot);c.drawImage(S.crystal,-sz/2,-sz/2,sz,sz);c.restore()}
+  else{c.globalAlpha=f.kind==='near'?.32:f.kind==='far'?.6:.9;c.drawImage(f.kind==='near'?S.bokeh:S.ball,f.x-sz/2,f.y-sz/2,sz,sz)}}
  c.globalAlpha=1;WL.raf=requestAnimationFrame(wLoop)}
 function wWake(){if(WL.on&&!WL.raf)WL.raf=requestAnimationFrame(wLoop)}
 function lightsEl(){if(WL.lights)return WL.lights;const cols=['#ff5a5f','#ffd36a','#fff3dc','#6fd0a0','#6aa8ff'];let b='';const n=34;for(let i=0;i<n;i++){const x=(i+.5)/n*1200,y=6+Math.sin((i+.5)/n*Math.PI*6)*0;const sag=7*Math.sin(((i%6)+.5)/6*Math.PI);b+=`<line x1="${x}" y1="${2+sag}" x2="${x}" y2="${5+sag}" stroke="#2a2a2a" stroke-width="1.6"/><circle cx="${x}" cy="${12+sag}" r="5.2" fill="${cols[i%5]}" style="animation:ft-tw 2.4s ${(i%7)*.35}s ease-in-out infinite"/><circle cx="${x}" cy="${12+sag}" r="10" fill="${cols[i%5]}" opacity=".2"/>`}

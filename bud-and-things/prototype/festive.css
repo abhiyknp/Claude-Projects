@@ -236,7 +236,7 @@ body.ft-scn .site-head{box-shadow:0 1px 0 rgba(214,163,74,.5)}
 .ft-say{width:max-content!important}
 
 /* ---- the festive world (Christmas) ---- */
-.ft-wcv{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1}
+.ft-wcv{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:19}
 .ft-capped{position:relative}
 .ft-cap{position:absolute;left:-3px;right:-3px;top:-8px;height:13px;z-index:4;pointer-events:none;background:no-repeat center/100% 100% url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 13' preserveAspectRatio='none'><path d='M0 13V8Q3 1 8 6T18 5T29 7T40 3T52 6T63 4T74 7T86 3T100 6V13Z' fill='%23fff'/><path d='M0 13V10Q10 7 20 10T40 9T60 10T80 9T100 10V13Z' fill='%23dde7f3'/></svg>");filter:drop-shadow(0 2px 2px rgba(60,80,110,.25))}
 .ft-cap-s{height:10px;top:-6px;left:-1px;right:-1px}
@@ -315,3 +315,6 @@ body.ft-world #ft-foot:after{content:"";position:absolute;left:0;right:0;top:-1p
 @media (max-width:640px){.ft-sit img{height:96px!important}.ft-sit-foot img{height:92px!important}}
 .ft-sit img{height:150px!important}.ft-spacer{height:158px!important}
 @media (max-width:640px){.ft-sit img{height:110px!important}.ft-spacer{height:120px!important}}
+
+/* v4: soft, rounded snow caps with a blue shadow and a few sparkles (wide lumps, so they stay smooth when stretched) */
+.ft-cap{top:-9px!important;height:15px!important;left:14px!important;right:6px!important;filter:drop-shadow(0 2px 1.5px rgba(80,102,140,.28));-webkit-mask-image:linear-gradient(#000 52%,transparent 96%);mask-image:linear-gradient(#000 52%,transparent 96%);background:no-repeat center/100% 100% url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 15' preserveAspectRatio='none'><path d='M0 15V10C7 5 13 6 19 9S31 11 38 8S51 5 59 8S73 11 81 8S95 6 100 9V15Z' fill='%23d3e0f0'/><path d='M0 15V8C6 2 12 2 18 6S30 9 36 5S50 1 58 5S72 9 80 4S94 2 100 6V15Z' fill='%23ffffff'/><circle cx='22' cy='5.6' r='.7' fill='%23dbeaff'/><circle cx='55' cy='3.6' r='.6' fill='%23dbeaff'/><circle cx='83' cy='4.4' r='.7' fill='%23dbeaff'/></svg>")}
