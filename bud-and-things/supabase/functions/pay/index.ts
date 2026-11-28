@@ -31,7 +31,8 @@ const markPaid = (id: string, pay: unknown) => db('/rest/v1/rpc/mark_paid', { or
 async function rzpOrder(id: string) {
   const list = await rzp('/orders?receipt=' + encodeURIComponent(id) + '&count=10');
   const items: any[] = Array.isArray(list?.items) ? list.items : [];
-  return items.find((x) => x.receipt === id && x.status !== 'paid') || items.find((x) => x.receipt === id) || null;
+  // a paid one wins over an open one: if the customer opened Razorpay twice, the money is on the one that was paid
+  return items.find((x) => x.receipt === id && x.status === 'paid') || items.find((x) => x.receipt === id) || null;
 }
 
 // Razorpay says the order is paid, for the full amount: record it (once; repeats change nothing)

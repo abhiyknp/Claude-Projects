@@ -55,6 +55,7 @@ reset(); order.status = 'Placed'; assert.equal((await pay(post({ action: 'start'
 reset(); { const r = await pay(post({ action: 'start', order_id: 'BT-1-ABCDEF', phone: '9876543210' })); const d = await r.json();
   assert.equal(r.status, 200); assert.equal(d.amount, 50000); assert.equal(d.mode, 'sandbox'); assert.ok(!('secret' in d) && !JSON.stringify(d).includes('zzsecret')); ok('pay: start charges exactly the database total and leaks no secret'); }
 reset(); { const r = await pay(post({ action: 'verify', order_id: 'BT-1-ABCDEF' })); assert.equal((await r.json()).paid, false); assert.equal(paidCalls.length, 0); ok('pay: verify with nothing paid at Razorpay records nothing'); }
+reset(); rzpItems = [{ id: 'order_open', receipt: 'BT-1-ABCDEF', status: 'created', amount: 50000, amount_paid: 0 }, { id: 'order_1', receipt: 'BT-1-ABCDEF', status: 'paid', amount: 50000, amount_paid: 50000 }]; { const r = await pay(post({ action: 'verify', order_id: 'BT-1-ABCDEF' })); assert.equal((await r.json()).paid, true); assert.equal(paidCalls.length, 1); ok('pay: two Razorpay orders for one shop order, the paid one is the one that counts'); }
 
 // ----- delivery
 reset(); assert.equal((await delivery(post({ action: 'pin', pin: '12' }))).status, 400); ok('delivery: a bad PIN code is refused');
