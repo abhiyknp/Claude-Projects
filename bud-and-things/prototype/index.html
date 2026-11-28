@@ -2118,10 +2118,14 @@ function listOf(k) {
 const linkHref = (to) => (/^https?:\/\//i.test(to) ? to : '#' + to.replace(/^#/, ''));
 const linkA = (to, l, extra) => /^https?:\/\//i.test(to) ? `<a href="${esc(to)}" target="_blank" rel="noopener"${extra || ''}>${esc(l)}</a>` : `<a href="${esc(linkHref(to))}"${extra || ''}>${esc(l)}</a>`;
 // FAQ: a saved list wins; before that, the numbered Site text lines
+// a question about burn times stays hidden until at least one product has a tested burn time saved
+const burnTested = () => (DATA.products || []).some((p) => p && String(p.burnTime || '').trim());
+const burnFaq = (x) => /\bburn/i.test(x.q) && /how long|burn time/i.test(x.q + ' ' + x.a);
 function faqItems() {
-  if (Array.isArray(SET.faqList) && SET.faqList.every((x) => x && typeof x.q === 'string')) return SET.faqList.filter((x) => x.q.trim()).map((x) => ({ q: fill(x.q), a: fill(x.a || '') }));
+  const keep = (list) => (burnTested() ? list : list.filter((x) => !burnFaq(x)));
+  if (Array.isArray(SET.faqList) && SET.faqList.every((x) => x && typeof x.q === 'string')) return keep(SET.faqList.filter((x) => x.q.trim()).map((x) => ({ q: fill(x.q), a: fill(x.a || '') })));
   const out = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) out.push({ q: Tx('faq.q' + i), a: Tx('faq.a' + i) });
-  return out;
+  return keep(out);
 }
 const mdText = (t) => esc(t).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
 // ---------- menus: a panel under each main menu word on desktop, a full-screen menu on phones ----------

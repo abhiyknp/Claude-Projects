@@ -1,5 +1,5 @@
 // No burn time anywhere until the testing team has real burn tests: not on candle pages (no "to be confirmed" line
-// either) and not promised in the FAQ. Needs tools/preview.sh running (BT_BASE to use another address).
+// either), and the FAQ question about burn times is hidden. Needs tools/preview.sh running (BT_BASE to use another address).
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_process').execSync('npm root -g').toString().trim() + '/playwright');
 const fails = [];
 const ok = (label, cond) => { console.log(label, cond ? 'ok' : 'FAIL'); if (!cond) fails.push(label); };
@@ -13,8 +13,8 @@ const ok = (label, cond) => { console.log(label, cond ? 'ok' : 'FAIL'); if (!con
     for (const d of await p.locator('details').all()) { try { await d.evaluate((e) => { e.open = true; }); } catch (e) {} }
     const t = await p.evaluate(() => document.body.innerText); await ctx.close(); return t;
   };
-  for (const h of ['#p-bnt-prd-tl-001', '#p-bnt-prd-cg-001', '#p-bnt-prd-mc-001', '#help', '#shop']) {
-    const t = await text(h); ok(h + ': page has content', t.length > 300); ok(h + ': no burn time', !/burn time/i.test(t));
+  for (const h of ['#p-bnt-prd-tl-001', '#p-bnt-prd-cg-001', '#p-bnt-prd-mc-001', '#help', '#faq', '#shop']) {
+    const t = await text(h); ok(h + ': page has content', t.length > 300); ok(h + ': no burn time', !/burn time|how long do they burn/i.test(t));
   }
   await b.close();
   if (fails.length) { console.log('FAILED:', fails.join(' | ')); process.exit(1); }
