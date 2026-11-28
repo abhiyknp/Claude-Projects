@@ -36,8 +36,10 @@ const DB = 'http://localhost:54321';
     await p.click('[data-act="pay-success"][data-via="Online"]');
     const t0 = Date.now();
     if (lag === 2) {
-      // only the order page counts (the checkout page also has words like "paid"), and only once it no longer says Awaiting payment
-      await p.waitForFunction(() => location.hash.startsWith('#order-') && /\bPaid\b/.test(document.body.innerText) && !/Awaiting payment/.test(document.body.innerText), null, { timeout: 40000 }).catch(() => {});
+      // only the order page counts (the checkout page also has words like "paid"), and only once it no longer says Awaiting payment.
+      // Plain polling: the page's security policy blocks Playwright's waitForFunction on older Playwright versions.
+      const done = async () => p.evaluate(() => location.hash.startsWith('#order-') && /\bPaid\b/.test(document.body.innerText) && !/Awaiting payment/.test(document.body.innerText));
+      while (Date.now() - t0 < 40000 && !(await done())) await p.waitForTimeout(250);
       const txt = await p.evaluate(() => document.body.innerText);
       ok('paid after two "not yet" answers: the page shows Paid by itself', /\bPaid\b/.test(txt) && !/Awaiting payment/.test(txt) && p.url().includes('#order-'), (Date.now() - t0) + ' ms');
       ok('it really waited and asked again (3 s + 5 s), not just once', Date.now() - t0 >= 7500, (Date.now() - t0) + ' ms');
