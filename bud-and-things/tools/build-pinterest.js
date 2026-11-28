@@ -80,7 +80,7 @@ function patchHome(d, fileUrl) {
 function productPage(p, qty) {
   const prices = p.variants.map((v) => v.price);
   const inStock = p.variants.some((v) => (qty[v.sku] || 0) > 0);
-  const img = p.photos[0] ? p.photos[0].url : SITE + '/assets/share.jpg';
+  const img = p.photos[0] ? p.photos[0].url : SITE + '/assets/share-v2.jpg';
   const title = `${p.name} · ${BRAND} by Ashi`;
   const ld = {
     '@context': 'https://schema.org', '@type': 'Product', name: p.name, description: p.text, url: p.link,
