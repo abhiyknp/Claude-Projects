@@ -346,7 +346,7 @@
    "id": "BNT-PRD-DIY-001",
    "name": "Paint Your Starfish",
    "type": "DIY Paint Kit",
-   "price": 249,
+   "price": 149,
    "img": "bnt-prd-diy-001.jpg",
    "sheetTab": "DIY Items",
    "sheetRow": null,
@@ -379,6 +379,26 @@
    "price": 349,
    "img": "bnt-prd-st-003.jpg",
    "sheetTab": "Moulded Candles",
+   "sheetRow": null,
+   "stock": 99
+  },
+  {
+   "id": "BNT-PRD-ST-004",
+   "name": "Paint Your Starfish · Set of 2",
+   "type": "DIY paint kit set",
+   "price": 249,
+   "img": "bnt-prd-st-004.jpg",
+   "sheetTab": "DIY Items",
+   "sheetRow": null,
+   "stock": 99
+  },
+  {
+   "id": "BNT-PRD-ST-005",
+   "name": "Paint Your Starfish · Set of 3",
+   "type": "DIY paint kit set",
+   "price": 349,
+   "img": "bnt-prd-st-005.jpg",
+   "sheetTab": "DIY Items",
    "sheetRow": null,
    "stock": 99
   }
