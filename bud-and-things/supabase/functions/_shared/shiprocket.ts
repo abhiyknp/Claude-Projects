@@ -67,8 +67,8 @@ export async function bookOrder(id: string, b: Record<string, any> = {}) {
   if (!['Placed', 'Packed'].includes(o.status)) throw new BookError(409, { error: 'not_ready', status: o.status });
   const d = o.data, ship = { ...(d.parcel || {}) }; // data.ship is the shipping fee; the parcel is kept apart
   const num = (k: string, f: number) => { const v = Number(b[k]); return v > 0 && v < 1000 ? v : f; };
-  const size = { weight: num('weight', Number(d.shipKg) || Number(await setting('parcelKg', 0.5)) || 0.5), length: num('length', Number(await setting('parcelL', 20)) || 20),
-    breadth: num('breadth', Number(await setting('parcelB', 15)) || 15), height: num('height', Number(await setting('parcelH', 10)) || 10) };
+  const size = { weight: num('weight', Number(d.shipKg) || Number(await setting('parcelKg', 0.5)) || 0.5), length: num('length', Number(await setting('parcelL', 17)) || 17),
+    breadth: num('breadth', Number(await setting('parcelB', 14)) || 14), height: num('height', Number(await setting('parcelH', 10)) || 10) };
 
   if (!ship.shipment) {
     // a gift goes to the person it's for, under their name and number
