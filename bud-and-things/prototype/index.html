@@ -2100,7 +2100,7 @@ function toggleSave(id) { const i = S.saved.indexOf(id); if (i >= 0) { S.saved.s
 // ---------- routing ----------
 // old 3D-house links (#tour, #house-<piece>) land on the product or the home page
 function route() { const h = (location.hash || '#home').slice(1) || 'home'; if (h === 'tour') return 'home'; if (h.startsWith('house-')) return 'p-' + h.slice(6); return h; }
-window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false; UI.orderSync = {}; UI.invSync = {}; render(true); track('page_view', { page: pageName(route()) }); });
+window.addEventListener('hashchange', () => { UI.menu = false; DB.stale = false; UI.orderSync = {}; UI.invSync = {}; if (UI.watch && UI.watch.t) clearTimeout(UI.watch.t); UI.watch = null; render(true); track('page_view', { page: pageName(route()) }); });
 
 // ---------- chrome ----------
 // menus and the FAQ: the owner edits these lists in Owner view (Menus & FAQ); the lists below are what shows until then
@@ -2694,6 +2694,7 @@ function orderJourney(o, { idx, unpaid, cod }) {
 function viewOrder(id) {
   const o = S.orders.find((x) => x.id === id); if (!o) return viewNotFound('order');
   if (BTDB.on && !UI.orderSync[id]) { UI.orderSync[id] = 1; BTDB.rpc('get_order', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.status && (d.status !== o.status || JSON.stringify(d.parcel) !== JSON.stringify(o.parcel) || JSON.stringify(d.delay) !== JSON.stringify(o.delay))) { o.status = d.status; o.parcel = d.parcel; o.delay = d.delay; o.refundDue = d.refundDue; save(); if (route() === 'order-' + id) render(); } }).catch(() => { /* offline: keep the copy in this browser */ }); }
+  watchUnpaid(id);
   if (BTDB.on && !(UI.invSync || (UI.invSync = {}))[id] && o.status !== 'Awaiting payment' && o.status !== 'Cancelled') { UI.invSync[id] = 1; BTDB.rpc('get_invoice', { order_id: id, phone_no: o.contact.phone }).then((d) => { if (d && d.id && !UI.invOf[id]) { UI.invOf[id] = d; if (route() === 'order-' + id) render(); } }).catch(() => { /* no invoice yet: it shows once it is made */ }); }
   const inv = BTDB.on ? UI.invOf[id] : invoiceOf(id);
   const idx = STATUSES.indexOf(o.status); const cod = o.method === 'Cash on delivery'; const unpaid = o.status === 'Awaiting payment', gone = o.status === 'Cancelled';
@@ -5058,6 +5059,35 @@ async function payCheck(id, again) {
   // a payment Razorpay confirmed on the customer's side keeps being checked, quietly, while the page stays open
   if (!paid && P.expect && (P.autoTries = (P.autoTries || 0) + 1) <= 12) setTimeout(() => { if (route() === 'order-' + id && S.orders.find((x) => x.id === id && x.status === 'Awaiting payment')) payCheck(id, true); }, 15000);
 }
+
+// an online order that is still unpaid is watched while its page is open: every few seconds, for about 7 minutes, the page asks Razorpay
+// (through the pay function) again, so it turns Paid by itself however the payment was recorded (this page, or Razorpay's own notification)
+const ORDER_POLL_MS = () => (typeof window.BT_ORDER_POLL_MS === 'number' ? window.BT_ORDER_POLL_MS : 10000);
+async function quietPaidCheck(id) {
+  const o = S.orders.find((x) => x.id === id); if (!o || o.status !== 'Awaiting payment') return false;
+  try {
+    const r = await BTDB.fn('pay', { action: 'verify', order_id: id });
+    if (r && r.paid && r.status && o.status === 'Awaiting payment') { track('purchase', { order: id, value: o.total, method: 'Online', gift: !!o.gift }); o.status = r.status; if (UI.pay && UI.pay.id === id) UI.pay.err = null; save(); return true; }
+  } catch (e) { /* try again next time */ }
+  return false;
+}
+function watchUnpaid(id) {
+  const o = S.orders.find((x) => x.id === id); if (!BTDB.on || !o || o.status !== 'Awaiting payment' || o.method !== 'Online') return;
+  const W = UI.watch = UI.watch && UI.watch.id === id ? UI.watch : { id, n: 0, t: 0 }; if (W.t) return;
+  const tick = async () => {
+    W.t = 0; const cur = S.orders.find((x) => x.id === id);
+    if (route() !== 'order-' + id || !cur || cur.status !== 'Awaiting payment' || ++W.n > 40) return;
+    if (!(UI.pay && UI.pay.id === id && UI.pay.busy)) { if (await quietPaidCheck(id) && route() === 'order-' + id) { render(); return; } }
+    W.t = setTimeout(tick, ORDER_POLL_MS());
+  };
+  W.t = setTimeout(tick, ORDER_POLL_MS());
+}
+// coming back to the tab (from a UPI app or another tab) asks once at once
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || !BTDB.on) return; const r = route(); if (!r.startsWith('order-')) return;
+  const id = r.slice(6), o = S.orders.find((x) => x.id === id);
+  if (o && o.status === 'Awaiting payment' && o.method === 'Online') quietPaidCheck(id).then((paid) => { if (paid && route() === 'order-' + id) render(); });
+});
 
 // ---------- validation ----------
 function luhn(num) { let s = 0, alt = false; for (let i = num.length - 1; i >= 0; i--) { let d = +num[i]; if (alt) { d *= 2; if (d > 9) d -= 9; } s += d; alt = !alt; } return s % 10 === 0; }

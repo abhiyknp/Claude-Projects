@@ -13,7 +13,7 @@ const DB = 'http://localhost:54321';
   const html = require('fs').readFileSync(path.join(__dirname, '..', 'prototype', 'index.html'), 'utf8');
   const pieces = html.split('\n').filter((l) => /^\s*\{"id": "bnt-prd-/.test(l)).map((l) => JSON.parse(l.trim().replace(/,$/, '')));
   const b = await chromium.launch();
-  for (const lag of [2, 99]) {
+  for (const [lag, mode] of [[2, 'ok'], [99, 'ok'], [2, 'dismiss']]) {
     const mock = spawn('node', [path.join(__dirname, 'mock-supabase.js')], { stdio: 'ignore', env: Object.assign({}, process.env, { PAY_LAG: String(lag) }) });
     await new Promise((r) => setTimeout(r, 1500));
     const tok = (await (await fetch(DB + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'hello@budandthings.com', password: 'demo' }) })).json()).access_token;
@@ -24,7 +24,10 @@ const DB = 'http://localhost:54321';
     const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
     await ctx.route('**/config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: CFG }));
     // Razorpay's window: opening it is the customer paying; its handler runs straight away
-    await ctx.route('https://checkout.razorpay.com/**', (r) => r.fulfill({ contentType: 'text/javascript', body: 'window.Razorpay = function (o) { this.o = o; this.on = function () {}; this.open = function () { setTimeout(() => o.handler({ razorpay_payment_id: "pay_x" }), 50); }; };' }));
+    await ctx.route('https://checkout.razorpay.com/**', (r) => r.fulfill({ contentType: 'text/javascript', body: mode === 'dismiss'
+      ? 'window.Razorpay = function (o) { this.o = o; this.on = function () {}; this.open = function () { setTimeout(() => o.modal.ondismiss(), 50); }; };' // the customer closes the window, no success report
+      : 'window.Razorpay = function (o) { this.o = o; this.on = function () {}; this.open = function () { setTimeout(() => o.handler({ razorpay_payment_id: "pay_x" }), 50); }; };' }));
+    if (mode === 'dismiss') await ctx.addInitScript(() => { window.BT_ORDER_POLL_MS = 1200; }); // watch faster than the real 10 s
     const p = await ctx.newPage(); p.on('pageerror', (e) => errs.push(e.message));
     await p.goto(url + '#p-bnt-prd-jt-001'); await p.waitForTimeout(1200); await p.click('[data-act="add"]'); await p.keyboard.press('Escape');
     await p.goto(url + '#checkout'); await p.waitForTimeout(500);
@@ -35,7 +38,11 @@ const DB = 'http://localhost:54321';
     await p.click('form[data-form="address"] button[type="submit"]'); await p.waitForTimeout(500);
     await p.click('[data-act="pay-success"][data-via="Online"]');
     const t0 = Date.now();
-    if (lag === 2) {
+    if (mode === 'dismiss') {
+      const done = async () => p.evaluate(() => location.hash.startsWith('#order-') && /\bPaid\b/.test(document.body.innerText) && !/Awaiting payment/.test(document.body.innerText));
+      while (Date.now() - t0 < 30000 && !(await done())) await p.waitForTimeout(250);
+      ok('window closed with no success report: the page still turns Paid by itself, with no button pressed', await done(), (Date.now() - t0) + ' ms');
+    } else if (lag === 2) {
       // only the order page counts (the checkout page also has words like "paid"), and only once it no longer says Awaiting payment.
       // Plain polling: the page's security policy blocks Playwright's waitForFunction on older Playwright versions.
       const done = async () => p.evaluate(() => location.hash.startsWith('#order-') && /\bPaid\b/.test(document.body.innerText) && !/Awaiting payment/.test(document.body.innerText));
