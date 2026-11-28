@@ -1,6 +1,6 @@
 // Shiprocket helpers shared by the delivery and pay functions: the API client, picking the quickest courier, working out the
 // shipping fee from a live rate, and booking a courier for a paid order (by the owner, or automatically after payment).
-import { env, db, getOrder, setting, ORDER_ID } from './util.ts';
+import { env, db, getOrder, setting, ORDER_ID, nameLabel } from './util.ts';
 
 // Shiprocket wants the 10 digits for an Indian number (saved as +91…) and the plain digits for any other country
 export const shipPhone = (v: unknown) => { const d = String(v || '').replace(/\D/g, ''); return d.startsWith('91') && d.length === 12 ? d.slice(2) : d; };
@@ -81,7 +81,7 @@ export async function bookOrder(id: string, b: Record<string, any> = {}) {
       billing_address: d.address.line1, billing_address_2: d.address.line2 || '', billing_city: d.address.city, billing_pincode: d.address.pin,
       billing_state: d.address.state, billing_country: 'India', billing_email: d.contact.email || '', billing_phone: shipPhone((gift && d.gift.phone) || d.contact.phone),
       shipping_is_billing: true,
-      order_items: d.items.map((l: any) => ({ name: l.name + (l.label ? ' · ' + l.label : ''), sku: l.sku, units: l.qty, selling_price: l.price })),
+      order_items: d.items.map((l: any) => ({ name: nameLabel(l.name, l.label), sku: l.sku, units: l.qty, selling_price: l.price })),
       payment_method: o.method === 'Cash on delivery' ? 'COD' : 'Prepaid',
       shipping_charges: d.ship || 0, giftwrap_charges: d.wrap || 0, transaction_charges: d.cod || 0,
       total_discount: (d.ritual || 0) + (d.codeOff || 0), sub_total: d.sub, ...size });
