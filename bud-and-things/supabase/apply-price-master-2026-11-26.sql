@@ -1,5 +1,5 @@
 -- Locked names and prices from the master sheet (26 Nov 2026, prices of the small moulded candles updated 27 Nov). Run once in Supabase -> SQL editor.
--- It changes only the name and price of the 31 products (and the pack wording of the six tealights), and hides Paint Your Starfish.
+-- It changes only the name and price of the 31 products (and the pack wording of the six tealights), and makes Paint Your Starfish live (on sale at 249).
 -- It does NOT touch stock, photos, orders, customers, coupons, gift cards, reviews, settings or site text.
 -- Safe to run again: it sets the same values each time.
 begin;
