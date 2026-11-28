@@ -341,6 +341,46 @@
    "sheetTab": "Moulded Candles",
    "sheetRow": null,
    "stock": 99
+  },
+  {
+   "id": "BNT-PRD-DIY-001",
+   "name": "Paint Your Starfish",
+   "type": "DIY Paint Kit",
+   "price": 249,
+   "img": "bnt-prd-diy-001.jpg",
+   "sheetTab": "DIY Items",
+   "sheetRow": null,
+   "stock": 99
+  },
+  {
+   "id": "BNT-PRD-ST-001",
+   "name": "Float & Bloom Trio",
+   "type": "Moulded candle set",
+   "price": 249,
+   "img": "bnt-prd-st-001.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": null,
+   "stock": 99
+  },
+  {
+   "id": "BNT-PRD-ST-002",
+   "name": "Moulded Six",
+   "type": "Moulded candle set",
+   "price": 479,
+   "img": "bnt-prd-st-002.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": null,
+   "stock": 99
+  },
+  {
+   "id": "BNT-PRD-ST-003",
+   "name": "Mini Bubble Trio",
+   "type": "Moulded candle set",
+   "price": 349,
+   "img": "bnt-prd-st-003.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": null,
+   "stock": 99
   }
  ]
 }
