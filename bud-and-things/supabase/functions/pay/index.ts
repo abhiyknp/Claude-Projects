@@ -31,12 +31,17 @@ const markPaid = (id: string, pay: unknown) => db('/rest/v1/rpc/mark_paid', { or
 async function rzpOrder(id: string) {
   const list = await rzp('/orders?receipt=' + encodeURIComponent(id) + '&count=10');
   const items: any[] = Array.isArray(list?.items) ? list.items : [];
-  return items.find((x) => x.receipt === id && x.status !== 'paid') || items.find((x) => x.receipt === id) || null;
+  // a paid one wins over an open one: if the customer opened Razorpay twice, the money is on the one that was paid
+  return items.find((x) => x.receipt === id && x.status === 'paid') || items.find((x) => x.receipt === id) || null;
 }
 
 // Razorpay says the order is paid, for the full amount: record it (once; repeats change nothing)
 async function settle(o: { id: string; total: number }, ro: any) {
-  if (!ro || ro.status !== 'paid' || Number(ro.amount_paid) !== o.total * 100) return null;
+  if (!ro || ro.status !== 'paid' || Number(ro.amount_paid) !== o.total * 100) {
+    // not an error: the money may simply not have landed yet. Logged (no secrets) so the function logs say why an order stayed unpaid
+    console.log('pay: not recorded', o.id, JSON.stringify({ razorpay_order: ro ? { id: ro.id, status: ro.status, amount: ro.amount, amount_paid: ro.amount_paid } : null, expected_paise: Number(o.total) * 100, shop_status: (o as any).status }));
+    return null;
+  }
   const pays = (await rzp('/orders/' + encodeURIComponent(ro.id) + '/payments'))?.items || [];
   const p = (Array.isArray(pays) ? pays : []).find((x: any) => x.status === 'captured') || {};
   const first = !(o as any).data?.payment; // only the payment that first settles the order starts a booking
