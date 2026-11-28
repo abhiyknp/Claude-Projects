@@ -34,8 +34,8 @@ update products set data = jsonb_set(jsonb_set(data, '{name}', to_jsonb($j$Ivory
 update products set data = jsonb_set(jsonb_set(data, '{name}', to_jsonb($j$Cloud Marble$j$::text)), '{variants,0,price}', '199'::jsonb) where id = 'bnt-prd-jt-003';
 update products set data = jsonb_set(jsonb_set(data, '{name}', to_jsonb($j$Little Hearts$j$::text)), '{variants,0,price}', '199'::jsonb) where id = 'bnt-prd-jt-004';
 update products set data = jsonb_set(jsonb_set(data, '{name}', to_jsonb($j$Holi Bloom$j$::text)), '{variants,0,price}', '199'::jsonb) where id = 'bnt-prd-jt-005';
-update products set live = false where id = 'bnt-prd-diy-001';
+update products set live = true where id = 'bnt-prd-diy-001'; -- Paint Your Starfish is on sale (owner decision, 28 Nov)
 commit;
 
--- Check: should list the live products with the new prices, and Paint Your Starfish as not live.
+-- Check: should list the live products with the new prices, and Paint Your Starfish as live.
 select id, data->>'name' as name, data->'variants'->0->>'price' as price, live from products order by sort;
