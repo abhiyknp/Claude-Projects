@@ -205,7 +205,7 @@ alter table referrers enable row level security;
 alter table profiles enable row level security;
 alter table coupons enable row level security;
 alter table points_log enable row level security;
-alter table invoice_counters enable row level security; -- no rules on purpose: only issue_invoice() uses it
+alter table invoice_counters enable row level security; -- visitors and customers get nothing; only the owner may read it (for the backup), and issue_invoice() writes it
 alter table invoices enable row level security;
 alter table notifications enable row level security;
 alter table review_authors enable row level security;
@@ -223,6 +223,9 @@ create index if not exists ship_quotes_expiry on ship_quotes (expires_at);
 alter table ship_quotes enable row level security; -- no rules on purpose: only the delivery function and place_order use it
 revoke all on hits from anon, authenticated;
 revoke all on invoice_counters from anon, authenticated;
+grant select on invoice_counters to authenticated; -- the owner policy below is what lets rows through
+drop policy if exists "owner" on invoice_counters;
+create policy "owner" on invoice_counters for select using (is_owner());
 revoke insert, update, delete on invoices from anon, authenticated;
 
 -- change history: what each save to site text, settings, products and rituals replaced, so Owner view can put it back

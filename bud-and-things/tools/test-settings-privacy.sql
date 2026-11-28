@@ -14,4 +14,19 @@ do $$ declare n int; begin
   reset role;
   assert cfg_text('bizAddress', '') = 'Flat 9 Private Tower', 'the server cannot read bizAddress for invoices';
 end $$;
+-- the invoice number counter: only the owner may read it (for the backup)
+insert into invoice_counters (fy, kind, last) values ('26-27', 'test', 5) on conflict do nothing;
+insert into auth.users (id, email) values ('22222222-2222-2222-2222-222222222222', 'boss@example.com') on conflict do nothing;
+insert into owners (email) values ('boss@example.com') on conflict do nothing;
+do $$ declare n int; begin
+  set local role anon;
+  begin select count(*) into n from invoice_counters; assert false, 'anon can read the counter'; exception when insufficient_privilege then null; end;
+  reset role;
+  set local role authenticated; perform set_config('request.jwt.claim.sub','11111111-1111-1111-1111-111111111111', true);
+  select count(*) into n from invoice_counters; assert n = 0, 'a customer can read the counter';
+  perform set_config('request.jwt.claim.sub','22222222-2222-2222-2222-222222222222', true);
+  perform set_config('request.jwt.claims','{"aal":"aal2"}', true);
+  select count(*) into n from invoice_counters; assert n >= 1, 'the owner cannot read the counter';
+  reset role;
+end $$;
 select 'settings privacy checks passed';
