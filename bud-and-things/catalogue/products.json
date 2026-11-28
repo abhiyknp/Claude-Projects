@@ -311,6 +311,36 @@
    "sheetTab": "Jesmonite Tray",
    "sheetRow": 9,
    "stock": 1
+  },
+  {
+   "id": "BNT-PRD-MC-013",
+   "name": "Christmas Tree",
+   "type": "Moulded candle",
+   "price": 299,
+   "img": "bnt-prd-mc-013.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": null,
+   "stock": 99
+  },
+  {
+   "id": "BNT-PRD-MC-014",
+   "name": "Teddy",
+   "type": "Moulded candle",
+   "price": 99,
+   "img": "bnt-prd-mc-014.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": null,
+   "stock": 99
+  },
+  {
+   "id": "BNT-PRD-MC-015",
+   "name": "Evening Ember / Classic Pillar",
+   "type": "Moulded candle",
+   "price": 399,
+   "img": "bnt-prd-mc-015.jpg",
+   "sheetTab": "Moulded Candles",
+   "sheetRow": null,
+   "stock": 99
   }
  ]
 }

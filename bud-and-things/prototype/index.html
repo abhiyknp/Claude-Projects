@@ -190,7 +190,7 @@ body.public .proto { display: none; }
 .mega-panel > .wrap { display: flex; flex-wrap: wrap; gap: 8px 64px; padding-block: 28px 32px; align-items: flex-start; animation: megaIn .22s ease both; }
 .mega-col { display: grid; gap: 2px; align-content: start; } .mega-col strong { font-family: var(--display); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #D6A34A; margin-bottom: 8px; }
 .mega-col a { text-decoration: none; padding: 7px 0; font-size: 16px; border-bottom: 1px solid transparent; width: fit-content; } .mega-col a:hover, .mega-col a:focus-visible { border-bottom-color: #D6A34A; }
-.mega-feat { display: grid; gap: 6px; text-decoration: none; padding: 0; width: 300px; margin-left: auto; } .mega-feat img { width: 100%; height: 150px; object-fit: cover; border: 1px solid rgba(214,163,74,.5); } .mega-feat .eyebrow { color: #D6A34A; } .mega-feat strong { font-size: 17px; }
+.mega-feat { display: grid; gap: 6px; text-decoration: none; padding: 0; width: 300px; margin-left: auto; } .mega-feat img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 58%; border: 1px solid rgba(214,163,74,.5); } .mega-feat .eyebrow { color: #D6A34A; } .mega-feat strong { font-size: 17px; }
 .mega-wa { padding: 22px; border: 1px solid rgba(214,163,74,.6); background: rgba(214,163,74,.08); }
 @keyframes megaIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 @media (max-width: 860px) { .mega { display: none !important; } }
