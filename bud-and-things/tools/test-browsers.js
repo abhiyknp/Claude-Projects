@@ -18,11 +18,14 @@ const ROUTES = ['home', 'shop', 'gifting', 'story', 'help', 'faq', 'privacy', 't
         if (m.ow > 0) issues.push('#' + r + ' sideways scroll ' + m.ow + 'px'); if (m.bad) issues.push('#' + r + ' ' + m.bad + ' broken image(s)'); if (m.txt < 80) issues.push('#' + r + ' nearly empty');
       }
       // the main path: add a piece, open the cart, reach the checkout gate
-      await p.goto(url + '#p-bnt-prd-cg-001'); await p.waitForTimeout(500); await p.click('[data-act="add"]'); await p.waitForTimeout(300);
-      const added = await p.locator('.added-pop').count(); if (!added) issues.push('adding to the cart showed no confirmation');
+      await p.goto(url + '#p-bnt-prd-cg-001'); await p.waitForTimeout(800);
+      try { await p.locator('[data-act="add"]').first().click({ timeout: 10000 }); await p.waitForTimeout(400);
+        if (!(await p.locator('.added-pop').count())) issues.push('adding to the cart showed no confirmation'); }
+      catch (e) { const info = await p.evaluate(() => ({ hash: location.hash, len: document.body.innerText.length, head: document.body.innerText.slice(0, 160).replace(/\s+/g, ' '), btns: [...document.querySelectorAll('button')].slice(0, 12).map((x) => (x.dataset.act || x.className || x.textContent).toString().slice(0, 24)) })).catch(() => ({}));
+        issues.push('the Add to cart button was not found on the product page: ' + JSON.stringify(info)); }
       await p.goto(url + '#cart'); await p.waitForTimeout(400); if (!/Subtotal/.test(await p.evaluate(() => document.body.innerText))) issues.push('the cart shows no subtotal');
       await p.goto(url + '#checkout'); await p.waitForTimeout(400); if (!(await p.$('#acct-email'))) issues.push('the checkout sign-in form is missing');
-      const bad = errs.length || issues.length; if (bad) fails++;
+      const bad = errs.length || issues.length; if (bad) fails++; if (errs.length) console.log('  page errors:', [...new Set(errs)].slice(0, 6).join(' | ').slice(0, 600));
       console.log(`${label.padEnd(18)} ${ROUTES.length} pages + cart path · ${bad ? 'PROBLEMS' : 'ok'}${errs.length ? ' · errors: ' + [...new Set(errs)].slice(0, 3).join(' | ').slice(0, 200) : ''}${issues.length ? ' · ' + issues.slice(0, 4).join('; ') : ''}`);
       await ctx.close();
     }
