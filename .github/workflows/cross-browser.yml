@@ -21,6 +21,17 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
+      - name: Live site, HTTPS redirect and analytics script (information only)
+        continue-on-error: true
+        run: |
+          echo "== http://budandthings.com (should redirect to https)"
+          curl -sI -m 20 http://budandthings.com/ | head -6
+          code=$(curl -s -o /dev/null -w '%{http_code}' -m 20 http://budandthings.com/); loc=$(curl -sI -m 20 http://budandthings.com/ | grep -i '^location:' | tr -d '\r')
+          case "$code" in 301|302|307|308) case "$loc" in *https://*) echo "RESULT: http redirects to https ($code)";; *) echo "RESULT: http redirects, but not to https: $loc";; esac;; *) echo "RESULT: http does NOT redirect (status $code). Turn on Always Use HTTPS in Cloudflare.";; esac
+          echo "== https headers"
+          curl -sI -m 20 https://budandthings.com/ | grep -i 'strict-transport\|^server\|x-frame\|x-content-type\|referrer-policy'
+          echo "== Cloudflare Web Analytics script in the page?"
+          if curl -s -m 20 https://budandthings.com/ | grep -qi 'cloudflareinsights'; then echo "RESULT: Cloudflare Web Analytics is injected (the shop's security policy blocks it)"; else echo "RESULT: no Cloudflare Web Analytics script in the page"; fi
       - name: Install Firefox and WebKit
         run: |
           mkdir -p "$RUNNER_TEMP/xb" && cd "$RUNNER_TEMP/xb"
@@ -28,10 +39,10 @@ jobs:
           npx playwright install --with-deps firefox webkit
       - name: Run the shop in Firefox
         run: |
-          sh bud-and-things/tools/preview.sh >/dev/null 2>&1 &
+          BT_CSP_NO_UPGRADE=1 sh bud-and-things/tools/preview.sh >/dev/null 2>&1 &
           sleep 3
           BROWSERS=firefox PLAYWRIGHT_PATH="$RUNNER_TEMP/xb/node_modules/playwright" node bud-and-things/tools/test-browsers.js
       - name: Run the shop in WebKit (Safari)
         if: always()
         run: |
-          BROWSERS=webkit PLAYWRIGHT_PATH="$RUNNER_TEMP/xb/node_modules/playwright" node bud-and-things/tools/test-browsers.js
+          VERBOSE=1 BROWSERS=webkit PLAYWRIGHT_PATH="$RUNNER_TEMP/xb/node_modules/playwright" node bud-and-things/tools/test-browsers.js
