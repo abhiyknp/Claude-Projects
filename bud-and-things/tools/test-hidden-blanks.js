@@ -39,7 +39,7 @@ const BAD = [/\[to add\]/i, /\bundefined\b/, /\bnull\b/, /\bNaN\b/, /,\s*,/, /:\
   ok('privacy filled: business name', /Test Maker/.test(t)); ok('privacy filled: grievance officer', /Test Officer/.test(t) && /9000000001/.test(t)); ok('privacy filled: date', /5 May 2030/.test(t));
   ok('privacy filled: no gaps', !BAD.some((re) => re.test(t))); await v.ctx.close();
   v = await visit(FULL, '#terms'); t = await v.text(); ok('terms filled: court city', /Courts in Testville/.test(t)); await v.ctx.close();
-  v = await visit(FULL, href); t = await v.text(); ok('product filled: made and packed by', /Made and packed by/.test(t) && /Test Maker/.test(t)); ok('product filled: consumer care', /Consumer care/.test(t) && /Test Officer/.test(t)); await v.ctx.close();
+  v = await visit(FULL, href); t = await v.text(); ok('product filled: made and packed by', /Made and packed by/.test(t) && /Test Maker/.test(t)); ok('product filled: consumer care is the official email, with no grievance officer name or phone on the product page', /Consumer care/.test(t) && /a@b\.test/.test(t) && !/Test Officer/.test(t) && !/9000000001/.test(t)); await v.ctx.close();
 
   // some details filled, some not: the list keeps what exists
   v = await visit({ ...BLANK, grievanceName: 'Only Name', email: 'x@y.test' }, '#privacy'); t = await v.text();

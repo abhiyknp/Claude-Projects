@@ -2430,7 +2430,7 @@ function packDetails(p, v) {
   const bd = p.batch && (p.batch.packed || p.batch.poured) ? new Date(p.batch.packed || p.batch.poured) : null;
   const packed = bd && !isNaN(bd) ? bd.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : ''; // no date recorded: the row is left out, the pack label does not carry it
   const biz = [fill('{bizName}'), fill('{siteAddress}')].filter(Boolean).join(', ');
-  const care = [fill('{grievanceName}'), fill('{grievancePhone}'), fill('{email}')].filter(Boolean).join(', ');
+  const care = fill('{email}'); // the official email only; the grievance officer's name and phone are on the Privacy and Terms pages
   return `<dl class="spec"><dt>Common name</dt><dd>${esc(p.type)}</dd><dt>Net quantity</dt><dd>${esc(net)}</dd><dt>MRP</dt><dd>${inr(v.price)} (incl. of all taxes)</dd>${packed ? `<dt>Packed</dt><dd>${esc(packed)}</dd>` : ''}<dt>Country of origin</dt><dd>India</dd>${biz ? `<dt>Made and packed by</dt><dd>${esc(biz)}, India</dd>` : ''}${care ? `<dt>Consumer care</dt><dd>${esc(care)}</dd>` : ''}</dl>`;
 }
 function viewProduct(id) {
