@@ -60,4 +60,6 @@ export function cors(req: Request) {
 }
 export const reply = (req: Request, status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors(req), 'Content-Type': 'application/json' } });
+// the option label is added to a product's name only when the name does not already say it
+export const nameLabel = (name: unknown, label: unknown) => { const n = String(name ?? ''), l = String(label ?? ''); return l && !n.toLowerCase().includes(l.toLowerCase()) ? n + ' · ' + l : n; };
 export const ORDER_ID = /^BT-\d+-[0-9A-F]{6}$/;

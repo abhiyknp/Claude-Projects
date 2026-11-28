@@ -9,7 +9,7 @@
 // Email goes through Resend (RESEND_API_KEY). WhatsApp, SMS and app push are wired to the same queue but only send
 // once a provider is set up (WHATSAPP_URL / SMS_URL / PUSH_URL below); until then those messages are given up
 // quietly and the email still goes. Set up: see "Messages to customers" in supabase/README.md.
-import { env, dbReady, db, setting, same, reply, cors } from '../_shared/util.ts';
+import { env, dbReady, db, setting, same, reply, cors, nameLabel } from '../_shared/util.ts';
 
 const esc = (s: unknown) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string));
 const inr = (n: unknown) => '₹' + Number(n || 0).toLocaleString('en-IN');
@@ -22,7 +22,7 @@ type Msg = { subject: string; lines: string[]; button?: [string, string]; short:
 function compose(n: Note, site: string, shop: string): Msg | null {
   const o = n.order || {}, first = String(n.name || '').split(' ')[0] || 'there', id = n.order_id || '';
   const link = site ? site + '/#order-' + id : '';
-  const items = (o.items || []).map((l: any) => `${l.name}${l.label ? ' · ' + l.label : ''} × ${l.qty}`);
+  const items = (o.items || []).map((l: any) => `${nameLabel(l.name, l.label)} × ${l.qty}`);
   const track = o.parcel && o.parcel.awb ? `${o.parcel.courier || 'Courier'}, tracking number ${o.parcel.awb}` : '';
   const trackLink = o.parcel && o.parcel.track ? [`Track your parcel`, o.parcel.track] as [string, string] : undefined;
   switch (n.event) {
