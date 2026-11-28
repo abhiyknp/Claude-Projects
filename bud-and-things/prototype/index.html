@@ -331,6 +331,7 @@ label { font-size: 14px; font-weight: 600; }
 .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px 28px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 16px; }
 .facts strong { display: block; margin-bottom: 2px; }
 .facts .social { margin-top: 10px; }
+.facts > div > span { display: block; margin-top: 6px; font-weight: 400; overflow-wrap: anywhere; } .facts > div > span:first-of-type { margin-top: 4px; } /* contact lines on their own rows, not run together */
 .pair { background: var(--linen); padding: 26px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
 .status { padding: 12px 14px; background: var(--sand2); font-size: 16px; }
 .status.ok { background: var(--ok-bg); }
@@ -896,6 +897,7 @@ body.app .why-band { padding-bottom: 96px; }
 .disc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .78; transition: transform 1s ease, opacity .4s; }
 .disc:hover img { transform: scale(1.05); opacity: .65; }
 .disc:hover { color: #FFF8ED; }
+.name-panel { aspect-ratio: 4 / 3; display: grid; place-items: center; border-radius: 18px 4px 18px 4px; background: var(--velvet, none) center / cover, radial-gradient(ellipse at 50% 35%, #3a0610, #150206 70%); } .name-panel img { width: min(42%, 220px); height: auto; filter: drop-shadow(0 8px 18px rgba(0,0,0,.45)); }
 .disc-ph { position: absolute; inset: 0; display: grid; place-items: start center; padding-top: 34px; background: var(--velvet, none) center / cover, radial-gradient(ellipse at 50% 35%, #3a0610, #150206 70%); }
 .disc .disc-ph img { position: static; inset: auto; width: min(40%, 150px); height: auto; max-height: 130px; object-fit: contain; opacity: 1; filter: drop-shadow(0 8px 18px rgba(0,0,0,.45)); transition: transform .8s ease; }
 .disc:hover .disc-ph img { transform: scale(1.05); opacity: 1; }
@@ -2428,7 +2430,7 @@ function packDetails(p, v) {
   const bd = p.batch && (p.batch.packed || p.batch.poured) ? new Date(p.batch.packed || p.batch.poured) : null;
   const packed = bd && !isNaN(bd) ? bd.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : ''; // no date recorded: the row is left out, the pack label does not carry it
   const biz = [fill('{bizName}'), fill('{siteAddress}')].filter(Boolean).join(', ');
-  const care = [fill('{grievanceName}'), fill('{grievancePhone}'), fill('{email}')].filter(Boolean).join(', ');
+  const care = fill('{email}'); // the official email only; the grievance officer's name and phone are on the Privacy and Terms pages
   return `<dl class="spec"><dt>Common name</dt><dd>${esc(p.type)}</dd><dt>Net quantity</dt><dd>${esc(net)}</dd><dt>MRP</dt><dd>${inr(v.price)} (incl. of all taxes)</dd>${packed ? `<dt>Packed</dt><dd>${esc(packed)}</dd>` : ''}<dt>Country of origin</dt><dd>India</dd>${biz ? `<dt>Made and packed by</dt><dd>${esc(biz)}, India</dd>` : ''}${care ? `<dt>Consumer care</dt><dd>${esc(care)}</dd>` : ''}</dl>`;
 }
 function viewProduct(id) {
@@ -2715,17 +2717,17 @@ function viewOrder(id) {
 
 function viewStory() {
   const pillars = [['leaf', 'Thoughtful Design', 'Thought goes into the things we make.'], ['sun', 'Everyday Moments', 'The everyday deserves beautiful things too.'], ['arch', 'Gifting With Feeling', 'Give something that feels chosen, not simply bought.'], ['flow', 'Contemporary Indian Soul', 'Rooted in India. Designed for contemporary living.'], ['spark', 'Made to Be Kept', 'Some things become special because we keep them.']];
-  const founder = mediaFor('brand', { role: 'founder' })[0]; const side = brandImgs('process', [[IMG.seal, 'Handmade BUD & THINGS pieces.'], [IMG.leather, 'Made with thought, given with feeling.']]);
+  const founder = mediaFor('brand', { role: 'founder' })[0]; const side = brandImgs('process', []); // the owner's own studio and process photos; none yet: a brand panel, never product photos
   const steps = [['spark', 'Thought', 'Every piece starts with a moment we want to make room for: tea at four, rings at night, a lamp at the door.'], ['hand', 'Object', 'Candles are poured and Jesmonite cast by hand in small batches, then cured, checked and finished.'], ['flame', 'Feeling', 'Each order is wrapped in tissue with a care card and, for gifts, a note written by hand.'], ['star', 'Memory', 'The best part is when a piece becomes part of someone’s everyday. That is what we make them for.']];
   return `<section class="story-top" aria-labelledby="story-h1"><div class="wrap story-top-in">
     <div class="story-top-copy"><span class="eyebrow">Our Story</span><h1 id="story-h1" tabindex="-1">${T('story.title')}</h1><p class="lead">${T('story.lead')}</p>
       <span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn light" href="#shop">Shop the collection</a></span></div>
-    <div class="story-collage">${founder ? `<div class="c1">${mediaEl(founder)}</div>` : `<img class="c1" src="${IMG.box}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy">`}<img class="c2" src="${IMG.jar}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"><img class="c3" src="${IMG.seal}" alt="Handmade BUD &amp; THINGS pieces." loading="lazy"><span class="mark monogram c4" aria-hidden="true"></span></div></div></section>
+    <div class="story-collage">${founder ? `<div class="c1">${mediaEl(founder)}</div>` : `<img class="c1" src="${IMG.box}" alt="Cloud Marble, a handmade Jesmonite dish." loading="lazy">`}<img class="c2" src="${IMG.jar}" alt="Iced Latte, a hand-poured glass candle." loading="lazy"><img class="c3" src="${IMG.leather}" alt="Sunflower Float, a hand-moulded candle." loading="lazy"><span class="mark monogram c4" aria-hidden="true"></span></div></div></section>
   <div class="wrap" style="padding-bottom:var(--section)">
     <section class="section" aria-labelledby="name-h"><div class="split" style="align-items:flex-start"><div style="display:flex;flex-direction:column;gap:18px;max-width:640px">
       <span class="eyebrow">The name</span><h2 id="name-h" style="font-size:clamp(30px,3.4vw,44px)">A bud is a small beginning.</h2>
       <p class="muted">${T('story.p1')}</p><p class="muted">${T('story.p2')}</p></div>
-      <div style="display:grid;gap:16px">${side.slice(0, 2).map(([src, alt]) => `<figure class="photo" style="margin:0"><img src="${esc(src)}" alt="${esc(alt || '')}" loading="lazy" style="aspect-ratio:4/3"></figure>`).join('')}</div></div></section>
+      <div style="display:grid;gap:16px">${side.length ? side.slice(0, 2).map(([src, alt]) => `<figure class="photo" style="margin:0"><img src="${esc(src)}" alt="${esc(alt || '')}" loading="lazy" style="aspect-ratio:4/3"></figure>`).join('') : `<div class="name-panel" aria-hidden="true"><img src="assets/silk/logo-stacked.webp" alt=""></div>`}</div></div></section>
     ${/^\s*\[/.test(Tx('story.note')) ? '' : `<section class="founder-note" aria-labelledby="note-h"><span class="mark monogram" aria-hidden="true" style="width:56px"></span><span class="eyebrow" id="note-h">A note from Ashi</span><p>${T('story.note')}</p><span class="signature">— Ashi</span></section>`}
     <section class="section" aria-labelledby="how-h" style="padding-bottom:0"><div class="section-head"><h2 id="how-h">How a piece is made</h2><span class="eyebrow">Thought → Object → Feeling → Memory</span></div>
       <ol class="how-steps">${steps.map(([i, h, t], n) => `<li><span class="how-n num">0${n + 1}</span>${hl(i, 28)}<strong>${h}</strong><span class="muted">${esc(t)}</span></li>`).join('')}</ol></section>
@@ -2736,7 +2738,7 @@ function viewStory() {
 function viewHelp() {
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">We usually reply within a working day.</p></div>
     <div class="help-cards"><a href="#track">${hl('box', 26)}<strong>Track your order</strong><span>Order number and mobile number</span></a><a href="#shipping">${hl('truck', 26)}<strong>Shipping &amp; delivery</strong><span>Charges, times and gifts</span></a><a href="#refunds">${hl('shield', 26)}<strong>Cancellations &amp; replacements</strong><span>Damaged items replaced free</span></a><a href="#faq">${hl('note', 26)}<strong>FAQs</strong><span>Quick answers</span></a></div>
-    <div class="facts" style="border-top:0;margin-top:32px"><div><strong>Contact us</strong>${SET.email ? `<span class="muted sel">${esc(SET.email)}</span>` : ''}${String(SET.whatsapp || '').replace(/\D/g, '').slice(-10).length === 10 ? `<span class="muted sel">WhatsApp: +91 ${esc(String(SET.whatsapp).replace(/\D/g, '').slice(-10))}</span>` : ''}${SET.bizName ? `<span class="muted sel">${esc(SET.bizName)}${SET.siteAddress ? ', ' + esc(SET.siteAddress) + ', India' : ''}</span>` : ''}${SET.grievanceName && SET.grievancePhone ? `<span class="muted sel">Customer care and grievance officer: ${esc(SET.grievanceName)}, ${esc(SET.grievancePhone)}</span>` : ''}${socialLinks()}</div>
+    <div class="facts" style="border-top:0;margin-top:32px"><div><strong>Contact us</strong>${SET.email ? `<span class="muted sel">${esc(SET.email)}</span>` : ''}${SET.bizName ? `<span class="muted sel">${esc(SET.bizName)}${SET.siteAddress ? ', ' + esc(SET.siteAddress) + ', India' : ''}</span>` : ''}${socialLinks()}</div>
     <div><strong>Shipping &amp; delivery</strong><span class="muted">${T('help.shipping')}</span></div>
     ${SET.codOn ? `<div><strong>Cash on delivery</strong><span class="muted">${T('co.cod')}</span></div>` : ''}
     <div><strong>Replacements</strong><span class="muted">${T('help.exchanges')}</span></div>
@@ -5025,7 +5027,7 @@ async function payOnline(id) {
     await new Promise((done) => {
       const rz = new window.Razorpay({ key: r.key, order_id: r.razorpay_order, amount: r.amount, currency: 'INR', name: 'BUD & THINGS', description: 'Order ' + id,
         prefill: { name: o.contact.name || '', email: o.contact.email || '', contact: o.contact.phone || '' }, theme: { color: '#7A1229' },
-        handler: () => done(), modal: { ondismiss: () => done() } });
+        handler: () => { P.expect = true; done(); }, modal: { ondismiss: () => done() } }); // handler = Razorpay says the payment went through
       rz.on('payment.failed', (f) => { P.err = (f && f.error && f.error.description) || 'The payment didn’t go through.'; });
       rz.open();
     });
@@ -5037,14 +5039,24 @@ async function payOnline(id) {
   }
 }
 // ask the pay function whether Razorpay has the money; it records the payment if so
-async function payCheck(id) {
+async function payCheck(id, again) {
   const o = S.orders.find((x) => x.id === id); const P = UI.pay = UI.pay && UI.pay.id === id ? UI.pay : { id }; P.busy = true; render();
+  const ask = async () => { const r = await BTDB.fn('pay', { action: 'verify', order_id: id }); if (o && r.status) { if (r.paid && o.status === 'Awaiting payment') track('purchase', { order: id, value: o.total, method: 'Online', gift: !!o.gift }); o.status = r.status; save(); } return r; };
+  let paid = false;
   try {
-    const r = await BTDB.fn('pay', { action: 'verify', order_id: id });
-    if (o && r.status) { if (r.paid && o.status === 'Awaiting payment') track('purchase', { order: id, value: o.total, method: 'Online', gift: !!o.gift }); o.status = r.status; save(); }
-    P.busy = false; if (r.paid) P.err = null; else if (!P.err) P.err = 'We haven’t received the payment yet. If money left your account, it will show here within a few minutes; otherwise, try again.';
+    // Razorpay can take a little while to mark the order paid: a customer who has just paid is asked again a few times (3, 5, 8 and 12 seconds) before we say anything
+    const waits = P.expect && !again ? [3000, 5000, 8000, 12000] : [];
+    let r = await ask();
+    for (const w of waits) { if (r.paid) break; await new Promise((ok) => setTimeout(ok, w)); r = await ask(); }
+    paid = !!r.paid;
+    P.busy = false;
+    if (paid) P.err = null;
+    else if (P.expect) P.err = 'Your payment went through. We’re confirming it with Razorpay, and this page updates by itself within a few minutes. Please don’t pay again.';
+    else if (!P.err) P.err = 'We haven’t received the payment yet. If money left your account, it will show here within a few minutes; otherwise, try again.';
   } catch (e) { P.busy = false; P.err = 'We couldn’t check the payment just now. Refresh this page in a minute.'; }
   if (route() === 'order-' + id) render();
+  // a payment Razorpay confirmed on the customer's side keeps being checked, quietly, while the page stays open
+  if (!paid && P.expect && (P.autoTries = (P.autoTries || 0) + 1) <= 12) setTimeout(() => { if (route() === 'order-' + id && S.orders.find((x) => x.id === id && x.status === 'Awaiting payment')) payCheck(id, true); }, 15000);
 }
 
 // ---------- validation ----------
