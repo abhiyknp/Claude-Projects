@@ -21,13 +21,11 @@ do $$ declare n int; begin
   if n <> 5 then raise exception 'Expected 5 offline orders but found %. Nothing was changed.', n; end if;
 end $$;
 
-create temp table test_orders on commit drop as select id from orders where (data ->> 'channel') is distinct from 'offline';
-
-delete from notifications where order_id in (select id from test_orders);
-delete from bills where order_id in (select id from test_orders);
+delete from notifications where order_id in (select id from orders where (data ->> 'channel') is distinct from 'offline');
+delete from bills where order_id in (select id from orders where (data ->> 'channel') is distinct from 'offline');
 update invoices set status = 'Void', void_reason = 'Test order', voided_at = now()
-  where order_id in (select id from test_orders) and status = 'Issued';
-delete from orders where id in (select id from test_orders);
+  where order_id in (select id from orders where (data ->> 'channel') is distinct from 'offline') and status = 'Issued';
+delete from orders where (data ->> 'channel') is distinct from 'offline';
 
 -- the 5 real offline orders: Delivered, with no customer message
 alter table orders disable trigger order_notes;
