@@ -246,7 +246,7 @@ create policy "owner" on owners for select using (is_owner());
 create policy "read" on products for select using (live or is_owner());
 create policy "read" on pairings for select using (live or is_owner());
 create policy "read" on site_text for select using (true);
-create policy "read" on settings for select using (true);
+create policy "read" on settings for select using (key <> 'bizAddress'); -- the full address is for invoices only (the server reads it)
 create policy "read" on stock for select using (true);
 create policy "read" on media for select using (published or is_owner());
 create policy "read" on reviews for select using (published or is_owner());
