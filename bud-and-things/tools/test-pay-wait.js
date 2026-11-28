@@ -36,9 +36,11 @@ const DB = 'http://localhost:54321';
     await p.click('[data-act="pay-success"][data-via="Online"]');
     const t0 = Date.now();
     if (lag === 2) {
-      await p.waitForFunction(() => /Paid/.test(document.body.innerText) && !/Awaiting payment/.test(document.body.innerText), null, { timeout: 40000 }).catch(() => {});
+      // only the order page counts (the checkout page also has words like "paid"), and only once it no longer says Awaiting payment
+      await p.waitForFunction(() => location.hash.startsWith('#order-') && /\bPaid\b/.test(document.body.innerText) && !/Awaiting payment/.test(document.body.innerText), null, { timeout: 40000 }).catch(() => {});
       const txt = await p.evaluate(() => document.body.innerText);
-      ok('paid after two "not yet" answers: the page shows Paid by itself', /Paid/.test(txt) && !/Awaiting payment/.test(txt), (Date.now() - t0) + ' ms');
+      ok('paid after two "not yet" answers: the page shows Paid by itself', /\bPaid\b/.test(txt) && !/Awaiting payment/.test(txt) && p.url().includes('#order-'), (Date.now() - t0) + ' ms');
+      ok('it really waited and asked again (3 s + 5 s), not just once', Date.now() - t0 >= 7500, (Date.now() - t0) + ' ms');
       ok('no "we haven\'t received the payment" message on the way', !/haven.t received the payment/.test(txt));
     } else {
       await p.waitForTimeout(36000);
