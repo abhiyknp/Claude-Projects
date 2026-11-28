@@ -16,8 +16,8 @@ const BAD = [/\[to add\]/i, /\bundefined\b/, /\bnull\b/, /\bNaN\b/, /,\s*,/, /:\
     const text = async () => { try { await p.locator('text=Pack details').first().click({ timeout: 1500 }); await p.waitForTimeout(300); } catch (e) {} return p.evaluate(() => document.body.innerText); };
     return { p, ctx, errs, text };
   };
-  const BLANK = { bizName: '', bizAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '', email: '' };
-  const FULL = { bizName: 'Test Maker', bizAddress: '1 Test Road', gstin: '', grievanceName: 'Test Officer', grievancePhone: '9000000001', courtCity: 'Testville', policyDate: '5 May 2030', email: 'a@b.test' };
+  const BLANK = { bizName: '', bizAddress: '', siteAddress: '', gstin: '', grievanceName: '', grievancePhone: '', courtCity: '', policyDate: '', email: '' };
+  const FULL = { bizName: 'Test Maker', bizAddress: '1 Test Road', siteAddress: '1 Test Road', gstin: '', grievanceName: 'Test Officer', grievancePhone: '9000000001', courtCity: 'Testville', policyDate: '5 May 2030', email: 'a@b.test' };
 
   for (const h of ['#privacy', '#terms', '#shipping', '#refunds']) {
     const v = await visit(BLANK, h); const t = await v.text();
