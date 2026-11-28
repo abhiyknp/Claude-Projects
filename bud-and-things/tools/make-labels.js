@@ -11,7 +11,7 @@ const rows = JSON.parse(fs.readFileSync(fs.existsSync(LABELS) ? LABELS : path.jo
 const out = process.argv[2] || 'labels.html';
 const now = new Date(); const packed = process.argv[3] || String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear();
 const COPIES = Math.max(1, parseInt(process.env.COPIES || '1', 10));
-const MAKER = 'BUD & THINGS by Ashi, Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318, India';
+const MAKER = 'BUD & THINGS by Ashi, Greater Noida West, Gautam Buddha Nagar, Uttar Pradesh 201318, India';
 const CARE = 'Abhishek Yadav, 9839176160, hello@budandthings.com';
 // Burn times are printed only when BURN_TESTED=1 is set, after real burn tests (tasks/AFTER_LAUNCH.md). The ranges below are untested estimates.
 const burn = (t) => !process.env.BURN_TESTED ? '' : t0(t);
@@ -40,7 +40,7 @@ const qrgen = require(path.join(__dirname, '..', 'prototype', 'vendor', 'qrcode'
 const qrSvg = (url) => { const q = qrgen(0, 'M'); q.addData(url); q.make(); return q.createSvgTag({ cellSize: 1, margin: 0, scalable: true }); };
 const smell = {};
 try { fs.readFileSync(path.join(__dirname, '..', 'supabase', 'apply-product-copy-2026-11-26.sql'), 'utf8').split('\n').forEach((l) => { const m = l.match(/'smellsLike', to_jsonb\(\$j\$(.*?)\$j\$::text\)/); const k = l.match(/where id = '([a-z0-9-]+)'/); if (m && k) smell[k[1].toUpperCase()] = m[1]; }); } catch (e) { /* no scent lines */ }
-const LEGAL = 'Made in India by BUD & THINGS by Ashi, Amarpali Verona Heights, Tech Zone 4, Greater Noida West, UP 201318 · hello@budandthings.com';
+const LEGAL = 'Made in India by BUD & THINGS by Ashi, Greater Noida West, UP 201318 · hello@budandthings.com';
 const qty = (r, i) => r.set ? `Set of ${r.set} · ${r.grams} g` : i.short;
 const url = (r) => 'https://budandthings.com/#p-' + String(r.id).toLowerCase();
 const labelMrich = (r) => { const i = info(r); const sm = smell[r.id]; return `<div class="l M"><div class="pn"><img src="${mono}"></div>
@@ -53,7 +53,7 @@ const labelSrich = (r) => { const i = info(r); return `<div class="l S"><div cla
 <div class="legal">${esc(LEGAL)}</div></div>`; };
 
 // Minimal style (default): gold monogram, name, weight and price, one small legal line. LABEL_STYLE=rich gives the designed version with scent line and QR.
-const LEGAL_MIN = 'Packed ' + packed + ' · MRP incl. of all taxes · Made in India by BUD & THINGS by Ashi, Amarpali Verona Heights, Tech Zone 4, Greater Noida West, UP 201318 · hello@budandthings.com';
+const LEGAL_MIN = 'Packed ' + packed + ' · MRP incl. of all taxes · Made in India by BUD & THINGS by Ashi, Greater Noida West, UP 201318 · hello@budandthings.com';
 const labelMin = (r, t) => { const i = info(r); return `<div class="l ${t} mn"><img class="mo" src="${mono}"><div class="nm${i.name.length > 24 ? ' long' : ''}">${esc(i.name)}</div><div class="wp">${esc(qty(r, i))} <i>·</i> <b>₹${r.price}</b></div><div class="lg">${esc(LEGAL_MIN)}</div></div>`; };
 
 // LOCKED DESIGN (Silk & Gold): maroon silk, double gold frame, leaf, brand line, diamond divider, type line, name, tagline,
