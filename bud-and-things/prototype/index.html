@@ -5025,7 +5025,7 @@ async function payOnline(id) {
     await new Promise((done) => {
       const rz = new window.Razorpay({ key: r.key, order_id: r.razorpay_order, amount: r.amount, currency: 'INR', name: 'BUD & THINGS', description: 'Order ' + id,
         prefill: { name: o.contact.name || '', email: o.contact.email || '', contact: o.contact.phone || '' }, theme: { color: '#7A1229' },
-        handler: () => done(), modal: { ondismiss: () => done() } });
+        handler: () => { P.expect = true; done(); }, modal: { ondismiss: () => done() } }); // handler = Razorpay says the payment went through
       rz.on('payment.failed', (f) => { P.err = (f && f.error && f.error.description) || 'The payment didn’t go through.'; });
       rz.open();
     });
@@ -5037,14 +5037,24 @@ async function payOnline(id) {
   }
 }
 // ask the pay function whether Razorpay has the money; it records the payment if so
-async function payCheck(id) {
+async function payCheck(id, again) {
   const o = S.orders.find((x) => x.id === id); const P = UI.pay = UI.pay && UI.pay.id === id ? UI.pay : { id }; P.busy = true; render();
+  const ask = async () => { const r = await BTDB.fn('pay', { action: 'verify', order_id: id }); if (o && r.status) { if (r.paid && o.status === 'Awaiting payment') track('purchase', { order: id, value: o.total, method: 'Online', gift: !!o.gift }); o.status = r.status; save(); } return r; };
+  let paid = false;
   try {
-    const r = await BTDB.fn('pay', { action: 'verify', order_id: id });
-    if (o && r.status) { if (r.paid && o.status === 'Awaiting payment') track('purchase', { order: id, value: o.total, method: 'Online', gift: !!o.gift }); o.status = r.status; save(); }
-    P.busy = false; if (r.paid) P.err = null; else if (!P.err) P.err = 'We haven’t received the payment yet. If money left your account, it will show here within a few minutes; otherwise, try again.';
+    // Razorpay can take a little while to mark the order paid: a customer who has just paid is asked again a few times (3, 5, 8 and 12 seconds) before we say anything
+    const waits = P.expect && !again ? [3000, 5000, 8000, 12000] : [];
+    let r = await ask();
+    for (const w of waits) { if (r.paid) break; await new Promise((ok) => setTimeout(ok, w)); r = await ask(); }
+    paid = !!r.paid;
+    P.busy = false;
+    if (paid) P.err = null;
+    else if (P.expect) P.err = 'Your payment went through. We’re confirming it with Razorpay, and this page updates by itself within a few minutes. Please don’t pay again.';
+    else if (!P.err) P.err = 'We haven’t received the payment yet. If money left your account, it will show here within a few minutes; otherwise, try again.';
   } catch (e) { P.busy = false; P.err = 'We couldn’t check the payment just now. Refresh this page in a minute.'; }
   if (route() === 'order-' + id) render();
+  // a payment Razorpay confirmed on the customer's side keeps being checked, quietly, while the page stays open
+  if (!paid && P.expect && (P.autoTries = (P.autoTries || 0) + 1) <= 12) setTimeout(() => { if (route() === 'order-' + id && S.orders.find((x) => x.id === id && x.status === 'Awaiting payment')) payCheck(id, true); }, 15000);
 }
 
 // ---------- validation ----------

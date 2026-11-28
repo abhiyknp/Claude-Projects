@@ -16,6 +16,7 @@ const custJwt = (email) => ['x', Buffer.from(JSON.stringify({ email, role: 'auth
 const custOf = (auth) => { try { const p = JSON.parse(Buffer.from(auth.replace(/^Bearer /, '').split('.')[1], 'base64url').toString()); return p.customer ? String(p.email).toLowerCase() : null; } catch (e) { return null; } };
 const CUST_CODE = '111111';
 const custSession = (email) => ({ access_token: custJwt(email), refresh_token: 'r.' + Buffer.from(email).toString('base64url'), expires_in: 3600, token_type: 'bearer', user: { email } });
+const PAYLAG = {};
 const TWO_STEP = process.env.TWO_STEP === '1'; // matches ownerTwoStep in config.js; off until launch
 const KEYS = { site_text: 'key', settings: 'key', stock: 'sku', coupons: 'code', invoices: 'id', bills: 'code', customer_meta: 'contact', review_authors: 'review_id' };
 const T = { bills: [], coupons: [{ code: 'HELLO10', kind: 'percent', amount: 10, min_order: 0, max_off: 0, starts_on: null, ends_on: null, max_uses: 0, per_customer: 0, first_order_only: false, tag: 'welcome', featured: true, active: true, created_at: new Date().toISOString() }], invoices: [], points_log: [], products: [], pairings: [], site_text: [], settings: [], stock: [], media: [], orders: [], reviews: [], subscribers: [], restock_requests: [], reminders: [], gift_cards: [], referrers: [], review_authors: [], customer_meta: [], events: [], notifications: [], profiles: [] };
@@ -256,6 +257,10 @@ http.createServer((req, res) => {
       if (m && m[1] === 'my_referral') { const who = String(json().contact_in).trim().toLowerCase(); let r = T.referrers.find((x) => x.contact === who); if (!r) { r = { id: Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'), contact: who, created_at: new Date().toISOString() }; T.referrers.push(r); } return send(res, 200, JSON.stringify(r.id), 'application/json'); }
       // the pay (Razorpay) and delivery (Shiprocket) functions: paid at once, every PIN reachable, a made-up AWB number
       if (u.pathname === '/functions/v1/pay') { const b = json(); const o = T.orders.find((x) => x.id === b.order_id); if (!o) return fail(res, 404, 'not_found');
+        // PAY_LAG=n: act like Razorpay's checkout. 'start' hands back a window to open; the first n 'verify' calls answer "not paid yet"
+        if (process.env.PAY_LAG) { PAYLAG[o.id] = PAYLAG[o.id] || 0;
+          if (b.action === 'start') return send(res, 200, { key: 'rzp_test_mock', razorpay_order: 'order_mock', amount: o.total * 100, mode: 'sandbox' });
+          if (b.action === 'verify' && o.status === 'Awaiting payment' && PAYLAG[o.id]++ < +process.env.PAY_LAG) return send(res, 200, { status: o.status, paid: false }); }
         if (o.status === 'Awaiting payment') { o.status = 'Placed'; o.data.payment = { by: 'mock' }; autoInvoice(o, 'Awaiting payment');
           if (on('autoBook', false)) { o.data.parcel = { awb: 'AUTO' + o.id.slice(3, 7), courier: (o.data.shipQuote && o.data.shipQuote.courier) || 'Mock Express', track: 'https://shiprocket.co/tracking/AUTO', booked: new Date().toISOString(), auto: true }; o.status = 'Packed'; } } return send(res, 200, { status: o.status, paid: true }); }
       if (u.pathname === '/functions/v1/delivery') { const b = json();
