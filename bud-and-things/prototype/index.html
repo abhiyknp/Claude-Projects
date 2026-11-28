@@ -384,6 +384,8 @@ label { font-size: 14px; font-weight: 600; }
 /* checkout */
 .checkout { display: flex; flex-wrap: wrap; gap: clamp(24px, 4vw, 40px); padding-block: var(--s6) var(--section); }
 .checkout-main { flex: 2 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+.sum-toggle { display: none; } .sum-body { display: contents; }
+@media (max-width: 760px) { .checkout-side { order: -1; flex-basis: 100%; align-self: stretch; padding: 0; gap: 0; } .sum-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 0 16px; background: none; border: 0; font: inherit; font-size: 16px; color: inherit; cursor: pointer; text-align: left; } .sum-lbl, .sum-amt { white-space: nowrap; } .sum-body > strong:first-child { display: none; } .sum-chev { display: inline-block; font-style: normal; transition: transform .2s; } .checkout-side.open .sum-chev { transform: rotate(180deg); } .sum-body { display: none; flex-direction: column; gap: 14px; padding: 4px 16px 18px; } .checkout-side.open .sum-body { display: flex; } }
 .checkout-side { flex: 1 1 300px; min-width: 0; background: var(--linen); padding: var(--s5); display: flex; flex-direction: column; gap: 14px; align-self: flex-start; }
 .steps { display: flex; gap: 18px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; font-size: 14px; }
 .steps li { color: var(--choc2); }
@@ -2298,7 +2300,7 @@ function paintDeliv() {
 function paintShip() {
   const t = totals();
   const r = document.querySelector('.checkout-side .sum-ship'); if (r) { r.firstElementChild.innerHTML = shipLabel(t); r.lastElementChild.textContent = shipValue(t); }
-  const g = document.querySelector('.checkout-side .grand'); if (g) g.lastElementChild.textContent = inr(t.total);
+  const g = document.querySelector('.checkout-side .grand'); if (g) g.lastElementChild.textContent = inr(t.total); const sb = document.querySelector('.sum-bar-total'); if (sb) sb.textContent = inr(t.total);
 }
 function totalsHTML(t) {
   const row = (l, v, cls) => `<div${cls ? ` class="${cls}"` : ''}><span>${l}</span><span>${v}</span></div>`;
@@ -2586,7 +2588,7 @@ function viewCheckout() {
   const codeBox = (codeOk(co.code) ? `<div class="code-on"><span>Code <strong>${esc(String(co.code).toUpperCase())}</strong> ${t.code ? 'applied' : `needs ${inr(co.coupon.min_order)} of pieces in your cart`}</span><button class="linkbtn" type="button" data-act="code-remove">Remove</button></div>` : '')
     + (co.gcard ? `<div class="code-on"><span>Gift card <strong>${esc(co.gcard.code)}</strong> applied</span><button class="linkbtn" type="button" data-act="card-remove">Remove</button></div>` : '')
     + (codeOk(co.code) && co.gcard ? '' : `<form data-form="code" class="code-form" novalidate><label for="co-code">Have a code or gift card?</label><span><input id="co-code" autocomplete="off" value="${esc(co.code || '')}" ${codeOk(co.code) || co.gcard ? 'disabled' : ''} ${co.codeErr ? 'aria-invalid="true" aria-describedby="co-code-err"' : ''}><button class="btn small ghost" type="submit" ${codeOk(co.code) || co.gcard ? 'disabled' : ''}>Apply</button></span>${co.codeErr ? `<span class="err" id="co-code-err">${esc(co.codeErr)}</span>` : ''}</form>`);
-  const side = `<aside class="checkout-side" aria-label="Order summary"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" id="co-deliv" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</aside>`;
+  const side = `<aside class="checkout-side${co.sumOpen ? ' open' : ''}" aria-label="Order summary"><button class="sum-toggle" type="button" data-act="co-sum" aria-expanded="${co.sumOpen ? 'true' : 'false'}" aria-controls="sum-body"><span class="sum-lbl">Order summary <span class="muted">· code</span></span><span class="sum-amt"><strong class="num sum-bar-total">${inr(t.total)}</strong> <i class="sum-chev" aria-hidden="true">▾</i></span></button><div class="sum-body" id="sum-body"><strong>Order summary</strong>${shipBar(t)}${lines.map((l) => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>${esc(l.p.name)} · ${esc(l.v.label)} × ${l.qty}</span><span class="num">${inr(l.v.price * l.qty)}</span></div>`).join('')}${codeBox}${ptsBox(t)}${totalsHTML(t)}${giftSummary(g)}${co.address.pin ? `<span class="muted" id="co-deliv" style="font-size:14px">Delivering to ${esc(co.address.city || '')} ${esc(co.address.pin)}</span>` : ''}</div></aside>`;
   let main = '';
   if (co.step === 'contact') {
     main = `<h1 tabindex="-1" style="font-size:38px">Contact</h1><p class="muted">Signed in as <strong>${esc(S.account.email)}</strong>. We use these only for your delivery and order updates.</p>
@@ -5180,6 +5182,7 @@ document.addEventListener('click', (e) => {
     case 'pts-use': UI.co.usePts = t.checked; render(); break;
     case 'pts-remove': UI.co.usePts = false; render(); break;
     case 'gc-amt': UI.gc.amt = +d.v; render(); break;
+    case 'co-sum': { UI.co.sumOpen = !UI.co.sumOpen; const sd = document.querySelector('.checkout-side'); if (sd) { sd.classList.toggle('open', UI.co.sumOpen); const sbtn = sd.querySelector('.sum-toggle'); if (sbtn) sbtn.setAttribute('aria-expanded', UI.co.sumOpen ? 'true' : 'false'); } break; }
     case 'card-remove': UI.co.gcard = null; render(); break;
     case 'code-remove': UI.co.code = ''; UI.co.coupon = null; UI.co.codeErr = null; render(); break;
     case 'ft-note': { const q = BTFest.nextQuote(); const b = $('#ft-nq'); if (b) { b.innerHTML = q.t.split(' ').map((w, i) => `<span style="animation-delay:${i * .07}s">${esc(w)}&nbsp;</span>`).join(''); } const k = $('#ft-nk'); if (k) k.textContent = q.k; break; }
