@@ -1578,7 +1578,7 @@ const TEXT = {
   'faq.q6': ['Can I track my order?', 'FAQ: question 6 (empty to hide)'],
   'faq.a6': ['Yes. Open Track your order in the footer, or your account, and enter your order number and mobile number.', 'FAQ: answer 6'],
   'faq.q7': ['What are the candles made of, and how long do they burn?', 'FAQ: question 7 (empty to hide)'],
-  'faq.a7': ['Each product page lists the wax, scent notes, size and burn time. For a clean, even burn, trim the wick and let the top melt edge to edge the first time.', 'FAQ: answer 7'],
+  'faq.a7': ['Each product page lists the scent, size and weight. For a clean, even burn, trim the wick and let the top melt edge to edge the first time.', 'FAQ: answer 7'],
   'faq.q8': ['How do I care for Jesmonite pieces?', 'FAQ: question 8 (empty to hide)'],
   'faq.a8': ['Wipe them with a soft, damp cloth. Keep them away from standing water and harsh cleaners. Every piece is hand-poured, so small marks and swirls are part of it.', 'FAQ: answer 8'],
   'faq.q9': ['Do you take bulk or corporate orders?', 'FAQ: question 9 (empty to hide)'],
@@ -2443,7 +2443,7 @@ function viewProduct(id) {
   const pz = p.pyramid; const one = p.variants.length < 2;
   const optName = p.art === 'jar' ? 'Size' : p.cat === 'candles' ? 'Colour' : 'Finish';
   const acc = (key, icon, title, body, open) => `<details class="acc"${open ? ' open' : ''} data-acc="${key}"><summary>${hl(icon, 20)}<span>${title}</span><span class="acc-ic" aria-hidden="true"></span></summary><div class="acc-body">${body}</div></details>`;
-  const care = p.care.map((c) => `<li>${esc(c)}</li>`).join('') + (p.cat === 'candles' || p.cat === 'gifts' && /candle/i.test(p.material) ? `<li>${esc(p.burnTime ? 'Burn time: ' + p.burnTime + '.' : 'Burn time to be confirmed by testing.')}</li>` : '');
+  const care = p.care.map((c) => `<li>${esc(c)}</li>`).join('') + (p.burnTime && (p.cat === 'candles' || p.cat === 'gifts' && /candle/i.test(p.material)) ? `<li>${esc('Burn time: ' + p.burnTime + '.')}</li>` : '');
   return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${subOf(p)}">${SUBS[subOf(p)].label}</a> / ${esc(p.name)}</nav>
   <div class="pdp"><div class="pdp-gallery"><div class="gal-main">${main}
       ${isDiy(p) ? '' : `<button class="room-try" type="button" data-act="room-open" data-id="${id}">${hl('home', 18)}${T('pdp.room')}</button>`}</div>
