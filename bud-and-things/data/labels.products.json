@@ -475,7 +475,29 @@
   "scent": "",
   "colour": "White",
   "grams": 43,
-  "price": 249,
+  "price": 149,
   "show": "YES"
+ },
+ {
+  "id": "BNT-PRD-ST-004",
+  "name": "Paint Your Starfish · Set of 2",
+  "type": "DIY paint kit set",
+  "scent": "Assorted scents",
+  "colour": "Assorted",
+  "grams": 86,
+  "price": 249,
+  "show": "YES",
+  "set": 2
+ },
+ {
+  "id": "BNT-PRD-ST-005",
+  "name": "Paint Your Starfish · Set of 3",
+  "type": "DIY paint kit set",
+  "scent": "Assorted scents",
+  "colour": "Assorted",
+  "grams": 129,
+  "price": 349,
+  "show": "YES",
+  "set": 3
  }
 ]

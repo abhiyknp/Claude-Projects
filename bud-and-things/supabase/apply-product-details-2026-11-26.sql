@@ -53,7 +53,7 @@ update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) w
 update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) where id = 'bnt-prd-cg-015';
 update products set data = jsonb_set(data, '{variants,0,price}', '349'::jsonb) where id = 'bnt-prd-cg-016';
 update products set data = jsonb_set(data, '{variants,0,price}', '329'::jsonb) where id = 'bnt-prd-cg-017';
-update products set data = jsonb_set(data, '{variants,0,price}', '249'::jsonb) where id = 'bnt-prd-diy-001';
+update products set data = jsonb_set(data, '{variants,0,price}', '149'::jsonb) where id = 'bnt-prd-diy-001';
 update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-002';
 update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-007';
 update products set data = jsonb_set(data, '{variants,0,price}', '99'::jsonb) where id = 'bnt-prd-mc-003';

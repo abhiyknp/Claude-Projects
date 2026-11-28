@@ -46,6 +46,8 @@ update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand
 update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-cast Jesmonite dish in red and white, heart-themed, 124 g.$j$::text)) where id = 'bnt-prd-jt-004';
 update products set data = data || jsonb_build_object('line', to_jsonb($j$A hand-cast Jesmonite dish in bright multicolour, Holi-inspired, 100 g.$j$::text)) where id = 'bnt-prd-jt-005';
 update products set data = data || jsonb_build_object('line', to_jsonb($j$Paint your own starfish: a starfish to paint, with paints and a brush.$j$::text)) where id = 'bnt-prd-diy-001';
+update products set data = data || jsonb_build_object('line', to_jsonb($j$Two paint-your-own starfish kits, each with paints and a brush, 86 g in all.$j$::text)) where id = 'bnt-prd-st-004';
+update products set data = data || jsonb_build_object('line', to_jsonb($j$Three paint-your-own starfish kits, each with paints and a brush, 129 g in all.$j$::text)) where id = 'bnt-prd-st-005';
 commit;
 
 select id, data->>'line' as line, data->>'smellsLike' as smells_like, data->'pyramid' as notes from products order by sort;

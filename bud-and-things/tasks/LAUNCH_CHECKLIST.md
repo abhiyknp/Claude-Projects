@@ -26,7 +26,7 @@ Sources: `audit/legal/TODO.md`, `audit/28_CLOSEOUT_STATUS.md`, `audit/26_MASTER_
 - [x] Master sheet `data/BUD-and-THINGS_MASTER_Products-and-Prices.xlsx` locked; site, catalogue, labels, tests and the price-update SQL changed to match (PR).
 - [ ] Run `supabase/apply-price-master-2026-11-26.sql` in Supabase after the PR is merged, then set shipping 79 and free over 699 in Owner view → Settings.
 - [x] Stock: every option is set to 99 (`supabase/set-all-stock-99-2026-11-28.sql`) so no order is lost to Sold out. When something is really out, set its count to 0 in Owner view → Stock. Tealight counts mean packs of 6.
-- [x] Paint Your Starfish is on sale at ₹249 (owner decision 28 Nov). Run `supabase/apply-price-master-2026-11-26.sql` (it now makes it live) or switch it on in Owner view.
+- [x] Paint Your Starfish is on sale as a multi-buy ladder (owner decision 28 Nov): 1 kit ₹149, Set of 2 ₹249, Set of 3 ₹349. Run `supabase/add-starfish-sets-2026-11-28.sql` (moves the kit out of Gift boxes, adds the two sets). The prices use an ASSUMED kit cost of ₹55: **please confirm the real cost** (blank starfish, paints, brush, pouch, labour). At the old ₹109 these prices lose money.
 - [ ] Run `supabase/apply-product-details-2026-11-26.sql` (order numbers, Chai and Tulip Tower prices, feelings, rooms and occasions where blank).
 - [ ] Seven live products are not in the team sheet (Urli x4, Lime Glass, Daisy Candle x2): send their costs, or hide them until you have.
 - [ ] Fill the yellow cells on the master's Product details sheet (burn time after a real test, package size, packed on, scent story, barcode if any), then enter them in Owner view → Products.

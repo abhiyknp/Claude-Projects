@@ -21,8 +21,8 @@ const CARE_C = 'Trim wick to 5 mm. Burn 2 to 3 h at a time. Never leave burning 
 const CARE_O = 'Decorative item. Handle with care.';
 const tier = () => 'M'; // one label size for every product (stuck on the pouch or card, so the piece size does not matter)
 const info = (r) => {
-  const candle = /candle/i.test(r.type) || !!r.set; const kit = /kit/i.test(r.type); const pack = r.pack || 1;
-  const net = r.set ? `Set of ${r.set} candles, ${r.grams} g in all` : pack > 1 ? `Pack of ${pack} candles, ${r.grams * pack} g in all` : candle ? `1 candle, ${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `1 piece, about ${r.grams} g`;
+  const candle = /candle/i.test(r.type); const noun = /kit/i.test(r.type) ? 'kits' : 'candles'; const kit = /kit/i.test(r.type); const pack = r.pack || 1;
+  const net = r.set ? `Set of ${r.set} ${noun}, ${r.grams} g in all` : pack > 1 ? `Pack of ${pack} candles, ${r.grams * pack} g in all` : candle ? `1 candle, ${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `1 piece, about ${r.grams} g`;
   const short = r.set ? `Set of ${r.set}, ${r.grams} g` : pack > 1 ? `${pack} candles, ${r.grams * pack} g` : candle ? `${r.grams} g` : kit ? `1 kit, ${r.grams} g` : `about ${r.grams} g`;
   const name = r.name + (pack > 1 ? ' · Pack of ' + pack : '');
   return { candle, net, short, name, b: candle ? burn(r.type) : '' };
