@@ -648,7 +648,7 @@ input[type="file"] { padding: 10px 12px; }
   .toolbar .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 12px; width: 100%; }
   .toolbar .tf { flex-direction: column; align-items: stretch; gap: 4px; }
   .toolbar .tf label { font-size: 14px; }
-  .toolbar .tf select { width: 100%; min-height: 46px; font-size: 16px; padding: 0 36px 0 12px; text-overflow: ellipsis; }
+  .toolbar .tf select { width: 100%; min-height: 48px; font-size: 16px; padding: 0 36px 0 12px; text-overflow: ellipsis; }
 }
 @media (max-width: 560px) { .toolbar .filters { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); } .toolbar .tf select { font-size: 14px; padding: 0 32px 0 10px; background-position: right 12px center; } .toolbar { margin-bottom: 18px; } .toolbar .group:first-child .chip { flex: 1 1 auto; justify-content: center; } }
 /* phones, round 2: tidy cards, buttons and the payment row */
@@ -1143,7 +1143,7 @@ body.app .why-band { padding-bottom: 96px; }
 
 
 /* go-live sizing fixes */
-#adm-find { min-height: 44px; }
+#adm-find { min-height: 48px; }
 #gc-msg { min-height: 96px; }
 .ft-cel .linkbtn, .ft-note .linkbtn { min-height: 44px; padding: 0 6px; }
 /* festive looks, daily note, owner ease */
@@ -1578,7 +1578,7 @@ const TEXT = {
   'faq.q6': ['Can I track my order?', 'FAQ: question 6 (empty to hide)'],
   'faq.a6': ['Yes. Open Track your order in the footer, or your account, and enter your order number and mobile number.', 'FAQ: answer 6'],
   'faq.q7': ['What are the candles made of, and how long do they burn?', 'FAQ: question 7 (empty to hide)'],
-  'faq.a7': ['Each product page lists the wax, scent notes, size and burn time. For a clean, even burn, trim the wick and let the top melt edge to edge the first time.', 'FAQ: answer 7'],
+  'faq.a7': ['Each product page lists the scent, size and weight. For a clean, even burn, trim the wick and let the top melt edge to edge the first time.', 'FAQ: answer 7'],
   'faq.q8': ['How do I care for Jesmonite pieces?', 'FAQ: question 8 (empty to hide)'],
   'faq.a8': ['Wipe them with a soft, damp cloth. Keep them away from standing water and harsh cleaners. Every piece is hand-poured, so small marks and swirls are part of it.', 'FAQ: answer 8'],
   'faq.q9': ['Do you take bulk or corporate orders?', 'FAQ: question 9 (empty to hide)'],
@@ -1641,7 +1641,7 @@ const HOME_STYLES = { gift: 'Gift shop: products and gifts first' };
 const homeStyle = () => { const v = S.homePick || SET.homeStyle; return HOME_STYLES[v] ? v : 'gift'; };
 const SET_DEFAULTS = { pickupPin: '', shiprocketPickup: 'Primary', parcelKg: 0.5, parcelL: 20, parcelB: 15, parcelH: 10, giftCards: '500, 1000, 2000', refReward: 100, shipFee: 79, freeOver: 699, shipAuto: false, autoBook: false, shipRound: 10, shipBuffer: 0, shipMin: 0, shipMax: 0, pieceG: 300, packG: 100, deliveryDays: '4 to 7 days', exchangeDays: 7, codOn: false, onlineOn: false, upiQrOn: false, upiId: '', upiName: 'Bud & Things', codFee: 49, wrapFee: 99, ritualOff: 0, welcomeCode: 'HELLO10', welcomeOff: 10, repourPrice: 199, rewardPct: 5,
   featured: 'bnt-prd-cg-001, bnt-prd-cg-002, bnt-prd-jt-001, bnt-prd-jt-004', giftPicks: 'bnt-prd-jt-001, bnt-prd-jt-002, bnt-prd-jt-004, bnt-prd-cg-001', homeRitual: '', newIn: 'bnt-prd-jt-005, bnt-prd-jt-003, bnt-prd-tl-001, bnt-prd-tl-002, bnt-prd-mc-002, bnt-prd-mc-001', spotlight: 'bnt-prd-cg-001', whatsapp: '', orderAlerts: '', reminderDays: 7, whatsappOn: false, ownerWhatsappOn: false, smsOn: false, pushOn: false, email: 'hello@budandthings.com', instagram: '@budandthings_official', pinterest: 'budandthings_official',
-  bizName: 'BUD & THINGS by Ashi', bizAddress: 'Amarpali Verona Heights, Tech Zone 4, Gautam Buddha Nagar, Greater Noida West, Uttar Pradesh 201318', siteAddress: 'Greater Noida West, Gautam Buddha Nagar, Uttar Pradesh 201318', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, invTerms: '', invSignName: 'Ashi', hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: 'Abhishek Yadav', grievancePhone: '9839176160', courtCity: 'Greater Noida', policyDate: '3 November 2026',
+  bizName: 'BUD & THINGS by Ashi', bizAddress: '', siteAddress: 'Greater Noida West, Gautam Buddha Nagar, Uttar Pradesh 201318', gstin: '', gstOn: false, gstState: '', invoicePrefix: 'BT', invoiceAuto: true, invTerms: '', invSignName: 'Ashi', hsnCandles: '', gstCandles: 18, hsnObjects: '', gstObjects: 18, hsnGifts: '', gstGifts: 18, grievanceName: 'Abhishek Yadav', grievancePhone: '9839176160', courtCity: 'Greater Noida', policyDate: '3 November 2026',
   reviewAskDays: 7, reviewPoints: 0, monthlyGoal: 0, weeklySummary: true, festiveOn: true,
   theme: 'silk', homeStyle: 'gift', comingSoon: true, homeHide: [], previewHash: '', soonPages: [], newSections: [] };
 let SET = Object.assign({}, SET_DEFAULTS);
@@ -2118,10 +2118,14 @@ function listOf(k) {
 const linkHref = (to) => (/^https?:\/\//i.test(to) ? to : '#' + to.replace(/^#/, ''));
 const linkA = (to, l, extra) => /^https?:\/\//i.test(to) ? `<a href="${esc(to)}" target="_blank" rel="noopener"${extra || ''}>${esc(l)}</a>` : `<a href="${esc(linkHref(to))}"${extra || ''}>${esc(l)}</a>`;
 // FAQ: a saved list wins; before that, the numbered Site text lines
+// a question about burn times stays hidden until at least one product has a tested burn time saved
+const burnTested = () => (DATA.products || []).some((p) => p && String(p.burnTime || '').trim());
+const burnFaq = (x) => /\bburn/i.test(x.q) && /how long|burn time/i.test(x.q + ' ' + x.a);
 function faqItems() {
-  if (Array.isArray(SET.faqList) && SET.faqList.every((x) => x && typeof x.q === 'string')) return SET.faqList.filter((x) => x.q.trim()).map((x) => ({ q: fill(x.q), a: fill(x.a || '') }));
+  const keep = (list) => (burnTested() ? list : list.filter((x) => !burnFaq(x)));
+  if (Array.isArray(SET.faqList) && SET.faqList.every((x) => x && typeof x.q === 'string')) return keep(SET.faqList.filter((x) => x.q.trim()).map((x) => ({ q: fill(x.q), a: fill(x.a || '') })));
   const out = []; for (let i = 1; Tx('faq.q' + i) || TEXT['faq.q' + i]; i++) if (Tx('faq.q' + i).trim()) out.push({ q: Tx('faq.q' + i), a: Tx('faq.a' + i) });
-  return out;
+  return keep(out);
 }
 const mdText = (t) => esc(t).replace(/\*([^*\n]+)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
 // ---------- menus: a panel under each main menu word on desktop, a full-screen menu on phones ----------
@@ -2443,7 +2447,7 @@ function viewProduct(id) {
   const pz = p.pyramid; const one = p.variants.length < 2;
   const optName = p.art === 'jar' ? 'Size' : p.cat === 'candles' ? 'Colour' : 'Finish';
   const acc = (key, icon, title, body, open) => `<details class="acc"${open ? ' open' : ''} data-acc="${key}"><summary>${hl(icon, 20)}<span>${title}</span><span class="acc-ic" aria-hidden="true"></span></summary><div class="acc-body">${body}</div></details>`;
-  const care = p.care.map((c) => `<li>${esc(c)}</li>`).join('') + (p.cat === 'candles' || p.cat === 'gifts' && /candle/i.test(p.material) ? `<li>${esc(p.burnTime ? 'Burn time: ' + p.burnTime + '.' : 'Burn time to be confirmed by testing.')}</li>` : '');
+  const care = p.care.map((c) => `<li>${esc(c)}</li>`).join('') + (p.burnTime && (p.cat === 'candles' || p.cat === 'gifts' && /candle/i.test(p.material)) ? `<li>${esc('Burn time: ' + p.burnTime + '.')}</li>` : '');
   return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb" style="padding-block:24px"><a href="#shop">Shop</a> / <a href="#${subOf(p)}">${SUBS[subOf(p)].label}</a> / ${esc(p.name)}</nav>
   <div class="pdp"><div class="pdp-gallery"><div class="gal-main">${main}
       ${isDiy(p) ? '' : `<button class="room-try" type="button" data-act="room-open" data-id="${id}">${hl('home', 18)}${T('pdp.room')}</button>`}</div>
@@ -2728,7 +2732,7 @@ function viewStory() {
 function viewHelp() {
   return `<div class="wrap" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Help</span><h1 tabindex="-1">Help &amp; contact</h1><p class="muted">We usually reply within a working day.</p></div>
     <div class="help-cards"><a href="#track">${hl('box', 26)}<strong>Track your order</strong><span>Order number and mobile number</span></a><a href="#shipping">${hl('truck', 26)}<strong>Shipping &amp; delivery</strong><span>Charges, times and gifts</span></a><a href="#refunds">${hl('shield', 26)}<strong>Cancellations &amp; replacements</strong><span>Damaged items replaced free</span></a><a href="#faq">${hl('note', 26)}<strong>FAQs</strong><span>Quick answers</span></a></div>
-    <div class="facts" style="border-top:0;margin-top:32px"><div><strong>Contact us</strong>${SET.email ? `<span class="muted sel">${esc(SET.email)}</span>` : ''}${String(SET.whatsapp || '').replace(/\D/g, '').slice(-10).length === 10 ? `<span class="muted sel">WhatsApp: +91 ${esc(String(SET.whatsapp).replace(/\D/g, '').slice(-10))}</span>` : ''}${SET.bizName ? `<span class="muted sel">${esc(SET.bizName)}${SET.bizAddress ? ', ' + esc(SET.bizAddress) + ', India' : ''}</span>` : ''}${SET.grievanceName && SET.grievancePhone ? `<span class="muted sel">Customer care and grievance officer: ${esc(SET.grievanceName)}, ${esc(SET.grievancePhone)}</span>` : ''}${socialLinks()}</div>
+    <div class="facts" style="border-top:0;margin-top:32px"><div><strong>Contact us</strong>${SET.email ? `<span class="muted sel">${esc(SET.email)}</span>` : ''}${String(SET.whatsapp || '').replace(/\D/g, '').slice(-10).length === 10 ? `<span class="muted sel">WhatsApp: +91 ${esc(String(SET.whatsapp).replace(/\D/g, '').slice(-10))}</span>` : ''}${SET.bizName ? `<span class="muted sel">${esc(SET.bizName)}${SET.siteAddress ? ', ' + esc(SET.siteAddress) + ', India' : ''}</span>` : ''}${SET.grievanceName && SET.grievancePhone ? `<span class="muted sel">Customer care and grievance officer: ${esc(SET.grievanceName)}, ${esc(SET.grievancePhone)}</span>` : ''}${socialLinks()}</div>
     <div><strong>Shipping &amp; delivery</strong><span class="muted">${T('help.shipping')}</span></div>
     ${SET.codOn ? `<div><strong>Cash on delivery</strong><span class="muted">${T('co.cod')}</span></div>` : ''}
     <div><strong>Replacements</strong><span class="muted">${T('help.exchanges')}</span></div>

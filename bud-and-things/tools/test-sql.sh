@@ -19,5 +19,8 @@ BAD=$(grep -i "error" "$D/schema.out" | grep -v -i "storage")
 if [ -n "$BAD" ]; then echo "FAIL: schema.sql did not apply:"; echo "$BAD" | head -5; exit 1; fi
 OUT=$($P -v ON_ERROR_STOP=1 -f "$HERE/test-place-order.sql" 2>&1) || { echo "FAIL:"; echo "$OUT" | tail -8; exit 1; }
 echo "$OUT" | grep -q "place_order checks passed" || { echo "FAIL:"; echo "$OUT" | tail -8; exit 1; }
+OUT=$($P -v ON_ERROR_STOP=1 -f "$HERE/test-settings-privacy.sql" 2>&1) || { echo "FAIL:"; echo "$OUT" | tail -8; exit 1; }
+echo "$OUT" | grep -q "settings privacy checks passed" || { echo "FAIL:"; echo "$OUT" | tail -8; exit 1; }
+echo "ok   the full address is hidden from visitors and customers, invoices can still read it"
 echo "ok   schema.sql applies on PostgreSQL, and place_order: live quote, weight band, expiry, flat fee, total check"
 echo "SQL checks passed."
