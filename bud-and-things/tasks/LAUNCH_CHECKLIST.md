@@ -51,7 +51,7 @@ Sources: `audit/legal/TODO.md`, `audit/28_CLOSEOUT_STATUS.md`, `audit/26_MASTER_
 2. [ ] Check out with a real PIN and pay for real (UPI or card). Check: the order page shows Paid, the customer email and the shop email both arrive, and the stock count in Owner view → Stock went down by one.
 3. [ ] In Owner view → Orders open the order and press **Book courier**. Check that a tracking number and a label appear. Print the label and check it reads correctly.
 4. [ ] Cancel the test shipment in Shiprocket, refund the test payment in Razorpay, and put the stock count back to 99.
-5. [ ] Take a first backup (the Backup card in Owner view) and remove the test order and test data.
+5. [ ] Take a first backup (the Backup card in Owner view). Test data: run `supabase/clean-test-data-2026-11-28.sql` (part 1 to look, part 2 to clean: it keeps the 5 offline orders and marks them Delivered). Do the backup first.
 
 **Last step: open the shop**
 6. [ ] Owner view → Settings → turn **Coming soon** off.
