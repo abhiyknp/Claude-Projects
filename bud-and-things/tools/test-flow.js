@@ -55,7 +55,8 @@ const { chromium } = require(process.env.PLAYWRIGHT_PATH || require('child_proce
     await pg.goto(url + '#account'); await pg.waitForTimeout(100);
     console.log(w, 'points:', (await pg.textContent('.ah-pts .ring-n')).trim());
     await pg.goto(url + '#p-bnt-prd-jt-001'); await pg.click('[data-act="add"]'); await pg.keyboard.press('Escape'); await pg.goto(url + '#checkout'); await pg.waitForTimeout(100);
-    const before = (await pg.textContent('.checkout-side .grand')).trim(); await pg.click('[data-act="pts-use"]'); await pg.waitForTimeout(100);
+    const before = (await pg.textContent('.checkout-side .grand')).trim(); const sumBar = await pg.$('.sum-toggle'); if (sumBar && await sumBar.isVisible()) { console.log(w, 'phone: order summary is a bar at the top:', (await sumBar.textContent()).replace(/\s+/g, ' ').trim()); if ((await pg.$eval('.checkout-side', (e) => e.getBoundingClientRect().top)) > (await pg.$eval('.checkout-main', (e) => e.getBoundingClientRect().top))) errs.push(w + ' the summary bar is not above the form'); await sumBar.click(); } else if (w < 800) errs.push(w + ' no summary bar on the phone');
+    await pg.click('[data-act="pts-use"]'); await pg.waitForTimeout(100);
     console.log(w, 'with points:', before, '→', (await pg.textContent('.checkout-side .grand')).trim());
     await pg.goto(url + '#admin'); await pg.waitForTimeout(100);
     await pg.click('[data-act="adm-tab"][data-v="stock"]'); console.log(w, 'stock CG-001:', await pg.inputValue('#st-BNT-PRD-CG-001'));
