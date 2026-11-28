@@ -4266,7 +4266,7 @@ function viewLegal(r) {
   const LG = legalMap(); const [title, k, raw] = LG[r];
   return `<div class="wrap legal" style="padding-bottom:var(--section)"><div class="page-head"><span class="eyebrow">Policies</span><h1 tabindex="-1">${esc(title)}</h1>${Tx('legal.note') ? `<div class="status" role="note">${T('legal.note')}</div>` : ''}</div>
     <div class="legal-grid"><nav class="legal-nav" aria-label="Policy pages">${Object.entries(LG).map(([h, [t]]) => `<a href="#${h}"${h === r ? ' aria-current="page"' : ''}>${esc(t)}</a>`).join('')}<a href="#faq">FAQs</a><a href="#help">Contact us</a></nav>
-    <div class="article-body">${legalBody(k, raw)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p><p>${T('legal.grievance')}</p></div></div></div>`;
+    <div class="article-body">${legalBody(k, raw)}<h2>Contact and grievances</h2><p>${T('legal.biz')}</p>${r === 'privacy' || r === 'terms' ? `<p>${T('legal.grievance')}</p>` : ''}</div></div></div>`; // the grievance officer is named on the Privacy and Terms pages only
 }
 // a signed-in customer's orders and Bud Points: from the database (my_orders), or this browser's orders in the preview
 function myOrders() {
