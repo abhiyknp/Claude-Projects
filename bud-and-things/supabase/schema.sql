@@ -551,10 +551,13 @@ begin
 end $$;
 
 -- a customer can look up their own order with its number and their phone number (20 tries an hour per connection)
--- the page behind a short invoice link; the code is 8 random characters, so it cannot be guessed
-create or replace function get_bill(code_in text) returns jsonb language sql security definer set search_path = public as $$
-  select data from bills where code = upper(trim(code_in)) limit 1
-$$;
+-- the page behind a short invoice link; the code is 8 random characters, so it cannot be guessed, and a connection may
+-- try 60 codes an hour (opening or reloading a real link is a handful), so nobody can run through them either
+create or replace function get_bill(code_in text) returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  perform hit('bill', client_key(), 60, '1 hour');
+  return (select data from bills where code = upper(trim(code_in)) limit 1);
+end $$;
 
 drop function if exists get_order(text, text);
 create function get_order(order_id text, phone_no text) returns jsonb language plpgsql security definer set search_path = public as $$

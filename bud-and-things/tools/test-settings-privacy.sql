@@ -29,4 +29,17 @@ do $$ declare n int; begin
   select count(*) into n from invoice_counters; assert n >= 1, 'the owner cannot read the counter';
   reset role;
 end $$;
+-- short invoice links: a real code works, and a connection is stopped after 60 tries an hour
+insert into bills (code, order_id, data) values ('ABCD2345', 'BT-1-ABCDEF', '{"hello":"bill"}');
+do $$ declare r jsonb; n int := 0; stopped boolean := false; begin
+  set local role anon;
+  r := get_bill('abcd2345'); assert r ->> 'hello' = 'bill', 'a real short link opens';
+  assert get_bill('ZZZZ9999') is null, 'an unknown code finds nothing';
+  begin
+    for i in 1..70 loop n := n + 1; perform get_bill('QWER' || lpad(i::text, 4, '0')); end loop;
+  exception when others then stopped := sqlerrm = 'too_many_requests'; end;
+  reset role;
+  assert stopped, 'a connection is stopped after too many short-link tries';
+  assert n between 55 and 62, 'the stop comes at about 60 tries, not at once and not never (stopped at ' || n || ')';
+end $$;
 select 'settings privacy checks passed';
