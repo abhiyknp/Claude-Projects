@@ -34,4 +34,4 @@ jobs:
       - name: Run the shop in WebKit (Safari)
         if: always()
         run: |
-          BROWSERS=webkit PLAYWRIGHT_PATH="$RUNNER_TEMP/xb/node_modules/playwright" node bud-and-things/tools/test-browsers.js
+          VERBOSE=1 BROWSERS=webkit PLAYWRIGHT_PATH="$RUNNER_TEMP/xb/node_modules/playwright" node bud-and-things/tools/test-browsers.js
